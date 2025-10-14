@@ -1,0 +1,46 @@
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ""
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false
+
+repos:
+  # Python hooks
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.13.3
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+        args: [--config=pyproject.toml]
+
+  # VHDL hooks
+  - repo: https://github.com/jeremiah-c-leary/vhdl-style-guide
+    rev: 3.35.0
+    hooks:
+      - id: vsg
+        args:
+          - --jobs=4
+          - --configuration=tools/vsg/.vsg.yaml
+
+  # RestructuredText hooks
+  - repo: https://github.com/LilSpazJoekp/docstrfmt
+    rev: v1.11.1
+    hooks:
+      - id: docstrfmt
+        language_version: python3
+        exclude_types:
+          - python
+
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.7.7
+    hooks:
+      - id: docformatter
+        additional_dependencies: [tomli]
+        args: [--in-place, --config, ./pyproject.toml]

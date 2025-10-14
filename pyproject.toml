@@ -1,0 +1,101 @@
+[project]
+name = "uart"
+version = "1.0"
+dependencies = [
+    "pytest",
+    "ruff",
+    "vsg",
+    "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
+]
+
+[project.optional-dependencies]
+dev = ["pre-commit", "docformatter", "docstrfmt"]
+
+[tool.ruff]
+exclude = [
+    "__pypackages__",
+    "_build",
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git-rewrite",
+    ".git",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "oss-cad-suite",
+    "site-packages",
+    "venv",
+]
+line-length = 120
+indent-width = 4
+
+[tool.ruff.lint]
+extend-select = [
+    'D',       # pydocstyle
+    "I",       # isort
+    "UP",      # pyupgrade
+    "PL",      # pylint
+    "E",       # pycodestyle errors
+    "W",       # pycodestyle warnings
+    "F",       # pyflakes
+    "C4",      # flake8-comprehension
+    "LOG",     # flake8-logging
+    "G",       # flake8-logging-format
+    "ISC",     # implicit string concat
+    "TC",      # flake8-typechecking
+    "SIM103",  # return the condition directly
+    "SIM300",  # yoda conditions
+    "RUF100",  # unused noqa
+    "RUF101",  # redirected noqa
+    "RUF010",  # explicit type conversion in f-string
+    "RUF005",  # collection literal concatenation
+    "RUF022",  # unsorted __all__
+    "PERF101", # unnecessary list cast
+    "PERF102", # unnecessary dict.items()
+    "B007",    # unused loop variable
+    "PYI030",  # unnecessary literal union
+]
+ignore = [
+    "E741",    # ambiguous variable name (preference)
+    "E501",    # line too long (preference)
+    "PLR0912", # Too many branches (>12) (preference)
+    "PLR0913", # Too many arguments to function call (>5) (preference)
+    "PLR0915", # Too many statements (>50) (preference)
+    "PLR2004", # Magic value used in comparison (preference)
+    "PLW0603", # Using the global statement (preference)
+    "PLR0911", # Too many return statements (preference)
+    "PLW1641", # __eq__ without __hash__ (mypy compatibility)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cocotb", "cocotb_tools", "pygpi"]
+known-third-party = ["pytest"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+docstring-code-line-length = 120
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.setuptools]
+py-modules = []
