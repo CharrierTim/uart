@@ -306,6 +306,40 @@ begin
 
         end procedure;
 
+        -- =============================================================================================================
+        -- proc_uart_read
+        -- Description: This procedure sends a read command over the UART interface.
+        --
+        -- Parameters:
+        --   uart_rx      : out std_logic - The UART RX line to drive.
+        --   addr         : string        - The address to read from as hex string (e.g., "01", "FF").
+        --
+        -- Example:
+        --   proc_uart_read(tb_i_uart_rx, "05"); -- Read data from address 0x05
+        --
+        -- =============================================================================================================
+        procedure proc_uart_read (
+            signal uart_rx : out std_logic;
+            constant addr  : string(1 to 2)) is
+        begin
+
+            info("");
+            info("Sending UART read command: Address = 0x" & addr);
+
+            -- Send 'R'
+            proc_send_byte(uart_rx, x"52");
+
+            -- Send address (convert each hex character to ASCII)
+            for i in addr'range loop
+                proc_send_byte(uart_rx, hex_char_to_ascii(addr(i)));
+            end loop;
+
+            -- Send carriage return and line feed
+            proc_send_byte(uart_rx, x"0D");
+            proc_send_byte(uart_rx, x"0A");
+
+        end procedure;
+
     begin
 
         -- Set up the test runner
@@ -400,6 +434,11 @@ begin
                     tb_o_write_data,
                     C_RX_MESSAGE_ALL_ONES.slv_data,
                     "Check write data   ");
+
+                -- =====================================================================================================
+                -- SEND READ COMMAND
+                -- =====================================================================================================
+                proc_uart_read(tb_i_uart_rx, C_RX_MESSAGE_1.string_addr);
 
             elsif run("testing invalid start and stop bits") then
 
