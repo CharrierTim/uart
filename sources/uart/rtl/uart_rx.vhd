@@ -414,7 +414,7 @@ begin
 
             when STATE_DATA_BITS =>
 
-                if (decoded_bit_count = 0 and i_baud_tick_count = 15 and rx_baud_tick = '1') then
+                if (decoded_bit_count = 7 and i_baud_tick_count = 15 and rx_baud_tick = '1') then
                     if (G_PARITY = "NONE") then
                         next_state <= STATE_STOP_BIT;
                     else
