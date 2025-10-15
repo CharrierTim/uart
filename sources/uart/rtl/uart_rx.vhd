@@ -1,7 +1,7 @@
 -- =====================================================================================================================
 --  MIT License
 --
---  Copyright (c) 2025 Timothée Charrier
+--  Copyright (c) 2025 Timothee Charrier
 --
 --  Permission is hereby granted, free of charge, to any person obtaining a copy
 --  of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 -- @file    uart_rx.vhd
 -- @version 1.0
 -- @brief   Reception module for UART communication
--- @author  Timothée Charrier
+-- @author  Timothee Charrier
 -- @date    14/10/2025
 -- =====================================================================================================================
 
@@ -125,6 +125,9 @@ architecture UART_RX_ARCH of UART_RX is
     signal i_baud_tick_count      : unsigned(4 - 1 downto 0); -- Oversampling at 16x, so 16 ticks per bit
     signal decoded_bit_count      : unsigned(3 - 1 downto 0); -- 8 data bits
 
+    -- Current byte
+    signal latch_byte             : std_logic_vector(8 - 1 downto 0);
+
 begin
 
     -- =================================================================================================================
@@ -220,7 +223,7 @@ begin
         if (RST_N = '0') then
 
             i_baud_tick_count   <= (others => '0');
-            decoded_bit_count   <= (others => '1');
+            decoded_bit_count   <= (others => '0');
             uart_rx_mid_bit     <= (others => '0');
             uart_rx_sampled_bit <= '1';
 
@@ -241,8 +244,8 @@ begin
 
                     -- Decrement the decoded bit count
                     if (current_state = STATE_DATA_BITS) then
-                        if (decoded_bit_count > 0) then
-                            decoded_bit_count <= decoded_bit_count - 1;
+                        if (decoded_bit_count <= 7) then
+                            decoded_bit_count <= decoded_bit_count + 1;
                         else
                             decoded_bit_count <= (others => '0');
                         end if;
@@ -268,7 +271,7 @@ begin
             --                      \_________________________________________________________/
             --
             --   Tick:                 0  1  2  3  4  5  6  7  8  9  10  11  12  13  14  15
-            --                                              ↑  ↑  ↑
+            --                                              ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
             --                                          Sample Points (Ticks 7, 8, 9)
             --
             -- Sampling Logic:
@@ -613,11 +616,18 @@ begin
             O_STOP_BIT_ERROR   <= '0';
             O_PARITY_BIT_ERROR <= '0';
 
+            latch_byte         <= (others => '0');
+
         elsif (rising_edge(CLK)) then
 
             -- Update output byte
             if (next_o_byte_update = '1') then
-                O_BYTE(to_integer(decoded_bit_count)) <= uart_rx_sampled_bit;
+                latch_byte <= latch_byte(latch_byte'high - 1 downto latch_byte'low) & uart_rx_sampled_bit;
+            end if;
+
+            -- If data is valid, latch the byte to output
+            if (next_o_data_valid = '1') then
+                O_BYTE <= latch_byte;
             end if;
 
             -- Update output signals
