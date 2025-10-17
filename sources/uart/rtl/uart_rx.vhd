@@ -227,7 +227,7 @@ begin
             -- Baud tick counter and decoded bit counter
             -- ========================================================================================================
             -- Each bit period is 16 baud ticks. After 16 ticks, we have received one full bit, then the data bit count
-            -- is decremented by one.
+            -- is Incremented by one.
             -- =========================================================================================================
 
             if (rx_baud_tick = '1' and next_count_enable = '1') then
@@ -236,13 +236,9 @@ begin
                     -- One full bit period has passed (16 ticks at 16x oversampling)
                     i_baud_tick_count <= (others => '0');
 
-                    -- Decrement the decoded bit count
+                    -- Increment the decoded bit count
                     if (current_state = STATE_DATA_BITS) then
-                        if (decoded_bit_count <= 7) then
-                            decoded_bit_count <= decoded_bit_count + 1;
-                        else
-                            decoded_bit_count <= (others => '0');
-                        end if;
+                        decoded_bit_count <= decoded_bit_count + 1;
                     end if;
 
                 else
@@ -251,12 +247,12 @@ begin
             end if;
 
             -- =========================================================================================================
-            -- UART RX Sampling: Triple-Midpoint Sampling for Reliable Bit Detection
+            -- UART RX Sampling: Majority Voting at Mid-Bit
             -- =========================================================================================================
             --
             -- Visual representation of a data bit transition:
             --
-            --   Idle/Previous Bit                            Current Data Bit                          Next Bit
+            --   Idle/Previous Bit                           Current Data Bit                           Next Bit
             --        (High)                                     (Low)                                   (High)
             --   ________________                                                                 __________________
             --                   \                                                               /
@@ -314,8 +310,6 @@ begin
 
                 -- Ambiguous cases (1 zero, 1 one, 1 unknown), keep previous value
                 when others =>
-
-                    uart_rx_sampled_bit <= uart_rx_sampled_bit;
 
             end case;
 
