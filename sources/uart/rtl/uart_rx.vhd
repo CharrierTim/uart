@@ -26,7 +26,7 @@
 -- @version 1.0
 -- @brief   Reception module for UART communication
 -- @author  Timothee Charrier
--- @date    14/10/2025
+-- @date    17/10/2025
 -- =====================================================================================================================
 
 library ieee;
@@ -567,9 +567,9 @@ begin
 
         elsif (rising_edge(CLK)) then
 
-            -- Update output byte
+            -- Update output byte (receive from LSB to MSB)
             if (next_o_byte_update = '1') then
-                latch_byte <= latch_byte(latch_byte'high - 1 downto latch_byte'low) & uart_rx_sampled_bit;
+                latch_byte <= uart_rx_sampled_bit & latch_byte(latch_byte'high downto latch_byte'low + 1);
             end if;
 
             -- If data is valid, latch the byte to output
