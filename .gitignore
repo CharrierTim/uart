@@ -1,3 +1,12 @@
+/*
+ * Filename: /home/tim/projects/uart/.gitignore
+ * Path: /home/tim/projects/uart
+ * Created Date: Friday, October 17th 2025, 6:20:53 pm
+ * Author: Timothée Charrier
+ *
+ * Copyright (c) 2025 Elsys Design
+ */
+
 # Python
 .venv/
 **/__pycache__
@@ -8,6 +17,7 @@
 
 # VUnit
 **/vunit_out
+**/work
 
 # VSCode
 **/.vscode/
