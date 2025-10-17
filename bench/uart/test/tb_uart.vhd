@@ -143,27 +143,28 @@ architecture TB_UART_ARCH of TB_UART is
     function hex_char_to_ascii (hex_char : character) return std_logic_vector is
     begin
 
-                -- vsg_off
-                case hex_char is
-                    when '0'       => return x"30";
-                    when '1'       => return x"31";
-                    when '2'       => return x"32";
-                    when '3'       => return x"33";
-                    when '4'       => return x"34";
-                    when '5'       => return x"35";
-                    when '6'       => return x"36";
-                    when '7'       => return x"37";
-                    when '8'       => return x"38";
-                    when '9'       => return x"39";
-                    when 'A' | 'a' => return x"41";
-                    when 'B' | 'b' => return x"42";
-                    when 'C' | 'c' => return x"43";
-                    when 'D' | 'd' => return x"44";
-                    when 'E' | 'e' => return x"45";
-                    when 'F' | 'f' => return x"46";
-                    when others    => return x"30"; -- Default to '0'
-                end case;
-                -- vsg_on
+        -- vsg_off
+        case hex_char is
+            when '0'       => return x"30";
+            when '1'       => return x"31";
+            when '2'       => return x"32";
+            when '3'       => return x"33";
+            when '4'       => return x"34";
+            when '5'       => return x"35";
+            when '6'       => return x"36";
+            when '7'       => return x"37";
+            when '8'       => return x"38";
+            when '9'       => return x"39";
+            when 'A' | 'a' => return x"41";
+            when 'B' | 'b' => return x"42";
+            when 'C' | 'c' => return x"43";
+            when 'D' | 'd' => return x"44";
+            when 'E' | 'e' => return x"45";
+            when 'F' | 'f' => return x"46";
+            when others    => return x"30"; -- Default to '0'
+        end case;
+        -- vsg_on
+
     end function;
 
 begin
