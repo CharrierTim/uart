@@ -1,15 +1,25 @@
 -- =====================================================================================================================
---  ______ _                 _____            _
--- |  ____| |               |  __ \          (_)
--- | |__  | |___ _   _ ___  | |  | | ___  ___ _  __ _ _ __
--- |  __| | / __| | | / __| | |  | |/ _ \/ __| |/ _` | '_ \
--- | |____| \__ \ |_| \__ \ | |__| |  __/\__ \ | (_| | | | |
--- |______|_|___/\__, |___/ |_____/ \___||___/_|\__, |_| |_|
---             __/ |                          __/ |
---             |___/                          |___/
+--  MIT License
 --
--- Copyright (c) 2025 Elsys Design
+--  Copyright (c) 2025 Timothée Charrier
 --
+--  Permission is hereby granted, free of charge, to any person obtaining a copy
+--  of this software and associated documentation files (the "Software"), to deal
+--  in the Software without restriction, including without limitation the rights
+--  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--  copies of the Software, and to permit persons to whom the Software is
+--  furnished to do so, subject to the following conditions:
+--
+--  The above copyright notice and this permission notice shall be included in all
+--  copies or substantial portions of the Software.
+--
+--  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+--  SOFTWARE.
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_uart.vhd
@@ -83,6 +93,14 @@ architecture TB_UART_ARCH of TB_UART is
         string_data => "1234",
         slv_addr    => x"FF",
         slv_data    => x"1234"
+    );
+
+    constant C_RX_MESSAGE_3         : t_rx_message :=
+    (
+        string_addr => "1A",
+        string_data => "5678",
+        slv_addr    => x"1A",
+        slv_data    => x"5678"
     );
 
     constant C_RX_MESSAGE_ALL_ZEROS : t_rx_message :=
@@ -398,6 +416,23 @@ begin
                 check_equal(
                     tb_o_write_data,
                     C_RX_MESSAGE_2.slv_data,
+                    "Check write data   ");
+
+                wait for 1 ms;
+                -- =====================================================================================================
+                -- MESSAGE 3
+                -- =====================================================================================================
+                proc_uart_write(tb_i_uart_rx, C_RX_MESSAGE_3.string_addr, C_RX_MESSAGE_3.string_data);
+
+                -- Check received address and data
+                check_equal(
+                    tb_o_addr,
+                    C_RX_MESSAGE_3.slv_addr,
+                    "Check write address");
+
+                check_equal(
+                    tb_o_write_data,
+                    C_RX_MESSAGE_3.slv_data,
                     "Check write data   ");
 
                 wait for 1 ms;
