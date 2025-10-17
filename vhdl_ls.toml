@@ -1,80 +1,188 @@
-# ----------------------------------------------------------------------------------------------------------------------
-# vhdl_ls.toml
-# ----------------------------------------------------------------------------------------------------------------------
-# This file is used to configure the VHDL Language Server (vhdl_ls).
-# It specifies the libraries and files to be included in the VHDL project.
-# ----------------------------------------------------------------------------------------------------------------------
+## =====================================================================================================================
+##   MIT License
+##
+##   Copyright (c) 2025 Timothee Charrier
+##
+##   Permission is hereby granted, free of charge, to any person obtaining a copy
+##   of this software and associated documentation files (the "Software"), to deal
+##   in the Software without restriction, including without limitation the rights
+##   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+##   copies of the Software, and to permit persons to whom the Software is
+##   furnished to do so, subject to the following conditions:
+##
+##   The above copyright notice and this permission notice shall be included in all
+##   copies or substantial portions of the Software.
+##
+##   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+##   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+##   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+##   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+##   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+##   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+##   SOFTWARE.
+## =====================================================================================================================
+##  @project uart
+##  @file    vhdl_ls.toml
+##  @version 1.0
+##  @brief   This file is used to configure the VHDL Language Server (vhdl_ls). It specifies the libraries and files to
+##           be included in the VHDL project.
+##  @author  Timothee Charrier
+##  @date    17/10/2025
+## =====================================================================================================================
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Vunit: https://github.com/VUnit/vunit
 # ----------------------------------------------------------------------------------------------------------------------
 
 [libraries.vunit_lib]
-
 files = [
-    # I know this is a lot of files, but it is easiest way to include all files without hundreds of errors or
-    # warnings
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check_api-2008p.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/queue_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/codec_builder-2008p.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/event_common_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/integer_array_pkg.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/event_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check_api.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/codec_builder-2008p.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/event_private_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/event_common_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/queue_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/queue_pkg-2008p.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/types.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/codec-2008p.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/string_ops/src/string_ops.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/codec_builder.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/string_ptr_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/queue_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/integer_vector_ptr_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/codec.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/string_ptr_pkg-body-2002p.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/integer_vector_ptr_pool_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/api/external_string_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/id_pkg.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/data_types_context.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/data_types_private_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/integer_array_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/dict_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/codec_builder.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/integer_vector_ptr_pkg-body-2002p.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/queue_pool_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/id_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/dict_pkg-2008p.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/dict_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/string_ptr_pool_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/byte_vector_ptr_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/integer_array_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/api/external_string_pkg.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/api/external_integer_vector_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/location_pkg-body-2008m.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/common_log_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/location_pkg.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/logger_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/file_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/log_handler_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/print_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/log_levels_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/log_levels_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/print_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/ansi_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/common_log_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/logger_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/log_handler_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/vunit_run_context.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/vunit_context.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/string_ops/src/string_ops.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/checker_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check-2008p.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check_api.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/checker_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check_api-2008p.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/dictionary/src/dictionary.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/run/src/runner_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/path/src/path.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/event_private_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/string_ptr_pool_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run_api.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/queue_pkg-2008p.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/dict_pkg-body.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/string_ptr_pkg-body-2002p.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/dict_pkg-2008p.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/vunit_context.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check-2008p.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/logger_pkg-body.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/ansi_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/integer_vector_ptr_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/queue_pool_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/integer_vector_ptr_pkg-body-2002p.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/log_levels_pkg-body.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/types.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/location_pkg-body-2008m.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/string_ptr_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/log_levels_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/common_log_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/codec.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/location_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/checker_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/checker_pkg-body.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/integer_array_pkg-body.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/print_pkg-body.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/byte_vector_ptr_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/vunit_run_context.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run_types.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/common_log_pkg-body.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/log_handler_pkg-body.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/print_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/file_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/data_types_private_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/dict_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_pkg.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/queue_pkg-body.vhd",
-    ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/log_handler_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run_api.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/path/src/path.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/com/src/com_deprecated.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/com/src/com_common.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/com/src/com.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/com/src/com_api.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/com/src/com_string.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/com/src/com_messenger.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/com/src/com_debug_codec_builder.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/com/src/com_context.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/com/src/com_types.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/com/src/com_support.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_slave_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/wishbone_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/sync_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/uart_master.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/wishbone_slave.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/bus2memory.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_stream_master.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/vc_context.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/avalon_source.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_stream_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/stream_slave_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/sync_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/stream_master_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_stream_slave.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/avalon_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/signal_checker_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/avalon_stream_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/memory_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_stream_monitor.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/avalon_master.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/ram_master.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/uart_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/std_logic_checker.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/avalon_slave.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/wishbone_master.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_statistics_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_stream_private_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_write_slave.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/uart_slave.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/stream_slave_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_lite_master_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/bus_master_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_lite_master.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_slave_private_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/memory_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/vc_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_stream_protocol_checker.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/avalon_sink.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/axi_read_slave.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/stream_master_pkg-body.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/bus_master_pkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/verification_components/src/memory_utils_pkg.vhd",
+]
+is_third_party = true
+
+[libraries.osvvm]
+files = [
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/OsvvmTypesPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/ReportPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/SortListPkg_int.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/OsvvmContext.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/OsvvmScriptSettingsPkg_default.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/TextUtilPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/RandomProcedurePkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/ScoreboardPkg_int.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/AlertLogPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/TranscriptPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/ResizePkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/VendorCovApiPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/ResolutionPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/MemorySupportPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/MemoryGenericPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/MemoryPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/OsvvmGlobalPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/NameStorePkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/TbUtilPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/RandomBasePkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/OsvvmScriptSettingsPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/RandomPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/ScoreboardPkg_slv.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/MessageListPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/ScoreboardGenericPkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/CoveragePkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/MessagePkg.vhd",
+    ".venv/lib/python3.12/site-packages/vunit/vhdl/osvvm/NamePkg.vhd",
 ]
 is_third_party = true
 
