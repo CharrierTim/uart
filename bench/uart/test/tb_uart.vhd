@@ -37,6 +37,7 @@ library lib_rtl;
 
 library vunit_lib;
     context vunit_lib.vunit_context;
+    context vunit_lib.vc_context;
 
 -- =====================================================================================================================
 -- ENTITY
@@ -61,7 +62,7 @@ architecture TB_UART_ARCH of TB_UART is
     type t_rx_message is record
         string_addr : string(1 to 2);                    -- Address in hex (2 characters)
         string_data : string(1 to 4);                    -- Data in hex (4 characters
-        slv_addr    : std_logic_vector(8  - 1 downto 0); -- Address as std_logic_vector
+        slv_addr    : std_logic_vector(8 - 1 downto 0);  -- Address as std_logic_vector
         slv_data    : std_logic_vector(16 - 1 downto 0); -- Data as std_logic_vector
     end record t_rx_message;
 
@@ -76,7 +77,14 @@ architecture TB_UART_ARCH of TB_UART is
     -- DUT generics
     constant C_CLK_FREQ_HZ          : positive := 50_000_000;
     constant C_BAUD_RATE_BPS        : positive := 115_200;
-    constant C_PARITY               : string   := "NONE";
+    constant C_DATA_LENGTH          : positive := 8;
+
+    -- UART BFM instance
+    constant C_UART_BFM_SLAVE       : uart_slave_t   :=
+        new_uart_slave(
+            initial_baud_rate => C_BAUD_RATE_BPS,
+            data_length       => C_DATA_LENGTH);
+    constant C_UART_STREAM          : stream_slave_t := as_stream(C_UART_BFM_SLAVE);
 
     -- RX message
     constant C_RX_MESSAGE_1         : t_rx_message :=
@@ -125,16 +133,16 @@ architecture TB_UART_ARCH of TB_UART is
     -- SIGNALS
     -- =================================================================================================================
 
-    -- dut signals
+    -- DUT signals
     signal tb_clk                   : std_logic;
     signal tb_rst_n                 : std_logic;
     signal tb_i_uart_rx             : std_logic;
     signal tb_o_uart_tx             : std_logic;
-    signal tb_o_read_addr           : std_logic_vector( 8 - 1 downto 0);
+    signal tb_o_read_addr           : std_logic_vector(8 - 1 downto 0);
     signal tb_o_read_addr_valid     : std_logic;
-    signal tb_i_read_data           : std_logic_vector( 8 - 1 downto 0);
+    signal tb_i_read_data           : std_logic_vector(8 - 1 downto 0);
     signal tb_i_read_data_valid     : std_logic;
-    signal tb_o_write_addr          : std_logic_vector( 8 - 1 downto 0);
+    signal tb_o_write_addr          : std_logic_vector(8 - 1 downto 0);
     signal tb_o_write_data          : std_logic_vector(16 - 1 downto 0);
     signal tb_o_write_valid         : std_logic;
 
@@ -159,23 +167,23 @@ architecture TB_UART_ARCH of TB_UART is
 
         -- vsg_off
         case hex_char is
-            when '0'       => return x"30";
-            when '1'       => return x"31";
-            when '2'       => return x"32";
-            when '3'       => return x"33";
-            when '4'       => return x"34";
-            when '5'       => return x"35";
-            when '6'       => return x"36";
-            when '7'       => return x"37";
-            when '8'       => return x"38";
-            when '9'       => return x"39";
-            when 'A' | 'a' => return x"41";
-            when 'B' | 'b' => return x"42";
-            when 'C' | 'c' => return x"43";
-            when 'D' | 'd' => return x"44";
-            when 'E' | 'e' => return x"45";
-            when 'F' | 'f' => return x"46";
-            when others    => return x"30"; -- Default to '0'
+        when '0'       => return x"30";
+        when '1'       => return x"31";
+        when '2'       => return x"32";
+        when '3'       => return x"33";
+        when '4'       => return x"34";
+        when '5'       => return x"35";
+        when '6'       => return x"36";
+        when '7'       => return x"37";
+        when '8'       => return x"38";
+        when '9'       => return x"39";
+        when 'A' | 'a' => return x"41";
+        when 'B' | 'b' => return x"42";
+        when 'C' | 'c' => return x"43";
+        when 'D' | 'd' => return x"44";
+        when 'E' | 'e' => return x"45";
+        when 'F' | 'f' => return x"46";
+        when others    => return x"30"; -- Default to '0'
         end case;
         -- vsg_on
 
@@ -204,6 +212,18 @@ begin
             O_WRITE_ADDR      => tb_o_write_addr,
             O_WRITE_DATA      => tb_o_write_data,
             O_WRITE_VALID     => tb_o_write_valid
+        );
+
+    -- =================================================================================================================
+    -- UART SLAVE
+    -- =================================================================================================================
+
+    inst_uart_slave : entity vunit_lib.uart_slave
+        generic map (
+            UART => C_UART_BFM_SLAVE
+        )
+        port map (
+            rx => tb_o_uart_tx
         );
 
     -- =================================================================================================================
@@ -388,7 +408,7 @@ begin
         disable_stop(get_logger(default_checker), error);
 
         while test_suite loop
-
+            -- -- vunit: run_all_in_same_sim
             if run("test_uart_decoder") then
 
                 info("-----------------------------------------------------------------------------");
@@ -591,6 +611,58 @@ begin
                 check(
                     tb_o_write_valid = '0' and tb_o_write_valid'stable(9 * 1 sec / C_BAUD_RATE_BPS),
                     "Check no data received due to stop bit error");
+
+            elsif (run("test_uart_encoder")) then
+
+                info("-----------------------------------------------------------------------------");
+                info("TESTING UART ENCODER");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset values
+                proc_reset_dut;
+
+                wait for 100 us;
+
+                -- =====================================================================================================
+                -- TEST SOME DATA RECEPTION
+                -- =====================================================================================================
+
+                -- Send data to be transmitted
+                tb_i_read_data       <= x"AA";
+                tb_i_read_data_valid <= '1';
+                wait for C_CLK_PERIOD;
+                tb_i_read_data_valid <= '0';
+
+                check_stream(net, C_UART_STREAM, 8x"AA");
+
+                wait for 1 sec / C_BAUD_RATE_BPS;
+
+                -- Send data to be transmitted
+                tb_i_read_data       <= x"1D";
+                tb_i_read_data_valid <= '1';
+                wait for C_CLK_PERIOD;
+                tb_i_read_data_valid <= '0';
+
+                check_stream(net, C_UART_STREAM, 8x"1D");
+
+                wait for 1 sec / C_BAUD_RATE_BPS;
+
+                -- =====================================================================================================
+                -- TEST ALL POSSIBLE BYTE VALUES
+                -- =====================================================================================================
+
+                for byte_value in 0 to 2 ** 8 - 1 loop
+
+                    -- Send data to be transmitted
+                    tb_i_read_data       <= std_logic_vector(to_unsigned(byte_value, 8));
+                    tb_i_read_data_valid <= '1';
+                    wait for C_CLK_PERIOD;
+                    tb_i_read_data_valid <= '0';
+
+                    check_stream(net, C_UART_STREAM, std_logic_vector(to_unsigned(byte_value, 8)));
+
+                    wait for 1 sec / C_BAUD_RATE_BPS;
+                end loop;
 
             end if;
 
