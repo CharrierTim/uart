@@ -50,7 +50,7 @@ if shutil.which("nvc"):
 elif shutil.which("ghdl"):
     VUNIT_SIMULATOR: str = "ghdl"
 elif shutil.which("vsim"):
-    VUNIT_SIMULATOR: str = "vsim"
+    VUNIT_SIMULATOR: str = "modelsim"
 else:
     print("No supported simulator found")
     sys.exit(status=1)
@@ -86,7 +86,7 @@ if VUNIT_SIMULATOR == "ghdl":
 VU.set_sim_option(name="disable_ieee_warnings", value=True)
 
 # Enable code coverage if supported by the simulator
-if VUNIT_SIMULATOR == "vsim":
+if VUNIT_SIMULATOR == "modelsim":
     VU.set_sim_option(name="enable_coverage", value=True)
 
 VU.main()
