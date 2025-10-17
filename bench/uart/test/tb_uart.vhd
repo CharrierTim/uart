@@ -119,6 +119,8 @@ architecture TB_UART_ARCH of TB_UART is
         slv_data    => x"FFFF"
     );
 
+    constant C_DEAD                 : std_logic_vector(16 - 1 downto 0) := x"DEAD";
+
     -- =================================================================================================================
     -- SIGNALS
     -- =================================================================================================================
@@ -483,6 +485,28 @@ begin
                     "Check write data   ");
 
                 wait for 1 ms;
+                -- =====================================================================================================
+                -- SENDING ALL ADDRESSES FROM 0x00 TO 0xFF
+                -- =====================================================================================================
+
+                for addr in 0 to 2 ** 8 - 1 loop
+
+                    proc_uart_write(tb_i_uart_rx, to_hstring(to_unsigned(addr, 8))(1 to 2), "DEAD");
+
+                    -- Check received address and data
+                    check_equal(
+                        tb_o_write_addr,
+                        std_logic_vector(to_unsigned(addr, 8)),
+                        "Check write address");
+
+                    check_equal(
+                        tb_o_write_data,
+                        C_DEAD,
+                        "Check write data   ");
+
+                    wait for 0.25 ms;
+                end loop;
+
                 -- =====================================================================================================
                 -- SEND READ COMMAND
                 -- =====================================================================================================
