@@ -41,8 +41,7 @@ library lib_rtl;
 entity UART is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
-        G_BAUD_RATE_BPS : positive := 115_200;    -- Baud rate
-        G_PARITY        : string   := "NONE"      -- Parity type ("NONE", "EVEN", "ODD")
+        G_BAUD_RATE_BPS : positive := 115_200     -- Baud rate
     );
     port (
         -- Clock and reset
@@ -151,7 +150,6 @@ architecture UART_ARCH of UART is
     signal rx_data_valid         : std_logic;
     signal rx_start_bit_error    : std_logic;
     signal rx_stop_bit_error     : std_logic;
-    signal rx_parity_bit_error   : std_logic;
 
     -- Decoded RX data
     signal decoded_rx_data       : std_logic_vector( 4 - 1 downto 0);
@@ -166,18 +164,16 @@ begin
     inst_uart_rx : entity lib_rtl.uart_rx
         generic map (
             G_CLK_FREQ_HZ   => G_CLK_FREQ_HZ,
-            G_BAUD_RATE_BPS => G_BAUD_RATE_BPS,
-            G_PARITY        => G_PARITY
+            G_BAUD_RATE_BPS => G_BAUD_RATE_BPS
         )
         port map (
-            CLK                => CLK,
-            RST_N              => RST_N,
-            I_UART_RX          => I_UART_RX,
-            O_BYTE             => rx_data,
-            O_BYTE_VALID       => rx_data_valid,
-            O_START_BIT_ERROR  => rx_start_bit_error,
-            O_STOP_BIT_ERROR   => rx_stop_bit_error,
-            O_PARITY_BIT_ERROR => rx_parity_bit_error
+            CLK               => CLK,
+            RST_N             => RST_N,
+            I_UART_RX         => I_UART_RX,
+            O_BYTE            => rx_data,
+            O_BYTE_VALID      => rx_data_valid,
+            O_START_BIT_ERROR => rx_start_bit_error,
+            O_STOP_BIT_ERROR  => rx_stop_bit_error
         );
 
     -- =================================================================================================================

@@ -41,22 +41,20 @@ library ieee;
 entity UART_RX is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
-        G_BAUD_RATE_BPS : positive := 115_200;    -- Baud rate
-        G_PARITY        : string   := "NONE"      -- Parity type ("NONE", "EVEN", "ODD")
+        G_BAUD_RATE_BPS : positive := 115_200     -- Baud rate
     );
     port (
         -- Clock and reset
-        CLK                : in    std_logic;
-        RST_N              : in    std_logic;
+        CLK               : in    std_logic;
+        RST_N             : in    std_logic;
         -- UART interface
-        I_UART_RX          : in    std_logic;
+        I_UART_RX         : in    std_logic;
         -- Output data interface
-        O_BYTE             : out   std_logic_vector(8 - 1 downto 0);
-        O_BYTE_VALID       : out   std_logic;
+        O_BYTE            : out   std_logic_vector(8 - 1 downto 0);
+        O_BYTE_VALID      : out   std_logic;
         -- Error flags
-        O_START_BIT_ERROR  : out   std_logic;
-        O_STOP_BIT_ERROR   : out   std_logic;
-        O_PARITY_BIT_ERROR : out   std_logic
+        O_START_BIT_ERROR : out   std_logic;
+        O_STOP_BIT_ERROR  : out   std_logic
     );
 end entity UART_RX;
 
@@ -74,12 +72,10 @@ architecture UART_RX_ARCH of UART_RX is
         STATE_IDLE,
         STATE_START_BIT,
         STATE_DATA_BITS,
-        STATE_PARITY_BIT,
         STATE_STOP_BIT,
         STATE_CLEANUP,
         STATE_START_BIT_ERROR,
-        STATE_STOP_BIT_ERROR,
-        STATE_PARITY_BIT_ERROR
+        STATE_STOP_BIT_ERROR
     );
 
     -- =================================================================================================================
@@ -113,9 +109,7 @@ architecture UART_RX_ARCH of UART_RX is
     signal next_o_byte_update     : std_logic;
     signal next_start_bit_error   : std_logic;
     signal next_stop_bit_error    : std_logic;
-    signal next_parity_bit_error  : std_logic;
     signal next_o_data_valid      : std_logic;
-    signal next_computed_parity   : std_logic;
 
     -- Bit tick
     signal uart_rx_mid_bit        : std_logic_vector(3 - 1 downto 0);
@@ -415,36 +409,10 @@ begin
             when STATE_DATA_BITS =>
 
                 if (decoded_bit_count = 7 and i_baud_tick_count = 15 and rx_baud_tick = '1') then
-                    if (G_PARITY = "NONE") then
-                        next_state <= STATE_STOP_BIT;
-                    else
-                        next_state <= STATE_PARITY_BIT;
-                    end if;
+                    next_state <= STATE_STOP_BIT;
                 else
                     next_state <= STATE_DATA_BITS;
                 end if;
-
-            -- =========================================================================================================
-            -- STATE: PARITY BIT
-            -- =========================================================================================================
-            -- In parity bit state, the module checks the parity bit if parity is enabled.
-            -- After checking the parity bit, the module transitions to the STOP BIT state.
-            -- =========================================================================================================
-
-            when STATE_PARITY_BIT =>
-
-                -- TBD: Implement parity check logic here
-                next_state <= STATE_STOP_BIT;
-
-            -- =========================================================================================================
-            -- STATE: PARITY BIT ERROR
-            -- =========================================================================================================
-            -- In parity bit error state, the module flags a parity bit error and transitions back to the IDLE state.
-            -- =========================================================================================================
-
-            when STATE_PARITY_BIT_ERROR =>
-
-                next_state <= STATE_IDLE;
 
             -- =========================================================================================================
             -- STATE: STOP BIT
@@ -505,13 +473,11 @@ begin
     begin
 
         -- Default assignment
-        next_count_enable     <= '1';
-        next_o_byte_update    <= '0';
-        next_start_bit_error  <= '0';
-        next_stop_bit_error   <= '0';
-        next_parity_bit_error <= '0';
-        next_o_data_valid     <= '0';
-        next_computed_parity  <= '0';
+        next_count_enable    <= '1';
+        next_o_byte_update   <= '0';
+        next_start_bit_error <= '0';
+        next_stop_bit_error  <= '0';
+        next_o_data_valid    <= '0';
 
         case current_state is
 
@@ -550,22 +516,6 @@ begin
                 end if;
 
             -- =========================================================================================================
-            -- STATE: PARITY BIT
-            -- =========================================================================================================
-
-            when STATE_PARITY_BIT =>
-
-                next_computed_parity <= '1';
-
-            -- =========================================================================================================
-            -- STATE: PARITY BIT ERROR
-            -- =========================================================================================================
-
-            when STATE_PARITY_BIT_ERROR =>
-
-                next_parity_bit_error <= '1';
-
-            -- =========================================================================================================
             -- STATE: STOP BIT
             -- =========================================================================================================
 
@@ -590,13 +540,11 @@ begin
             -- Default case, should not occur
             when others =>
 
-                next_count_enable     <= '1';
-                next_o_byte_update    <= '0';
-                next_start_bit_error  <= '0';
-                next_stop_bit_error   <= '0';
-                next_parity_bit_error <= '0';
-                next_o_data_valid     <= '0';
-                next_computed_parity  <= '0';
+                next_count_enable    <= '1';
+                next_o_byte_update   <= '0';
+                next_start_bit_error <= '0';
+                next_stop_bit_error  <= '0';
+                next_o_data_valid    <= '0';
 
         end case;
 
@@ -610,13 +558,12 @@ begin
 
         if (RST_N = '0') then
 
-            O_BYTE             <= (others => '0');
-            O_BYTE_VALID       <= '0';
-            O_START_BIT_ERROR  <= '0';
-            O_STOP_BIT_ERROR   <= '0';
-            O_PARITY_BIT_ERROR <= '0';
+            O_BYTE            <= (others => '0');
+            O_BYTE_VALID      <= '0';
+            O_START_BIT_ERROR <= '0';
+            O_STOP_BIT_ERROR  <= '0';
 
-            latch_byte         <= (others => '0');
+            latch_byte        <= (others => '0');
 
         elsif (rising_edge(CLK)) then
 
@@ -631,10 +578,9 @@ begin
             end if;
 
             -- Update output signals
-            O_BYTE_VALID       <= next_o_data_valid;
-            O_START_BIT_ERROR  <= next_start_bit_error;
-            O_STOP_BIT_ERROR   <= next_stop_bit_error;
-            O_PARITY_BIT_ERROR <= next_parity_bit_error;
+            O_BYTE_VALID      <= next_o_data_valid;
+            O_START_BIT_ERROR <= next_start_bit_error;
+            O_STOP_BIT_ERROR  <= next_stop_bit_error;
 
         end if;
 
