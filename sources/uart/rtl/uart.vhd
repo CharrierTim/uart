@@ -109,22 +109,22 @@ architecture UART_ARCH of UART is
     -- ASCII to hexadecimal conversion table
 
     -- vsg_off
-    constant C_CHAR_0           : t_ascii_to_hex := (ascii => x"30", hex => "0000");
-    constant C_CHAR_1           : t_ascii_to_hex := (ascii => x"31", hex => "0001");
-    constant C_CHAR_2           : t_ascii_to_hex := (ascii => x"32", hex => "0010");
-    constant C_CHAR_3           : t_ascii_to_hex := (ascii => x"33", hex => "0011");
-    constant C_CHAR_4           : t_ascii_to_hex := (ascii => x"34", hex => "0100");
-    constant C_CHAR_5           : t_ascii_to_hex := (ascii => x"35", hex => "0101");
-    constant C_CHAR_6           : t_ascii_to_hex := (ascii => x"36", hex => "0110");
-    constant C_CHAR_7           : t_ascii_to_hex := (ascii => x"37", hex => "0111");
-    constant C_CHAR_8           : t_ascii_to_hex := (ascii => x"38", hex => "1000");
-    constant C_CHAR_9           : t_ascii_to_hex := (ascii => x"39", hex => "1001");
-    constant C_CHAR_A           : t_ascii_to_hex := (ascii => x"41", hex => "1010");
-    constant C_CHAR_B           : t_ascii_to_hex := (ascii => x"42", hex => "1011");
-    constant C_CHAR_C           : t_ascii_to_hex := (ascii => x"43", hex => "1100");
-    constant C_CHAR_D           : t_ascii_to_hex := (ascii => x"44", hex => "1101");
-    constant C_CHAR_E           : t_ascii_to_hex := (ascii => x"45", hex => "1110");
-    constant C_CHAR_F           : t_ascii_to_hex := (ascii => x"46", hex => "1111");
+    constant C_CHAR_0            : t_ascii_to_hex := (ascii => x"30", hex => "0000");
+    constant C_CHAR_1            : t_ascii_to_hex := (ascii => x"31", hex => "0001");
+    constant C_CHAR_2            : t_ascii_to_hex := (ascii => x"32", hex => "0010");
+    constant C_CHAR_3            : t_ascii_to_hex := (ascii => x"33", hex => "0011");
+    constant C_CHAR_4            : t_ascii_to_hex := (ascii => x"34", hex => "0100");
+    constant C_CHAR_5            : t_ascii_to_hex := (ascii => x"35", hex => "0101");
+    constant C_CHAR_6            : t_ascii_to_hex := (ascii => x"36", hex => "0110");
+    constant C_CHAR_7            : t_ascii_to_hex := (ascii => x"37", hex => "0111");
+    constant C_CHAR_8            : t_ascii_to_hex := (ascii => x"38", hex => "1000");
+    constant C_CHAR_9            : t_ascii_to_hex := (ascii => x"39", hex => "1001");
+    constant C_CHAR_A            : t_ascii_to_hex := (ascii => x"41", hex => "1010");
+    constant C_CHAR_B            : t_ascii_to_hex := (ascii => x"42", hex => "1011");
+    constant C_CHAR_C            : t_ascii_to_hex := (ascii => x"43", hex => "1100");
+    constant C_CHAR_D            : t_ascii_to_hex := (ascii => x"44", hex => "1101");
+    constant C_CHAR_E            : t_ascii_to_hex := (ascii => x"45", hex => "1110");
+    constant C_CHAR_F            : t_ascii_to_hex := (ascii => x"46", hex => "1111");
     -- vsg_on
 
     -- Other useful ASCII characters
