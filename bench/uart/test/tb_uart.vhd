@@ -128,10 +128,10 @@ architecture TB_UART_ARCH of TB_UART is
     signal tb_rst_n                 : std_logic;
     signal tb_i_uart_rx             : std_logic;
     signal tb_o_uart_tx             : std_logic;
-    signal tb_o_read_addr           : std_logic_vector(8 - 1 downto 0);
-    signal tb_i_read_data           : std_logic_vector(8 - 1 downto 0);
+    signal tb_o_read_addr           : std_logic_vector( 8 - 1 downto 0);
+    signal tb_i_read_data           : std_logic_vector( 8 - 1 downto 0);
     signal tb_i_read_data_valid     : std_logic;
-    signal tb_o_addr                : std_logic_vector(8 - 1 downto 0);
+    signal tb_o_addr                : std_logic_vector( 8 - 1 downto 0);
     signal tb_o_write_data          : std_logic_vector(16 - 1 downto 0);
     signal tb_o_write_valid         : std_logic;
 
@@ -139,8 +139,19 @@ architecture TB_UART_ARCH of TB_UART is
     -- FUNCTIONS
     -- =================================================================================================================
 
-    -- Convert a hex character ('0'-'9', 'A'-'F', 'a'-'f') to its ASCII std_logic_vector representation
-    function hex_char_to_ascii (hex_char : character) return std_logic_vector is
+    -- =================================================================================================================
+    -- func_hex_char_to_ascii
+    -- Description: This function converts a hex character to its ASCII std_logic_vector representation.
+    --              Converts '0'-'9', 'A'-'F', 'a'-'f' to corresponding ASCII values.
+    --
+    -- Parameters:
+    --   hex_char : character - The hex character to convert.
+    --
+    -- Example:
+    --   func_hex_char_to_ascii('A'); -- Returns x"41"
+    --
+    -- =================================================================================================================
+    function func_hex_char_to_ascii (hex_char : character) return std_logic_vector is
     begin
 
         -- vsg_off
@@ -311,12 +322,12 @@ begin
 
             -- Send address (convert each hex character to ASCII)
             for i in addr'range loop
-                proc_send_byte(uart_rx, hex_char_to_ascii(addr(i)));
+                proc_send_byte(uart_rx, func_hex_char_to_ascii(addr(i)));
             end loop;
 
             -- Send data (convert each hex character to ASCII)
             for i in data'range loop
-                proc_send_byte(uart_rx, hex_char_to_ascii(data(i)));
+                proc_send_byte(uart_rx, func_hex_char_to_ascii(data(i)));
             end loop;
 
             -- Send carriage return and line feed
@@ -350,7 +361,7 @@ begin
 
             -- Send address (convert each hex character to ASCII)
             for i in addr'range loop
-                proc_send_byte(uart_rx, hex_char_to_ascii(addr(i)));
+                proc_send_byte(uart_rx, func_hex_char_to_ascii(addr(i)));
             end loop;
 
             -- Send carriage return and line feed
