@@ -129,9 +129,10 @@ architecture TB_UART_ARCH of TB_UART is
     signal tb_i_uart_rx             : std_logic;
     signal tb_o_uart_tx             : std_logic;
     signal tb_o_read_addr           : std_logic_vector( 8 - 1 downto 0);
+    signal tb_o_read_addr_valid     : std_logic;
     signal tb_i_read_data           : std_logic_vector( 8 - 1 downto 0);
     signal tb_i_read_data_valid     : std_logic;
-    signal tb_o_addr                : std_logic_vector( 8 - 1 downto 0);
+    signal tb_o_write_addr          : std_logic_vector( 8 - 1 downto 0);
     signal tb_o_write_data          : std_logic_vector(16 - 1 downto 0);
     signal tb_o_write_valid         : std_logic;
 
@@ -195,9 +196,10 @@ begin
             I_UART_RX         => tb_i_uart_rx,
             O_UART_TX         => tb_o_uart_tx,
             O_READ_ADDR       => tb_o_read_addr,
+            O_READ_ADDR_VALID => tb_o_read_addr_valid,
             I_READ_DATA       => tb_i_read_data,
             I_READ_DATA_VALID => tb_i_read_data_valid,
-            O_WRITE_ADDR      => tb_o_addr,
+            O_WRITE_ADDR      => tb_o_write_addr,
             O_WRITE_DATA      => tb_o_write_data,
             O_WRITE_VALID     => tb_o_write_valid
         );
@@ -403,7 +405,7 @@ begin
 
                 -- Check received address and data
                 check_equal(
-                    tb_o_addr,
+                    tb_o_write_addr,
                     C_RX_MESSAGE_1.slv_addr,
                     "Check write address");
 
@@ -420,7 +422,7 @@ begin
 
                 -- Check received address and data
                 check_equal(
-                    tb_o_addr,
+                    tb_o_write_addr,
                     C_RX_MESSAGE_2.slv_addr,
                     "Check write address");
 
@@ -437,7 +439,7 @@ begin
 
                 -- Check received address and data
                 check_equal(
-                    tb_o_addr,
+                    tb_o_write_addr,
                     C_RX_MESSAGE_3.slv_addr,
                     "Check write address");
 
@@ -454,7 +456,7 @@ begin
 
                 -- Check received address and data
                 check_equal(
-                    tb_o_addr,
+                    tb_o_write_addr,
                     C_RX_MESSAGE_ALL_ZEROS.slv_addr,
                     "Check write address");
 
@@ -471,7 +473,7 @@ begin
 
                 -- Check received address and data
                 check_equal(
-                    tb_o_addr,
+                    tb_o_write_addr,
                     C_RX_MESSAGE_ALL_ONES.slv_addr,
                     "Check write address");
 
