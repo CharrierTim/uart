@@ -145,6 +145,9 @@ architecture UART_ARCH of UART is
     signal next_write_data       : std_logic_vector(16 - 1 downto 0);
     signal next_write_valid      : std_logic;
 
+    -- TX module signal
+    signal tx_o_done             : std_logic;
+
     -- RX module signals
     signal rx_data               : std_logic_vector( 8 - 1 downto 0);
     signal rx_data_valid         : std_logic;
@@ -157,6 +160,23 @@ architecture UART_ARCH of UART is
     signal decoded_rx_data_valid : std_logic;
 
 begin
+
+    -- =================================================================================================================
+    -- UART TX MODULE
+    -- =================================================================================================================
+    inst_uart_tx : entity lib_rtl.uart_tx
+        generic map (
+            G_CLK_FREQ_HZ   => G_CLK_FREQ_HZ,
+            G_BAUD_RATE_BPS => G_BAUD_RATE_BPS
+        )
+        port map (
+            CLK          => CLK,
+            RST_N        => RST_N,
+            I_DATA       => I_READ_DATA,
+            I_DATA_VALID => I_READ_DATA_VALID,
+            O_UART_TX    => O_UART_TX,
+            O_DONE       => tx_o_done
+        );
 
     -- =================================================================================================================
     -- UART RX MODULE
