@@ -187,8 +187,7 @@ begin
     dut : entity lib_rtl.uart
         generic map (
             G_CLK_FREQ_HZ   => C_CLK_FREQ_HZ,
-            G_BAUD_RATE_BPS => C_BAUD_RATE_BPS,
-            G_PARITY        => C_PARITY
+            G_BAUD_RATE_BPS => C_BAUD_RATE_BPS
         )
         port map (
             CLK               => tb_clk,
@@ -465,7 +464,6 @@ begin
                     "Check write data   ");
 
                 wait for 1 ms;
-
                 -- =====================================================================================================
                 -- MESSAGE ALL ONES
                 -- =====================================================================================================
