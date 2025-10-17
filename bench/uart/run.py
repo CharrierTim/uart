@@ -85,7 +85,8 @@ if VUNIT_SIMULATOR == "ghdl":
 # Disable IEEE warnings at 0 ns
 VU.set_sim_option(name="disable_ieee_warnings", value=True)
 
-# Enable code coverage
-VU.set_sim_option(name="enable_coverage", value=True)
+# Enable code coverage if supported by the simulator
+if VUNIT_SIMULATOR == "vsim":
+    VU.set_sim_option(name="enable_coverage", value=True)
 
 VU.main()
