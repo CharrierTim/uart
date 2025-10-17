@@ -275,12 +275,12 @@ begin
             --
             -- =========================================================================================================
 
-            -- Sampling at ticks 7, 8, and 9
-            if (i_baud_tick_count = 7 and rx_baud_tick = '1') then
+            -- Sampling at ticks 7, 8, and 9 (all - 1 because counting from 0)
+            if (i_baud_tick_count = 6 and rx_baud_tick = '1') then
                 uart_rx_mid_bit(0) <= i_uart_rx_filtering;
-            elsif (i_baud_tick_count = 8 and rx_baud_tick = '1') then
+            elsif (i_baud_tick_count = 7 and rx_baud_tick = '1') then
                 uart_rx_mid_bit(1) <= i_uart_rx_filtering;
-            elsif (i_baud_tick_count = 9 and rx_baud_tick = '1') then
+            elsif (i_baud_tick_count = 8 and rx_baud_tick = '1') then
                 uart_rx_mid_bit(2) <= i_uart_rx_filtering;
             end if;
 
