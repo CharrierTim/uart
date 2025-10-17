@@ -33,12 +33,69 @@
 
 import os
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
 from vunit import VUnit
 from vunit.ui.library import Library
 from vunit.ui.source import SourceFileList
+
+
+def generate_coverage_report_nvc(
+    results, ncdb_file: Path = Path("vunit_out/coverage.ncdb"), output_folder: Path = Path("vunit_out/coverage_report")
+) -> None:
+    """Generate the coverage report in HTML format.
+
+    Parameters
+    ----------
+    results : Any
+        The VUnit test results.
+    ncdb_file : Path
+        The path to the NCDB file.
+    output_folder : Path
+        The path to the output folder.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the nvc executable is not found in the PATH.
+    RuntimeError
+        If the coverage report generation fails.
+    """
+    # Check if the nvc executable is available
+    nvc_path: str | None = shutil.which(cmd="nvc")
+    if not nvc_path:
+        error_message: str = "nvc executable not found in PATH"
+        raise FileNotFoundError(error_message)
+
+    # Create the output folder if it does not exist
+    output_folder.mkdir(parents=True, exist_ok=True)
+
+    # Define the command to generate the coverage report
+    # nvc --cover-report -o html  report_dir ncdb_file
+    nvc_coverage_cmd: list[str] = [
+        nvc_path,
+        "--cover-report",
+        "-o",
+        str(object=output_folder),
+        str(object=ncdb_file),
+    ]
+
+    try:
+        subprocess.run(
+            args=nvc_coverage_cmd,
+            check=True,
+            shell=False,
+        )
+
+        sys.stdout.write(f"{' '.join(nvc_coverage_cmd)}\n")
+        sys.stdout.write(f"Coverage report generated in {output_folder}\n")
+
+    except subprocess.CalledProcessError as e:
+        error_message: str = f"Failed to generate coverage report with error: {e}"
+        raise RuntimeError(error_message) from e
+
 
 # Define the simulation tool:
 #   1. NVC              (default)
@@ -69,6 +126,7 @@ bench_library_name: str = "lib_bench"
 argv: list[str] = sys.argv if len(sys.argv) > 1 else ["-v", "-p", "0"]
 VU: VUnit = VUnit.from_argv(argv=argv)
 VU.add_vhdl_builtins()
+VU.add_verification_components()
 
 # Add the source files to the library
 LIB_SRC: Library = VU.add_library(library_name=src_library_name)
@@ -88,5 +146,13 @@ VU.set_sim_option(name="disable_ieee_warnings", value=True)
 # Enable code coverage if supported by the simulator
 if VUNIT_SIMULATOR == "modelsim":
     VU.set_sim_option(name="enable_coverage", value=True)
+elif VUNIT_SIMULATOR == "nvc":
+    VU.set_sim_option(
+        name="nvc.elab_flags",
+        value=[
+            "--cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable",
+            "--cover-file=vunit_out/coverage.ncdb",
+        ],
+    )
 
-VU.main()
+VU.main(post_run=generate_coverage_report_nvc)
