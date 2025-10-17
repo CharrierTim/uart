@@ -26,7 +26,7 @@
 -- @version 1.0
 -- @brief   Top-level UART module, implementing both TX and RX functionalities with a custom protocol
 -- @author  Timothee Charrier
--- @date    14/10/2025
+-- @date    17/10/2025
 -- =====================================================================================================================
 
 library ieee;

@@ -28,7 +28,7 @@
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
 ##          UART module.
 ## @author  Timothee Charrier
-## @date    10/10/2025
+## @date    17/10/2025
 ## =====================================================================================================================
 
 import os
