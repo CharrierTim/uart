@@ -1,7 +1,7 @@
 -- =====================================================================================================================
 --  MIT License
 --
---  Copyright (c) 2025 Timothée Charrier
+--  Copyright (c) 2025 Timothee Charrier
 --
 --  Permission is hereby granted, free of charge, to any person obtaining a copy
 --  of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 -- @file    uart.vhd
 -- @version 1.0
 -- @brief   Top-level UART module, implementing both TX and RX functionalities with a custom protocol
--- @author  Timothée Charrier
+-- @author  Timothee Charrier
 -- @date    14/10/2025
 -- =====================================================================================================================
 
