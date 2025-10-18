@@ -33,7 +33,6 @@
 
 import os
 import shutil
-import subprocess
 import sys
 from pathlib import Path
 
@@ -41,61 +40,10 @@ from vunit import VUnit
 from vunit.ui.library import Library
 from vunit.ui.source import SourceFileList
 
+# Add the directory containing the utils.py file to the Python path
+sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
 
-def generate_coverage_report_nvc(
-    results, ncdb_file: Path = Path("vunit_out/coverage.ncdb"), output_folder: Path = Path("vunit_out/coverage_report")
-) -> None:
-    """Generate the coverage report in HTML format.
-
-    Parameters
-    ----------
-    results : Any
-        The VUnit test results.
-    ncdb_file : Path
-        The path to the NCDB file.
-    output_folder : Path
-        The path to the output folder.
-
-    Raises
-    ------
-    FileNotFoundError
-        If the nvc executable is not found in the PATH.
-    RuntimeError
-        If the coverage report generation fails.
-    """
-    # Check if the nvc executable is available
-    nvc_path: str | None = shutil.which(cmd="nvc")
-    if not nvc_path:
-        error_message: str = "nvc executable not found in PATH"
-        raise FileNotFoundError(error_message)
-
-    # Create the output folder if it does not exist
-    output_folder.mkdir(parents=True, exist_ok=True)
-
-    # Define the command to generate the coverage report
-    # nvc --cover-report -o html  report_dir ncdb_file
-    nvc_coverage_cmd: list[str] = [
-        nvc_path,
-        "--cover-report",
-        "-o",
-        str(object=output_folder),
-        str(object=ncdb_file),
-    ]
-
-    try:
-        subprocess.run(
-            args=nvc_coverage_cmd,
-            check=True,
-            shell=False,
-        )
-
-        sys.stdout.write(f"{' '.join(nvc_coverage_cmd)}\n")
-        sys.stdout.write(f"Coverage report generated in {output_folder}\n")
-
-    except subprocess.CalledProcessError as e:
-        error_message: str = f"Failed to generate coverage report with error: {e}"
-        raise RuntimeError(error_message) from e
-
+from utils import generate_coverage_report_nvc
 
 # Define the simulation tool:
 #   1. NVC              (default)
