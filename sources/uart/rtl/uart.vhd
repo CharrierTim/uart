@@ -172,8 +172,8 @@ begin
         port map (
             CLK          => CLK,
             RST_N        => RST_N,
-            I_DATA       => I_READ_DATA,
-            I_DATA_VALID => I_READ_DATA_VALID,
+            I_BYTE       => I_READ_DATA,
+            I_BYTE_VALID => I_READ_DATA_VALID,
             O_UART_TX    => O_UART_TX,
             O_DONE       => tx_o_done
         );
