@@ -31,10 +31,9 @@
 ## @date    17/10/2025
 ## =====================================================================================================================
 
-import os
-import shutil
 import sys
 from pathlib import Path
+from typing import Literal
 
 from vunit import VUnit
 from vunit.ui.library import Library
@@ -43,26 +42,18 @@ from vunit.ui.source import SourceFileList
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
 
-from utils import generate_coverage_report_nvc
+from utils import generate_coverage_report_nvc, setup_ghdl, setup_modelsim, setup_nvc, setup_simulator
 
-# Define the simulation tool:
-#   1. NVC              (default)
-#   2. GHDL             (fallback)
-#   3. Questa/ModelSim  (fallback)
+## =====================================================================================================================
+# Set up the simulator environment
+## =====================================================================================================================
 
-if shutil.which("nvc"):
-    VUNIT_SIMULATOR: str = "nvc"
-elif shutil.which("ghdl"):
-    VUNIT_SIMULATOR: str = "ghdl"
-elif shutil.which("vsim"):
-    VUNIT_SIMULATOR: str = "modelsim"
-else:
-    print("No supported simulator found")
-    sys.exit(status=1)
+VUNIT_SIMULATOR: Literal["nvc", "ghdl", "modelsim"] = setup_simulator()
 
-os.environ["VUNIT_SIMULATOR"] = os.environ.get("VUNIT_SIMULATOR", default=VUNIT_SIMULATOR)
+## =====================================================================================================================
+# Define paths and libraries
+## =====================================================================================================================
 
-# Define the source and bench paths
 SRC_ROOT: Path = Path(__file__).parent.parent.parent / "sources"
 BENCH_ROOT: Path = Path(__file__).parent / "test"
 
@@ -70,9 +61,11 @@ BENCH_ROOT: Path = Path(__file__).parent / "test"
 src_library_name: str = "lib_rtl"
 bench_library_name: str = "lib_bench"
 
-# Initialize VUnit
-argv: list[str] = sys.argv if len(sys.argv) > 1 else ["-v", "-p", "0"]
-VU: VUnit = VUnit.from_argv(argv=argv)
+## =====================================================================================================================
+# Set up VUnit environment
+## =====================================================================================================================
+
+VU: VUnit = VUnit.from_argv()
 VU.add_vhdl_builtins()
 VU.add_verification_components()
 
@@ -84,23 +77,18 @@ LIB_SRC.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
 LIB_BENCH: SourceFileList = VU.add_library(library_name=bench_library_name)
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
 
-# Reduce warnings from Vunit when compiling with GHDL
-if VUNIT_SIMULATOR == "ghdl":
-    VU.set_compile_option(name="ghdl.a_flags", value=["--warn-no-hide"])
+## =====================================================================================================================
+# Configure compile and simulation options
+## =====================================================================================================================
 
 # Disable IEEE warnings at 0 ns
 VU.set_sim_option(name="disable_ieee_warnings", value=True)
 
-# Enable code coverage if supported by the simulator
-if VUNIT_SIMULATOR == "modelsim":
-    VU.set_sim_option(name="enable_coverage", value=True)
-elif VUNIT_SIMULATOR == "nvc":
-    VU.set_sim_option(
-        name="nvc.elab_flags",
-        value=[
-            "--cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable",
-            "--cover-file=vunit_out/coverage.ncdb",
-        ],
-    )
+if VUNIT_SIMULATOR == "nvc":
+    setup_nvc(VU)
+elif VUNIT_SIMULATOR == "ghdl":
+    setup_ghdl(VU)
+elif VUNIT_SIMULATOR == "modelsim":
+    setup_modelsim(VU)
 
 VU.main(post_run=generate_coverage_report_nvc)

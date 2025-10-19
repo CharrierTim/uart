@@ -31,10 +31,69 @@
 ## @date    18/10/2025
 ## =====================================================================================================================
 
+import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+from typing import Literal
+
+import vunit
+
+
+def setup_simulator() -> Literal["nvc", "ghdl", "modelsim"]:
+    """Set up the simulator environment based on the available simulator.
+
+        - The current supported simulators are:
+            1. NVC              (default)
+            2. GHDL             (fallback)
+            3. Questa/ModelSim  (fallback)
+
+    Returns
+    -------
+    Literal["nvc", "ghdl", "modelsim"]
+        The name of the selected simulator.
+    """
+    global VUNIT_SIMULATOR
+
+    if shutil.which("nvc"):
+        VUNIT_SIMULATOR = "nvc"
+    elif shutil.which("ghdl"):
+        VUNIT_SIMULATOR = "ghdl"
+    elif shutil.which("vsim"):
+        VUNIT_SIMULATOR = "modelsim"
+    else:
+        print("No supported simulator found")
+        sys.exit(status=1)
+
+    # Set the VUNIT_SIMULATOR environment variable
+    os.environ["VUNIT_SIMULATOR"] = os.environ.get("VUNIT_SIMULATOR", default=VUNIT_SIMULATOR)
+
+    return VUNIT_SIMULATOR
+
+
+def setup_nvc(VU: vunit) -> None:
+    """Set up the NVC simulator environment."""
+    # Enable coverage collection
+    VU.set_sim_option(
+        name="nvc.elab_flags",
+        value=[
+            "--cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable",
+            "--cover-file=vunit_out/coverage.ncdb",
+        ],
+    )
+
+
+def setup_ghdl(VU: vunit) -> None:
+    """Set up the GHDL simulator environment."""
+    # Warn on unused signals and variables
+    VU.set_compile_option(name="ghdl.a_flags", value=["--warn-no-hide"])
+
+
+def setup_modelsim(VU: vunit) -> None:
+    """Set up the ModelSim simulator environment."""
+    # Enable coverage collection
+    VU.set_sim_option(name="enable_coverage", value=True)
 
 
 def generate_coverage_report_nvc(
