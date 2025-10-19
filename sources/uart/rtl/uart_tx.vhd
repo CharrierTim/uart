@@ -47,8 +47,8 @@ entity UART_TX is
         CLK          : in    std_logic;
         RST_N        : in    std_logic;
         -- Input data interface
-        I_DATA       : in    std_logic_vector(8 - 1 downto 0);
-        I_DATA_VALID : in    std_logic;
+        I_BYTE       : in    std_logic_vector(8 - 1 downto 0);
+        I_BYTE_VALID : in    std_logic;
         -- Output interface
         O_UART_TX    : out   std_logic;
         O_DONE       : out   std_logic
@@ -219,7 +219,7 @@ begin
 
             when STATE_IDLE =>
 
-                if (I_DATA_VALID = '1') then
+                if (I_BYTE_VALID = '1') then
                     next_state <= STATE_START_BIT;
                 else
                     next_state <= STATE_IDLE;
@@ -308,7 +308,7 @@ begin
             when STATE_IDLE =>
 
                 next_count_enable <= '0';
-                next_tx_data      <= I_DATA;
+                next_tx_data      <= I_BYTE;
 
             -- =========================================================================================================
             -- STATE: START BIT
