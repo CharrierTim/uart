@@ -261,8 +261,6 @@ begin
 
         while test_suite loop
 
-            -- vunit: run_all_in_same_sim
-
             if run("TEST UART RX DESERIALIZATION") then
 
                 info("-----------------------------------------------------------------------------");
