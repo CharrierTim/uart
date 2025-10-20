@@ -126,7 +126,7 @@ architecture TB_UART_TX_ARCH of TB_UART_TX is
     constant C_BAUD_RATE_BPS  : positive := 115_200;
     constant C_DATA_LENGTH    : positive := 8;
 
-    -- UART BFM instance
+    -- UART Slave BFM instance
     constant C_UART_BFM_SLAVE : uart_slave_t   := new_uart_slave(
             initial_baud_rate => C_BAUD_RATE_BPS,
             data_length       => C_DATA_LENGTH
@@ -254,7 +254,7 @@ begin
 
         while test_suite loop
 
-            if run("TEST UART TX SERIALIZATION") then
+            if run("test_uart_tx_serialization") then
 
                 info("-----------------------------------------------------------------------------");
                 info("TESTING UART TX SERIALIZATION");

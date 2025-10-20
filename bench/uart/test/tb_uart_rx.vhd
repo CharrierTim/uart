@@ -78,7 +78,7 @@ architecture TB_UART_RX_ARCH of TB_UART_RX is
     constant C_CLK_FREQ_HZ      : positive := 50_000_000;
     constant C_BAUD_RATE_BPS    : positive := 115_200;
 
-    -- UART BFM instance
+    -- UART Master BFM instance
     constant C_UART_BFM_MASTER  : uart_master_t   := new_uart_master(initial_baud_rate => C_BAUD_RATE_BPS);
     constant C_UART_STREAM      : stream_master_t := as_stream(C_UART_BFM_MASTER);
 
@@ -261,7 +261,7 @@ begin
 
         while test_suite loop
 
-            if run("TEST UART RX DESERIALIZATION") then
+            if run("test_uart_rx_deserialization") then
 
                 info("-----------------------------------------------------------------------------");
                 info("TESTING UART RX DESERIALIZATION");
@@ -300,7 +300,7 @@ begin
 
                 end loop;
 
-            elsif run("TEST UART RX INPUT WITH INVALID START/STOP BITS") then
+            elsif run("test_uart_invalid_start_or_stop_bits") then
 
                 -- Reset values
                 proc_reset_dut;
@@ -431,7 +431,7 @@ begin
                     '1',
                     "Check stop bit error flag is set");
 
-            elsif run("TEST UART RX FILTERING") then
+            elsif run("test_uart_rx_filtering") then
 
                 info("");
                 info("-----------------------------------------------------------------------------");
