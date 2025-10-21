@@ -70,7 +70,9 @@ entity UART_MODEL is
         -- Read interface
         I_READ_ADDRESS       : in    std_logic_vector( 8 - 1 downto 0);
         I_READ_ADDRESS_VALID : in    std_logic;
-        O_READ_DATA          : out   std_logic_vector(16 - 1 downto 0);
+        -- vsg_disable_next_line port_012 : In a model, default value is fine
+        O_READ_DATA          : out   std_logic_vector(16 - 1 downto 0) := (others => '0');
+        O_READ_DATA_VALID    : out   std_logic;
         -- Write interface
         I_WRITE_ADDRESS      : in    std_logic_vector( 8 - 1 downto 0);
         I_WRITE_DATA         : in    std_logic_vector(16 - 1 downto 0);
@@ -229,6 +231,8 @@ begin
 
     begin
 
+        O_READ_DATA_VALID <= '0';
+
         -- Wait for rising edge of the valid signal
         wait until rising_edge(I_READ_ADDRESS_VALID);
 
@@ -245,34 +249,28 @@ begin
         -- Get the bits 15 - 12
         pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
         v_data(15 downto 12) := func_ascii_to_nibble(v_byte);
-        info("Got : 0x" & to_hstring(v_byte));
 
         -- Get the bits 11 -  8
         pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
         v_data(11 downto  8) := func_ascii_to_nibble(v_byte);
-        info("Got : 0x" & to_hstring(v_byte));
 
         -- Get the bits  7 -  4
         pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
         v_data( 7 downto  4) := func_ascii_to_nibble(v_byte);
-        info("Got : 0x" & to_hstring(v_byte));
 
         -- Get the bits  3 -  0
         pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
         v_data( 3 downto  0) := func_ascii_to_nibble(v_byte);
 
-        info("Got : 0x" & to_hstring(v_byte));
-
-        info("Got : 0x" & to_hstring(v_data));
-
         -- Check last value if CR
         pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
 
         if (v_byte = C_CHAR_CR) then
-            O_READ_DATA <= v_data;
+            O_READ_DATA       <= v_data;
+            O_READ_DATA_VALID <= '1';
         end if;
 
-        info("Got : 0x" & to_hstring(v_byte));
+        wait for 100 ns;
 
     end process p_read;
 
