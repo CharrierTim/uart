@@ -76,7 +76,11 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
 
     -- DUT generics
     constant C_BAUD_RATE_BPS       : positive                          := 115_200;
-    constant C_DATA_LENGTH         : positive                          := 8;
+    constant C_BIT_TIME_NS         : time                              := 1 sec / C_BAUD_RATE_BPS;
+    constant C_WRITE_NB_BITS       : positive                          := 10 * 8; -- 10 bits , 8 chars in total
+    constant C_WRITE_TIME_NS       : time                              := C_BIT_TIME_NS * C_WRITE_NB_BITS;
+    constant C_READ_NB_BITS        : positive                          := 10 * 9; -- 10 bits , 9 chars in total
+    constant C_READ_TIME_NS        : time                              := C_BIT_TIME_NS * C_READ_NB_BITS;
     constant C_GIT_ID              : std_logic_vector(32 - 1 downto 0) := x"12345678";
 
     -- Registers
@@ -107,11 +111,12 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
 
     -- UART model
     signal tb_i_uart_rx_manual     : std_logic;
-    signal tb_i_uart_rx_model      : std_logic;
+    signal tb_i_uart_rx            : std_logic;
     signal tb_i_uart_select        : std_logic;
     signal tb_i_read_address       : std_logic_vector( 8 - 1 downto 0);
     signal tb_i_read_address_valid : std_logic;
     signal tb_o_read_data          : std_logic_vector(16 - 1 downto 0);
+    signal tb_o_read_data_valid    : std_logic;
     signal tb_i_write_address      : std_logic_vector( 8 - 1 downto 0);
     signal tb_i_write_data         : std_logic_vector(16 - 1 downto 0);
     signal tb_i_write_valid        : std_logic;
@@ -129,7 +134,7 @@ begin
         port map (
             CLK           => tb_clk,
             RST_N         => tb_rst_n,
-            PAD_I_UART_RX => tb_pad_i_uart_rx_model,
+            PAD_I_UART_RX => tb_i_uart_rx,
             PAD_O_UART_TX => tb_pad_o_uart_tx_model
         );
 
@@ -147,10 +152,15 @@ begin
             I_READ_ADDRESS       => tb_i_read_address,
             I_READ_ADDRESS_VALID => tb_i_read_address_valid,
             O_READ_DATA          => tb_o_read_data,
+            O_READ_DATA_VALID    => tb_o_read_data_valid,
             I_WRITE_ADDRESS      => tb_i_write_address,
             I_WRITE_DATA         => tb_i_write_data,
             I_WRITE_VALID        => tb_i_write_valid
         );
+
+    -- Select between manual RX input and model RX input
+    tb_i_uart_rx <= tb_i_uart_rx_manual when tb_i_uart_select = '1' else
+                    tb_pad_i_uart_rx_model;
 
     -- =================================================================================================================
     -- CLK GENERATION
@@ -215,6 +225,153 @@ begin
 
         end procedure;
 
+        -- =============================================================================================================
+        -- proc_uart_write
+        -- Description: This procedure writes a value to a specified UART register.
+        -- Parameters:
+        --   reg : t_reg - The register to write to.
+        --   value : std_logic_vector - The value to write to the register.
+        -- Example:
+        --   proc_uart_write(C_REG_16_BITS, x"ABCD");
+        -- =============================================================================================================
+        procedure proc_uart_write (
+            constant reg   : t_reg;
+            constant value : std_logic_vector(16 - 1 downto 0)) is
+        begin
+
+            info(
+                "Writing value 0x" & to_hstring(value) & " to register " & reg.name &
+                " at address 0x"   & to_hstring(reg.addr));
+
+            -- Set up the write operation
+            tb_i_write_address <= reg.addr;
+            tb_i_write_data    <= value;
+            tb_i_write_valid   <= '1';
+
+            -- Wait for a short duration
+            wait for 200 ns;
+
+            -- De-assert the write valid signal
+            tb_i_write_valid   <= '0';
+
+            -- Wait for the write operation to complete
+            wait for 1.1 * C_WRITE_TIME_NS;
+
+        end procedure;
+
+        -- =============================================================================================================
+        -- proc_uart_read
+        -- Description: This procedure reads a value from a specified UART register.
+        -- Parameters:
+        --   reg : t_reg - The register to read from.
+        -- Example:
+        --   proc_uart_read(C_REG_16_BITS);
+        -- =============================================================================================================
+        procedure proc_uart_read (
+            constant reg : t_reg) is
+        begin
+
+            info("Reading value from register " & reg.name & " at address 0x" & to_hstring(reg.addr));
+
+            -- Set up the read operation
+            tb_i_read_address       <= reg.addr;
+            tb_i_read_address_valid <= '1';
+
+            -- Wait for a short duration
+            wait for 200 ns;
+
+            -- De-assert the read valid signal
+            tb_i_read_address_valid <= '0';
+
+        end procedure;
+
+        -- =============================================================================================================
+        -- proc_uart_check
+        -- Description: This procedure checks if the read value from a specified UART register matches the expected
+        --              value.
+        -- Parameters:
+        --   reg : t_reg - The register to check.
+        --   expected_value : std_logic_vector - The expected value to compare against.
+        -- Example:
+        --   proc_uart_check(C_REG_16_BITS, x"ABCD");
+        -- =============================================================================================================
+        procedure proc_uart_check (
+            constant reg            : t_reg;
+            constant expected_value : std_logic_vector(16 - 1 downto 0)) is
+        begin
+
+            -- Read the register value
+            proc_uart_read(reg);
+            wait for 1.1 * C_READ_TIME_NS;
+
+            -- Check if the read value matches the expected value
+            check_equal(
+                tb_o_read_data,
+                expected_value,
+                "Check register " & reg.name & ": expected 0x" & to_hstring(expected_value) &
+                ", got 0x"        & to_hstring(tb_o_read_data));
+
+        end procedure;
+
+        -- =============================================================================================================
+        -- proc_uart_check_default_value
+        -- Description: This procedure checks if the default value of a specified UART register matches the expected
+        --              reset value.
+        -- Parameters:
+        --   reg : t_reg - The register to check.
+        -- Example:
+        --   proc_uart_check_default_value(C_REG_16_BITS);
+        -- =============================================================================================================
+        procedure proc_uart_check_default_value (
+            constant reg : t_reg) is
+        begin
+            proc_uart_check(reg, reg.data);
+        end procedure;
+
+        -- =============================================================================================================
+        -- proc_uart_check_read_only
+        -- Description: This procedure checks if a specified UART register is read-only by attempting to write to it
+        --              and verifying that the value remains unchanged.
+        -- Parameters:
+        --   reg : t_reg - The register to check.
+        -- Example:
+        --   proc_uart_check_read_only(C_REG_16_BITS);
+        -- =============================================================================================================
+        procedure proc_uart_check_read_only (
+            constant reg : t_reg) is
+        begin
+
+            -- Attempt to write an incorrect value to the register
+            proc_uart_write(reg, not reg.data);
+
+            -- Check if the register value remains unchanged
+            proc_uart_check(reg, reg.data);
+
+        end procedure;
+
+        -- =============================================================================================================
+        -- proc_uart_check_read_write
+        -- Description: This procedure checks if a specified UART register is read-write by writing a value to it and
+        --              verifying that the value is correctly updated.
+        -- Parameters:
+        --   reg : t_reg - The register to check.
+        --   expected_value : std_logic_vector - The expected value to compare against after writing.
+        -- Example:
+        --   proc_uart_check_read_write(C_REG_16_BITS, x"0001");
+        -- =============================================================================================================
+        procedure proc_uart_check_read_write (
+            constant reg            : t_reg;
+            constant expected_value : std_logic_vector(16 - 1 downto 0)) is
+        begin
+
+            -- Write the expected value to the register
+            proc_uart_write(reg, not reg.data);
+
+            -- Check if the register value is updated correctly
+            proc_uart_check(reg, expected_value);
+
+        end procedure;
+
     begin
 
         -- Set up the test runner
@@ -234,25 +391,46 @@ begin
             if run("test_uart_read_command") then
 
                 info("-----------------------------------------------------------------------------");
-                info("TESTING UART COMMAND");
+                info(" Checking default register values ");
                 info("-----------------------------------------------------------------------------");
 
                 -- Reset values
                 proc_reset_dut;
                 wait for 100 us;
 
-                tb_i_read_address       <= x"AB";
-                tb_i_read_address_valid <= '1';
-                wait for 200 ns;
-                tb_i_read_address_valid <= '0';
-                wait for 1 ms;
+                -- Check default register values
+                proc_uart_check_default_value(C_REG_GIT_ID_MSB);
+                proc_uart_check_default_value(C_REG_GIT_ID_LSB);
+                proc_uart_check_default_value(C_REG_12);
+                proc_uart_check_default_value(C_REG_34);
+                proc_uart_check_default_value(C_REG_56);
+                proc_uart_check_default_value(C_REG_78);
+                proc_uart_check_default_value(C_REG_9A);
+                proc_uart_check_default_value(C_REG_CD);
+                proc_uart_check_default_value(C_REG_EF);
+                proc_uart_check_default_value(C_REG_1_BIT);
+                proc_uart_check_default_value(C_REG_16_BITS);
 
-                tb_i_write_address      <= x"FF";
-                tb_i_write_data         <= x"CDEF";
-                tb_i_write_valid        <= '1';
-                wait for 200 ns;
-                tb_i_write_valid        <= '0';
-                wait for 1 ms;
+                info("-----------------------------------------------------------------------------");
+                info(" Checking read-only registers ");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_check_read_only(C_REG_GIT_ID_MSB);
+                proc_uart_check_read_only(C_REG_GIT_ID_LSB);
+                proc_uart_check_read_only(C_REG_12);
+                proc_uart_check_read_only(C_REG_34);
+                proc_uart_check_read_only(C_REG_56);
+                proc_uart_check_read_only(C_REG_78);
+                proc_uart_check_read_only(C_REG_9A);
+                proc_uart_check_read_only(C_REG_CD);
+                proc_uart_check_read_only(C_REG_EF);
+
+                info("-----------------------------------------------------------------------------");
+                info(" Checking read-write registers ");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_check_read_write(C_REG_1_BIT, x"0000");
+                proc_uart_check_read_write(C_REG_16_BITS, not C_REG_16_BITS.data);
 
             end if;
 
