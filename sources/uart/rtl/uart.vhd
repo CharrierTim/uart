@@ -90,6 +90,9 @@ architecture UART_ARCH of UART is
 
         -- Read mode
         STATE_READ_MODE,
+        STATE_READ_MODE_WAIT_DATA,
+        STATE_READ_MODE_SEND_DATA,
+        STATE_READ_MODE_SET_VALID,
         STATE_READ_MODE_END
     );
 
@@ -135,6 +138,7 @@ architecture UART_ARCH of UART is
     signal current_state             : t_state;
     signal next_state                : t_state;
     signal next_rx_byte_count_enable : std_logic;
+    signal next_tx_byte_count_enable : std_logic;
     signal next_read_addr            : std_logic_vector( 8 - 1 downto 0);
     signal next_read_addr_valid      : std_logic;
     signal next_write_addr           : std_logic_vector( 8 - 1 downto 0);
@@ -144,18 +148,67 @@ architecture UART_ARCH of UART is
     -- RX module signals
     signal rx_byte_count             : unsigned(3 - 1 downto 0);
     signal rx_byte                   : std_logic_vector( 8 - 1 downto 0);
+    signal rx_byte_decoded           : std_logic_vector( 4 - 1 downto 0);
     signal rx_byte_valid             : std_logic;
     signal rx_start_bit_error        : std_logic;
     signal rx_stop_bit_error         : std_logic;
 
-    -- Decoded RX data
-    signal decoded_rx_byte           : std_logic_vector( 4 - 1 downto 0);
+    -- TX module signals
+    signal tx_byte_count             : unsigned(3 - 1 downto 0);
+    signal tx_byte_cr                : std_logic;
+    signal tx_byte_to_send           : std_logic_vector( 4 - 1 downto 0);
+    signal tx_byte_to_send_encoded   : std_logic_vector( 8 - 1 downto 0);
+    signal tx_byte_to_send_valid     : std_logic;
+    signal tx_byte_send              : std_logic;
 
 begin
 
     -- =================================================================================================================
+    -- UART TX MODULE
+    -- =================================================================================================================
+
+    inst_uart_tx : entity lib_rtl.uart_tx
+        generic map (
+            G_CLK_FREQ_HZ   => G_CLK_FREQ_HZ,
+            G_BAUD_RATE_BPS => G_BAUD_RATE_BPS
+        )
+        port map (
+            CLK          => CLK,
+            RST_N        => RST_N,
+            I_BYTE       => tx_byte_to_send_encoded,
+            I_BYTE_VALID => tx_byte_to_send_valid,
+            O_UART_TX    => O_UART_TX,
+            O_DONE       => tx_byte_send
+        );
+
+    -- =================================================================================================================
+    -- TX DATA DECODING
+    -- =================================================================================================================
+
+    -- Converting the hexadecimal values to their ASCII representation
+    tx_byte_to_send_encoded <= C_CHAR_CR      when tx_byte_cr = '1'               else
+                               C_CHAR_0.ascii when tx_byte_to_send = C_CHAR_0.hex else
+                               C_CHAR_1.ascii when tx_byte_to_send = C_CHAR_1.hex else
+                               C_CHAR_2.ascii when tx_byte_to_send = C_CHAR_2.hex else
+                               C_CHAR_3.ascii when tx_byte_to_send = C_CHAR_3.hex else
+                               C_CHAR_4.ascii when tx_byte_to_send = C_CHAR_4.hex else
+                               C_CHAR_5.ascii when tx_byte_to_send = C_CHAR_5.hex else
+                               C_CHAR_6.ascii when tx_byte_to_send = C_CHAR_6.hex else
+                               C_CHAR_7.ascii when tx_byte_to_send = C_CHAR_7.hex else
+                               C_CHAR_8.ascii when tx_byte_to_send = C_CHAR_8.hex else
+                               C_CHAR_9.ascii when tx_byte_to_send = C_CHAR_9.hex else
+                               C_CHAR_A.ascii when tx_byte_to_send = C_CHAR_A.hex else
+                               C_CHAR_B.ascii when tx_byte_to_send = C_CHAR_B.hex else
+                               C_CHAR_C.ascii when tx_byte_to_send = C_CHAR_C.hex else
+                               C_CHAR_D.ascii when tx_byte_to_send = C_CHAR_D.hex else
+                               C_CHAR_E.ascii when tx_byte_to_send = C_CHAR_E.hex else
+                               C_CHAR_F.ascii when tx_byte_to_send = C_CHAR_F.hex else
+                               8x"00";
+
+    -- =================================================================================================================
     -- UART RX MODULE
     -- =================================================================================================================
+
     inst_uart_rx : entity lib_rtl.uart_rx
         generic map (
             G_CLK_FREQ_HZ   => G_CLK_FREQ_HZ,
@@ -176,7 +229,7 @@ begin
     -- =================================================================================================================
 
     -- Converting the received ASCII-encoded hexadecimal data to binary
-    decoded_rx_byte <= C_CHAR_0.hex when rx_byte = C_CHAR_0.ascii else
+    rx_byte_decoded <= C_CHAR_0.hex when rx_byte = C_CHAR_0.ascii else
                        C_CHAR_1.hex when rx_byte = C_CHAR_1.ascii else
                        C_CHAR_2.hex when rx_byte = C_CHAR_2.ascii else
                        C_CHAR_3.hex when rx_byte = C_CHAR_3.ascii else
@@ -192,7 +245,7 @@ begin
                        C_CHAR_D.hex when rx_byte = C_CHAR_D.ascii else
                        C_CHAR_E.hex when rx_byte = C_CHAR_E.ascii else
                        C_CHAR_F.hex when rx_byte = C_CHAR_F.ascii else
-                       x"0";
+                       4x"0";
 
     -- =================================================================================================================
     -- FSM sequential process for state transitions and byte count
@@ -206,6 +259,7 @@ begin
             current_state <= STATE_IDLE;
 
             rx_byte_count <= (others => '0');
+            tx_byte_count <= (others => '0');
 
         elsif rising_edge(CLK) then
 
@@ -221,6 +275,13 @@ begin
                 rx_byte_count <= (others => '0');
             elsif (rx_byte_valid = '1' and next_rx_byte_count_enable = '1') then
                 rx_byte_count <= rx_byte_count + 1;
+            end if;
+
+            -- TX byte count
+            if (next_tx_byte_count_enable = '0') then
+                tx_byte_count <= (others => '0');
+            elsif (tx_byte_send = '1') then
+                tx_byte_count <= tx_byte_count + 1;
             end if;
 
         end if;
@@ -297,7 +358,47 @@ begin
 
             when STATE_READ_MODE_END =>
 
-                next_state <= STATE_IDLE;
+                next_state <= STATE_READ_MODE_WAIT_DATA;
+
+            -- =========================================================================================================
+            -- STATE: READ_MODE_WAIT_DATA
+            -- =========================================================================================================
+            -- Wait for the data from the regfile
+            -- =========================================================================================================
+
+            when STATE_READ_MODE_WAIT_DATA =>
+
+                if (I_READ_DATA_VALID = '1') then
+                    next_state <= STATE_READ_MODE_SEND_DATA;
+                else
+                    next_state <= STATE_READ_MODE_WAIT_DATA;
+                end if;
+
+            -- =========================================================================================================
+            -- STATE: READ_MODE_SEND_DATA
+            -- =========================================================================================================
+            -- Send the data via uart
+            -- =========================================================================================================
+
+            when STATE_READ_MODE_SEND_DATA =>
+
+                if (tx_byte_count >= 4 and tx_byte_send = '1') then
+                    next_state <= STATE_IDLE;
+                elsif (tx_byte_send = '1') then
+                    next_state <= STATE_READ_MODE_SET_VALID;
+                else
+                    next_state <= STATE_READ_MODE_SEND_DATA;
+                end if;
+
+            -- =========================================================================================================
+            -- STATE: READ_MODE_SET_VALID
+            -- =========================================================================================================
+            -- Set the input data valid flag
+            -- =========================================================================================================
+
+            when STATE_READ_MODE_SET_VALID =>
+
+                next_state <= STATE_READ_MODE_SEND_DATA;
 
             -- =========================================================================================================
             -- STATE: WRITE_MODE
@@ -357,6 +458,9 @@ begin
         -- Default assignment
 
         next_rx_byte_count_enable <= '1';
+        next_tx_byte_count_enable <= '0';
+        tx_byte_to_send_valid     <= '0';
+        tx_byte_cr                <= '0';
         next_read_addr_valid      <= '0';
         next_write_valid          <= '0';
 
@@ -372,6 +476,7 @@ begin
                 next_read_addr            <= (others => '0');
                 next_write_addr           <= (others => '0');
                 next_write_data           <= (others => '0');
+                tx_byte_to_send           <= (others => '0');
 
             -- =========================================================================================================
             -- STATE: CHAR_START
@@ -383,6 +488,7 @@ begin
                 next_read_addr            <= (others => '0');
                 next_write_addr           <= (others => '0');
                 next_write_data           <= (others => '0');
+                tx_byte_to_send           <= (others => '0');
 
             -- =========================================================================================================
             -- STATE: READ_MODE
@@ -400,8 +506,8 @@ begin
                 case rx_byte_count is
 
                     -- vsg_off
-                    when "000"  => next_read_addr(7 downto 4) <= decoded_rx_byte; -- Addr MSB
-                    when "001"  => next_read_addr(3 downto 0) <= decoded_rx_byte; -- Addr LSB
+                    when "000"  => next_read_addr(7 downto 4) <= rx_byte_decoded; -- Addr MSB
+                    when "001"  => next_read_addr(3 downto 0) <= rx_byte_decoded; -- Addr LSB
                     when others => null;
                     -- vsg_on
 
@@ -414,6 +520,52 @@ begin
             when STATE_READ_MODE_END =>
 
                 next_read_addr_valid <= '1';
+
+            -- =========================================================================================================
+            -- STATE: READ_MODE_WAIT_DATA
+            -- =========================================================================================================
+
+            when STATE_READ_MODE_WAIT_DATA =>
+
+                -- Specific case to start the first byte
+                if (I_READ_DATA_VALID = '1') then
+                    tx_byte_to_send_valid <= '1';
+                end if;
+
+            -- =========================================================================================================
+            -- STATE: READ_MODE_WAIT_DATA
+            -- =========================================================================================================
+
+            when STATE_READ_MODE_SEND_DATA =>
+
+                -- Enable the tx counter
+                next_tx_byte_count_enable <= '1';
+
+                -- Select the data
+                case tx_byte_count is
+
+                    -- vsg_off
+                    when "000"  => tx_byte_to_send <= I_READ_DATA(15 downto 12); -- Data (bits 15 - 12)
+                    when "001"  => tx_byte_to_send <= I_READ_DATA(11 downto  8); -- Data (bits 11 -  8)
+                    when "010"  => tx_byte_to_send <= I_READ_DATA( 7 downto  4); -- Data (bits  7 -  4)
+                    when "011"  => tx_byte_to_send <= I_READ_DATA( 3 downto  0); -- Data (bits  3 -  0)
+                    when "100"  => tx_byte_cr      <= '1';
+                    when others => null;
+                    -- vsg_on
+
+                end case;
+
+            -- =========================================================================================================
+            -- STATE: READ_MODE_SET_VALID
+            -- =========================================================================================================
+
+            when STATE_READ_MODE_SET_VALID =>
+
+                -- Keep counting
+                next_tx_byte_count_enable <= '1';
+
+                -- Set the new data valid
+                tx_byte_to_send_valid <= '1';
 
             -- =========================================================================================================
             -- STATE: WRITE_MODE
@@ -432,12 +584,12 @@ begin
                 case rx_byte_count is
 
                     -- vsg_off
-                    when "000"  => next_write_addr( 7 downto  4) <= decoded_rx_byte; -- Addr MSB
-                    when "001"  => next_write_addr( 3 downto  0) <= decoded_rx_byte; -- Addr LSB
-                    when "010"  => next_write_data(15 downto 12) <= decoded_rx_byte; -- Data (bits 15 - 12)
-                    when "011"  => next_write_data(11 downto  8) <= decoded_rx_byte; -- Data (bits 11 -  8)
-                    when "100"  => next_write_data( 7 downto  4) <= decoded_rx_byte; -- Data (bits  7 -  4)
-                    when "101"  => next_write_data( 3 downto  0) <= decoded_rx_byte; -- Data (bits  3 -  0)
+                    when "000"  => next_write_addr( 7 downto  4) <= rx_byte_decoded; -- Addr MSB
+                    when "001"  => next_write_addr( 3 downto  0) <= rx_byte_decoded; -- Addr LSB
+                    when "010"  => next_write_data(15 downto 12) <= rx_byte_decoded; -- Data (bits 15 - 12)
+                    when "011"  => next_write_data(11 downto  8) <= rx_byte_decoded; -- Data (bits 11 -  8)
+                    when "100"  => next_write_data( 7 downto  4) <= rx_byte_decoded; -- Data (bits  7 -  4)
+                    when "101"  => next_write_data( 3 downto  0) <= rx_byte_decoded; -- Data (bits  3 -  0)
                     when others => null;
                     -- vsg_on
 
@@ -458,6 +610,8 @@ begin
             when others =>
 
                 next_rx_byte_count_enable <= '1';
+                next_tx_byte_count_enable <= '0';
+                tx_byte_to_send_valid     <= '0';
                 next_read_addr_valid      <= '0';
                 next_write_valid          <= '0';
                 next_read_addr            <= (others => '0');
