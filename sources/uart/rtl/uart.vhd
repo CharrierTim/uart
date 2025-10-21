@@ -79,21 +79,23 @@ architecture UART_ARCH of UART is
     end record t_ascii_to_hex;
 
     type t_state is (
+
+        -- Waiting for 'R' or 'W' command
         STATE_IDLE,
 
-        -- Start character state ('R' or 'W')
+        -- Processing start character
         STATE_CHAR_START,
 
-        -- Write mode
-        STATE_WRITE_MODE,
-        STATE_WRITE_MODE_END,
+        -- Write mode states
+        STATE_WRITE_MODE,     -- Receiving address and data bytes
+        STATE_WRITE_MODE_END, -- Validating write command
 
-        -- Read mode
-        STATE_READ_MODE,
-        STATE_READ_MODE_WAIT_DATA,
-        STATE_READ_MODE_SEND_DATA,
-        STATE_READ_MODE_SET_VALID,
-        STATE_READ_MODE_END
+        -- Read mode states
+        STATE_READ_MODE,           -- Receiving address bytes
+        STATE_READ_MODE_WAIT_DATA, -- Waiting for register data
+        STATE_READ_MODE_SEND_DATA, -- Transmitting data as hex ASCII
+        STATE_READ_MODE_SET_VALID, -- Setting read address valid
+        STATE_READ_MODE_END        -- Completing read operation
     );
 
     -- =================================================================================================================
@@ -104,25 +106,28 @@ architecture UART_ARCH of UART is
     constant C_READ_MODE_BYTE_COUNT  : positive := 3; -- ADDR        + CR
     constant C_WRITE_MODE_BYTE_COUNT : positive := 7; -- ADDR + DATA + CR
 
+    -- Number of bytes to transmit
+    constant C_TX_DATA_BYTES         : positive := 5; -- Number of hex chars to transmit for data + CR
+
     -- ASCII to hexadecimal conversion table
 
     -- vsg_off
-    constant C_CHAR_0            : t_ascii_to_hex := (ascii => x"30", hex => "0000");
-    constant C_CHAR_1            : t_ascii_to_hex := (ascii => x"31", hex => "0001");
-    constant C_CHAR_2            : t_ascii_to_hex := (ascii => x"32", hex => "0010");
-    constant C_CHAR_3            : t_ascii_to_hex := (ascii => x"33", hex => "0011");
-    constant C_CHAR_4            : t_ascii_to_hex := (ascii => x"34", hex => "0100");
-    constant C_CHAR_5            : t_ascii_to_hex := (ascii => x"35", hex => "0101");
-    constant C_CHAR_6            : t_ascii_to_hex := (ascii => x"36", hex => "0110");
-    constant C_CHAR_7            : t_ascii_to_hex := (ascii => x"37", hex => "0111");
-    constant C_CHAR_8            : t_ascii_to_hex := (ascii => x"38", hex => "1000");
-    constant C_CHAR_9            : t_ascii_to_hex := (ascii => x"39", hex => "1001");
-    constant C_CHAR_A            : t_ascii_to_hex := (ascii => x"41", hex => "1010");
-    constant C_CHAR_B            : t_ascii_to_hex := (ascii => x"42", hex => "1011");
-    constant C_CHAR_C            : t_ascii_to_hex := (ascii => x"43", hex => "1100");
-    constant C_CHAR_D            : t_ascii_to_hex := (ascii => x"44", hex => "1101");
-    constant C_CHAR_E            : t_ascii_to_hex := (ascii => x"45", hex => "1110");
-    constant C_CHAR_F            : t_ascii_to_hex := (ascii => x"46", hex => "1111");
+    constant C_CHAR_0                : t_ascii_to_hex := (ascii => x"30", hex => "0000");
+    constant C_CHAR_1                : t_ascii_to_hex := (ascii => x"31", hex => "0001");
+    constant C_CHAR_2                : t_ascii_to_hex := (ascii => x"32", hex => "0010");
+    constant C_CHAR_3                : t_ascii_to_hex := (ascii => x"33", hex => "0011");
+    constant C_CHAR_4                : t_ascii_to_hex := (ascii => x"34", hex => "0100");
+    constant C_CHAR_5                : t_ascii_to_hex := (ascii => x"35", hex => "0101");
+    constant C_CHAR_6                : t_ascii_to_hex := (ascii => x"36", hex => "0110");
+    constant C_CHAR_7                : t_ascii_to_hex := (ascii => x"37", hex => "0111");
+    constant C_CHAR_8                : t_ascii_to_hex := (ascii => x"38", hex => "1000");
+    constant C_CHAR_9                : t_ascii_to_hex := (ascii => x"39", hex => "1001");
+    constant C_CHAR_A                : t_ascii_to_hex := (ascii => x"41", hex => "1010");
+    constant C_CHAR_B                : t_ascii_to_hex := (ascii => x"42", hex => "1011");
+    constant C_CHAR_C                : t_ascii_to_hex := (ascii => x"43", hex => "1100");
+    constant C_CHAR_D                : t_ascii_to_hex := (ascii => x"44", hex => "1101");
+    constant C_CHAR_E                : t_ascii_to_hex := (ascii => x"45", hex => "1110");
+    constant C_CHAR_F                : t_ascii_to_hex := (ascii => x"46", hex => "1111");
     -- vsg_on
 
     -- Other useful ASCII characters
@@ -137,12 +142,7 @@ architecture UART_ARCH of UART is
     -- FSM signals
     signal current_state             : t_state;
     signal next_state                : t_state;
-    signal next_rx_byte_count_enable : std_logic;
-    signal next_tx_byte_count_enable : std_logic;
-    signal next_read_addr            : std_logic_vector( 8 - 1 downto 0);
-    signal next_read_addr_valid      : std_logic;
-    signal next_write_addr           : std_logic_vector( 8 - 1 downto 0);
-    signal next_write_data           : std_logic_vector(16 - 1 downto 0);
+    signal next_read_valid           : std_logic;
     signal next_write_valid          : std_logic;
 
     -- RX module signals
@@ -155,7 +155,6 @@ architecture UART_ARCH of UART is
 
     -- TX module signals
     signal tx_byte_count             : unsigned(3 - 1 downto 0);
-    signal tx_byte_cr                : std_logic;
     signal tx_byte_to_send           : std_logic_vector( 4 - 1 downto 0);
     signal tx_byte_to_send_encoded   : std_logic_vector( 8 - 1 downto 0);
     signal tx_byte_to_send_valid     : std_logic;
@@ -186,23 +185,23 @@ begin
     -- =================================================================================================================
 
     -- Converting the hexadecimal values to their ASCII representation
-    tx_byte_to_send_encoded <= C_CHAR_CR      when tx_byte_cr = '1'               else
-                               C_CHAR_0.ascii when tx_byte_to_send = C_CHAR_0.hex else
-                               C_CHAR_1.ascii when tx_byte_to_send = C_CHAR_1.hex else
-                               C_CHAR_2.ascii when tx_byte_to_send = C_CHAR_2.hex else
-                               C_CHAR_3.ascii when tx_byte_to_send = C_CHAR_3.hex else
-                               C_CHAR_4.ascii when tx_byte_to_send = C_CHAR_4.hex else
-                               C_CHAR_5.ascii when tx_byte_to_send = C_CHAR_5.hex else
-                               C_CHAR_6.ascii when tx_byte_to_send = C_CHAR_6.hex else
-                               C_CHAR_7.ascii when tx_byte_to_send = C_CHAR_7.hex else
-                               C_CHAR_8.ascii when tx_byte_to_send = C_CHAR_8.hex else
-                               C_CHAR_9.ascii when tx_byte_to_send = C_CHAR_9.hex else
-                               C_CHAR_A.ascii when tx_byte_to_send = C_CHAR_A.hex else
-                               C_CHAR_B.ascii when tx_byte_to_send = C_CHAR_B.hex else
-                               C_CHAR_C.ascii when tx_byte_to_send = C_CHAR_C.hex else
-                               C_CHAR_D.ascii when tx_byte_to_send = C_CHAR_D.hex else
-                               C_CHAR_E.ascii when tx_byte_to_send = C_CHAR_E.hex else
-                               C_CHAR_F.ascii when tx_byte_to_send = C_CHAR_F.hex else
+    tx_byte_to_send_encoded <= C_CHAR_CR      when tx_byte_count = C_TX_DATA_BYTES else
+                               C_CHAR_0.ascii when tx_byte_to_send = C_CHAR_0.hex  else
+                               C_CHAR_1.ascii when tx_byte_to_send = C_CHAR_1.hex  else
+                               C_CHAR_2.ascii when tx_byte_to_send = C_CHAR_2.hex  else
+                               C_CHAR_3.ascii when tx_byte_to_send = C_CHAR_3.hex  else
+                               C_CHAR_4.ascii when tx_byte_to_send = C_CHAR_4.hex  else
+                               C_CHAR_5.ascii when tx_byte_to_send = C_CHAR_5.hex  else
+                               C_CHAR_6.ascii when tx_byte_to_send = C_CHAR_6.hex  else
+                               C_CHAR_7.ascii when tx_byte_to_send = C_CHAR_7.hex  else
+                               C_CHAR_8.ascii when tx_byte_to_send = C_CHAR_8.hex  else
+                               C_CHAR_9.ascii when tx_byte_to_send = C_CHAR_9.hex  else
+                               C_CHAR_A.ascii when tx_byte_to_send = C_CHAR_A.hex  else
+                               C_CHAR_B.ascii when tx_byte_to_send = C_CHAR_B.hex  else
+                               C_CHAR_C.ascii when tx_byte_to_send = C_CHAR_C.hex  else
+                               C_CHAR_D.ascii when tx_byte_to_send = C_CHAR_D.hex  else
+                               C_CHAR_E.ascii when tx_byte_to_send = C_CHAR_E.hex  else
+                               C_CHAR_F.ascii when tx_byte_to_send = C_CHAR_F.hex  else
                                8x"00";
 
     -- =================================================================================================================
@@ -256,10 +255,12 @@ begin
 
         if (RST_N = '0') then
 
-            current_state <= STATE_IDLE;
+            current_state         <= STATE_IDLE;
 
-            rx_byte_count <= (others => '0');
-            tx_byte_count <= (others => '0');
+            rx_byte_count         <= (others => '0');
+            tx_byte_count         <= (others => '0');
+
+            tx_byte_to_send_valid <= '0';
 
         elsif rising_edge(CLK) then
 
@@ -271,17 +272,25 @@ begin
             end if;
 
             -- RX byte count
-            if (next_rx_byte_count_enable = '0') then
+            if (current_state = STATE_IDLE or current_state = STATE_CHAR_START) then
                 rx_byte_count <= (others => '0');
-            elsif (rx_byte_valid = '1' and next_rx_byte_count_enable = '1') then
+            elsif (rx_byte_valid = '1') then
                 rx_byte_count <= rx_byte_count + 1;
             end if;
 
             -- TX byte count
-            if (next_tx_byte_count_enable = '0') then
-                tx_byte_count <= (others => '0');
-            elsif (tx_byte_send = '1') then
-                tx_byte_count <= tx_byte_count + 1;
+            if (current_state = STATE_IDLE or current_state = STATE_CHAR_START) then
+                tx_byte_count         <= (others => '0');
+                tx_byte_to_send_valid <= '0';
+            elsif (
+                   (I_READ_DATA_VALID = '1')                                          -- First byte to send
+                   or
+                   (tx_byte_send = '1' and current_state = STATE_READ_MODE_SEND_DATA) -- Other bytes to send
+               ) then
+                tx_byte_count         <= tx_byte_count + 1;
+                tx_byte_to_send_valid <= '1';
+            else
+                tx_byte_to_send_valid <= '0';
             end if;
 
         end if;
@@ -382,23 +391,11 @@ begin
 
             when STATE_READ_MODE_SEND_DATA =>
 
-                if (tx_byte_count >= 4 and tx_byte_send = '1') then
+                if (tx_byte_count >= C_TX_DATA_BYTES) then
                     next_state <= STATE_IDLE;
-                elsif (tx_byte_send = '1') then
-                    next_state <= STATE_READ_MODE_SET_VALID;
                 else
                     next_state <= STATE_READ_MODE_SEND_DATA;
                 end if;
-
-            -- =========================================================================================================
-            -- STATE: READ_MODE_SET_VALID
-            -- =========================================================================================================
-            -- Set the input data valid flag
-            -- =========================================================================================================
-
-            when STATE_READ_MODE_SET_VALID =>
-
-                next_state <= STATE_READ_MODE_SEND_DATA;
 
             -- =========================================================================================================
             -- STATE: WRITE_MODE
@@ -456,13 +453,9 @@ begin
     begin
 
         -- Default assignment
-
-        next_rx_byte_count_enable <= '1';
-        next_tx_byte_count_enable <= '0';
-        tx_byte_to_send_valid     <= '0';
-        tx_byte_cr                <= '0';
-        next_read_addr_valid      <= '0';
-        next_write_valid          <= '0';
+        next_read_valid  <= '0';
+        next_write_valid <= '0';
+        tx_byte_to_send  <= (others => '0');
 
         case current_state is
 
@@ -472,23 +465,11 @@ begin
 
             when STATE_IDLE =>
 
-                next_rx_byte_count_enable <= '0';
-                next_read_addr            <= (others => '0');
-                next_write_addr           <= (others => '0');
-                next_write_data           <= (others => '0');
-                tx_byte_to_send           <= (others => '0');
-
             -- =========================================================================================================
             -- STATE: CHAR_START
             -- =========================================================================================================
 
             when STATE_CHAR_START =>
-
-                next_rx_byte_count_enable <= '0';
-                next_read_addr            <= (others => '0');
-                next_write_addr           <= (others => '0');
-                next_write_data           <= (others => '0');
-                tx_byte_to_send           <= (others => '0');
 
             -- =========================================================================================================
             -- STATE: READ_MODE
@@ -503,23 +484,13 @@ begin
 
             when STATE_READ_MODE =>
 
-                case rx_byte_count is
-
-                    -- vsg_off
-                    when "000"  => next_read_addr(7 downto 4) <= rx_byte_decoded; -- Addr MSB
-                    when "001"  => next_read_addr(3 downto 0) <= rx_byte_decoded; -- Addr LSB
-                    when others => null;
-                    -- vsg_on
-
-                end case;
-
             -- =========================================================================================================
             -- STATE: READ_MODE_END
             -- =========================================================================================================
 
             when STATE_READ_MODE_END =>
 
-                next_read_addr_valid <= '1';
+                next_read_valid <= '1';
 
             -- =========================================================================================================
             -- STATE: READ_MODE_WAIT_DATA
@@ -527,45 +498,25 @@ begin
 
             when STATE_READ_MODE_WAIT_DATA =>
 
-                -- Specific case to start the first byte
-                if (I_READ_DATA_VALID = '1') then
-                    tx_byte_to_send_valid <= '1';
-                end if;
-
             -- =========================================================================================================
             -- STATE: READ_MODE_WAIT_DATA
             -- =========================================================================================================
 
             when STATE_READ_MODE_SEND_DATA =>
 
-                -- Enable the tx counter
-                next_tx_byte_count_enable <= '1';
-
                 -- Select the data
+
                 case tx_byte_count is
 
                     -- vsg_off
-                    when "000"  => tx_byte_to_send <= I_READ_DATA(15 downto 12); -- Data (bits 15 - 12)
-                    when "001"  => tx_byte_to_send <= I_READ_DATA(11 downto  8); -- Data (bits 11 -  8)
-                    when "010"  => tx_byte_to_send <= I_READ_DATA( 7 downto  4); -- Data (bits  7 -  4)
-                    when "011"  => tx_byte_to_send <= I_READ_DATA( 3 downto  0); -- Data (bits  3 -  0)
-                    when "100"  => tx_byte_cr      <= '1';
+                    when "001"  => tx_byte_to_send <= I_READ_DATA(15 downto 12); -- Data (bits 15 - 12)
+                    when "010"  => tx_byte_to_send <= I_READ_DATA(11 downto  8); -- Data (bits 11 -  8)
+                    when "011"  => tx_byte_to_send <= I_READ_DATA( 7 downto  4); -- Data (bits  7 -  4)
+                    when "100"  => tx_byte_to_send <= I_READ_DATA( 3 downto  0); -- Data (bits  3 -  0)
                     when others => null;
                     -- vsg_on
 
                 end case;
-
-            -- =========================================================================================================
-            -- STATE: READ_MODE_SET_VALID
-            -- =========================================================================================================
-
-            when STATE_READ_MODE_SET_VALID =>
-
-                -- Keep counting
-                next_tx_byte_count_enable <= '1';
-
-                -- Set the new data valid
-                tx_byte_to_send_valid <= '1';
 
             -- =========================================================================================================
             -- STATE: WRITE_MODE
@@ -581,20 +532,6 @@ begin
 
             when STATE_WRITE_MODE =>
 
-                case rx_byte_count is
-
-                    -- vsg_off
-                    when "000"  => next_write_addr( 7 downto  4) <= rx_byte_decoded; -- Addr MSB
-                    when "001"  => next_write_addr( 3 downto  0) <= rx_byte_decoded; -- Addr LSB
-                    when "010"  => next_write_data(15 downto 12) <= rx_byte_decoded; -- Data (bits 15 - 12)
-                    when "011"  => next_write_data(11 downto  8) <= rx_byte_decoded; -- Data (bits 11 -  8)
-                    when "100"  => next_write_data( 7 downto  4) <= rx_byte_decoded; -- Data (bits  7 -  4)
-                    when "101"  => next_write_data( 3 downto  0) <= rx_byte_decoded; -- Data (bits  3 -  0)
-                    when others => null;
-                    -- vsg_on
-
-                end case;
-
             -- =========================================================================================================
             -- STATE: WRITE_MODE_END
             -- =========================================================================================================
@@ -609,14 +546,9 @@ begin
 
             when others =>
 
-                next_rx_byte_count_enable <= '1';
-                next_tx_byte_count_enable <= '0';
-                tx_byte_to_send_valid     <= '0';
-                next_read_addr_valid      <= '0';
-                next_write_valid          <= '0';
-                next_read_addr            <= (others => '0');
-                next_write_addr           <= (others => '0');
-                next_write_data           <= (others => '0');
+                next_read_valid  <= '0';
+                next_write_valid <= '0';
+                tx_byte_to_send  <= (others => '0');
 
         end case;
 
@@ -640,16 +572,39 @@ begin
         elsif rising_edge(CLK) then
 
             -- Update the read address and valid signal
-            if (next_read_addr_valid = '1') then
-                O_READ_ADDR <= next_read_addr;
+            if (rx_byte_valid = '1') then
+
+                case rx_byte_count is
+
+                    -- vsg_off
+                    when "000"  => O_READ_ADDR(7 downto 4) <= rx_byte_decoded; -- Addr MSB
+                    when "001"  => O_READ_ADDR(3 downto 0) <= rx_byte_decoded; -- Addr LSB
+                    when others => null;
+                    -- vsg_on
+
+                end case;
+
             end if;
 
-            O_READ_ADDR_VALID <= next_read_addr_valid;
+            O_READ_ADDR_VALID <= next_read_valid;
 
             -- Update the write address, data and valid signal
-            if (next_write_valid = '1') then
-                O_WRITE_DATA <= next_write_data;
-                O_WRITE_ADDR <= next_write_addr;
+            if (rx_byte_valid = '1') then
+
+                case rx_byte_count is
+
+                    -- vsg_off
+                    when "000"  => O_WRITE_ADDR( 7 downto  4) <= rx_byte_decoded; -- Addr MSB
+                    when "001"  => O_WRITE_ADDR( 3 downto  0) <= rx_byte_decoded; -- Addr LSB
+                    when "010"  => O_WRITE_DATA(15 downto 12) <= rx_byte_decoded; -- Data (bits 15 - 12)
+                    when "011"  => O_WRITE_DATA(11 downto  8) <= rx_byte_decoded; -- Data (bits 11 -  8)
+                    when "100"  => O_WRITE_DATA( 7 downto  4) <= rx_byte_decoded; -- Data (bits  7 -  4)
+                    when "101"  => O_WRITE_DATA( 3 downto  0) <= rx_byte_decoded; -- Data (bits  3 -  0)
+                    when others => null;
+                    -- vsg_on
+
+                end case;
+
             end if;
 
             O_WRITE_VALID <= next_write_valid;
