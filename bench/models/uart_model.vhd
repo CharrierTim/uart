@@ -51,6 +51,10 @@
 library ieee;
     use ieee.std_logic_1164.all;
 
+library vunit_lib;
+    context vunit_lib.vunit_context;
+    context vunit_lib.vc_context;
+
 -- =====================================================================================================================
 -- ENTITY
 -- =====================================================================================================================
@@ -81,37 +85,28 @@ end entity UART_MODEL;
 architecture UART_MODEL_ARCH of UART_MODEL is
 
     -- =================================================================================================================
-    -- TYPE
-    -- =================================================================================================================
-
-    type t_state is (
-        STATE_IDLE,
-        STATE_READ,
-        STATE_WRITE
-    );
-
-    -- =================================================================================================================
     -- CONSTANTS
     -- =================================================================================================================
 
-    constant C_BIT_TIME  : time := 1 sec / G_BAUD_RATE_BPS;
-
     -- Characters
-    constant C_CHAR_CR   : std_logic_vector(8 - 1 downto 0) := x"0D"; -- Carriage return character
-    constant C_CHAR_R    : std_logic_vector(8 - 1 downto 0) := x"52"; -- 'R' character
-    constant C_CHAR_W    : std_logic_vector(8 - 1 downto 0) := x"57"; -- 'W' character
+    constant C_CHAR_CR            : std_logic_vector(8 - 1 downto 0) := x"0D"; -- Carriage return character
+    constant C_CHAR_R             : std_logic_vector(8 - 1 downto 0) := x"52"; -- 'R' character
+    constant C_CHAR_W             : std_logic_vector(8 - 1 downto 0) := x"57"; -- 'W' character
 
-    -- =================================================================================================================
-    -- SIGNAL
-    -- =================================================================================================================
+    -- UART Slave BFM instance
+    constant C_UART_BFM_SLAVE     : uart_slave_t   := new_uart_slave(
+            initial_baud_rate => G_BAUD_RATE_BPS,
+            data_length       => 8
+        );
+    constant C_UART_STREAM_SLAVE  : stream_slave_t := as_stream(C_UART_BFM_SLAVE);
 
-    signal current_state : t_state;
+    -- UART Master BFM instance
+    constant C_UART_BFM_MASTER    : uart_master_t   := new_uart_master(
+            initial_baud_rate => G_BAUD_RATE_BPS
+        );
+    constant C_UART_STREAM_MASTER : stream_master_t := as_stream(C_UART_BFM_MASTER);
 
-    -- =================================================================================================================
-    -- func_hex_to_ascii_representation
-    -- Description: This function converts a 4-bit hex value to its ASCII std_logic_vector representation.
-    -- =================================================================================================================
-    function func_hex_to_ascii_representation (hex_char : std_logic_vector(4 - 1 downto 0)) return std_logic_vector is
+    function func_hex_to_ascii_representation (hex_char : std_logic_vector) return std_logic_vector is
     begin
 
         -- vsg_off
@@ -139,16 +134,11 @@ architecture UART_MODEL_ARCH of UART_MODEL is
         -- vsg_on
     end function;
 
-    -- =================================================================================================================
-    -- func_ascii_to_nibble
-    -- Description: Convert an ASCII hex character (0-9, A-F, a-f) to a 4-bit nibble.
-    -- =================================================================================================================
-    function func_ascii_to_nibble (ascii_byte : std_logic_vector(8 - 1 downto 0)) return std_logic_vector is
+    function func_ascii_to_nibble (ascii_byte : std_logic_vector) return std_logic_vector is
     begin
 
         -- vsg_off
         case ascii_byte is
-            -- '0'..'9'
             when x"30" => return x"0";
             when x"31" => return x"1";
             when x"32" => return x"2";
@@ -159,57 +149,131 @@ architecture UART_MODEL_ARCH of UART_MODEL is
             when x"37" => return x"7";
             when x"38" => return x"8";
             when x"39" => return x"9";
-            -- 'A'..'F'
             when x"41" => return x"A";
             when x"42" => return x"B";
             when x"43" => return x"C";
             when x"44" => return x"D";
             when x"45" => return x"E";
             when x"46" => return x"F";
+            when x"61" => return x"A";
+            when x"62" => return x"B";
+            when x"63" => return x"C";
+            when x"64" => return x"D";
+            when x"65" => return x"E";
+            when x"66" => return x"F";
             when others => return x"0"; -- Default to 0 on unexpected input
         end case;
         -- vsg_on
     end function;
 
-    -- =================================================================================================================
-    -- proc_send_byte
-    -- Description: This procedure sends a single byte over the UART interface.
-    --              Uses LSB-first data bit order (typical UART).
-    -- =================================================================================================================
-    procedure proc_send_byte (
-        signal uart_line      : out std_logic;
-        constant byte_to_send : std_logic_vector(8 - 1 downto 0)) is
-    begin
-        -- Start bit (low)
-        uart_line <= '0';
-        wait for C_BIT_TIME;
-
-        -- Data bits (LSB first)
-        for bit_idx in 0 to 7 loop
-            uart_line <= byte_to_send(bit_idx);
-            wait for C_BIT_TIME;
-        end loop;
-
-        -- Stop bit (high)
-        uart_line <= '1';
-        wait for C_BIT_TIME;
-    end procedure;
-
 begin
 
-    p_read_write : process (all) is
+    -- =================================================================================================================
+    -- UART MASTER
+    -- =================================================================================================================
+
+    inst_uart_master : entity vunit_lib.uart_master
+        generic map (
+            UART => C_UART_BFM_MASTER
+        )
+        port map (
+            tx => O_UART_TX
+        );
+
+    -- =================================================================================================================
+    -- UART SLAVE
+    -- =================================================================================================================
+
+    inst_uart_slave : entity vunit_lib.uart_slave
+        generic map (
+            UART => C_UART_BFM_SLAVE
+        )
+        port map (
+            rx => I_UART_RX
+        );
+
+    -- =================================================================================================================
+    -- Write process: send "W" AA DDDD "\r", no response expected
+    -- =================================================================================================================
+    p_write : process is
     begin
 
-        case current_state is
+        wait until rising_edge(I_WRITE_VALID);
 
-            when STATE_IDLE =>
+        -- Send 'W'
+        push_stream(net, C_UART_STREAM_MASTER, C_CHAR_W);
 
-            when STATE_READ =>
+        -- Send address (2 ASCII hex characters MSB-first)
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_ADDRESS(7 downto 4)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_ADDRESS(3 downto 0)));
 
-            when STATE_WRITE =>
+        -- Send data (4 ASCII hex characters MSB-first)
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(15 downto 12)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(11 downto  8)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA( 7 downto  4)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA( 3 downto  0)));
 
-        end case;
+        -- Send carriage return
+        push_stream(net, C_UART_STREAM_MASTER, C_CHAR_CR);
 
-    end process p_read_write;
+    end process p_write;
+
+    -- =================================================================================================================
+    -- Read process: send "R" AA "\r", then parse 4 ASCII hex chars (DDDD) then CR
+    -- =================================================================================================================
+    p_read : process is
+
+        variable v_byte : std_logic_vector( 7 downto 0);
+        variable v_last : boolean;
+        variable v_data : std_logic_vector(15 downto 0);
+
+    begin
+
+        -- Wait for rising edge of the valid signal
+        wait until rising_edge(I_READ_ADDRESS_VALID);
+
+        -- Send 'R'
+        push_stream(net, C_UART_STREAM_MASTER, C_CHAR_R);
+
+        -- Send address (MSB nibble then LSB nibble)
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_READ_ADDRESS(7 downto 4)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_READ_ADDRESS(3 downto 0)));
+
+        -- Send carriage return
+        push_stream(net, C_UART_STREAM_MASTER, C_CHAR_CR);
+
+        -- Get the bits 15 - 12
+        pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
+        v_data(15 downto 12) := func_ascii_to_nibble(v_byte);
+        info("Got : 0x" & to_hstring(v_byte));
+
+        -- Get the bits 11 -  8
+        pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
+        v_data(11 downto  8) := func_ascii_to_nibble(v_byte);
+        info("Got : 0x" & to_hstring(v_byte));
+
+        -- Get the bits  7 -  4
+        pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
+        v_data( 7 downto  4) := func_ascii_to_nibble(v_byte);
+        info("Got : 0x" & to_hstring(v_byte));
+
+        -- Get the bits  3 -  0
+        pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
+        v_data( 3 downto  0) := func_ascii_to_nibble(v_byte);
+
+        info("Got : 0x" & to_hstring(v_byte));
+
+        info("Got : 0x" & to_hstring(v_data));
+
+        -- Check last value if CR
+        pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
+
+        if (v_byte = C_CHAR_CR) then
+            O_READ_DATA <= v_data;
+        end if;
+
+        info("Got : 0x" & to_hstring(v_byte));
+
+    end process p_read;
 
 end architecture UART_MODEL_ARCH;
