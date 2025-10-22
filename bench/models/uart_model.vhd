@@ -201,6 +201,7 @@ begin
     -- =================================================================================================================
     -- Write process: send "W" AA DDDD "\r", no response expected
     -- =================================================================================================================
+
     p_write : process is
     begin
 
@@ -227,6 +228,7 @@ begin
     -- =================================================================================================================
     -- Read process: send "R" AA "\r", then parse 4 ASCII hex chars (DDDD) then CR
     -- =================================================================================================================
+
     p_read : process is
 
         variable v_byte : std_logic_vector( 7 downto 0);
@@ -250,21 +252,13 @@ begin
         -- Send carriage return
         push_stream(net, C_UART_STREAM_MASTER, C_CHAR_CR);
 
-        -- Get the bits 15 - 12
-        pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
-        v_data(15 downto 12) := func_ascii_to_nibble(v_byte);
+        -- Get the 4 ASCII characters for the 16-bit data value
+        for char in 0 to 3 loop
 
-        -- Get the bits 11 -  8
-        pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
-        v_data(11 downto  8) := func_ascii_to_nibble(v_byte);
+            pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
+            v_data(15 - 4 * char downto 12 - 4 * char) := func_ascii_to_nibble(v_byte);
 
-        -- Get the bits  7 -  4
-        pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
-        v_data( 7 downto  4) := func_ascii_to_nibble(v_byte);
-
-        -- Get the bits  3 -  0
-        pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
-        v_data( 3 downto  0) := func_ascii_to_nibble(v_byte);
+        end loop;
 
         -- Check last value if CR
         pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
