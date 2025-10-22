@@ -222,8 +222,10 @@ begin
         -- Notes:
         --  - This procedure is called at the beginning of each test to ensure the DUT starts from a known state.
         -- =============================================================================================================
+
         procedure proc_reset_dut (
-            constant c_clock_cycles : positive := 50) is
+            constant c_clock_cycles : positive := 50
+        ) is
         begin
 
             -- Reset the DUT by setting the input state to all zeros
@@ -243,7 +245,7 @@ begin
             info("DUT has been reset.");
             info("");
 
-        end procedure;
+        end procedure proc_reset_dut;
 
     begin
 

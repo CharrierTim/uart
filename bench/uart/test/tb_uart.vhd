@@ -262,8 +262,10 @@ begin
         -- Notes:
         --  - This procedure is called at the beginning of each test to ensure the DUT starts from a known state.
         -- =============================================================================================================
+
         procedure proc_reset_dut (
-            constant c_clock_cycles : positive := 50) is
+            constant c_clock_cycles : positive := 50
+        ) is
         begin
 
             -- Reset the DUT by setting the input state to all zeros
@@ -284,7 +286,7 @@ begin
             info("DUT has been reset.");
             info("");
 
-        end procedure;
+        end procedure proc_reset_dut;
 
         -- =============================================================================================================
         -- proc_send_byte
@@ -298,9 +300,11 @@ begin
         --   proc_send_byte(tb_i_uart_rx, x"41"); -- Send ASCII 'A'
         --
         -- =============================================================================================================
+
         procedure proc_send_byte (
             signal uart_rx        : out std_logic;
-            constant byte_to_send : std_logic_vector(8 - 1 downto 0)) is
+            constant byte_to_send : std_logic_vector(8 - 1 downto 0)
+        ) is
         begin
 
             -- Start bit
@@ -316,7 +320,7 @@ begin
             -- Stop bit
             uart_rx <= '1';
             wait for 1 sec / C_BAUD_RATE_BPS;
-        end procedure;
+        end procedure proc_send_byte;
 
         -- =============================================================================================================
         -- proc_uart_write
@@ -331,10 +335,12 @@ begin
         --   proc_uart_write(tb_i_uart_rx, "05", "ABCD"); -- Write data 0xABCD to address 0x05
         --
         -- =============================================================================================================
+
         procedure proc_uart_write (
             signal uart_rx : out std_logic;
             constant addr  : string(1 to 2);
-            constant data  : string(1 to 4)) is
+            constant data  : string(1 to 4)
+        ) is
         begin
 
             info("");
@@ -357,7 +363,7 @@ begin
             proc_send_byte(uart_rx, x"0D");
             proc_send_byte(uart_rx, x"0A");
 
-        end procedure;
+        end procedure proc_uart_write;
 
         -- =============================================================================================================
         -- proc_uart_read
@@ -371,9 +377,11 @@ begin
         --   proc_uart_read(tb_i_uart_rx, "05"); -- Read data from address 0x05
         --
         -- =============================================================================================================
+
         procedure proc_uart_read (
             signal uart_rx : out std_logic;
-            constant addr  : string(1 to 2)) is
+            constant addr  : string(1 to 2)
+        ) is
         begin
 
             info("");
@@ -391,7 +399,7 @@ begin
             proc_send_byte(uart_rx, x"0D");
             proc_send_byte(uart_rx, x"0A");
 
-        end procedure;
+        end procedure proc_uart_read;
 
     begin
 
