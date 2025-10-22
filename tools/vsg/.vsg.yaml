@@ -3705,13 +3705,9 @@ rule:
 
     procedure_010:
         # This rule checks the identifiers for all declarations are aligned in the procedure declarative part.
-        blank_line_ends_group: no
-        case_control_statements_ends_group: yes
-        comment_line_ends_group: no
         compact_alignment: yes
-        if_control_statements_ends_group: yes
-        loop_control_statements_ends_group: yes
-        severity: Error
+        blank_line_ends_group: no
+        comment_line_ends_group: no
 
     procedure_012:
         # This rule checks the procedure keyword exist in the closing of the procedure specification.
@@ -3720,14 +3716,14 @@ rule:
     procedure_013:
         # This rule checks the structure of procedure specifications.
         first_open_paren: remove_new_line
-        last_close_paren: remove_new_line
+        last_close_paren: add_new_line
         interface_element: add_new_line
         interface_list_semicolon: ignore
         ignore_single_line: no
 
     procedure_014:
         # This rule checks the procedure designator exists in the closing of the procedure specification.
-        action: remove
+        action: add
 
     procedure_100:
         # This rule checks for a single space between the following procedure elements: procedure keyword, procedure designator, open parenthesis, close parenthesis, and is keywords.
@@ -3739,8 +3735,7 @@ rule:
 
     procedure_200:
         # This rule checks for blank lines or comments above the procedure keyword.
-        style: no_blank_line_unless_different_library
-        severity: Warning
+        style: require_blank_line
 
     procedure_401:
         # This rule checks the colons are in the same column for all declarations in the procedure declarative part.
@@ -3771,9 +3766,9 @@ rule:
 
     procedure_501:
         # This rule checks the procedure designator has proper case.
-        case: camelCase
+        case: lower
         case_exceptions: []
-        disable: true
+        disable: false
         fixable: false
         prefix_exceptions: []
         suffix_exceptions: []
@@ -3792,8 +3787,7 @@ rule:
 
     procedure_506:
         # This rule checks the procedure designator has proper case on the end procedure declaration.
-        case: regex
-        regex: "(?!.*[A-Z]{3})[A-Z][a-zA-Z0-9]*(?:_[A-Z0-9][a-zA-Z0-9]*)*"
+        case: lower
         case_exceptions: []
         fixable: false
         prefix_exceptions: []
