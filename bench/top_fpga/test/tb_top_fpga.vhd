@@ -35,6 +35,7 @@ library ieee;
 
 library lib_rtl;
 library lib_bench;
+    use lib_bench.tb_top_fpga_pkg.all;
 
 library vunit_lib;
     context vunit_lib.vunit_context;
@@ -57,16 +58,6 @@ end entity TB_TOP_FPGA;
 architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
 
     -- =================================================================================================================
-    -- TYPES
-    -- =================================================================================================================
-
-    type t_reg is record
-        name : string;                            -- Name
-        addr : std_logic_vector( 8 - 1 downto 0); -- Address
-        data : std_logic_vector(16 - 1 downto 0); -- Value at reset
-    end record t_reg;
-
-    -- =================================================================================================================
     -- CONSTANTS
     -- =================================================================================================================
 
@@ -82,22 +73,6 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     constant C_READ_NB_BITS        : positive                          := 10 * 9; -- 10 bits , 9 chars in total
     constant C_READ_TIME_NS        : time                              := C_BIT_TIME_NS * C_READ_NB_BITS;
     constant C_GIT_ID              : std_logic_vector(32 - 1 downto 0) := x"12345678";
-
-    -- Registers
-
-    -- vsg_off
-    constant C_REG_GIT_ID_MSB : t_reg := (addr => 8x"00", data => 16x"1234", name => "C_REG_GIT_ID_MSB");
-    constant C_REG_GIT_ID_LSB : t_reg := (addr => 8x"01", data => 16x"5678", name => "C_REG_GIT_ID_LSB");
-    constant C_REG_12         : t_reg := (addr => 8x"02", data => 16x"1212", name => "C_REG_12");
-    constant C_REG_34         : t_reg := (addr => 8x"03", data => 16x"3434", name => "C_REG_34");
-    constant C_REG_56         : t_reg := (addr => 8x"04", data => 16x"5656", name => "C_REG_56");
-    constant C_REG_78         : t_reg := (addr => 8x"05", data => 16x"7878", name => "C_REG_78");
-    constant C_REG_9A         : t_reg := (addr => 8x"AB", data => 16x"9A9A", name => "C_REG_9A");
-    constant C_REG_CD         : t_reg := (addr => 8x"AC", data => 16x"CDCD", name => "C_REG_CD");
-    constant C_REG_EF         : t_reg := (addr => 8x"DC", data => 16x"EFEF", name => "C_REG_EF");
-    constant C_REG_1_BIT      : t_reg := (addr => 8x"EF", data => 16x"0001", name => "C_REG_1_BIT");
-    constant C_REG_16_BITS    : t_reg := (addr => 8x"FF", data => 16x"0000", name => "C_REG_16_BITS");
-    -- vsg_on
 
     -- =================================================================================================================
     -- SIGNALS
@@ -205,6 +180,7 @@ begin
             -- Reset the DUT by setting the input state to all zeros
             tb_rst_n                <= '0';
             tb_i_uart_select        <= '0';
+            tb_i_uart_rx_manual     <= '0';
             tb_i_read_address       <= (others => '0');
             tb_i_read_address_valid <= '0';
             tb_i_write_address      <= (others => '0');
@@ -348,7 +324,7 @@ begin
         begin
 
             info("");
-            info("Checking register " & reg.name & " is in **read-only**");
+            info("Checking register " & reg.name & " is in read-only");
 
             -- Attempt to write an incorrect value to the register
             proc_uart_write(reg, not reg.data);
@@ -372,6 +348,9 @@ begin
             constant reg            : t_reg;
             constant expected_value : std_logic_vector(16 - 1 downto 0)) is
         begin
+
+            info("");
+            info("Checking register " & reg.name & " is in read-write");
 
             -- Write the expected value to the register
             proc_uart_write(reg, not reg.data);
@@ -397,11 +376,11 @@ begin
 
         while test_suite loop
 
-            if run("test_uart_read_command") then
+            if run("test_top_fpga_registers") then
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Checking default register values ");
+                info(" Checking default register values");
                 info("-----------------------------------------------------------------------------");
 
                 -- Reset values
@@ -420,10 +399,11 @@ begin
                 proc_uart_check_default_value(C_REG_EF);
                 proc_uart_check_default_value(C_REG_1_BIT);
                 proc_uart_check_default_value(C_REG_16_BITS);
+                proc_uart_check_default_value(C_REG_DEAD);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Checking read-only registers ");
+                info(" Checking read-only registers");
                 info("-----------------------------------------------------------------------------");
 
                 proc_uart_check_read_only(C_REG_GIT_ID_MSB);
@@ -435,14 +415,26 @@ begin
                 proc_uart_check_read_only(C_REG_9A);
                 proc_uart_check_read_only(C_REG_CD);
                 proc_uart_check_read_only(C_REG_EF);
+                proc_uart_check_read_only(C_REG_DEAD);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Checking read-write registers ");
+                info(" Checking read-write registers");
                 info("-----------------------------------------------------------------------------");
 
                 proc_uart_check_read_write(C_REG_1_BIT, x"0000");
                 proc_uart_check_read_write(C_REG_16_BITS, not C_REG_16_BITS.data);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Writing some values to read-write registers");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_write(C_REG_1_BIT, x"0001");
+                proc_uart_check(C_REG_1_BIT, x"0001");
+
+                proc_uart_write(C_REG_16_BITS, x"ABCD");
+                proc_uart_check(C_REG_16_BITS, x"ABCD");
 
             end if;
 
