@@ -90,8 +90,9 @@ package body tb_top_fpga_pkg is
     -- FUNCTIONS
     -- =================================================================================================================
 
-    function format_time (
-        time_to_format : time) return string is
+    function func_format_time (
+        time_to_format : time
+    ) return string is
         variable v_time_value : real;
         variable v_rounded    : real;
     begin
@@ -133,13 +134,14 @@ package body tb_top_fpga_pkg is
             return time'image(time_to_format);
         end if;
 
-    end function;
+    end function func_format_time;
 
     -- Simple padding function
 
-    function pad_left (
+    function func_pad_left (
         str : string;
-        width : integer) return string is
+        width : integer
+    ) return string is
         variable v_result     : string(1 to width) := (others => ' ');
         variable v_actual_len : integer            := str'length;
         variable v_padding    : integer;
@@ -153,7 +155,7 @@ package body tb_top_fpga_pkg is
             return v_result;
         end if;
 
-    end function;
+    end function func_pad_left;
 
     -- =================================================================================================================
     -- PROCEDURE
@@ -170,9 +172,9 @@ package body tb_top_fpga_pkg is
         check(
             abs(time_to_check - expected_time) <= accuracy,
             message &
-            "Time: "       & pad_left(format_time(time_to_check), 12) &
-            "  |  Range: " & pad_left(format_time(expected_time), 12) &
-            " +/- "        & pad_left(format_time(accuracy), 10));
+            "Time: "       & func_pad_left(func_format_time(time_to_check), 12) &
+            "  |  Range: " & func_pad_left(func_format_time(expected_time), 12) &
+            " +/- "        & func_pad_left(func_format_time(accuracy), 10));
 
     end procedure proc_check_time_in_range;
 

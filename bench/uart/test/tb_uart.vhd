@@ -162,7 +162,10 @@ architecture TB_UART_ARCH of TB_UART is
     --   func_hex_char_to_ascii('A'); -- Returns x"41"
     --
     -- =================================================================================================================
-    function func_hex_char_to_ascii (hex_char : character) return std_logic_vector is
+
+    function func_hex_char_to_ascii (
+        hex_char : character
+    ) return std_logic_vector is
     begin
 
         -- vsg_off

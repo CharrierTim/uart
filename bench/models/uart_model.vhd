@@ -108,7 +108,9 @@ architecture UART_MODEL_ARCH of UART_MODEL is
         );
     constant C_UART_STREAM_MASTER : stream_master_t := as_stream(C_UART_BFM_MASTER);
 
-    function func_hex_to_ascii_representation (hex_char : std_logic_vector) return std_logic_vector is
+    function func_hex_to_ascii_representation (
+        hex_char : std_logic_vector
+    ) return std_logic_vector is
     begin
 
         -- vsg_off
@@ -136,7 +138,9 @@ architecture UART_MODEL_ARCH of UART_MODEL is
         -- vsg_on
     end function;
 
-    function func_ascii_to_nibble (ascii_byte : std_logic_vector) return std_logic_vector is
+    function func_ascii_to_nibble (
+        ascii_byte : std_logic_vector
+    ) return std_logic_vector is
     begin
 
         -- vsg_off
