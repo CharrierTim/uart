@@ -2094,11 +2094,8 @@ rule:
     function_012:
         # This rule checks the colons are in the same column for all declarations in the function declarative part.
         blank_line_ends_group: no
-        case_control_statements_ends_group: yes
         comment_line_ends_group: no
         compact_alignment: yes
-        if_control_statements_ends_group: yes
-        loop_control_statements_ends_group: yes
 
     function_013:
         # This rule checks the end keyword has proper case.
@@ -2107,11 +2104,8 @@ rule:
     function_015:
         # This rule checks the identifiers for all declarations are aligned in the function declarative part.
         blank_line_ends_group: no
-        case_control_statements_ends_group: yes
         comment_line_ends_group: no
         compact_alignment: yes
-        if_control_statements_ends_group: yes
-        loop_control_statements_ends_group: yes
 
     function_016:
         # This rule checks the indent of return statements in function bodies.
@@ -4631,16 +4625,11 @@ rule:
 
     subprogram_body_203:
         # This rule checks for a blank line below the begin keyword.
-        style: no_blank_line
-        #Conflicting with other rules (loop blank-lines)
-        disable: true
+        style: require_blank_line
 
     subprogram_body_204:
         # This rule checks for blank lines above the end keyword.
-        style: no_blank_line
-        severity: Error # Could be Warning for Development
-        #Conflicting with other rules (loop blank-lines)
-        disable: true
+        style: require_blank_line
 
     subprogram_body_205:
         # This rule checks for a blank line below the end of the function declaration.
