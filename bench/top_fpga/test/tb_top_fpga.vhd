@@ -264,7 +264,7 @@ begin
             -- Reassert reset
             tb_rst_n                <= '1';
 
-            -- Wait for the DUT to step over a simulation step
+            -- Wait for the DUT to step over
             wait for 5 ns;
 
             -- Log the reset action
@@ -365,14 +365,17 @@ begin
 
             info("Reading value from register " & reg.name & " at address 0x" & to_hstring(reg.addr));
 
+            -- Wait some time before starting the read to avoid simulation stuck
+            wait for 500 ns;
+
             -- Set up the read operation
             tb_i_read_address       <= reg.addr;
             tb_i_read_address_valid <= '1';
 
-            -- Wait for a short duration
-            wait for 200 ns;
+            -- Wait for the read operation to complete
+            wait until rising_edge(tb_o_read_data_valid);
 
-            -- De-assert the read valid signal
+            -- De-assert the read valid signal after completion
             tb_i_read_address_valid <= '0';
 
         end procedure proc_uart_read;
@@ -399,7 +402,6 @@ begin
 
             -- Read the register value
             proc_uart_read(reg);
-            wait for 1.1 * C_UART_READ_CMD_TIME;
 
             -- Check if the read value matches the expected value
             check_equal(
@@ -585,6 +587,8 @@ begin
                 -- Select the manual UART
                 tb_i_uart_select <= '1';
 
+                info("Sending command R00\n -> Invalid start bit in 'R'");
+
                 -- Send a byte (0x52) with invalid start bit
                 tb_i_uart_rx_manual <= '0';
                 wait for 0.25 * C_BIT_TIME; -- Invalid start bit (too short)
@@ -609,51 +613,12 @@ begin
                 tb_i_uart_rx_manual <= '1'; -- Stop bit
                 wait for 1.1 * C_BIT_TIME;
 
-                -- Send valid byte 0x30
-                for i in 1 to 2 loop
-                    tb_i_uart_rx_manual <= '0'; -- Start bit
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 0
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 1
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 2
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 3
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '1'; -- Bit 4
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '1'; -- Bit 5
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 6
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 7
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '1'; -- Stop bit
-                    wait for 1.1 * C_BIT_TIME;
-                end loop;
+                -- Send valid 2 bytes 0x30
+                proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
+                proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
 
                 -- Send valid byte 0x0D
-                tb_i_uart_rx_manual <= '0'; -- Start bit
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 0
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 1
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 2
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 3
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 4
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 5
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 6
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 7
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Stop bit
-                wait for 1.1 * C_BIT_TIME;
+                proc_uart_send_byte(tb_i_uart_rx_manual, 8x"0D");
 
                 -- Wait some time longer than the response
                 wait for 1.1 * C_UART_READ_CMD_TIME;
@@ -672,6 +637,8 @@ begin
                 -- Reset DUT
                 proc_reset_dut;
                 wait for 100 us;
+
+                info("Sending command R00\n -> Invalid stop bit in 'R'");
 
                 -- Select the manual UART
                 tb_i_uart_select <= '1';
@@ -702,51 +669,12 @@ begin
                 tb_i_uart_rx_manual <= '1';
                 wait for 1.1 * C_BIT_TIME;
 
-                -- Send valid byte 0x30
-                for i in 1 to 2 loop
-                    tb_i_uart_rx_manual <= '0'; -- Start bit
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 0
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 1
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 2
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 3
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '1'; -- Bit 4
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '1'; -- Bit 5
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 6
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '0'; -- Bit 7
-                    wait for C_BIT_TIME;
-                    tb_i_uart_rx_manual <= '1'; -- Stop bit
-                    wait for 1.1 * C_BIT_TIME;
-                end loop;
+                -- Send valid 2 bytes 0x30
+                proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
+                proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
 
                 -- Send valid byte 0x0D
-                tb_i_uart_rx_manual <= '0'; -- Start bit
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 0
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 1
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 2
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 3
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 4
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 5
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 6
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 7
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Stop bit
-                wait for 1.1 * C_BIT_TIME;
+                proc_uart_send_byte(tb_i_uart_rx_manual, 8x"0D");
 
                 -- Wait some time longer than the response
                 wait for 1.1 * C_UART_READ_CMD_TIME;
@@ -776,7 +704,7 @@ begin
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Sending read/write commands with invalid CR");
+                info(" Sending read commands with invalid CR");
                 info("-----------------------------------------------------------------------------");
 
                 -- Reset DUT
@@ -787,7 +715,7 @@ begin
                 tb_i_uart_select <= '1';
 
                 info("");
-                info("Sending command R01\n -> Missing \r");
+                info("Sending read command R01\n -> Missing \r");
 
                 proc_uart_send_byte(tb_i_uart_rx_manual, 8x"52");
                 proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
@@ -803,7 +731,16 @@ begin
                     "Ensuring UART not responding when sending read command with invalid \r");
 
                 info("");
-                info("Sending command WFFABCD\n -> Missing \r");
+                info("-----------------------------------------------------------------------------");
+                info(" Sending write commands with invalid CR");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                info("");
+                info("Sending write command WFFABCD\n -> Missing \r");
 
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"57");
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"46");
