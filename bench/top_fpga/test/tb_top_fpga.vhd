@@ -739,6 +739,9 @@ begin
                 proc_reset_dut;
                 wait for 100 us;
 
+                -- Select the manual UART
+                tb_i_uart_select <= '1';
+
                 info("");
                 info("Sending write command WFFABCD\n -> Missing \r");
 
@@ -751,9 +754,11 @@ begin
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"42");
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"0A"); -- Missing CR
 
+                -- Select the model UART again
+                tb_i_uart_select <= '0';
+
                 -- Read back the register to ensure the data was not written
                 proc_uart_check(C_REG_16_BITS, C_REG_16_BITS.data);
-                wait for C_UART_READ_CMD_TIME;
 
             end if;
 
