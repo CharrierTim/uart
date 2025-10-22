@@ -275,9 +275,12 @@ begin
 
         -- =============================================================================================================
         -- proc_uart_send_byte
-        -- Description: This procedure sends a byte via the UART.
+        --
+        -- Description: This procedure sends a byte ("manually") via the UART.
+        --
         -- Parameters:
         --   byte : std_logic_vector - The byte to send.
+        --
         -- Example:
         --   proc_uart_send_byte(uart_rx, x"30");
         -- =============================================================================================================
@@ -306,10 +309,13 @@ begin
 
         -- =============================================================================================================
         -- proc_uart_write
+        --
         -- Description: This procedure writes a value to a specified UART register.
+        --
         -- Parameters:
-        --   reg : t_reg - The register to write to.
+        --   reg   : t_reg            - The register to write to.
         --   value : std_logic_vector - The value to write to the register.
+        --
         -- Example:
         --   proc_uart_write(C_REG_16_BITS, x"ABCD");
         -- =============================================================================================================
@@ -342,9 +348,12 @@ begin
 
         -- =============================================================================================================
         -- proc_uart_read
+        --
         -- Description: This procedure reads a value from a specified UART register.
+        --
         -- Parameters:
         --   reg : t_reg - The register to read from.
+        --
         -- Example:
         --   proc_uart_read(C_REG_16_BITS);
         -- =============================================================================================================
@@ -370,11 +379,14 @@ begin
 
         -- =============================================================================================================
         -- proc_uart_check
+        --
         -- Description: This procedure checks if the read value from a specified UART register matches the expected
         --              value.
+        --
         -- Parameters:
-        --   reg : t_reg - The register to check.
+        --   reg            : t_reg            - The register to check.
         --   expected_value : std_logic_vector - The expected value to compare against.
+        --
         -- Example:
         --   proc_uart_check(C_REG_16_BITS, x"ABCD");
         -- =============================================================================================================
@@ -400,10 +412,13 @@ begin
 
         -- =============================================================================================================
         -- proc_uart_check_default_value
+        --
         -- Description: This procedure checks if the default value of a specified UART register matches the expected
         --              reset value.
+        --
         -- Parameters:
         --   reg : t_reg - The register to check.
+        --
         -- Example:
         --   proc_uart_check_default_value(C_REG_16_BITS);
         -- =============================================================================================================
@@ -423,10 +438,13 @@ begin
 
         -- =============================================================================================================
         -- proc_uart_check_read_only
+        --
         -- Description: This procedure checks if a specified UART register is read-only by attempting to write to it
         --              and verifying that the value remains unchanged.
+        --
         -- Parameters:
         --   reg : t_reg - The register to check.
+        --
         -- Example:
         --   proc_uart_check_read_only(C_REG_16_BITS);
         -- =============================================================================================================
@@ -449,11 +467,14 @@ begin
 
         -- =============================================================================================================
         -- proc_uart_check_read_write
+        --
         -- Description: This procedure checks if a specified UART register is read-write by writing a value to it and
         --              verifying that the value is correctly updated.
+        --
         -- Parameters:
-        --   reg : t_reg - The register to check.
+        --   reg            : t_reg            - The register to check.
         --   expected_value : std_logic_vector - The expected value to compare against after writing.
+        --
         -- Example:
         --   proc_uart_check_read_write(C_REG_16_BITS, x"0001");
         -- =============================================================================================================
