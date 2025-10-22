@@ -67,11 +67,11 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
 
     -- DUT generics
     constant C_BAUD_RATE_BPS       : positive                          := 115_200;
-    constant C_BIT_TIME_NS         : time                              := 1 sec / C_BAUD_RATE_BPS;
+    constant C_BIT_TIME            : time                              := 1 sec / C_BAUD_RATE_BPS;
     constant C_WRITE_NB_BITS       : positive                          := 10 * 8; -- 10 bits , 8 chars in total
-    constant C_WRITE_TIME_NS       : time                              := C_BIT_TIME_NS * C_WRITE_NB_BITS;
+    constant C_WRITE_TIME_NS       : time                              := C_BIT_TIME * C_WRITE_NB_BITS;
     constant C_READ_NB_BITS        : positive                          := 10 * 9; -- 10 bits , 9 chars in total
-    constant C_READ_TIME_NS        : time                              := C_BIT_TIME_NS * C_READ_NB_BITS;
+    constant C_READ_TIME_NS        : time                              := C_BIT_TIME * C_READ_NB_BITS;
     constant C_GIT_ID              : std_logic_vector(32 - 1 downto 0) := x"12345678";
 
     -- =================================================================================================================
@@ -81,8 +81,8 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     -- DUT signals
     signal tb_clk                  : std_logic;
     signal tb_rst_n                : std_logic;
-    signal tb_pad_i_uart_rx_model  : std_logic;
-    signal tb_pad_o_uart_tx_model  : std_logic;
+    signal tb_pad_i_uart_rx        : std_logic;
+    signal tb_pad_o_uart_tx        : std_logic;
 
     -- UART model
     signal tb_i_uart_rx_manual     : std_logic;
@@ -110,7 +110,7 @@ begin
             CLK           => tb_clk,
             RST_N         => tb_rst_n,
             PAD_I_UART_RX => tb_i_uart_rx,
-            PAD_O_UART_TX => tb_pad_o_uart_tx_model
+            PAD_O_UART_TX => tb_pad_o_uart_tx
         );
 
     -- =================================================================================================================
@@ -122,8 +122,8 @@ begin
             G_BAUD_RATE_BPS => C_BAUD_RATE_BPS
         )
         port map (
-            I_UART_RX            => tb_pad_o_uart_tx_model,
-            O_UART_TX            => tb_pad_i_uart_rx_model,
+            I_UART_RX            => tb_pad_o_uart_tx,
+            O_UART_TX            => tb_pad_i_uart_rx,
             I_READ_ADDRESS       => tb_i_read_address,
             I_READ_ADDRESS_VALID => tb_i_read_address_valid,
             O_READ_DATA          => tb_o_read_data,
@@ -135,7 +135,7 @@ begin
 
     -- Select between manual RX input and model RX input
     tb_i_uart_rx <= tb_i_uart_rx_manual when tb_i_uart_select = '1' else
-                    tb_pad_i_uart_rx_model;
+                    tb_pad_i_uart_rx;
 
     -- =================================================================================================================
     -- CLK GENERATION
@@ -378,16 +378,15 @@ begin
 
             if run("test_top_fpga_registers") then
 
+                -- Reset values
+                proc_reset_dut;
+                wait for 100 us;
+
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Checking default register values");
                 info("-----------------------------------------------------------------------------");
 
-                -- Reset values
-                proc_reset_dut;
-                wait for 100 us;
-
-                -- Check default register values
                 proc_uart_check_default_value(C_REG_GIT_ID_MSB);
                 proc_uart_check_default_value(C_REG_GIT_ID_LSB);
                 proc_uart_check_default_value(C_REG_12);
@@ -435,6 +434,192 @@ begin
 
                 proc_uart_write(C_REG_16_BITS, x"ABCD");
                 proc_uart_check(C_REG_16_BITS, x"ABCD");
+
+            elsif (run("test_uart_robustness")) then
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Sending read command with invalid start bit in char 'R'");
+                info("-----------------------------------------------------------------------------");
+
+                -- Select the manual UART
+                tb_i_uart_select <= '1';
+
+                -- Send a byte (0x52) with invalid start bit
+                tb_i_uart_rx_manual <= '0';
+                wait for 0.25 * C_BIT_TIME; -- Invalid start bit (too short)
+                tb_i_uart_rx_manual <= '1'; -- Sudden change to high
+                wait for 0.75 * C_BIT_TIME; -- Complete the rest of the start bit duration
+                tb_i_uart_rx_manual <= '0'; -- Bit 0
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 1
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 2
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 3
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 4
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 5
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 6
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 7
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Stop bit
+                wait for 1.1 * C_BIT_TIME;
+
+                -- Send valid byte 0x30
+                for i in 1 to 2 loop
+                    tb_i_uart_rx_manual <= '0'; -- Start bit
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 0
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 1
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 2
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 3
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 4
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 5
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 6
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 7
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Stop bit
+                    wait for 1.1 * C_BIT_TIME;
+                end loop;
+
+                -- Send valid byte 0x0D
+                tb_i_uart_rx_manual <= '0'; -- Start bit
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 0
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 1
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 2
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 3
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 4
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 5
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 6
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 7
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Stop bit
+                wait for 1.1 * C_BIT_TIME;
+
+                -- Wait some time longer than the response
+                wait for 1.1 * C_READ_TIME_NS;
+
+                -- Ensure UART TX remains stable high and send no data to this invalid read command
+                check_equal(
+                    tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_READ_TIME_NS),
+                    True,
+                    "Ensuring UART not responding when sending read command with invalid start bit in char 'R'");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Sending read command with invalid stop bit in char 'R'");
+                info("-----------------------------------------------------------------------------");
+
+                -- Select the manual UART
+                tb_i_uart_select <= '1';
+
+                -- Send a byte (0x52) with invalid stop bit
+                tb_i_uart_rx_manual <= '0';
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 0
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 1
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 2
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 3
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 4
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 5
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 6
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 7
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Stop bit
+                wait for 0.25 * C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Sudden change to low
+                wait for 0.75 * C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1';
+                wait for 1.1 * C_BIT_TIME;
+
+                -- Send valid byte 0x30
+                for i in 1 to 2 loop
+                    tb_i_uart_rx_manual <= '0'; -- Start bit
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 0
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 1
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 2
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 3
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 4
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 5
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 6
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 7
+                    wait for C_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Stop bit
+                    wait for 1.1 * C_BIT_TIME;
+                end loop;
+
+                -- Send valid byte 0x0D
+                tb_i_uart_rx_manual <= '0'; -- Start bit
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 0
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 1
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 2
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Bit 3
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 4
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 5
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 6
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Bit 7
+                wait for C_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- Stop bit
+                wait for 1.1 * C_BIT_TIME;
+
+                -- Wait some time longer than the response
+                wait for 1.1 * C_READ_TIME_NS;
+
+                -- Ensure UART TX remains stable high and send no data to this invalid read command
+                check_equal(
+                    tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_READ_TIME_NS),
+                    True,
+                    "Ensuring UART not responding when sending read command with invalid start bit in char 'R'");
 
             end if;
 
