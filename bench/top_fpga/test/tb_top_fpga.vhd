@@ -74,9 +74,9 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     constant C_BIT_TIME            : time                              := 1 sec / C_BAUD_RATE_BPS;
     constant C_BIT_TIME_ACCURACY   : time                              := 0.01 * C_BIT_TIME;
     constant C_WRITE_NB_BITS       : positive                          := 10 * 8; -- 10 bits , 8 chars in total
-    constant C_WRITE_TIME_NS       : time                              := C_BIT_TIME * C_WRITE_NB_BITS;
+    constant C_UART_WRITE_CMD_TIME : time                              := C_BIT_TIME * C_WRITE_NB_BITS;
     constant C_READ_NB_BITS        : positive                          := 10 * 9; -- 10 bits , 9 chars in total
-    constant C_READ_TIME_NS        : time                              := C_BIT_TIME * C_READ_NB_BITS;
+    constant C_UART_READ_CMD_TIME  : time                              := C_BIT_TIME * C_READ_NB_BITS;
     constant C_GIT_ID              : std_logic_vector(32 - 1 downto 0) := x"12345678";
 
     -- =================================================================================================================
@@ -274,6 +274,37 @@ begin
         end procedure proc_reset_dut;
 
         -- =============================================================================================================
+        -- proc_uart_send_byte
+        -- Description: This procedure sends a byte via the UART.
+        -- Parameters:
+        --   byte : std_logic_vector - The byte to send.
+        -- Example:
+        --   proc_uart_send_byte(uart_rx, x"30");
+        -- =============================================================================================================
+
+        procedure proc_uart_send_byte (
+            signal   uart_rx      : out std_logic;
+            constant byte_to_send : std_logic_vector(8 - 1 downto 0)
+        ) is
+        begin
+
+            -- Start bit
+            uart_rx <= '0';
+            wait for C_BIT_TIME;
+
+            -- Data bits (LSB to MSB)
+            for bit_idx in byte_to_send'low to byte_to_send'high loop
+                uart_rx <= byte_to_send(bit_idx);
+                wait for C_BIT_TIME;
+            end loop;
+
+            -- Stop bit
+            uart_rx <= '1';
+            wait for 1.1 * C_BIT_TIME;
+
+        end procedure proc_uart_send_byte;
+
+        -- =============================================================================================================
         -- proc_uart_write
         -- Description: This procedure writes a value to a specified UART register.
         -- Parameters:
@@ -305,7 +336,7 @@ begin
             tb_i_write_valid   <= '0';
 
             -- Wait for the write operation to complete
-            wait for 1.1 * C_WRITE_TIME_NS;
+            wait for 1.1 * C_UART_WRITE_CMD_TIME;
 
         end procedure proc_uart_write;
 
@@ -356,7 +387,7 @@ begin
 
             -- Read the register value
             proc_uart_read(reg);
-            wait for 1.1 * C_READ_TIME_NS;
+            wait for 1.1 * C_UART_READ_CMD_TIME;
 
             -- Check if the read value matches the expected value
             check_equal(
@@ -604,22 +635,22 @@ begin
                 wait for 1.1 * C_BIT_TIME;
 
                 -- Wait some time longer than the response
-                wait for 1.1 * C_READ_TIME_NS;
+                wait for 1.1 * C_UART_READ_CMD_TIME;
 
                 -- Ensure UART TX remains stable high and send no data to this invalid read command
                 check_equal(
-                    tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_READ_TIME_NS),
+                    tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_UART_READ_CMD_TIME),
                     True,
                     "Ensuring UART not responding when sending read command with invalid start bit in char 'R'");
-
-                -- Reset DUT
-                proc_reset_dut;
-                wait for 100 us;
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Sending read command with invalid stop bit in char 'R'");
                 info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
 
                 -- Select the manual UART
                 tb_i_uart_select <= '1';
@@ -697,22 +728,22 @@ begin
                 wait for 1.1 * C_BIT_TIME;
 
                 -- Wait some time longer than the response
-                wait for 1.1 * C_READ_TIME_NS;
+                wait for 1.1 * C_UART_READ_CMD_TIME;
 
                 -- Ensure UART TX remains stable high and send no data to this invalid read command
                 check_equal(
-                    tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_READ_TIME_NS),
+                    tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_UART_READ_CMD_TIME),
                     True,
                     "Ensuring UART not responding when sending read command with invalid start bit in char 'R'");
-
-                -- Reset DUT
-                proc_reset_dut;
-                wait for 100 us;
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Checking UART timings with value 0x5555");
                 info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
 
                 -- Enable the timings check
                 tb_check_uart_timings <= '1';
@@ -720,7 +751,51 @@ begin
                 proc_uart_write(C_REG_16_BITS, x"5555");
                 proc_uart_read (C_REG_16_BITS);
 
-                wait for C_READ_TIME_NS;
+                wait for C_UART_READ_CMD_TIME;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Sending read/write commands with invalid CR");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Select the manual UART
+                tb_i_uart_select <= '1';
+
+                info("");
+                info("Sending command R01\n -> Missing \r");
+
+                proc_uart_send_byte(tb_i_uart_rx_manual, 8x"52");
+                proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
+                proc_uart_send_byte(tb_i_uart_rx_manual, 8x"31");
+                proc_uart_send_byte(tb_i_uart_rx_manual, 8x"0A"); -- Missing CR
+
+                wait for C_UART_READ_CMD_TIME;
+
+                -- Ensure UART TX remains stable high and send no data to this invalid read command
+                check_equal(
+                    tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_UART_READ_CMD_TIME),
+                    True,
+                    "Ensuring UART not responding when sending read command with invalid \r");
+
+                info("");
+                info("Sending command WFFABCD\n -> Missing \r");
+
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"57");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"46");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"46");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"39");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"40");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"41");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"42");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"0A"); -- Missing CR
+
+                -- Read back the register to ensure the data was not written
+                proc_uart_check(C_REG_16_BITS, C_REG_16_BITS.data);
+                wait for C_UART_READ_CMD_TIME;
 
             end if;
 
