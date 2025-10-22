@@ -323,6 +323,7 @@ begin
             -- Stop bit
             uart_rx <= '1';
             wait for 1 sec / C_BAUD_RATE_BPS;
+
         end procedure proc_send_byte;
 
         -- =============================================================================================================

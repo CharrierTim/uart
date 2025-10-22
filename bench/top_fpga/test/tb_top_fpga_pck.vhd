@@ -139,7 +139,7 @@ package body tb_top_fpga_pkg is
     -- Simple padding function
 
     function func_pad_left (
-        str : string;
+        str   : string;
         width : integer
     ) return string is
         variable v_result     : string(1 to width) := (others => ' ');
