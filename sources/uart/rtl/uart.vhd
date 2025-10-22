@@ -94,7 +94,6 @@ architecture UART_ARCH of UART is
         STATE_READ_MODE,           -- Receiving address bytes
         STATE_READ_MODE_WAIT_DATA, -- Waiting for register data
         STATE_READ_MODE_SEND_DATA, -- Transmitting data as hex ASCII
-        STATE_READ_MODE_SET_VALID, -- Setting read address valid
         STATE_READ_MODE_END        -- Completing read operation
     );
 
