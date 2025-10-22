@@ -325,7 +325,13 @@ begin
         procedure proc_uart_check_default_value (
             constant reg : t_reg) is
         begin
+
+            info("");
+            info("Checking register " & reg.name & " value after reset");
+
+            -- Check the default value
             proc_uart_check(reg, reg.data);
+
         end procedure;
 
         -- =============================================================================================================
@@ -340,6 +346,9 @@ begin
         procedure proc_uart_check_read_only (
             constant reg : t_reg) is
         begin
+
+            info("");
+            info("Checking register " & reg.name & " is in **read-only**");
 
             -- Attempt to write an incorrect value to the register
             proc_uart_write(reg, not reg.data);
@@ -390,6 +399,7 @@ begin
 
             if run("test_uart_read_command") then
 
+                info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Checking default register values ");
                 info("-----------------------------------------------------------------------------");
@@ -411,6 +421,7 @@ begin
                 proc_uart_check_default_value(C_REG_1_BIT);
                 proc_uart_check_default_value(C_REG_16_BITS);
 
+                info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Checking read-only registers ");
                 info("-----------------------------------------------------------------------------");
@@ -425,6 +436,7 @@ begin
                 proc_uart_check_read_only(C_REG_CD);
                 proc_uart_check_read_only(C_REG_EF);
 
+                info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Checking read-write registers ");
                 info("-----------------------------------------------------------------------------");
