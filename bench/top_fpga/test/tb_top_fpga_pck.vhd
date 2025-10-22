@@ -31,12 +31,16 @@
 
 library ieee;
     use ieee.std_logic_1164.all;
+    use ieee.math_real.all;
+
+library vunit_lib;
+    context vunit_lib.vunit_context;
 
 -- =====================================================================================================================
 -- PACKAGE
 -- =====================================================================================================================
 
-package TB_TOP_FPGA_PKG is
+package tb_top_fpga_pkg is
 
     -- =================================================================================================================
     -- TYPES
@@ -67,4 +71,109 @@ package TB_TOP_FPGA_PKG is
     constant C_REG_DEAD       : t_reg := (addr => 8x"CC", data => 16x"DEAD", name => "C_REG_DEAD");
     -- vsg_on
 
-end package TB_TOP_FPGA_PKG;
+    -- =================================================================================================================
+    -- PROCEDURES
+    -- =================================================================================================================
+
+    procedure proc_check_time_in_range (
+        time_to_check : time;
+        expected_time : time;
+        accuracy      : time;
+        message       : string := ""
+    );
+
+end package tb_top_fpga_pkg;
+
+package body tb_top_fpga_pkg is
+
+    -- =================================================================================================================
+    -- FUNCTIONS
+    -- =================================================================================================================
+
+    function format_time (
+        time_to_format : time) return string is
+        variable v_time_value : real;
+        variable v_rounded    : real;
+    begin
+
+        -- Choose unit based on magnitude (show sec/ms/us/ns/ps/fs)
+
+        -- Seconds
+        if (time_to_format >= 1 sec) then
+            v_time_value := real(time_to_format / 1 fs) / 1.0e15;
+            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
+            return real'image(v_rounded) & " sec";
+
+        -- Milliseconds
+        elsif (time_to_format >= 1 ms) then
+            v_time_value := real(time_to_format / 1 fs) / 1.0e12;
+            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
+            return real'image(v_rounded) & " ms";
+
+        -- Microseconds
+        elsif (time_to_format >= 1 us) then
+            v_time_value := real(time_to_format / 1 fs) / 1.0e9;
+            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
+            return real'image(v_rounded) & " us";
+
+        -- Nanoseconds
+        elsif (time_to_format >= 1 ns) then
+            v_time_value := real(time_to_format / 1 fs) / 1.0e6;
+            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
+            return real'image(v_rounded) & " ns";
+
+        -- Picoseconds
+        elsif (time_to_format >= 1 ps) then
+            v_time_value := real(time_to_format / 1 fs) / 1.0e3;
+            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
+            return real'image(v_rounded) & " ps";
+
+        -- Femtoseconds
+        else
+            return time'image(time_to_format);
+        end if;
+
+    end function;
+
+    -- Simple padding function
+
+    function pad_left (
+        str : string;
+        width : integer) return string is
+        variable v_result     : string(1 to width) := (others => ' ');
+        variable v_actual_len : integer            := str'length;
+        variable v_padding    : integer;
+    begin
+
+        if (v_actual_len >= width) then
+            return str;
+        else
+            v_padding                        := width - v_actual_len;
+            v_result(v_padding + 1 to width) := str;
+            return v_result;
+        end if;
+
+    end function;
+
+    -- =================================================================================================================
+    -- PROCEDURE
+    -- =================================================================================================================
+
+    procedure proc_check_time_in_range (
+        time_to_check : time;
+        expected_time : time;
+        accuracy      : time;
+        message       : string := ""
+    ) is
+    begin
+
+        check(
+            abs(time_to_check - expected_time) <= accuracy,
+            message &
+            "Time: "       & pad_left(format_time(time_to_check), 12) &
+            "  |  Range: " & pad_left(format_time(expected_time), 12) &
+            " +/- "        & pad_left(format_time(accuracy), 10));
+
+    end procedure proc_check_time_in_range;
+
+end package body;

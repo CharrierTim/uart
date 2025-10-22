@@ -39,11 +39,15 @@ library lib_bench;
 
 library vunit_lib;
     context vunit_lib.vunit_context;
-    context vunit_lib.vc_context;
 
 -- =====================================================================================================================
 -- ENTITY
 -- =====================================================================================================================
+
+-- For coverage, NVC is not currently supported. So to get the correct results, all testcase must be run within the same
+-- simulator.
+
+-- vunit: run_all_in_same_sim
 
 entity TB_TOP_FPGA is
     generic (
@@ -68,6 +72,7 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     -- DUT generics
     constant C_BAUD_RATE_BPS       : positive                          := 115_200;
     constant C_BIT_TIME            : time                              := 1 sec / C_BAUD_RATE_BPS;
+    constant C_BIT_TIME_ACCURACY   : time                              := 0.01 * C_BIT_TIME;
     constant C_WRITE_NB_BITS       : positive                          := 10 * 8; -- 10 bits , 8 chars in total
     constant C_WRITE_TIME_NS       : time                              := C_BIT_TIME * C_WRITE_NB_BITS;
     constant C_READ_NB_BITS        : positive                          := 10 * 9; -- 10 bits , 9 chars in total
@@ -95,6 +100,9 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     signal tb_i_write_address      : std_logic_vector( 8 - 1 downto 0);
     signal tb_i_write_data         : std_logic_vector(16 - 1 downto 0);
     signal tb_i_write_valid        : std_logic;
+
+    -- UART timing verification
+    signal tb_check_uart_timings   : std_logic;
 
 begin
 
@@ -155,6 +163,64 @@ begin
     end process p_clock_gen;
 
     -- =================================================================================================================
+    -- UART TIMINGS VERIFICATION
+    -- =================================================================================================================
+
+    p_check_uart_timings : process is
+
+        variable v_start_time     : time;
+        variable v_start_bit_time : time;
+
+    begin
+
+        wait until rising_edge(tb_check_uart_timings);
+
+        info("Checking UART timings on TX with value 0x5555");
+
+        -- For each byte
+        for byte in 1 to 4 loop
+
+            -- Wait for the start bit
+            wait until falling_edge(tb_pad_o_uart_tx);
+            v_start_bit_time := now;
+
+            if (byte = 1) then
+                v_start_time := now;
+            end if;
+
+            wait until rising_edge(tb_pad_o_uart_tx);
+            proc_check_time_in_range(now - v_start_bit_time, C_BIT_TIME, C_BIT_TIME_ACCURACY);
+            v_start_bit_time := now;
+
+            wait until falling_edge(tb_pad_o_uart_tx);
+            proc_check_time_in_range(now - v_start_bit_time, C_BIT_TIME, C_BIT_TIME_ACCURACY);
+            v_start_bit_time := now;
+
+            wait until rising_edge(tb_pad_o_uart_tx);
+            proc_check_time_in_range(now - v_start_bit_time, C_BIT_TIME, C_BIT_TIME_ACCURACY);
+            v_start_bit_time := now;
+
+            wait until falling_edge(tb_pad_o_uart_tx);
+            proc_check_time_in_range(now - v_start_bit_time, C_BIT_TIME, C_BIT_TIME_ACCURACY);
+            v_start_bit_time := now;
+
+            wait until rising_edge(tb_pad_o_uart_tx);
+            proc_check_time_in_range(now - v_start_bit_time, C_BIT_TIME, C_BIT_TIME_ACCURACY);
+            v_start_bit_time := now;
+
+            wait until falling_edge(tb_pad_o_uart_tx);
+            proc_check_time_in_range(now - v_start_bit_time, 2.0 * C_BIT_TIME, 2.0 * C_BIT_TIME_ACCURACY);
+            v_start_bit_time := now;
+
+            wait until rising_edge(tb_pad_o_uart_tx);
+            proc_check_time_in_range(now - v_start_bit_time, 2.0 * C_BIT_TIME, 2.0 * C_BIT_TIME_ACCURACY);
+            v_start_bit_time := now;
+
+        end loop;
+
+    end process p_check_uart_timings;
+
+    -- =================================================================================================================
     -- TESTBENCH PROCESS
     -- =================================================================================================================
 
@@ -173,19 +239,25 @@ begin
         -- Notes:
         --  - This procedure is called at the beginning of each test to ensure the DUT starts from a known state.
         -- =============================================================================================================
+
         procedure proc_reset_dut (
-            constant c_clock_cycles : positive := 50) is
+            constant c_clock_cycles : positive := 50
+        ) is
         begin
 
             -- Reset the DUT by setting the input state to all zeros
             tb_rst_n                <= '0';
+
             tb_i_uart_select        <= '0';
             tb_i_uart_rx_manual     <= '0';
+
             tb_i_read_address       <= (others => '0');
             tb_i_read_address_valid <= '0';
             tb_i_write_address      <= (others => '0');
             tb_i_write_data         <= (others => '0');
             tb_i_write_valid        <= '0';
+
+            tb_check_uart_timings   <= '0';
 
             wait for c_clock_cycles * C_CLK_PERIOD;
 
@@ -199,7 +271,7 @@ begin
             info("");
             info("DUT has been reset.");
 
-        end procedure;
+        end procedure proc_reset_dut;
 
         -- =============================================================================================================
         -- proc_uart_write
@@ -210,9 +282,11 @@ begin
         -- Example:
         --   proc_uart_write(C_REG_16_BITS, x"ABCD");
         -- =============================================================================================================
+
         procedure proc_uart_write (
             constant reg   : t_reg;
-            constant value : std_logic_vector(16 - 1 downto 0)) is
+            constant value : std_logic_vector(16 - 1 downto 0)
+        ) is
         begin
 
             info(
@@ -233,7 +307,7 @@ begin
             -- Wait for the write operation to complete
             wait for 1.1 * C_WRITE_TIME_NS;
 
-        end procedure;
+        end procedure proc_uart_write;
 
         -- =============================================================================================================
         -- proc_uart_read
@@ -243,8 +317,10 @@ begin
         -- Example:
         --   proc_uart_read(C_REG_16_BITS);
         -- =============================================================================================================
+
         procedure proc_uart_read (
-            constant reg : t_reg) is
+            constant reg : t_reg
+        ) is
         begin
 
             info("Reading value from register " & reg.name & " at address 0x" & to_hstring(reg.addr));
@@ -259,7 +335,7 @@ begin
             -- De-assert the read valid signal
             tb_i_read_address_valid <= '0';
 
-        end procedure;
+        end procedure proc_uart_read;
 
         -- =============================================================================================================
         -- proc_uart_check
@@ -271,9 +347,11 @@ begin
         -- Example:
         --   proc_uart_check(C_REG_16_BITS, x"ABCD");
         -- =============================================================================================================
+
         procedure proc_uart_check (
             constant reg            : t_reg;
-            constant expected_value : std_logic_vector(16 - 1 downto 0)) is
+            constant expected_value : std_logic_vector(16 - 1 downto 0)
+        ) is
         begin
 
             -- Read the register value
@@ -287,7 +365,7 @@ begin
                 "Check register " & reg.name & ": expected 0x" & to_hstring(expected_value) &
                 ", got 0x"        & to_hstring(tb_o_read_data));
 
-        end procedure;
+        end procedure proc_uart_check;
 
         -- =============================================================================================================
         -- proc_uart_check_default_value
@@ -298,8 +376,10 @@ begin
         -- Example:
         --   proc_uart_check_default_value(C_REG_16_BITS);
         -- =============================================================================================================
+
         procedure proc_uart_check_default_value (
-            constant reg : t_reg) is
+            constant reg : t_reg
+        ) is
         begin
 
             info("");
@@ -308,7 +388,7 @@ begin
             -- Check the default value
             proc_uart_check(reg, reg.data);
 
-        end procedure;
+        end procedure proc_uart_check_default_value;
 
         -- =============================================================================================================
         -- proc_uart_check_read_only
@@ -319,8 +399,10 @@ begin
         -- Example:
         --   proc_uart_check_read_only(C_REG_16_BITS);
         -- =============================================================================================================
+
         procedure proc_uart_check_read_only (
-            constant reg : t_reg) is
+            constant reg : t_reg
+        ) is
         begin
 
             info("");
@@ -332,7 +414,7 @@ begin
             -- Check if the register value remains unchanged
             proc_uart_check(reg, reg.data);
 
-        end procedure;
+        end procedure proc_uart_check_read_only;
 
         -- =============================================================================================================
         -- proc_uart_check_read_write
@@ -344,9 +426,11 @@ begin
         -- Example:
         --   proc_uart_check_read_write(C_REG_16_BITS, x"0001");
         -- =============================================================================================================
+
         procedure proc_uart_check_read_write (
             constant reg            : t_reg;
-            constant expected_value : std_logic_vector(16 - 1 downto 0)) is
+            constant expected_value : std_logic_vector(16 - 1 downto 0)
+        ) is
         begin
 
             info("");
@@ -358,7 +442,7 @@ begin
             -- Check if the register value is updated correctly
             proc_uart_check(reg, expected_value);
 
-        end procedure;
+        end procedure proc_uart_check_read_write;
 
     begin
 
@@ -620,6 +704,23 @@ begin
                     tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_READ_TIME_NS),
                     True,
                     "Ensuring UART not responding when sending read command with invalid start bit in char 'R'");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking UART timings with value 0x5555");
+                info("-----------------------------------------------------------------------------");
+
+                -- Enable the timings check
+                tb_check_uart_timings <= '1';
+
+                proc_uart_write(C_REG_16_BITS, x"5555");
+                proc_uart_read (C_REG_16_BITS);
+
+                wait for C_READ_TIME_NS;
 
             end if;
 
