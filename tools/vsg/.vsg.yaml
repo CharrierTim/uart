@@ -2081,7 +2081,7 @@ rule:
 
     function_006:
         # This rule checks for blank lines or comments above the function keyword.
-        disable: true # Unhandy for multiple consecutive function declarations (e.g. in packages)
+        style: require_blank_line
 
     function_008:
         # This rule checks the indent of function parameters on multiple lines.
@@ -2112,7 +2112,6 @@ rule:
         compact_alignment: yes
         if_control_statements_ends_group: yes
         loop_control_statements_ends_group: yes
-        severity: Error
 
     function_016:
         # This rule checks the indent of return statements in function bodies.
@@ -2120,8 +2119,7 @@ rule:
 
     function_017:
         # This rule checks the function designator has proper case.
-        disable: true
-        case: upper
+        case: lower
 
     function_018:
         # This rule checks the function keyword exist in the closing of the function specification.
@@ -2130,14 +2128,14 @@ rule:
     function_019:
         # This rule checks the structure of function specifications.
         first_open_paren: remove_new_line
-        ignore_single_line: yes
+        last_close_paren: add_new_line
         interface_element: add_new_line
-        interface_list_semicolon: remove_new_line
-        last_close_paren: remove_new_line
+        interface_list_semicolon: ignore
+        ignore_single_line: no
 
     function_020:
         # This rule checks the function designator exists in the closing of the function specification.
-        action: remove
+        action: add
 
     function_100:
         # This rule checks for a single space between the following function elements: function keyword, function designator, open parenthesis, close parenthesis, return keyword, return type and is keyword.
@@ -2161,9 +2159,8 @@ rule:
 
     function_506:
         # This rule checks the function designator has proper case on the end function declaration.
-        case: camelCase
+        case: lower
         case_exceptions: []
-        fixable: false
         prefix_exceptions: []
         suffix_exceptions: []
 
@@ -2193,10 +2190,10 @@ rule:
 
     function_600:
         # This rule checks for valid prefixes on function designators. Default signal prefix is f_.
-        disable: true
+        disable: false
         exceptions: []
         fixable: false
-        prefixes: ["F_"]
+        prefixes: ["func_"]
         severity: Error
 
     function_601:
