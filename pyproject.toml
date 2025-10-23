@@ -6,10 +6,16 @@ dependencies = [
     "ruff",
     "vsg",
     "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
+    "docformatter",
+    "docstrfmt",
+    "numpydoc",
+    "pre-commit",
+    "pydata_sphinx_theme",
+    "sphinx_copybutton",
+    "sphinx",
+    "sphinxcontrib.bibtex",
+    "sphinxcontrib.wavedrom",
 ]
-
-[project.optional-dependencies]
-dev = ["pre-commit", "docformatter", "docstrfmt"]
 
 [tool.ruff]
 exclude = [
