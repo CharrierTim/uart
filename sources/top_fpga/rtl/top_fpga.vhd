@@ -44,12 +44,18 @@ entity TOP_FPGA is
     );
     port (
         -- Clock and reset
-        CLK           : in    std_logic;
-        RST_N         : in    std_logic;
+        CLK            : in    std_logic;
+        RST_N          : in    std_logic;
 
         -- UART
-        PAD_I_UART_RX : in    std_logic;
-        PAD_O_UART_TX : out   std_logic
+        PAD_I_UART_RX  : in    std_logic;
+        PAD_O_UART_TX  : out   std_logic;
+
+        -- Switches and LED
+        PAD_I_SWITCH_0 : in    std_logic;
+        PAD_I_SWITCH_1 : in    std_logic;
+        PAD_I_SWITCH_2 : in    std_logic;
+        PAD_O_LED_0    : out   std_logic
     );
 end entity TOP_FPGA;
 
@@ -63,25 +69,56 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- CONSTANTS
     -- =================================================================================================================
 
-    constant C_CLK_FREQ_HZ   : positive := 50_000_000;
-    constant C_BAUD_RATE_BPS : positive := 115_200;
+    -- Resynchronization
+    constant C_RESYNC_DEFAULT_VALUE : std_logic_vector(3 - 1 downto 0) := "000";
+
+    -- UART
+    constant C_CLK_FREQ_HZ          : positive := 50_000_000;
+    constant C_BAUD_RATE_BPS        : positive := 115_200;
 
     -- =================================================================================================================
     -- SIGNALS
     -- =================================================================================================================
 
+    -- Resynchronization
+    signal async_inputs_slv         : std_logic_vector(C_RESYNC_DEFAULT_VALUE'range);
+    signal sync_inputs_slv          : std_logic_vector(C_RESYNC_DEFAULT_VALUE'range);
+
     -- Read interface
-    signal read_addr         : std_logic_vector( 8 - 1 downto 0);
-    signal read_addr_valid   : std_logic;
-    signal read_data         : std_logic_vector(16 - 1 downto 0);
-    signal read_data_valid   : std_logic;
+    signal read_addr                : std_logic_vector( 8 - 1 downto 0);
+    signal read_addr_valid          : std_logic;
+    signal read_data                : std_logic_vector(16 - 1 downto 0);
+    signal read_data_valid          : std_logic;
 
     -- Write interface
-    signal write_addr        : std_logic_vector( 8 - 1 downto 0);
-    signal write_data        : std_logic_vector(16 - 1 downto 0);
-    signal write_addr_valid  : std_logic;
+    signal write_addr               : std_logic_vector( 8 - 1 downto 0);
+    signal write_data               : std_logic_vector(16 - 1 downto 0);
+    signal write_addr_valid         : std_logic;
 
 begin
+
+    -- =================================================================================================================
+    -- RESYNCHRONIZATION
+    -- =================================================================================================================
+
+    async_inputs_slv <=
+    (
+        2 => PAD_I_SWITCH_2,
+        1 => PAD_I_SWITCH_1,
+        0 => PAD_I_SWITCH_0
+    );
+
+    inst_resync_slv : entity lib_rtl.resync_slv
+        generic map (
+            G_WIDTH         => C_RESYNC_DEFAULT_VALUE'length,
+            G_DEFAULT_VALUE => C_RESYNC_DEFAULT_VALUE
+        )
+        port map (
+            CLK          => CLK,
+            RST_N        => RST_N,
+            I_DATA_ASYNC => async_inputs_slv,
+            O_DATA_SYNC  => sync_inputs_slv
+        );
 
     -- =================================================================================================================
     -- UART MODULE
@@ -118,6 +155,7 @@ begin
         port map (
             CLK               => CLK,
             RST_N             => RST_N,
+            I_SWITCHES        => async_inputs_slv,
             I_READ_ADDR       => read_addr,
             I_READ_ADDR_VALID => read_addr_valid,
             O_READ_DATA       => read_data,
