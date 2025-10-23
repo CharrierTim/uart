@@ -291,6 +291,12 @@ begin
         ) is
         begin
 
+            -- Select the manual UART
+            if (tb_i_uart_select = '0') then
+                tb_i_uart_select <= '1';
+                wait for 200 ns;
+            end if;
+
             -- Start bit
             uart_rx <= '0';
             wait for C_BIT_TIME;
@@ -330,6 +336,12 @@ begin
                 "Writing value 0x" & to_hstring(value) & " to register " & reg.name &
                 " at address 0x"   & to_hstring(reg.addr));
 
+            -- Select the model UART
+            if (tb_i_uart_select = '1') then
+                tb_i_uart_select <= '0';
+                wait for 200 ns;
+            end if;
+
             -- Set up the write operation
             tb_i_write_address <= reg.addr;
             tb_i_write_data    <= value;
@@ -364,6 +376,12 @@ begin
         begin
 
             info("Reading value from register " & reg.name & " at address 0x" & to_hstring(reg.addr));
+
+            -- Select the model UART
+            if (tb_i_uart_select = '1') then
+                tb_i_uart_select <= '0';
+                wait for 200 ns;
+            end if;
 
             -- Wait some time before starting the read to avoid simulation stuck
             wait for 500 ns;
@@ -711,9 +729,6 @@ begin
                 proc_reset_dut;
                 wait for 100 us;
 
-                -- Select the manual UART
-                tb_i_uart_select <= '1';
-
                 info("");
                 info("Sending read command R01\n -> Missing \r");
 
@@ -739,9 +754,6 @@ begin
                 proc_reset_dut;
                 wait for 100 us;
 
-                -- Select the manual UART
-                tb_i_uart_select <= '1';
-
                 info("");
                 info("Sending write command WFFABCD\n -> Missing \r");
 
@@ -753,9 +765,6 @@ begin
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"41");
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"42");
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"0A"); -- Missing CR
-
-                -- Select the model UART again
-                tb_i_uart_select <= '0';
 
                 -- Read back the register to ensure the data was not written
                 proc_uart_check(C_REG_16_BITS, C_REG_16_BITS.data);
