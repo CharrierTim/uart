@@ -88,6 +88,10 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     signal tb_rst_n                : std_logic;
     signal tb_pad_i_uart_rx        : std_logic;
     signal tb_pad_o_uart_tx        : std_logic;
+    signal tb_pad_i_switch_0       : std_logic;
+    signal tb_pad_i_switch_1       : std_logic;
+    signal tb_pad_i_switch_2       : std_logic;
+    signal tb_pad_o_led_0          : std_logic;
 
     -- UART model
     signal tb_i_uart_rx_manual     : std_logic;
@@ -115,10 +119,14 @@ begin
             G_GIT_ID => C_GIT_ID
         )
         port map (
-            CLK           => tb_clk,
-            RST_N         => tb_rst_n,
-            PAD_I_UART_RX => tb_i_uart_rx,
-            PAD_O_UART_TX => tb_pad_o_uart_tx
+            CLK            => tb_clk,
+            RST_N          => tb_rst_n,
+            PAD_I_UART_RX  => tb_i_uart_rx,
+            PAD_O_UART_TX  => tb_pad_o_uart_tx,
+            PAD_I_SWITCH_0 => tb_pad_i_switch_0,
+            PAD_I_SWITCH_1 => tb_pad_i_switch_1,
+            PAD_I_SWITCH_2 => tb_pad_i_switch_2,
+            PAD_O_LED_0    => tb_pad_o_led_0
         );
 
     -- =================================================================================================================
@@ -250,6 +258,9 @@ begin
 
             tb_i_uart_select        <= '0';
             tb_i_uart_rx_manual     <= '0';
+            tb_pad_i_switch_0       <= '0';
+            tb_pad_i_switch_1       <= '0';
+            tb_pad_i_switch_2       <= '0';
 
             tb_i_read_address       <= (others => '0');
             tb_i_read_address_valid <= '0';

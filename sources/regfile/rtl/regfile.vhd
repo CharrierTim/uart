@@ -48,6 +48,8 @@ entity REGFILE is
         -- Clock and reset
         CLK               : in    std_logic;
         RST_N             : in    std_logic;
+        -- Inputs switches
+        I_SWITCHES        : in    std_logic_vector(3 - 1 downto 0);
         -- Read data interface
         I_READ_ADDR       : in    std_logic_vector( 8 - 1 downto 0);
         I_READ_ADDR_VALID : in    std_logic;
@@ -70,12 +72,15 @@ architecture REGFILE_ARCH of REGFILE is
     -- SIGNALS
     -- =================================================================================================================
 
+    -- R  registers
+    signal reg_switches : std_logic_vector(3 - 1 downto 0);
+
     -- RW registers
-    signal reg_1_bit   : std_logic;
-    signal reg_16_bits : std_logic_vector(16 - 1 downto 0);
+    signal reg_1_bit    : std_logic;
+    signal reg_16_bits  : std_logic_vector(16 - 1 downto 0);
 
     -- Read interface
-    signal reg_read    : std_logic_vector(16 - 1 downto 0);
+    signal reg_read     : std_logic_vector(16 - 1 downto 0);
 
 begin
 
@@ -90,6 +95,9 @@ begin
 
             -- Read data valid flag
             O_READ_DATA_VALID <= '0';
+
+            -- R  registers
+            reg_switches <= C_REG_SWITCHES_RST;
 
             -- RW registers
             reg_1_bit   <= C_REG_1_BIT_RST;
@@ -149,6 +157,10 @@ begin
                     when C_REG_EF_ADDR =>
 
                         reg_read <= C_REG_EF_DATA;
+
+                    when C_REG_SWITCHES_ADDR =>
+
+                        reg_switches <= I_SWITCHES;
 
                     when C_REG_1_BIT_ADDR =>
 
