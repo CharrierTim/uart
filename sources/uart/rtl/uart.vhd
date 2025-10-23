@@ -149,8 +149,6 @@ architecture UART_ARCH of UART is
     signal rx_byte                   : std_logic_vector( 8 - 1 downto 0);
     signal rx_byte_decoded           : std_logic_vector( 4 - 1 downto 0);
     signal rx_byte_valid             : std_logic;
-    signal rx_start_bit_error        : std_logic;
-    signal rx_stop_bit_error         : std_logic;
 
     -- TX module signals
     signal tx_byte_count             : unsigned(3 - 1 downto 0);
@@ -218,8 +216,8 @@ begin
             I_UART_RX         => I_UART_RX,
             O_BYTE            => rx_byte,
             O_BYTE_VALID      => rx_byte_valid,
-            O_START_BIT_ERROR => rx_start_bit_error,
-            O_STOP_BIT_ERROR  => rx_stop_bit_error
+            O_START_BIT_ERROR => open,
+            O_STOP_BIT_ERROR  => open
         );
 
     -- =================================================================================================================
