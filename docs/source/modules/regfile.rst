@@ -18,6 +18,7 @@ REG_78         0x05    R    Internal register 4
 REG_9A         0xAB    R    Internal register 5
 REG_CD         0xAC    R    Internal register 6
 REG_EF         0xDC    R    Internal register 7
+REG_SWITCHES   0xB1    R    Status from the input switches
 REG_1_BIT      0xEF    RW   Register with LSB bit writable
 REG_16_BITS    0xFF    RW   Register with all bits writable
 ============== ======= ==== ===================================================
@@ -82,7 +83,7 @@ Fields
 ==== ====== ==== ===========
 Bits Reset  Name Description
 ==== ====== ==== ===========
-15:0 0x1212      Reserved
+15:0 0x1212      Constant
 ==== ====== ==== ===========
 
 REG_34
@@ -103,7 +104,7 @@ Fields
 ==== ====== ==== ===========
 Bits Reset  Name Description
 ==== ====== ==== ===========
-15:0 0x3434      Reserved
+15:0 0x3434      Constant
 ==== ====== ==== ===========
 
 REG_56
@@ -124,7 +125,7 @@ Fields
 ==== ====== ==== ===========
 Bits Reset  Name Description
 ==== ====== ==== ===========
-15:0 0x5656      Reserved
+15:0 0x5656      Constant
 ==== ====== ==== ===========
 
 REG_78
@@ -145,7 +146,7 @@ Fields
 ==== ====== ==== ===========
 Bits Reset  Name Description
 ==== ====== ==== ===========
-15:0 0x7878      Reserved
+15:0 0x7878      Constant
 ==== ====== ==== ===========
 
 REG_9A
@@ -166,7 +167,7 @@ Fields
 ==== ====== ==== ===========
 Bits Reset  Name Description
 ==== ====== ==== ===========
-15:0 0x9A9A      Reserved
+15:0 0x9A9A      Constant
 ==== ====== ==== ===========
 
 REG_CD
@@ -187,7 +188,7 @@ Fields
 ==== ====== ==== ===========
 Bits Reset  Name Description
 ==== ====== ==== ===========
-15:0 0xCDCD      Reserved
+15:0 0xCDCD      Constant
 ==== ====== ==== ===========
 
 REG_EF
@@ -208,8 +209,32 @@ Fields
 ==== ====== ==== ===========
 Bits Reset  Name Description
 ==== ====== ==== ===========
-15:0 0xEFEF      Reserved
+15:0 0xEFEF      Constant
 ==== ====== ==== ===========
+
+REG_SWITCHES
+~~~~~~~~~~~~
+
+Register returning the status of the input switches
+
+- Address: ``0xB1``
+- Reset default: ``0x0000``
+
+Fields
+++++++
+
+.. wavedrom::
+
+    {"reg": [{"name": "SWITCH_0", "bits": 1, "attr": ["ro"], "rotate": -90, "type": 3}, {"name": "SWITCH_1", "bits": 1, "attr": ["ro"], "rotate": -90, "type": 3}, {"name": "SWITCH_2", "bits": 1, "attr": ["ro"], "rotate": -90, "type": 3}, {"name": "Reserved", "bits": 13, "attr": ["ro"], "rotate": 0, "type": 2}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+
+==== ===== ======== ==========================
+Bits Reset Name     Description
+==== ===== ======== ==========================
+15:3 0x0            Reserved
+2    0x0   SWITCH_2 Signal from PAD_I_SWITCH_2
+2    0x0   SWITCH_1 Signal from PAD_I_SWITCH_1
+0    0x0   SWITCH_0 Signal from PAD_I_SWITCH_0
+==== ===== ======== ==========================
 
 REG_1_BIT
 ~~~~~~~~~
@@ -217,8 +242,7 @@ REG_1_BIT
 Register with LSB bit writable
 
 - Address: ``0xEF``
-- Reset default: ``0x1``
-- Reset mask: ``0x1``
+- Reset default: ``0x0001``
 
 Fields
 ++++++
@@ -240,7 +264,7 @@ REG_16_BITS
 Register with all bits writable
 
 - Address: ``0xFF``
-- Reset default: ``0x0``
+- Reset default: ``0x0000``
 
 Fields
 ++++++
