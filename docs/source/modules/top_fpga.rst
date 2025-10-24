@@ -1,29 +1,83 @@
 Top FPGA
 ========
 
-Tools Versions
---------------
+Description
+-----------
 
-- **NVC**: ``nvc 1.18.1 (Using LLVM 18.1.3)``
-- **Vunit**: ``commit 4e30fa124ea84609af0f957dbc55b82adaed1d76``
-- **VSG**: ``VHDL Style Guide (VSG) version: 3.35.0``
-- **Vivado**: ``2025.1``
+Top-Level of the FPGA.
+
+Generics
+--------
+
+.. list-table::
+    :widths: 25 10 15 60
+    :header-rows: 1
+
+    - - Generic Name
+      - Type
+      - Default Value
+      - Description
+    - - ``G_GIT_ID_MSB``
+      - vector
+      - 0x0000
+      - 16 MSB of the git ID containing the sources for the bitstream generation
+    - - ``G_DIT_ID_LSB``
+      - vector
+      - 0x0000
+      - 16 LSB of the git ID containing the sources for the bitstream generation
 
 Inputs and Outputs
 ------------------
 
-============== ========== ========= ======== ====
-Pin Name       Pin Number Direction Resistor Slew
-============== ========== ========= ======== ====
-PAD_I_CLK      Y9         in        \-       \-
-PAD_RST_N      BTN6       in        \-       \-
-PAD_I_UART_RX  Y11        in        \-       \-
-PAD_O_UART_TX  AA11       out       \-       \-
-PAD_I_SWITCH_0 F22        in        \-       \-
-PAD_I_SWITCH_1 G22        in        \-       \-
-PAD_I_SWITCH_2 H22        in        \-       \-
-PAD_O_LED_0    T22        out       \-       \-
-============== ========== ========= ======== ====
+.. list-table::
+    :widths: 25 10 15 15 45
+    :header-rows: 1
+
+    - - Port Name
+      - Type
+      - Direction
+      - Default Value
+      - Description
+    - - ``PAD_I_CLK``
+      - std_logic
+      - in
+      - \-
+      - Input clock
+    - - ``PAD_RST_N``
+      - std_logic
+      - in
+      - \-
+      - Input asynchronous reset, active low
+    - - ``PAD_I_UART_RX``
+      - std_logic
+      - in
+      - \-
+      - Input UART RX line
+    - - ``PAD_O_UART_TX``
+      - std_logic
+      - out
+      - 1
+      - Output UART TX line
+    - - ``PAD_I_SWITCH_0``
+      - std_logic
+      - in
+      - \-
+      - Input switch 0
+    - - ``PAD_I_SWITCH_1``
+      - std_logic
+      - in
+      - \-
+      - Input switch 1
+    - - ``PAD_I_SWITCH_2``
+      - std_logic
+      - in
+      - \-
+      - Input switch 2
+    - - ``PAD_I_LED_0``
+      - std_logic
+      - out
+      - 1
+      - Output LED 0
 
 Overview
 --------
@@ -31,3 +85,6 @@ Overview
 The following figure depicts the Top-Level:
 
 .. image:: ../_static/svg/UART-TOP_FPGA.svg
+
+Architecture
+------------
