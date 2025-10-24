@@ -563,7 +563,6 @@ begin
                 proc_uart_check_default_value(C_REG_9A);
                 proc_uart_check_default_value(C_REG_CD);
                 proc_uart_check_default_value(C_REG_EF);
-                proc_uart_check_default_value(C_REG_1_BIT);
                 proc_uart_check_default_value(C_REG_16_BITS);
                 proc_uart_check_default_value(C_REG_DEAD);
 
@@ -581,7 +580,6 @@ begin
                 proc_uart_check_read_only(C_REG_9A);
                 proc_uart_check_read_only(C_REG_CD);
                 proc_uart_check_read_only(C_REG_EF);
-                proc_uart_check_read_only(C_REG_SWITCHES);
                 proc_uart_check_read_only(C_REG_DEAD);
 
                 info("");
@@ -589,16 +587,12 @@ begin
                 info(" Checking read-write registers");
                 info("-----------------------------------------------------------------------------");
 
-                proc_uart_check_read_write(C_REG_1_BIT, x"0000");
                 proc_uart_check_read_write(C_REG_16_BITS, not C_REG_16_BITS.data);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Writing some values to read-write registers");
                 info("-----------------------------------------------------------------------------");
-
-                proc_uart_write(C_REG_1_BIT, x"0001");
-                proc_uart_check(C_REG_1_BIT, x"0001");
 
                 proc_uart_write(C_REG_16_BITS, x"ABCD");
                 proc_uart_check(C_REG_16_BITS, x"ABCD");
@@ -857,7 +851,51 @@ begin
                 -- Ensure UART still usable
                 proc_uart_check(C_REG_GIT_ID_MSB, C_REG_GIT_ID_MSB.data);
 
-            elsif (run("test_switches_toggling")) then
+            elsif (run("test_led_and_switches_toggling")) then
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking register REG_LED characteristics (read-write)");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Check default value
+                proc_uart_check_default_value(C_REG_LED);
+
+                -- Check register is in read-only
+                proc_uart_check_read_write(C_REG_LED, 15b"0" & not C_REG_LED.data(0));
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Toggling led_0 register");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_write(C_REG_LED, x"0001");
+                wait for 1 ms;
+
+                check_equal(
+                    tb_pad_o_led_0 = '1' and tb_pad_o_led_0'stable(1 ms),
+                    True,
+                    "Ensuring tb_pad_o_led_0 stable at '1' during 1 ms");
+
+                proc_uart_write(C_REG_LED, x"0000");
+                wait for 2.5 ms;
+
+                check_equal(
+                    tb_pad_o_led_0 = '0' and tb_pad_o_led_0'stable(2.5 ms),
+                    True,
+                    "Ensuring tb_pad_o_led_0 stable at '0' 2.5 ms");
+
+                proc_uart_write(C_REG_LED, x"0001");
+                wait for 1.78 ms;
+
+                check_equal(
+                    tb_pad_o_led_0 = '1' and tb_pad_o_led_0'stable(1.78 ms),
+                    True,
+                    "Ensuring tb_pad_o_led_0 stable at '1' during 1.78 ms");
 
                 info("");
                 info("-----------------------------------------------------------------------------");

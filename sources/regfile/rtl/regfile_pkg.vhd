@@ -53,7 +53,7 @@ package REGFILE_PKG is
     constant C_REG_CD_ADDR         : std_logic_vector(8 - 1 downto 0) := 8x"AC"; -- 0xAC
     constant C_REG_SWITCHES_ADDR   : std_logic_vector(8 - 1 downto 0) := 8x"B1"; -- 0xB1
     constant C_REG_EF_ADDR         : std_logic_vector(8 - 1 downto 0) := 8x"DC"; -- 0xDC
-    constant C_REG_1_BIT_ADDR      : std_logic_vector(8 - 1 downto 0) := 8x"EF"; -- 0xEF
+    constant C_REG_LED_ADDR        : std_logic_vector(8 - 1 downto 0) := 8x"EF"; -- 0xEF
     constant C_REG_16_BITS_ADDR    : std_logic_vector(8 - 1 downto 0) := 8x"FF"; -- 0xFF
 
     -- Read-only registers
@@ -66,7 +66,7 @@ package REGFILE_PKG is
     constant C_REG_EF_DATA : std_logic_vector(16 - 1 downto 0) := 16x"EFEF";
 
     -- Read-Write registers value at reset
-    constant C_REG_1_BIT_RST   : std_logic                         := '1';
+    constant C_REG_LED_RST     : std_logic                         := '1';
     constant C_REG_16_BITS_RST : std_logic_vector(16 - 1 downto 0) := x"0000";
 
     -- Specific values for undefined registers

@@ -61,7 +61,10 @@ entity REGFILE is
         -- Write data interface
         I_WRITE_ADDR      : in    std_logic_vector( 8 - 1 downto 0);
         I_WRITE_DATA      : in    std_logic_vector(16 - 1 downto 0);
-        I_WRITE_VALID     : in    std_logic
+        I_WRITE_VALID     : in    std_logic;
+
+        -- Output
+        O_LED_0           : out   std_logic
     );
 end entity REGFILE;
 
@@ -76,7 +79,7 @@ architecture REGFILE_ARCH of REGFILE is
     -- =================================================================================================================
 
     -- RW registers
-    signal reg_1_bit   : std_logic;
+    signal reg_led     : std_logic;
     signal reg_16_bits : std_logic_vector(16 - 1 downto 0);
 
     -- Read interface
@@ -97,7 +100,7 @@ begin
             O_READ_DATA_VALID <= '0';
 
             -- RW registers
-            reg_1_bit   <= C_REG_1_BIT_RST;
+            reg_led     <= C_REG_LED_RST;
             reg_16_bits <= C_REG_16_BITS_RST;
 
             -- Read interface
@@ -159,9 +162,9 @@ begin
 
                         reg_read <= 13b"0" & I_SWITCHES;
 
-                    when C_REG_1_BIT_ADDR =>
+                    when C_REG_LED_ADDR =>
 
-                        reg_read <= 15b"0" & reg_1_bit;
+                        reg_read <= 15b"0" & reg_led;
 
                     when C_REG_16_BITS_ADDR =>
 
@@ -183,9 +186,9 @@ begin
 
                 case I_WRITE_ADDR is
 
-                    when C_REG_1_BIT_ADDR =>
+                    when C_REG_LED_ADDR =>
 
-                        reg_1_bit <= I_WRITE_DATA(0);
+                        reg_led <= I_WRITE_DATA(0);
 
                     when C_REG_16_BITS_ADDR =>
 
@@ -206,5 +209,6 @@ begin
     -- =================================================================================================================
 
     O_READ_DATA <= reg_read;
+    O_LED_0     <= reg_led;
 
 end architecture REGFILE_ARCH;

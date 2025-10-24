@@ -162,7 +162,8 @@ begin
             O_READ_DATA_VALID => read_data_valid,
             I_WRITE_ADDR      => write_addr,
             I_WRITE_DATA      => write_data,
-            I_WRITE_VALID     => write_addr_valid
+            I_WRITE_VALID     => write_addr_valid,
+            O_LED_0           => PAD_O_LED_0
         );
 
 end architecture TOP_FPGA_ARCH;
