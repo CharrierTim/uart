@@ -66,9 +66,8 @@ package REGFILE_PKG is
     constant C_REG_EF_DATA : std_logic_vector(16 - 1 downto 0) := 16x"EFEF";
 
     -- Read-Write registers value at reset
-    constant C_REG_SWITCHES_RST : std_logic_vector( 3 - 1 downto 0) := "000";
-    constant C_REG_1_BIT_RST    : std_logic                         := '1';
-    constant C_REG_16_BITS_RST  : std_logic_vector(16 - 1 downto 0) := x"0000";
+    constant C_REG_1_BIT_RST   : std_logic                         := '1';
+    constant C_REG_16_BITS_RST : std_logic_vector(16 - 1 downto 0) := x"0000";
 
     -- Specific values for undefined registers
     constant C_REG_DEAD : std_logic_vector(16 - 1 downto 0) := x"DEAD";
