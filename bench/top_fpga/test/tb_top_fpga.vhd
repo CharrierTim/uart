@@ -781,6 +781,82 @@ begin
                 -- Read back the register to ensure the data was not written
                 proc_uart_check(C_REG_16_BITS, C_REG_16_BITS.data);
 
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Introducing noise spikes on the UART RX line.");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+                -- =====================================================================================================
+                -- Description: The goal of this first part it to get the filtering to grab the value "010", which
+                -- means a spike of noise when sampling. At tick 7 and 9, the value is high, and at tick 8,
+                -- the value is low.
+                --
+                -- Visual representation of this data bit transition:
+                --
+                --   Idle/Previous Bit                       Current Data Bit                           Next Bit
+                --        (High)                                 (Low)                                   (High)
+                --   ________________                              |                                 __________________
+                --                   \                             |                                /
+                --                    \                            |                               /
+                --                     \                           |                              /
+                --                      \________________________________________________________/
+                --
+                --   Tick:                 0  1  2  3  4  5  6  7  8  9  10  11  12  13  14  15
+                --   Samples:                                   ^  ^  ^
+                --                                          Sample Points (Ticks 7, 8, 9)
+                --
+                -- =====================================================================================================
+
+                info("");
+                info("Introducing noise spikes on the UART RX line.");
+
+                proc_uart_check(C_REG_GIT_ID_MSB, C_REG_GIT_ID_MSB.data);
+
+                -- Select the manual UART
+                tb_i_uart_select <= '1';
+
+                -- Sampling is done at mid-bit - 16th of the bit period, mid-bit and mid-bit + 16th of the bit period
+                tb_i_uart_rx_manual <= '0';
+                wait for 6 * (C_BIT_TIME) / 16; -- Before mid-bit
+                tb_i_uart_rx_manual <= '1';
+                wait for 1 * (C_BIT_TIME) / 16; -- Mid-bit
+                tb_i_uart_rx_manual <= '0';
+                wait for 1 * (C_BIT_TIME) / 16; -- After mid-bit
+
+                -- Continue the bit as high to be invalid
+                tb_i_uart_rx_manual <= '1';
+                wait for C_BIT_TIME;
+
+                -- Ensure UART still usable
+                proc_uart_check(C_REG_GIT_ID_MSB, C_REG_GIT_ID_MSB.data);
+
+                -- =====================================================================================================
+                -- Same as before, but this time the noise spike is inverted: "101"
+                -- =====================================================================================================
+
+                proc_uart_check(C_REG_GIT_ID_MSB, C_REG_GIT_ID_MSB.data);
+
+                -- Select the manual UART
+                tb_i_uart_select    <= '1';
+
+                tb_i_uart_rx_manual <= '0';
+                wait for 200 ns;
+                tb_i_uart_rx_manual <= '1';
+                wait for 6 * (C_BIT_TIME) / 16; -- Before mid-bit
+                wait for 1 * (C_BIT_TIME) / 16; -- Mid-bit
+                tb_i_uart_rx_manual <= '0';
+                wait for 1 * (C_BIT_TIME) / 16; -- After mid-bit
+
+                -- Continue the bit as high to be invalid
+                tb_i_uart_rx_manual <= '1';
+                wait for C_BIT_TIME;
+
+                -- Ensure UART still usable
+                proc_uart_check(C_REG_GIT_ID_MSB, C_REG_GIT_ID_MSB.data);
+
             elsif (run("test_switches_toggling")) then
 
                 info("");
