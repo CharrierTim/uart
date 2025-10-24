@@ -581,6 +581,7 @@ begin
                 proc_uart_check_read_only(C_REG_9A);
                 proc_uart_check_read_only(C_REG_CD);
                 proc_uart_check_read_only(C_REG_EF);
+                proc_uart_check_read_only(C_REG_SWITCHES);
                 proc_uart_check_read_only(C_REG_DEAD);
 
                 info("");
@@ -779,6 +780,45 @@ begin
 
                 -- Read back the register to ensure the data was not written
                 proc_uart_check(C_REG_16_BITS, C_REG_16_BITS.data);
+
+            elsif (run("test_switches_toggling")) then
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking register REG_SWITCHES characteristics (read-only)");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Check default value
+                proc_uart_check_default_value(C_REG_SWITCHES);
+
+                -- Check register is in read-only
+                proc_uart_check_read_only(C_REG_SWITCHES);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Toggling input switches - Testing combinations");
+                info("-----------------------------------------------------------------------------");
+
+                for i in 0 to 7 loop
+
+                    -- Set switches according to bit pattern
+                    tb_pad_i_switch_0 <= std_logic(to_unsigned(i, 3)(0));
+                    tb_pad_i_switch_1 <= std_logic(to_unsigned(i, 3)(1));
+                    tb_pad_i_switch_2 <= std_logic(to_unsigned(i, 3)(2));
+                    wait for 1 ns; -- Signal propagation
+
+                    info("");
+                    info("Testing combination :"           & " SW2=" &
+                        std_logic'image(tb_pad_i_switch_2) & " SW1=" &
+                        std_logic'image(tb_pad_i_switch_1) & " SW0=" &
+                        std_logic'image(tb_pad_i_switch_0));
+
+                    proc_uart_check(C_REG_SWITCHES, std_logic_vector(to_unsigned(i, 16)));
+                end loop;
 
             end if;
 
