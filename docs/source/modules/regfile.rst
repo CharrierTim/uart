@@ -19,7 +19,7 @@ REG_9A         0xAB    R    Internal register 5
 REG_CD         0xAC    R    Internal register 6
 REG_EF         0xDC    R    Internal register 7
 REG_SWITCHES   0xB1    R    Status from the input switches
-REG_1_BIT      0xEF    RW   Register with LSB bit writable
+REG_LED        0xEF    RW   Register with LSB bit writable controlling an LED
 REG_16_BITS    0xFF    RW   Register with all bits writable
 ============== ======= ==== ===================================================
 
@@ -236,10 +236,10 @@ Bits Reset Name     Description
 0    0x0   SWITCH_0 Signal from PAD_I_SWITCH_0
 ==== ===== ======== ==========================
 
-REG_1_BIT
-~~~~~~~~~
+REG_LED
+~~~~~~~
 
-Register with LSB bit writable
+Register with LSB bit writable controlling an LED
 
 - Address: ``0xEF``
 - Reset default: ``0x0001``
@@ -249,14 +249,14 @@ Fields
 
 .. wavedrom::
 
-    {"reg": [{"name": "BIT0", "bits": 1, "attr": ["rw"], "rotate": -90, "type": 3}, {"name": "Reserved", "bits": 15, "attr": ["ro"], "rotate": 0, "type": 2}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+    {"reg": [{"name": "LED_0", "bits": 1, "attr": ["rw"], "rotate": -90, "type": 3}, {"name": "Reserved", "bits": 15, "attr": ["ro"], "rotate": 0, "type": 2}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
 
-==== ===== ==== ============
-Bits Reset Name Description
-==== ===== ==== ============
-15:1 0x0        Reserved
-0    0x1   BIT0 Writable bit
-==== ===== ==== ============
+==== ===== ===== ============
+Bits Reset Name  Description
+==== ===== ===== ============
+15:1 0x0         Reserved
+0    0x1   LED_0 Writable bit
+==== ===== ===== ============
 
 REG_16_BITS
 ~~~~~~~~~~~
