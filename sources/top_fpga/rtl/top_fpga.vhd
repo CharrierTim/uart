@@ -44,8 +44,8 @@ entity TOP_FPGA is
     );
     port (
         -- Clock and reset
-        PAD_CLK        : in    std_logic;
-        PAD_RST_N      : in    std_logic;
+        PAD_I_CLK      : in    std_logic;
+        PAD_I_RST_N    : in    std_logic;
 
         -- UART
         PAD_I_UART_RX  : in    std_logic;
@@ -114,8 +114,8 @@ begin
             G_DEFAULT_VALUE => C_RESYNC_DEFAULT_VALUE
         )
         port map (
-            CLK          => PAD_CLK,
-            RST_N        => PAD_RST_N,
+            CLK          => PAD_I_CLK,
+            RST_N        => PAD_I_RST_N,
             I_DATA_ASYNC => async_inputs_slv,
             O_DATA_SYNC  => sync_inputs_slv
         );
@@ -130,8 +130,8 @@ begin
             G_BAUD_RATE_BPS => C_BAUD_RATE_BPS
         )
         port map (
-            CLK               => PAD_CLK,
-            RST_N             => PAD_RST_N,
+            CLK               => PAD_I_CLK,
+            RST_N             => PAD_I_RST_N,
             I_UART_RX         => PAD_I_UART_RX,
             O_UART_TX         => PAD_O_UART_TX,
             O_READ_ADDR       => read_addr,
@@ -153,8 +153,8 @@ begin
             G_GIT_ID_LSB => G_GIT_ID(15 downto  0)
         )
         port map (
-            CLK               => PAD_CLK,
-            RST_N             => PAD_RST_N,
+            CLK               => PAD_I_CLK,
+            RST_N             => PAD_I_RST_N,
             I_SWITCHES        => sync_inputs_slv,
             I_READ_ADDR       => read_addr,
             I_READ_ADDR_VALID => read_addr_valid,

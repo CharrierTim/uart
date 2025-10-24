@@ -84,8 +84,8 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     -- =================================================================================================================
 
     -- DUT signals
-    signal tb_clk                  : std_logic;
-    signal tb_rst_n                : std_logic;
+    signal tb_pad_i_clk            : std_logic;
+    signal tb_pad_i_rst_n          : std_logic;
     signal tb_pad_i_uart_rx        : std_logic;
     signal tb_pad_o_uart_tx        : std_logic;
     signal tb_pad_i_switch_0       : std_logic;
@@ -119,8 +119,8 @@ begin
             G_GIT_ID => C_GIT_ID
         )
         port map (
-            CLK            => tb_clk,
-            RST_N          => tb_rst_n,
+            PAD_I_CLK      => tb_pad_i_clk,
+            PAD_I_RST_N    => tb_pad_i_rst_n,
             PAD_I_UART_RX  => tb_i_uart_rx,
             PAD_O_UART_TX  => tb_pad_o_uart_tx,
             PAD_I_SWITCH_0 => tb_pad_i_switch_0,
@@ -159,13 +159,13 @@ begin
 
     p_clock_gen : process is
     begin
-        tb_clk <= '0';
+        tb_pad_i_clk <= '0';
 
         l_clock_gen : loop
             wait for C_CLK_PERIOD / 2;
-            tb_clk <= '1';
+            tb_pad_i_clk <= '1';
             wait for C_CLK_PERIOD / 2;
-            tb_clk <= '0';
+            tb_pad_i_clk <= '0';
         end loop l_clock_gen;
 
     end process p_clock_gen;
@@ -254,7 +254,7 @@ begin
         begin
 
             -- Reset the DUT by setting the input state to all zeros
-            tb_rst_n                <= '0';
+            tb_pad_i_rst_n          <= '0';
 
             tb_i_uart_select        <= '0';
             tb_i_uart_rx_manual     <= '0';
@@ -273,7 +273,7 @@ begin
             wait for c_clock_cycles * C_CLK_PERIOD;
 
             -- Reassert reset
-            tb_rst_n                <= '1';
+            tb_pad_i_rst_n          <= '1';
 
             -- Wait for the DUT to step over
             wait for 5 ns;
