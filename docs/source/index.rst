@@ -8,5 +8,6 @@ Documentation of the UART Project.
     :caption: Architecture:
 
     modules/top_fpga
+    modules/resync_slv
     modules/regfile
     modules/uart
