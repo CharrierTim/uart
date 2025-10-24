@@ -155,7 +155,7 @@ begin
         port map (
             CLK               => CLK,
             RST_N             => RST_N,
-            I_SWITCHES        => async_inputs_slv,
+            I_SWITCHES        => sync_inputs_slv,
             I_READ_ADDR       => read_addr,
             I_READ_ADDR_VALID => read_addr_valid,
             O_READ_DATA       => read_data,
