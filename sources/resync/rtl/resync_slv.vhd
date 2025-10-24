@@ -44,8 +44,8 @@ entity RESYNC_SLV is
     port (
         CLK          : in    std_logic;
         RST_N        : in    std_logic;
-        I_DATA_ASYNC : in    std_logic_vector(G_DEFAULT_VALUE'range);
-        O_DATA_SYNC  : out   std_logic_vector(G_DEFAULT_VALUE'range)
+        I_DATA_ASYNC : in    std_logic_vector(G_WIDTH - 1 downto 0);
+        O_DATA_SYNC  : out   std_logic_vector(G_WIDTH - 1 downto 0)
     );
 end entity RESYNC_SLV;
 
