@@ -812,10 +812,10 @@ begin
                     wait for 1 ns; -- Signal propagation
 
                     info("");
-                    info("Testing combination :"           & " SW2=" &
-                        std_logic'image(tb_pad_i_switch_2) & " SW1=" &
-                        std_logic'image(tb_pad_i_switch_1) & " SW0=" &
-                        std_logic'image(tb_pad_i_switch_0));
+                    info("Testing combination :"                     &
+                        " SW2=" & std_logic'image(tb_pad_i_switch_2) &
+                        " SW1=" & std_logic'image(tb_pad_i_switch_1) &
+                        " SW0=" & std_logic'image(tb_pad_i_switch_0));
 
                     proc_uart_check(C_REG_SWITCHES, std_logic_vector(to_unsigned(i, 16)));
                 end loop;
