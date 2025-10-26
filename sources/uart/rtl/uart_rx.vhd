@@ -89,7 +89,8 @@ architecture UART_RX_ARCH of UART_RX is
 
     -- Sampling constants
     constant C_OVERSAMPLE_COUNTER_WIDTH : integer := integer(ceil(log2(real(G_SAMPLING_RATE))));
-    constant C_MID_BIT_SAMPLE_POINT     : integer := G_SAMPLING_RATE / 2;
+    constant C_OVERSAMPLE_MAX           : integer := G_SAMPLING_RATE - 1;
+    constant C_MID_BIT_SAMPLE_POINT     : integer := C_OVERSAMPLE_MAX / 2;
 
     -- =================================================================================================================
     -- SIGNAL
@@ -235,7 +236,7 @@ begin
             -- =========================================================================================================
 
             if (rx_baud_tick = '1' and next_count_enable = '1') then
-                if (oversampling_count = G_SAMPLING_RATE - 1) then
+                if (oversampling_count = C_OVERSAMPLE_MAX) then
 
                     -- One full bit period has passed (16 ticks at 16x oversampling)
                     oversampling_count <= (others => '0');
@@ -377,7 +378,7 @@ begin
 
             when STATE_START_BIT =>
 
-                if (rx_baud_tick = '1' and oversampling_count = G_SAMPLING_RATE - 1) then
+                if (rx_baud_tick = '1' and oversampling_count = C_OVERSAMPLE_MAX) then
                     if (uart_rx_sampled_bit = '0') then
                         next_state <= STATE_DATA_BITS;
                     else
@@ -406,7 +407,7 @@ begin
 
             when STATE_DATA_BITS =>
 
-                if (data_bit_count = 7 and oversampling_count = G_SAMPLING_RATE - 1 and rx_baud_tick = '1') then
+                if (data_bit_count = 7 and oversampling_count = C_OVERSAMPLE_MAX and rx_baud_tick = '1') then
                     next_state <= STATE_STOP_BIT;
                 else
                     next_state <= STATE_DATA_BITS;
@@ -423,7 +424,7 @@ begin
 
             when STATE_STOP_BIT =>
 
-                if (rx_baud_tick = '1' and oversampling_count = G_SAMPLING_RATE - 1) then
+                if (rx_baud_tick = '1' and oversampling_count = C_OVERSAMPLE_MAX) then
                     if (uart_rx_sampled_bit = '1') then
                         next_state <= STATE_CLEANUP;
                     else
@@ -510,7 +511,7 @@ begin
 
             when STATE_DATA_BITS =>
 
-                if (rx_baud_tick = '1' and oversampling_count = G_SAMPLING_RATE - 1) then
+                if (rx_baud_tick = '1' and oversampling_count = C_OVERSAMPLE_MAX) then
                     next_o_byte_update <= '1';
                 else
                     next_o_byte_update <= '0';

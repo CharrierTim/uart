@@ -56,6 +56,23 @@ package tb_top_fpga_pkg is
     -- CONSTANTS
     -- =================================================================================================================
 
+    -- Clock period for the testbench
+    constant C_FREQ_HZ    : positive := 50_000_000;
+    constant C_CLK_PERIOD : time     := 1 sec / C_FREQ_HZ;
+
+    -- DUT generics
+    constant C_GIT_ID : std_logic_vector(32 - 1 downto 0) := x"12345678";
+
+    -- UART model constants
+    constant C_BAUD_RATE_BPS       : positive := 115_200;
+    constant C_OVER_SAMPLING_RATE  : positive := 16;
+    constant C_BIT_TIME            : time     := 1 sec / C_BAUD_RATE_BPS;
+    constant C_BIT_TIME_ACCURACY   : time     := 0.01 * C_BIT_TIME;
+    constant C_WRITE_NB_BITS       : positive := 10 * 8; -- 10 bits , 8 chars in total
+    constant C_UART_WRITE_CMD_TIME : time     := C_BIT_TIME * C_WRITE_NB_BITS;
+    constant C_READ_NB_BITS        : positive := 10 * 9; -- 10 bits , 9 chars in total
+    constant C_UART_READ_CMD_TIME  : time     := C_BIT_TIME * C_READ_NB_BITS;
+
     -- vsg_off
     constant C_REG_GIT_ID_MSB : t_reg := (addr => 8x"00", data => 16x"1234", name => "C_REG_GIT_ID_MSB");
     constant C_REG_GIT_ID_LSB : t_reg := (addr => 8x"01", data => 16x"5678", name => "C_REG_GIT_ID_LSB");
