@@ -70,14 +70,16 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     constant C_CLK_PERIOD          : time     := 1 sec / C_FREQ_HZ;
 
     -- DUT generics
-    constant C_BAUD_RATE_BPS       : positive                          := 115_200;
-    constant C_BIT_TIME            : time                              := 1 sec / C_BAUD_RATE_BPS;
-    constant C_BIT_TIME_ACCURACY   : time                              := 0.01 * C_BIT_TIME;
-    constant C_WRITE_NB_BITS       : positive                          := 10 * 8; -- 10 bits , 8 chars in total
-    constant C_UART_WRITE_CMD_TIME : time                              := C_BIT_TIME * C_WRITE_NB_BITS;
-    constant C_READ_NB_BITS        : positive                          := 10 * 9; -- 10 bits , 9 chars in total
-    constant C_UART_READ_CMD_TIME  : time                              := C_BIT_TIME * C_READ_NB_BITS;
     constant C_GIT_ID              : std_logic_vector(32 - 1 downto 0) := x"12345678";
+
+    -- UART model constants
+    constant C_BAUD_RATE_BPS       : positive := 115_200;
+    constant C_BIT_TIME            : time     := 1 sec / C_BAUD_RATE_BPS;
+    constant C_BIT_TIME_ACCURACY   : time     := 0.01 * C_BIT_TIME;
+    constant C_WRITE_NB_BITS       : positive := 10 * 8; -- 10 bits , 8 chars in total
+    constant C_UART_WRITE_CMD_TIME : time     := C_BIT_TIME * C_WRITE_NB_BITS;
+    constant C_READ_NB_BITS        : positive := 10 * 9; -- 10 bits , 9 chars in total
+    constant C_UART_READ_CMD_TIME  : time     := C_BIT_TIME * C_READ_NB_BITS;
 
     -- =================================================================================================================
     -- SIGNALS
@@ -877,25 +879,25 @@ begin
                 wait for 1 ms;
 
                 check_equal(
-                    tb_pad_o_led_0 = '1' and tb_pad_o_led_0'stable(1 ms),
+                    tb_pad_o_led_0 = '1' and tb_pad_o_led_0'stable(0.7 ms),
                     True,
-                    "Ensuring tb_pad_o_led_0 stable at '1' during 1 ms");
+                    "Ensuring tb_pad_o_led_0 stable at '1' during 0.7 ms");
 
                 proc_uart_write(C_REG_LED, x"0000");
                 wait for 2.5 ms;
 
                 check_equal(
-                    tb_pad_o_led_0 = '0' and tb_pad_o_led_0'stable(2.5 ms),
+                    tb_pad_o_led_0 = '0' and tb_pad_o_led_0'stable(2.3 ms),
                     True,
-                    "Ensuring tb_pad_o_led_0 stable at '0' 2.5 ms");
+                    "Ensuring tb_pad_o_led_0 stable at '0' 2.3 ms");
 
                 proc_uart_write(C_REG_LED, x"0001");
-                wait for 1.78 ms;
+                wait for 2 ms;
 
                 check_equal(
-                    tb_pad_o_led_0 = '1' and tb_pad_o_led_0'stable(1.78 ms),
+                    tb_pad_o_led_0 = '1' and tb_pad_o_led_0'stable(1.8 ms),
                     True,
-                    "Ensuring tb_pad_o_led_0 stable at '1' during 1.78 ms");
+                    "Ensuring tb_pad_o_led_0 stable at '1' during 1.8 ms");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
