@@ -75,6 +75,7 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- UART
     constant C_CLK_FREQ_HZ          : positive := 50_000_000;
     constant C_BAUD_RATE_BPS        : positive := 115_200;
+    constant C_SAMPLING_RATE        : positive := 16;
 
     -- =================================================================================================================
     -- SIGNALS
@@ -127,7 +128,8 @@ begin
     inst_uart : entity lib_rtl.uart
         generic map (
             G_CLK_FREQ_HZ   => C_CLK_FREQ_HZ,
-            G_BAUD_RATE_BPS => C_BAUD_RATE_BPS
+            G_BAUD_RATE_BPS => C_BAUD_RATE_BPS,
+            G_SAMPLING_RATE => C_SAMPLING_RATE
         )
         port map (
             CLK               => PAD_I_CLK,
