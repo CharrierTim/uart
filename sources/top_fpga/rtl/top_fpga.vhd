@@ -81,8 +81,8 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- =================================================================================================================
 
     -- Resynchronization
-    signal async_inputs_slv         : std_logic_vector(3 - 1 downto 0);
-    signal sync_inputs_slv          : std_logic_vector(3 - 1 downto 0);
+    signal async_inputs_slv         : std_logic_vector(C_RESYNC_DEFAULT_VALUE'range);
+    signal sync_inputs_slv          : std_logic_vector(C_RESYNC_DEFAULT_VALUE'range);
 
     -- Read interface
     signal read_addr                : std_logic_vector( 8 - 1 downto 0);
