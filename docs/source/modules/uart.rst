@@ -30,6 +30,10 @@ Generics
       - positive
       - 0d115\_200
       - Baud rate in bps
+    - - ``G_SAMPLING_RATE``
+      - positive
+      - 0d16
+      - Sampling rate (number of clock cycles per bit)
 
 Inputs and Outputs
 ------------------
