@@ -161,7 +161,7 @@ register, which contains the current bit being transmitted.
 FSM
 ~~~
 
-The UART FSM handling the above protocol is defined as:
+The UART FSM handling is defined as:
 
 .. image:: ../_static/svg/UART-UART-TX_FSM.svg
 
