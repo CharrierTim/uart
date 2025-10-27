@@ -403,7 +403,7 @@ begin
             -- Protocol is: RAB1235\r
             --       Where:     - A    is the address MSB
             --                  - B    is the address LSB
-            --                  - 1234 is the data (1 MSB, 4 LSB)
+            --                  - 1234 is the data
             --                  - \r   is the carriage return
             -- =========================================================================================================
 
@@ -525,7 +525,7 @@ begin
             -- Protocol is: RAB1235\r
             --       Where:     - A    is the address MSB
             --                  - B    is the address LSB
-            --                  - 1234 is the data (1 MSB, 4 LSB)
+            --                  - 1234 is the data
             --                  - \r   is the carriage return
             -- =========================================================================================================
 
