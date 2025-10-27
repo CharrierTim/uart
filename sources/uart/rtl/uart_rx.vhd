@@ -74,7 +74,7 @@ architecture UART_RX_ARCH of UART_RX is
         STATE_START_BIT,
         STATE_DATA_BITS,
         STATE_STOP_BIT,
-        STATE_CLEANUP,
+        STATE_DONE,
         STATE_START_BIT_ERROR,
         STATE_STOP_BIT_ERROR
     );
@@ -426,7 +426,7 @@ begin
 
                 if (rx_baud_tick = '1' and oversampling_count = C_OVERSAMPLE_MAX) then
                     if (uart_rx_sampled_bit = '1') then
-                        next_state <= STATE_CLEANUP;
+                        next_state <= STATE_DONE;
                     else
                         next_state <= STATE_STOP_BIT_ERROR;
                     end if;
@@ -451,7 +451,7 @@ begin
             -- transitions back to the IDLE state.
             -- =========================================================================================================
 
-            when STATE_CLEANUP =>
+            when STATE_DONE =>
 
                 next_state <= STATE_IDLE;
 
@@ -535,7 +535,7 @@ begin
             -- STATE: CLEANUP
             -- =========================================================================================================
 
-            when STATE_CLEANUP =>
+            when STATE_DONE =>
 
                 next_o_data_valid <= '1';
 
