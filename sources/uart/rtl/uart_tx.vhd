@@ -66,9 +66,7 @@ architecture UART_TX_ARCH of UART_TX is
 
     type t_tx_state is (
         STATE_IDLE,
-        STATE_START_BIT,
-        STATE_DATA_BITS,
-        STATE_STOP_BIT,
+        STATE_SEND_BYTE,
         STATE_DONE
     );
 
@@ -80,6 +78,10 @@ architecture UART_TX_ARCH of UART_TX is
     constant C_TX_CLK_DIV_RATIO  : integer := G_CLK_FREQ_HZ / G_BAUD_RATE_BPS;
     constant C_BAUD_COUNTER_BITS : integer := integer(ceil(log2(real(C_TX_CLK_DIV_RATIO))));
 
+    -- Data register
+    constant C_TX_NB_BITS        : integer := 10;
+    constant C_TX_COUNT_WIDTH    : integer := integer(ceil(log2(real(C_TX_NB_BITS))));
+
     -- =================================================================================================================
     -- SIGNAL
     -- =================================================================================================================
@@ -87,18 +89,17 @@ architecture UART_TX_ARCH of UART_TX is
     -- Baud rate generators
     signal tx_baud_counter       : unsigned(C_BAUD_COUNTER_BITS - 1 downto 0);
     signal tx_baud_tick          : std_logic;
-    signal tx_current_bit_index  : unsigned(3 - 1 downto 0);
+    signal tx_current_bit_index  : unsigned(C_TX_COUNT_WIDTH - 1 downto 0);
 
     -- FSM signals
     signal current_state         : t_tx_state;
     signal next_state            : t_tx_state;
     signal next_tx_data          : std_logic_vector(8 - 1 downto 0);
-    signal next_count_enable     : std_logic;
     signal next_o_uart_tx        : std_logic;
     signal next_o_done           : std_logic;
 
     -- Data register
-    signal tx_data_reg           : std_logic_vector(8 - 1 downto 0);
+    signal tx_data_reg           : std_logic_vector(C_TX_NB_BITS - 1 downto 0);
 
 begin
 
@@ -123,7 +124,7 @@ begin
             -- =========================================================================================================
 
             -- Counter handling
-            if (next_count_enable = '1') then
+            if (current_state = STATE_SEND_BYTE) then
                 if (tx_baud_counter >= C_TX_CLK_DIV_RATIO - 1) then
 
                     tx_baud_counter <= (others => '0');
@@ -161,8 +162,8 @@ begin
             -- =========================================================================================================
 
             if (current_state = STATE_IDLE) then
-                tx_data_reg <= next_tx_data;
-            elsif (current_state = STATE_DATA_BITS and tx_baud_tick = '1') then
+                tx_data_reg <= '1' & next_tx_data & '0'; -- 1 for stop bit, 0 for start bit
+            elsif (current_state = STATE_SEND_BYTE and tx_baud_tick = '1') then
                 tx_data_reg <= '1' & tx_data_reg(tx_data_reg'high downto tx_data_reg'low + 1);
             end if;
 
@@ -170,9 +171,9 @@ begin
             -- Bit index counter for data bits transmission
             -- =========================================================================================================
 
-            if (current_state /= STATE_DATA_BITS) then
+            if (current_state /= STATE_SEND_BYTE) then
                 tx_current_bit_index <= (others => '0');
-            elsif (current_state = STATE_DATA_BITS and tx_baud_tick = '1') then
+            elsif (current_state = STATE_SEND_BYTE and tx_baud_tick = '1') then
                 tx_current_bit_index <= tx_current_bit_index + 1;
             end if;
 
@@ -220,51 +221,23 @@ begin
             when STATE_IDLE =>
 
                 if (I_BYTE_VALID = '1') then
-                    next_state <= STATE_START_BIT;
+                    next_state <= STATE_SEND_BYTE;
                 else
                     next_state <= STATE_IDLE;
                 end if;
 
             -- =========================================================================================================
-            -- STATE: START BIT
+            -- STATE: SEND BYTE
             -- =========================================================================================================
-            -- In start bit state, the module transmits the start bit (0).
-            -- =========================================================================================================
-
-            when STATE_START_BIT =>
-
-                if (tx_baud_tick = '1') then
-                    next_state <= STATE_DATA_BITS;
-                else
-                    next_state <= STATE_START_BIT;
-                end if;
-
-            -- =========================================================================================================
-            -- STATE: DATA BITS
-            -- =========================================================================================================
-            -- In data bits state, the module transmits each bit of the data byte.
+            -- In this state, send the start bit, the data and the stop bit
             -- =========================================================================================================
 
-            when STATE_DATA_BITS =>
+            when STATE_SEND_BYTE =>
 
-                if (tx_current_bit_index >= 7 and tx_baud_tick = '1') then
-                    next_state <= STATE_STOP_BIT;
-                else
-                    next_state <= STATE_DATA_BITS;
-                end if;
-
-            -- =========================================================================================================
-            -- STATE: STOP BIT
-            -- =========================================================================================================
-            -- In stop bit state, the module transmits the stop bit (1).
-            -- =========================================================================================================
-
-            when STATE_STOP_BIT =>
-
-                if (tx_baud_tick = '1') then
+                if (tx_current_bit_index >= C_TX_NB_BITS and tx_baud_tick = '1') then
                     next_state <= STATE_DONE;
                 else
-                    next_state <= STATE_STOP_BIT;
+                    next_state <= STATE_SEND_BYTE;
                 end if;
 
             -- =========================================================================================================
@@ -297,10 +270,9 @@ begin
     begin
 
         -- Default assignments
-        next_tx_data      <= (others => '0');
-        next_count_enable <= '1';
-        next_o_uart_tx    <= '1';
-        next_o_done       <= '0';
+        next_tx_data   <= (others => '0');
+        next_o_uart_tx <= '1';
+        next_o_done    <= '0';
 
         case current_state is
 
@@ -310,32 +282,15 @@ begin
 
             when STATE_IDLE =>
 
-                next_count_enable <= '0';
-                next_tx_data      <= I_BYTE;
+                next_tx_data <= I_BYTE;
 
             -- =========================================================================================================
-            -- STATE: START BIT
+            -- STATE: SEND BYTE
             -- =========================================================================================================
 
-            when STATE_START_BIT =>
-
-                next_o_uart_tx <= '0';
-
-            -- =========================================================================================================
-            -- STATE: DATA BITS
-            -- =========================================================================================================
-
-            when STATE_DATA_BITS =>
+            when STATE_SEND_BYTE =>
 
                 next_o_uart_tx <= tx_data_reg(tx_data_reg'low);
-
-            -- =========================================================================================================
-            -- STATE: STOP BITS
-            -- =========================================================================================================
-
-            when STATE_STOP_BIT =>
-
-                next_o_uart_tx <= '1';
 
             -- =========================================================================================================
             -- STATE: DONE
@@ -343,8 +298,7 @@ begin
 
             when STATE_DONE =>
 
-                next_count_enable <= '0';
-                next_o_done       <= '1';
+                next_o_done <= '1';
 
             -- =========================================================================================================
             -- DEFAULT CASE: should not occur
@@ -352,10 +306,9 @@ begin
 
             when others =>
 
-                next_tx_data      <= (others => '0');
-                next_count_enable <= '1';
-                next_o_uart_tx    <= '1';
-                next_o_done       <= '0';
+                next_tx_data   <= (others => '0');
+                next_o_uart_tx <= '1';
+                next_o_done    <= '0';
 
         end case;
 
