@@ -12,3 +12,8 @@
 
 # VSCode
 **/.vscode/
+
+# Vivado
+synthesis/uart
+**/*vivado.log
+**/*vivado.jou
