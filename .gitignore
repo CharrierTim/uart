@@ -17,3 +17,5 @@
 synthesis/uart
 **/*vivado.log
 **/*vivado.jou
+**/*.backup.log
+**/*.backup.jou
