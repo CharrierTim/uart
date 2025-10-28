@@ -1,3 +1,12 @@
+/*
+ * Filename: /home/tim/projects/uart/synthesis/constraints/pinout.xdc
+ * Path: /home/tim/projects/uart/synthesis/constraints
+ * Created Date: Tuesday, October 28th 2025, 1:53:19 pm
+ * Author: Timothee Charrier
+ *
+ * Copyright (c) 2025 Elsys Design
+ */
+
 ## =====================================================================================================================
 ##  MIT License
 ##
@@ -29,3 +38,24 @@
 ## @date    27/10/2025
 ## =====================================================================================================================
 
+# Clock and reset
+set_property PACKAGE_PIN Y9      [get_ports {PAD_I_CLK}];
+set_property PACKAGE_PIN R16     [get_ports {PAD_I_RST_N}];  # "BTND"
+
+# UART
+set_property PACKAGE_PIN Y11     [get_ports {PAD_I_UART_RX}];
+set_property PACKAGE_PIN AA11    [get_ports {PAD_O_UART_TX}];
+
+# Switches
+set_property PACKAGE_PIN F22     [get_ports {PAD_I_SWITCH_0}]; # "SW0"
+set_property PACKAGE_PIN G22     [get_ports {PAD_I_SWITCH_1}]; # "SW1"
+set_property PACKAGE_PIN H22     [get_ports {PAD_I_SWITCH_2}]; # "SW2"
+
+# LED
+set_property PACKAGE_PIN T22     [get_ports {PAD_O_LED_0}];    # "LD0"
+
+# IOs bank
+set_property IOSTANDARD LVCMOS33 [get_ports -of_objects [get_iobanks 33]];
+set_property IOSTANDARD LVCMOS18 [get_ports -of_objects [get_iobanks 34]];
+set_property IOSTANDARD LVCMOS18 [get_ports -of_objects [get_iobanks 35]];
+set_property IOSTANDARD LVCMOS33 [get_ports -of_objects [get_iobanks 13]];
