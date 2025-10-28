@@ -1,12 +1,3 @@
-/*
- * Filename: /home/tim/projects/uart/synthesis/constraints/pinout.xdc
- * Path: /home/tim/projects/uart/synthesis/constraints
- * Created Date: Tuesday, October 28th 2025, 1:53:19 pm
- * Author: Timothee Charrier
- *
- * Copyright (c) 2025 Elsys Design
- */
-
 ## =====================================================================================================================
 ##  MIT License
 ##
