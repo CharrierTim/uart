@@ -35,153 +35,72 @@
 ## =====================================================================================================================
 
 # Names
-set PROJECT_NAME    "uart"
-set TOP_ENTITY      "TOP_FPGA"
+set    PROJECT_NAME "uart"
+set      TOP_ENTITY "TOP_FPGA"
 
 # FPGA selection
-set FPGA_PART       "xc7a35tcpg236-1"
+set       FPGA_PART "xc7z020clg484-1"
 
 # Target language and VHDL standard
 set TARGET_LANGUAGE "VHDL"
-set VHDL_STANDARD   "VHDL 2008"
+set   VHDL_STANDARD "VHDL 2008"
 
-# Paths - resolve to absolute paths before changing directory
-set ROOT_DIR        [file normalize ".."]
-set SOURCES_DIR     [file normalize "${ROOT_DIR}/sources"]
-set PROJECT_DIR     [file normalize "./${PROJECT_NAME}"]
+# Paths
+set        ROOT_DIR [file normalize ".."]
+set     SOURCES_DIR [file normalize "${ROOT_DIR}/sources"]
+set     PROJECT_DIR [file normalize "./${PROJECT_NAME}"]
 set CONSTRAINTS_DIR [file normalize "./constraints"]
-set PINOUT_FILE     [file normalize "${CONSTRAINTS_DIR}/pinout.xdc"]
-set TIMING_FILE     [file normalize "${CONSTRAINTS_DIR}/timing.xdc"]
+set     RESULTS_DIR [file normalize "./results"]
 
-## =====================================================================================================================
-# Manual File and Library Specification
-## =====================================================================================================================
-
-# Define files with their libraries
-# Format: {library_name file_path}
-# Files are compiled in the order specified here
-
-# Initialize empty list
-set VHDL_FILES_WITH_LIBS {}
-
-# Add files with their libraries (order matters for compilation)
-lappend VHDL_FILES_WITH_LIBS [list lib_rtl "${SOURCES_DIR}/regfile/rtl/regfile_pkg.vhd"]
-lappend VHDL_FILES_WITH_LIBS [list lib_rtl "${SOURCES_DIR}/resync/rtl/resync_slv.vhd"]
-lappend VHDL_FILES_WITH_LIBS [list lib_rtl "${SOURCES_DIR}/regfile/rtl/regfile.vhd"]
-lappend VHDL_FILES_WITH_LIBS [list lib_rtl "${SOURCES_DIR}/uart/rtl/uart_rx.vhd"]
-lappend VHDL_FILES_WITH_LIBS [list lib_rtl "${SOURCES_DIR}/uart/rtl/uart_tx.vhd"]
-lappend VHDL_FILES_WITH_LIBS [list lib_rtl "${SOURCES_DIR}/uart/rtl/uart.vhd"]
-lappend VHDL_FILES_WITH_LIBS [list lib_rtl "${SOURCES_DIR}/top_fpga/rtl/top_fpga.vhd"]
-
-puts ""
-puts "================================================================================================================="
-puts "File List Configuration"
-puts "================================================================================================================="
-puts ""
-puts "Total files specified: [llength $VHDL_FILES_WITH_LIBS]"
-puts ""
-puts "Files and their libraries:"
-foreach file_spec $VHDL_FILES_WITH_LIBS {
-    set lib [lindex $file_spec 0]
-    set file [lindex $file_spec 1]
-    puts "  Library: [format "%-15s" $lib] File: $file"
-}
+# Constraint files
+set     PINOUT_FILE [file normalize "${CONSTRAINTS_DIR}/pinout.xdc"]
+set     TIMING_FILE [file normalize "${CONSTRAINTS_DIR}/timing.xdc"]
 
 ## =====================================================================================================================
 # Create Project
 ## =====================================================================================================================
 
-puts ""
-puts "================================================================================================================="
-puts "Creating Vivado Project: $PROJECT_NAME"
-puts "================================================================================================================="
-
-# Close any open project
-catch {close_project}
-
 # Create project directory if it doesn't exist
-file mkdir $PROJECT_DIR
-cd         $PROJECT_DIR
+file mkdir  $PROJECT_DIR
+cd          $PROJECT_DIR
 
-# Create the project
-create_project $PROJECT_NAME -part $FPGA_PART -force
+create_project -force $PROJECT_NAME $PROJECT_DIR -part $FPGA_PART
 
-# Set target language
+
 set_property target_language $TARGET_LANGUAGE [current_project]
 
-puts ""
-puts "Project created successfully with $TARGET_LANGUAGE as target language"
-
 ## =====================================================================================================================
-# Adding constraint files
+# Read VHDL files
 ## =====================================================================================================================
 
-puts ""
-puts "================================================================================================================="
-puts "Adding constraint files"
-puts "================================================================================================================="
+set VHDL_SOURCES [list \
+    [list lib_rtl "$SOURCES_DIR/resync/rtl/resync_slv.vhd"   2008] \
+    [list lib_rtl "$SOURCES_DIR/regfile/rtl/regfile_pkg.vhd" 2008] \
+    [list lib_rtl "$SOURCES_DIR/regfile/rtl/regfile.vhd"     2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/rtl/uart_rx.vhd"        2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/rtl/uart_tx.vhd"        2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/rtl/uart.vhd"           2008] \
+    [list lib_rtl "$SOURCES_DIR/top_fpga/rtl/top_fpga.vhd"   2008] \
+]
 
-if { [file exists $PINOUT_FILE] } {
-    puts "Adding pinout file: $PINOUT_FILE"
-    add_files -fileset constrs_1 $PINOUT_FILE
-} else {
-    puts "WARNING: Pinout file not found: $PINOUT_FILE"
-}
+foreach source $VHDL_SOURCES {
+    lassign $source lib file std
 
-if { [file exists $TIMING_FILE] } {
-    puts "Adding timing file: $TIMING_FILE"
-    add_files -fileset constrs_1 $TIMING_FILE
-} else {
-    puts "WARNING: Timing file not found: $TIMING_FILE"
-}
-
-## =====================================================================================================================
-# Adding RTL files with library specification
-## =====================================================================================================================
-
-puts ""
-puts "================================================================================================================="
-puts "Adding RTL files to project with library assignments"
-puts "================================================================================================================="
-
-set file_count 0
-foreach file_spec $VHDL_FILES_WITH_LIBS {
-    set lib [lindex $file_spec 0]
-    set file [lindex $file_spec 1]
-
-    if { [file exists $file] } {
-        puts "Adding file: [file tail $file] to library: $lib"
-        add_files -fileset sources_1 $file
-
-        # Set library property
-        set file_obj [get_files $file]
-        set_property library $lib $file_obj
-
-        # Set VHDL 2008 standard
-        set_property FILE_TYPE $VHDL_STANDARD $file_obj
-
-        incr file_count
-    } else {
-        puts "ERROR: File not found: $file"
+    # Verify file exists before reading it
+    if {![file exists $file]} {
+        puts "ERROR: File does not exist: $file"
+        continue
     }
+
+    # Read VHDL file with specified standard
+    read_vhdl -vhdl2008 $file
+
+    # Set library property
+    set_property library $lib [get_files [file tail $file]]
 }
 
-puts ""
-puts "Successfully added $file_count file(s) with library assignments"
-
 ## =====================================================================================================================
-# Setting up Top Level
-## =====================================================================================================================
-
-puts ""
-puts "================================================================================================================="
-puts "Setting Top Level: $TOP_ENTITY"
-puts "================================================================================================================="
-
-set_property top $TOP_ENTITY [current_fileset]
-
-## =====================================================================================================================
-#  Get the git commit
+# Getting GIT ID for internal registers
 ## =====================================================================================================================
 
 set git_hash [exec git log -1 --pretty='%h']
@@ -189,12 +108,71 @@ set GIT_ID $git_hash
 
 set_property generic "G_GIT_ID=32'h$git_hash" [current_fileset]
 
-puts ""
-puts "================================================================================================================="
-puts "Git commit hash: $GIT_ID"
-puts "================================================================================================================="
+## =====================================================================================================================
+# Adding constraint
+## =====================================================================================================================
 
-puts ""
-puts "================================================================================================================="
-puts "Project setup complete!"
-puts "================================================================================================================="
+proc add_constraint_file {xdc_file description} {
+    if {![file exists $xdc_file]} {
+        puts "ERROR: $description file does not exist: $xdc_file"
+        return 0
+    } else {
+        read_xdc $xdc_file
+        puts "Added $description constraints: $xdc_file"
+        return 1
+    }
+}
+
+add_constraint_file $PINOUT_FILE "pinout"
+add_constraint_file $TIMING_FILE "timing"
+
+## =====================================================================================================================
+# Synthesis
+## =====================================================================================================================
+
+synth_design -top $TOP_ENTITY -part $FPGA_PART
+
+# Create synthesis results directory if it doesn't exist
+file mkdir "${RESULTS_DIR}/synth"
+
+# Generate synthesis reports
+report_timing_summary   -file               "${RESULTS_DIR}/synth/${PROJECT_NAME}_timing_synth.rpt"
+report_utilization      -hierarchical -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_hierarchical_synth.rpt"
+report_utilization      -file               "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_synth.rpt"
+
+# Optimize
+opt_design -directive "default"
+
+## =====================================================================================================================
+# Implementation
+## =====================================================================================================================
+
+# Placement
+place_design -directive "default"
+
+# Create implementation results directory if it doesn't exist
+file mkdir "${RESULTS_DIR}/impl"
+
+# Generate placement reports
+report_utilization          -hierarchical -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_utilization_hierarchical_place.rpt"
+report_utilization          -file               "${RESULTS_DIR}/impl/${PROJECT_NAME}_utilization_place.rpt"
+report_io                   -file               "${RESULTS_DIR}/impl/${PROJECT_NAME}_io.rpt"
+report_control_sets         -verbose -file      "${RESULTS_DIR}/impl/${PROJECT_NAME}_control_sets.rpt"
+report_clock_utilization    -file               "${RESULTS_DIR}/impl/${PROJECT_NAME}_clock_utilization.rpt"
+
+# Routing
+route_design            -directive "default"
+phys_opt_design         -directive "default"
+
+# Generate routing reports
+report_timing_summary   -no_header -no_detailed_paths
+report_route_status     -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_route_status.rpt"
+report_drc              -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_drc.rpt"
+report_timing_summary   -datasheet -max_paths 10 -file  "${RESULTS_DIR}/impl/${PROJECT_NAME}_timing.rpt"
+report_power            -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_power.rpt"
+
+## =====================================================================================================================
+# Bitstream generation
+## =====================================================================================================================
+
+write_bitstream -force "${RESULTS_DIR}/${PROJECT_NAME}.bit"
