@@ -66,7 +66,6 @@ cd          $PROJECT_DIR
 
 create_project -force $PROJECT_NAME $PROJECT_DIR -part $FPGA_PART
 
-
 set_property target_language $TARGET_LANGUAGE [current_project]
 
 ## =====================================================================================================================
@@ -136,9 +135,9 @@ synth_design -top $TOP_ENTITY -part $FPGA_PART
 file mkdir "${RESULTS_DIR}/synth"
 
 # Generate synthesis reports
-report_timing_summary   -file               "${RESULTS_DIR}/synth/${PROJECT_NAME}_timing_synth.rpt"
-report_utilization      -hierarchical -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_hierarchical_synth.rpt"
-report_utilization      -file               "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_synth.rpt"
+report_timing_summary       -file               "${RESULTS_DIR}/synth/${PROJECT_NAME}_timing_synth.rpt"
+report_utilization          -hierarchical -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_hierarchical_synth.rpt"
+report_utilization          -file               "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_synth.rpt"
 
 # Optimize
 opt_design -directive "default"
@@ -161,15 +160,15 @@ report_control_sets         -verbose -file      "${RESULTS_DIR}/impl/${PROJECT_N
 report_clock_utilization    -file               "${RESULTS_DIR}/impl/${PROJECT_NAME}_clock_utilization.rpt"
 
 # Routing
-route_design            -directive "default"
-phys_opt_design         -directive "default"
+route_design                -directive "default"
+phys_opt_design             -directive "default"
 
 # Generate routing reports
-report_timing_summary   -no_header -no_detailed_paths
-report_route_status     -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_route_status.rpt"
-report_drc              -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_drc.rpt"
-report_timing_summary   -datasheet -max_paths 10 -file  "${RESULTS_DIR}/impl/${PROJECT_NAME}_timing.rpt"
-report_power            -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_power.rpt"
+report_timing_summary       -no_header -no_detailed_paths
+report_route_status         -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_route_status.rpt"
+report_drc                  -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_drc.rpt"
+report_timing_summary       -datasheet -max_paths 10 -file  "${RESULTS_DIR}/impl/${PROJECT_NAME}_timing.rpt"
+report_power                -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_power.rpt"
 
 ## =====================================================================================================================
 # Bitstream generation
