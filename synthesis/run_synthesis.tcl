@@ -73,13 +73,13 @@ set_property target_language $TARGET_LANGUAGE [current_project]
 ## =====================================================================================================================
 
 set VHDL_SOURCES [list \
-    [list lib_rtl "$SOURCES_DIR/resync/rtl/resync_slv.vhd"   2008] \
-    [list lib_rtl "$SOURCES_DIR/regfile/rtl/regfile_pkg.vhd" 2008] \
-    [list lib_rtl "$SOURCES_DIR/regfile/rtl/regfile.vhd"     2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/rtl/uart_rx.vhd"        2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/rtl/uart_tx.vhd"        2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/rtl/uart.vhd"           2008] \
-    [list lib_rtl "$SOURCES_DIR/top_fpga/rtl/top_fpga.vhd"   2008] \
+    [list lib_rtl "$SOURCES_DIR/resync/resync_slv.vhd"   2008] \
+    [list lib_rtl "$SOURCES_DIR/regfile/regfile_pkg.vhd" 2008] \
+    [list lib_rtl "$SOURCES_DIR/regfile/regfile.vhd"     2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart_rx.vhd"        2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart_tx.vhd"        2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart.vhd"           2008] \
+    [list lib_rtl "$SOURCES_DIR/top_fpga/top_fpga.vhd"   2008] \
 ]
 
 foreach source $VHDL_SOURCES {
