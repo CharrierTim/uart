@@ -150,3 +150,76 @@ def generate_coverage_report_nvc(
     except subprocess.CalledProcessError as e:
         error_message: str = f"Failed to generate coverage report with error: {e}"
         raise RuntimeError(error_message) from e
+
+
+def copy_to_result_dir(
+    ncdb_file: Path = Path("vunit_out/coverage.ncdb"),
+    output_folder: Path = Path("vunit_out/test_output"),
+    result_dir: Path = Path("bench/results"),
+) -> None:
+    """Copy the NCDB file and output.txt file to the result directory.
+
+    Parameters
+    ----------
+    ncdb_file : Path
+        The path to the NCDB coverage file to copy.
+    output_folder : Path
+        The path to the folder containing the output.txt file.
+    result_dir : Path
+        The destination directory where files will be copied.
+
+    Raises
+    ------
+    OSError
+        If the result directory cannot be created.
+    PermissionError
+        If there are insufficient permissions to copy files.
+    """
+    # Create result directory if it doesn't exist
+    try:
+        result_dir.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        sys.stderr.write(f"Error creating result directory {result_dir}: {e}\n")
+        raise
+
+    # Copy NCDB file to result directory
+    if ncdb_file.exists():
+        try:
+            shutil.copy2(src=ncdb_file, dst=result_dir / ncdb_file.name)
+            sys.stdout.write(f"Copied {ncdb_file} to {result_dir}\n")
+        except (OSError, PermissionError) as e:
+            sys.stderr.write(f"Error copying NCDB file {ncdb_file}: {e}\n")
+    else:
+        sys.stdout.write(f"Warning: NCDB file not found at {ncdb_file}\n")
+
+    # Find and copy output.txt file from subdirectory
+    try:
+        output_files = list(output_folder.glob("**/output.txt"))
+        if output_files:
+            # Take the first match (should only be one)
+            output_file = output_files[0]
+            try:
+                shutil.copy2(src=output_file, dst=result_dir / "output.txt")
+                sys.stdout.write(f"Copied {output_file} to {result_dir}\n")
+            except (OSError, PermissionError) as e:
+                sys.stderr.write(f"Error copying output file {output_file}: {e}\n")
+        else:
+            sys.stdout.write(f"Warning: No output.txt file found in {output_folder}\n")
+    except OSError as e:
+        sys.stderr.write(f"Error searching for output.txt in {output_folder}: {e}\n")
+
+
+def post_run_callback(results, VUNIT_SIMULATOR: Literal["nvc", "ghdl", "modelsim"] = "nvc"):
+    """Post-run callback that works for all simulators.
+
+    Parameters
+    ----------
+    results : Any
+        The VUnit test results.
+    """
+    # Generate coverage report only for NVC simulator
+    if VUNIT_SIMULATOR == "nvc":
+        generate_coverage_report_nvc(results)
+
+    # Copy files to result directory (runs for all simulators)
+    copy_to_result_dir()

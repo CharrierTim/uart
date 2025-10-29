@@ -42,7 +42,13 @@ from vunit.ui.source import SourceFileList
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
 
-from utils import generate_coverage_report_nvc, setup_ghdl, setup_modelsim, setup_nvc, setup_simulator
+from utils import (
+    post_run_callback,
+    setup_ghdl,
+    setup_modelsim,
+    setup_nvc,
+    setup_simulator,
+)
 
 ## =====================================================================================================================
 # Set up the simulator environment
@@ -93,4 +99,4 @@ elif VUNIT_SIMULATOR == "ghdl":
 elif VUNIT_SIMULATOR == "modelsim":
     setup_modelsim(VU)
 
-VU.main(post_run=generate_coverage_report_nvc)
+VU.main(post_run=post_run_callback)
