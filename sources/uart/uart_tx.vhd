@@ -161,20 +161,22 @@ begin
             -- Data register loading or shifting
             -- =========================================================================================================
 
-            if (current_state = STATE_IDLE) then
-                tx_data_reg <= '1' & next_tx_data & '0'; -- 1 for stop bit, 0 for start bit
-            elsif (current_state = STATE_SEND_BYTE and tx_baud_tick = '1') then
-                tx_data_reg <= '1' & tx_data_reg(tx_data_reg'high downto tx_data_reg'low + 1);
-            end if;
-
-            -- =========================================================================================================
-            -- Bit index counter for data bits transmission
-            -- =========================================================================================================
-
             if (current_state /= STATE_SEND_BYTE) then
+
+                -- Set the data
+                tx_data_reg <= '1' & next_tx_data & '0'; -- 1 for stop bit, 0 for start bit
+
+                -- Reset counter
                 tx_current_bit_index <= (others => '0');
-            elsif (current_state = STATE_SEND_BYTE and tx_baud_tick = '1') then
+
+            elsif (tx_baud_tick = '1') then
+
+                -- Shift the data
+                tx_data_reg <= '1' & tx_data_reg(tx_data_reg'high downto tx_data_reg'low + 1);
+
+                -- Increment counter
                 tx_current_bit_index <= tx_current_bit_index + 1;
+
             end if;
 
         end if;
