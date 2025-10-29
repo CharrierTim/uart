@@ -46,6 +46,7 @@ set TARGET_LANGUAGE "VHDL"
 set   VHDL_STANDARD "VHDL 2008"
 
 # Paths
+set     CURRENT_DIR [file normalize "."]
 set        ROOT_DIR [file normalize ".."]
 set     SOURCES_DIR [file normalize "${ROOT_DIR}/sources"]
 set     PROJECT_DIR [file normalize "./${PROJECT_NAME}"]
@@ -175,3 +176,14 @@ report_power                -file                           "${RESULTS_DIR}/impl
 ## =====================================================================================================================
 
 write_bitstream -force "${RESULTS_DIR}/${PROJECT_NAME}.bit"
+
+## =====================================================================================================================
+# Move the .log generated to the result folder
+## =====================================================================================================================
+
+# Verify file exists before moving it
+if {![file exists $file]} {
+    puts "ERROR: File does not exist: $file"
+} else {
+    file rename -force "$CURRENT_DIR/vivado.log" "$RESULTS_DIR/${PROJECT_NAME}.log"
+}
