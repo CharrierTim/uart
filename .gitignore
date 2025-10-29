@@ -19,3 +19,4 @@ synthesis/uart
 **/*vivado.jou
 **/*.backup.log
 **/*.backup.jou
+**/*.bit
