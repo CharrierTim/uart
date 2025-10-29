@@ -112,7 +112,6 @@ architecture UART_RX_ARCH of UART_RX is
     -- FSM
     signal current_state                : t_rx_state;
     signal next_state                   : t_rx_state;
-    signal next_count_enable            : std_logic;
     signal next_o_byte_update           : std_logic;
     signal next_start_bit_error         : std_logic;
     signal next_stop_bit_error          : std_logic;
@@ -151,7 +150,7 @@ begin
             -- incoming data.
             -- =========================================================================================================
 
-            if (next_count_enable = '1') then
+            if (current_state /= STATE_IDLE) then
 
                 -- Counter handling
                 if (rx_baud_counter >= C_RX_CLK_DIV_RATIO - 1) then
@@ -235,7 +234,7 @@ begin
             -- is Incremented by one.
             -- =========================================================================================================
 
-            if (rx_baud_tick = '1' and next_count_enable = '1') then
+            if (rx_baud_tick = '1') then
                 if (oversampling_count = C_OVERSAMPLE_MAX) then
 
                     -- One full bit period has passed (16 ticks at 16x oversampling)
@@ -475,7 +474,6 @@ begin
     begin
 
         -- Default assignment
-        next_count_enable    <= '1';
         next_o_byte_update   <= '0';
         next_start_bit_error <= '0';
         next_stop_bit_error  <= '0';
@@ -488,8 +486,6 @@ begin
             -- =========================================================================================================
 
             when STATE_IDLE =>
-
-                next_count_enable <= '0';
 
             -- =========================================================================================================
             -- STATE: START BIT
@@ -545,7 +541,6 @@ begin
 
             when others =>
 
-                next_count_enable    <= '1';
                 next_o_byte_update   <= '0';
                 next_start_bit_error <= '0';
                 next_stop_bit_error  <= '0';
