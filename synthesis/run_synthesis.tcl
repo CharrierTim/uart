@@ -103,10 +103,10 @@ foreach source $VHDL_SOURCES {
 # Getting GIT ID for internal registers
 ## =====================================================================================================================
 
-set git_hash [exec git log -1 --pretty='%h']
-set GIT_ID $git_hash
+set git_hash [exec git log -1 --pretty=%H]
+set GIT_ID   [string range $git_hash 0 7]
 
-set_property generic "G_GIT_ID=32'h$git_hash" [current_fileset]
+set_property generic "G_GIT_ID=32'h$GIT_ID" [current_fileset]
 
 ## =====================================================================================================================
 # Adding constraint
