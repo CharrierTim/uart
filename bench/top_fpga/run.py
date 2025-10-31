@@ -31,6 +31,7 @@
 ## @date    17/10/2025
 ## =====================================================================================================================
 
+import os
 import sys
 from pathlib import Path
 from typing import Literal
@@ -60,11 +61,14 @@ VUNIT_SIMULATOR: Literal["nvc", "ghdl", "modelsim"] = setup_simulator()
 # Define paths and libraries
 ## =====================================================================================================================
 
+CORES_ROOT: Path = Path(__file__).parent.parent.parent / "cores"
 SRC_ROOT: Path = Path(__file__).parent.parent.parent / "sources"
 MODEL_ROOT: Path = Path(__file__).parent.parent / "models"
 BENCH_ROOT: Path = Path(__file__).parent / "test"
+UNISIM_PATH: str = os.path.expanduser(path="~/.nvc/lib/unisim.08")
 
 # Define the libraries
+cores_library_name: str = "lib_cores"
 src_library_name: str = "lib_rtl"
 bench_library_name: str = "lib_bench"
 
@@ -75,6 +79,10 @@ bench_library_name: str = "lib_bench"
 VU: VUnit = VUnit.from_argv()
 VU.add_vhdl_builtins()
 VU.add_verification_components()
+
+# Add PLL core
+LIB_CORES: Library = VU.add_library(library_name=cores_library_name)
+LIB_CORES.add_source_file(file_name=CORES_ROOT / "pll" / "pll_sim.vhd")
 
 # Add the source files to the library
 LIB_SRC: Library = VU.add_library(library_name=src_library_name)
@@ -93,9 +101,9 @@ LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
 VU.set_sim_option(name="disable_ieee_warnings", value=True)
 
 if VUNIT_SIMULATOR == "nvc":
-    setup_nvc(VU)
+    setup_nvc(VU, use_usisim=True)
 elif VUNIT_SIMULATOR == "ghdl":
-    setup_ghdl(VU)
+    setup_ghdl(VU, use_usisim=True)
 elif VUNIT_SIMULATOR == "modelsim":
     setup_modelsim(VU)
 

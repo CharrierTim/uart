@@ -72,7 +72,7 @@ def setup_simulator() -> Literal["nvc", "ghdl", "modelsim"]:
     return VUNIT_SIMULATOR
 
 
-def setup_nvc(VU: vunit) -> None:
+def setup_nvc(VU: vunit, use_usisim=False) -> None:
     """Set up the NVC simulator environment."""
     # Enable coverage collection
     VU.set_sim_option(
@@ -83,11 +83,17 @@ def setup_nvc(VU: vunit) -> None:
         ],
     )
 
+    if use_usisim:
+        VU.add_external_library(library_name="unisim", path=os.path.expanduser(path="~/.nvc/lib/unisim.08"))
 
-def setup_ghdl(VU: vunit) -> None:
+
+def setup_ghdl(VU: vunit, use_usisim=False) -> None:
     """Set up the GHDL simulator environment."""
     # Warn on unused signals and variables
     VU.set_compile_option(name="ghdl.a_flags", value=["--warn-no-hide"])
+
+    if use_usisim:
+        VU.add_external_library(library_name="unisim", path=os.path.expanduser(path="~/.ghdl/xilinx-vivado/unisim/v08"))
 
 
 def setup_modelsim(VU: vunit) -> None:
@@ -194,10 +200,10 @@ def copy_to_result_dir(
 
     # Find and copy output.txt file from subdirectory
     try:
-        output_files = list(output_folder.glob("**/output.txt"))
+        output_files: list[Path] = list(output_folder.glob("**/output.txt"))
         if output_files:
             # Take the first match (should only be one)
-            output_file = output_files[0]
+            output_file: Path = output_files[0]
             try:
                 shutil.copy2(src=output_file, dst=result_dir / "output.txt")
                 sys.stdout.write(f"Copied {output_file} to {result_dir}\n")
