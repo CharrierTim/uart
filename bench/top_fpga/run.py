@@ -31,7 +31,6 @@
 ## @date    17/10/2025
 ## =====================================================================================================================
 
-import os
 import sys
 from pathlib import Path
 from typing import Literal
@@ -65,7 +64,6 @@ CORES_ROOT: Path = Path(__file__).parent.parent.parent / "cores"
 SRC_ROOT: Path = Path(__file__).parent.parent.parent / "sources"
 MODEL_ROOT: Path = Path(__file__).parent.parent / "models"
 BENCH_ROOT: Path = Path(__file__).parent / "test"
-UNISIM_PATH: str = os.path.expanduser(path="~/.nvc/lib/unisim.08")
 
 # Define the libraries
 cores_library_name: str = "lib_cores"
