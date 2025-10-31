@@ -1,5 +1,5 @@
-Seed for lib_bench.tb_top_fpga: 823eec2f8ffced19
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --ieee-warnings=off -H 64m -e --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=vunit_out/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_top_fpga_registers,,test_uart_robustness,,test_led_and_switches_toggling,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga_470465ddee2a14c0a0641caef7654e43cc6c7033/,seed : 823eec2f8ffced19,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga: 2fdd07a96f5e9ca2
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=lib_cores:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_cores --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --ieee-warnings=off -H 64m -e --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=vunit_out/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_top_fpga_registers,,test_uart_robustness,,test_led_and_switches_toggling,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga_470465ddee2a14c0a0641caef7654e43cc6c7033/,seed : 2fdd07a96f5e9ca2,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
                0 ms - default              -    INFO - 
                0 ms - default              -    INFO - DUT has been reset.
                0 ms - default              -    INFO - 
@@ -287,7 +287,7 @@ Seed for lib_bench.tb_top_fpga: 823eec2f8ffced19
               57 ms - default              -    INFO - Testing combination : SW2='1' SW1='1' SW0='1'
               57 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
               58 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0007, got 0x0007 - Got 0000_0000_0000_0111 (7).
-** Note: 58618290ns+13: STOP called with status 0
+** Note: 58613575ns+13: STOP called with status 0
    Procedure STOP [INTEGER] at ../lib/std.08/env-body.vhd:27
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
