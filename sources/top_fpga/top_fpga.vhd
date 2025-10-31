@@ -45,7 +45,7 @@ entity TOP_FPGA is
     port (
         -- Clock and reset
         PAD_I_CLK      : in    std_logic;
-        PAD_I_RST_N    : in    std_logic;
+        PAD_I_RST_H    : in    std_logic;
 
         -- UART
         PAD_I_UART_RX  : in    std_logic;
@@ -81,6 +81,9 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- SIGNALS
     -- =================================================================================================================
 
+    -- Internal reset and clock
+    signal internal_rst_n           : std_logic;
+
     -- Resynchronization
     signal async_inputs_slv         : std_logic_vector(C_RESYNC_DEFAULT_VALUE'range);
     signal sync_inputs_slv          : std_logic_vector(C_RESYNC_DEFAULT_VALUE'range);
@@ -97,6 +100,9 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal write_addr_valid         : std_logic;
 
 begin
+
+    -- Toggle reset from BTN, which is active high
+    internal_rst_n <= not PAD_I_RST_H;
 
     -- =================================================================================================================
     -- RESYNCHRONIZATION
@@ -116,7 +122,7 @@ begin
         )
         port map (
             CLK          => PAD_I_CLK,
-            RST_N        => PAD_I_RST_N,
+            RST_N        => internal_rst_n,
             I_DATA_ASYNC => async_inputs_slv,
             O_DATA_SYNC  => sync_inputs_slv
         );
@@ -133,7 +139,7 @@ begin
         )
         port map (
             CLK               => PAD_I_CLK,
-            RST_N             => PAD_I_RST_N,
+            RST_N             => internal_rst_n,
             I_UART_RX         => PAD_I_UART_RX,
             O_UART_TX         => PAD_O_UART_TX,
             O_READ_ADDR       => read_addr,
@@ -156,7 +162,7 @@ begin
         )
         port map (
             CLK               => PAD_I_CLK,
-            RST_N             => PAD_I_RST_N,
+            RST_N             => internal_rst_n,
             I_SWITCHES        => sync_inputs_slv,
             I_READ_ADDR       => read_addr,
             I_READ_ADDR_VALID => read_addr_valid,
