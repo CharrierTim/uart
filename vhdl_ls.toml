@@ -186,9 +186,16 @@ files = [
 ]
 is_third_party = true
 
+[libraries.unisim]
+files = ["/tools/Xilinx/2025.1/Vivado/data/vhdl/src/unisims/unisim_VCOMP.vhd"]
+is_third_party = true
+
 # ----------------------------------------------------------------------------------------------------------------------
 # Custom libraries
 # ----------------------------------------------------------------------------------------------------------------------
+
+[libraries.lib_cores]
+files = ["cores/pll/pll_sim.vhd"]
 
 [libraries.lib_rtl]
 files = ["sources/**/*.vhd"]
