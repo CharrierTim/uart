@@ -57,7 +57,7 @@ package tb_top_fpga_pkg is
     -- =================================================================================================================
 
     -- Clock period for the testbench
-    constant C_FREQ_HZ    : positive := 50_000_000;
+    constant C_FREQ_HZ    : positive := 100_000_000;
     constant C_CLK_PERIOD : time     := 1 sec / C_FREQ_HZ;
 
     -- DUT generics

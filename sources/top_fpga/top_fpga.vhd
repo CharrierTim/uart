@@ -32,6 +32,7 @@
 library ieee;
     use ieee.std_logic_1164.all;
 
+library lib_cores;
 library lib_rtl;
 
 -- =====================================================================================================================
@@ -82,6 +83,7 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- =================================================================================================================
 
     -- Internal reset and clock
+    signal internal_clk             : std_logic;
     signal internal_rst_n           : std_logic;
 
     -- Resynchronization
@@ -105,6 +107,17 @@ begin
     internal_rst_n <= not PAD_I_RST_H;
 
     -- =================================================================================================================
+    -- PLL
+    -- =================================================================================================================
+
+    inst_pll : entity lib_cores.clk_wiz_0
+        port map (
+            clk_in1  => PAD_I_CLK,
+            reset    => '0',
+            clk_out1 => internal_clk
+        );
+
+    -- =================================================================================================================
     -- RESYNCHRONIZATION
     -- =================================================================================================================
 
@@ -121,7 +134,7 @@ begin
             G_DEFAULT_VALUE => C_RESYNC_DEFAULT_VALUE
         )
         port map (
-            CLK          => PAD_I_CLK,
+            CLK          => internal_clk,
             RST_N        => internal_rst_n,
             I_DATA_ASYNC => async_inputs_slv,
             O_DATA_SYNC  => sync_inputs_slv
@@ -138,7 +151,7 @@ begin
             G_SAMPLING_RATE => C_SAMPLING_RATE
         )
         port map (
-            CLK               => PAD_I_CLK,
+            CLK               => internal_clk,
             RST_N             => internal_rst_n,
             I_UART_RX         => PAD_I_UART_RX,
             O_UART_TX         => PAD_O_UART_TX,
@@ -161,7 +174,7 @@ begin
             G_GIT_ID_LSB => G_GIT_ID(15 downto  0)
         )
         port map (
-            CLK               => PAD_I_CLK,
+            CLK               => internal_clk,
             RST_N             => internal_rst_n,
             I_SWITCHES        => sync_inputs_slv,
             I_READ_ADDR       => read_addr,

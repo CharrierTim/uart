@@ -10,6 +10,8 @@ ci:
   skip: []
   submodules: false
 
+exclude: '^cores/'
+
 repos:
   # Python hooks
   - repo: https://github.com/astral-sh/ruff-pre-commit
