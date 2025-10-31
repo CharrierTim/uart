@@ -94,6 +94,8 @@ def setup_ghdl(VU: vunit, use_usisim=False) -> None:
 
     if use_usisim:
         VU.add_external_library(library_name="unisim", path=os.path.expanduser(path="~/.ghdl/xilinx-vivado/unisim/v08"))
+        VU.add_compile_option("ghdl.a_flags", ["-fsynopsys"])
+        VU.set_sim_option("ghdl.elab_flags", ["-fsynopsys", "-frelaxed"])
 
 
 def setup_modelsim(VU: vunit) -> None:
