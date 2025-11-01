@@ -10,7 +10,7 @@ ci:
   skip: []
   submodules: false
 
-exclude: '^cores/'
+exclude: "^cores/"
 
 repos:
   # Python hooks
@@ -39,10 +39,3 @@ repos:
         language_version: python3
         exclude_types:
           - python
-
-  - repo: https://github.com/PyCQA/docformatter
-    rev: v1.7.7
-    hooks:
-      - id: docformatter
-        additional_dependencies: [tomli]
-        args: [--in-place, --config, ./pyproject.toml]

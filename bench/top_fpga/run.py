@@ -1,4 +1,4 @@
-"""VUnit test runner for the UART module."""
+"""VUnit test runner for the Top-level module."""
 ## =====================================================================================================================
 ##  MIT License
 ##
@@ -26,49 +26,36 @@
 ## @file    run.py
 ## @version 1.0
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
-##          UART module.
+##          Top-level module.
 ## @author  Timothee Charrier
 ## @date    17/10/2025
 ## =====================================================================================================================
 
 import sys
 from pathlib import Path
-from typing import Literal
 
 from vunit import VUnit
 from vunit.ui.library import Library
-from vunit.ui.source import SourceFileList
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
 
-from utils import (
-    post_run_callback,
-    setup_ghdl,
-    setup_modelsim,
-    setup_nvc,
-    setup_simulator,
-)
+from setup_vunit import Simulator, select_simulator
 
 ## =====================================================================================================================
 # Set up the simulator environment
 ## =====================================================================================================================
 
-VUNIT_SIMULATOR: Literal["nvc", "ghdl", "modelsim"] = setup_simulator()
+simulator: Simulator = select_simulator()
 
 ## =====================================================================================================================
 # Define paths and libraries
 ## =====================================================================================================================
 
-CORES_ROOT: Path = Path(__file__).parent.parent.parent / "cores"
 SRC_ROOT: Path = Path(__file__).parent.parent.parent / "sources"
+CORES_ROOT: Path = Path(__file__).parent.parent.parent / "cores"
 MODEL_ROOT: Path = Path(__file__).parent.parent / "models"
 BENCH_ROOT: Path = Path(__file__).parent / "test"
-
-# Define the libraries
-cores_library_name: str = "lib_cores"
-src_library_name: str = "lib_rtl"
-bench_library_name: str = "lib_bench"
 
 ## =====================================================================================================================
 # Set up VUnit environment
@@ -78,16 +65,16 @@ VU: VUnit = VUnit.from_argv()
 VU.add_vhdl_builtins()
 VU.add_verification_components()
 
-# Add PLL core
-LIB_CORES: Library = VU.add_library(library_name=cores_library_name)
-LIB_CORES.add_source_file(file_name=CORES_ROOT / "pll" / "pll_sim.vhd")
+# IPs
+LIB_CORES: Library = VU.add_library(library_name="lib_cores")
+LIB_CORES.add_source_files(pattern=CORES_ROOT / "pll" / "pll_sim.vhd")
 
 # Add the source files to the library
-LIB_SRC: Library = VU.add_library(library_name=src_library_name)
+LIB_SRC: Library = VU.add_library(library_name="lib_rtl")
 LIB_SRC.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
 
 # Add the test library
-LIB_BENCH: SourceFileList = VU.add_library(library_name=bench_library_name)
+LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
 LIB_BENCH.add_source_files(pattern=MODEL_ROOT / "*.vhd")
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
 
@@ -95,14 +82,6 @@ LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
 # Configure compile and simulation options
 ## =====================================================================================================================
 
-# Disable IEEE warnings at 0 ns
-VU.set_sim_option(name="disable_ieee_warnings", value=True)
+simulator.configure(VU=VU)
 
-if VUNIT_SIMULATOR == "nvc":
-    setup_nvc(VU, use_usisim=True)
-elif VUNIT_SIMULATOR == "ghdl":
-    setup_ghdl(VU, use_usisim=True)
-elif VUNIT_SIMULATOR == "modelsim":
-    setup_modelsim(VU)
-
-VU.main(post_run=post_run_callback)
+VU.main(post_run=simulator.post_run)
