@@ -48,6 +48,7 @@ set   VHDL_STANDARD "VHDL 2008"
 # Paths
 set     CURRENT_DIR [file normalize "."]
 set        ROOT_DIR [file normalize ".."]
+set       CORES_DIR [file normalize "${ROOT_DIR}/cores"]
 set     SOURCES_DIR [file normalize "${ROOT_DIR}/sources"]
 set     PROJECT_DIR [file normalize "./${PROJECT_NAME}"]
 set CONSTRAINTS_DIR [file normalize "./constraints"]
@@ -68,6 +69,27 @@ cd          $PROJECT_DIR
 create_project -force $PROJECT_NAME $PROJECT_DIR -part $FPGA_PART
 
 set_property target_language $TARGET_LANGUAGE [current_project]
+
+## =====================================================================================================================
+# Read IP cores
+## =====================================================================================================================
+
+set IP_XCI_FILE "${CORES_DIR}/pll/clk_wiz_0.xci"
+
+if {[file exists $IP_XCI_FILE]} {
+    # Import IP into project
+    import_ip $IP_XCI_FILE
+
+    puts "Imported IP core: $IP_XCI_FILE"
+
+    set_property GENERATE_SYNTH_CHECKPOINT false [get_files clk_wiz_0.xci]
+
+    # Generate all target files
+    generate_target all [get_files clk_wiz_0.xci]
+
+} else {
+    puts "ERROR: IP XCI file does not exist: $IP_XCI_FILE"
+}
 
 ## =====================================================================================================================
 # Read VHDL files
