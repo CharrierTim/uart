@@ -2,7 +2,7 @@
 -- Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
--- Date        : Fri Oct 31 17:24:43 2025
+-- Date        : Mon Nov  3 16:44:03 2025
 -- Host        : L-FV0T324 running 64-bit Ubuntu 24.04.3 LTS
 -- Command     : write_vhdl -force -mode funcsim
 --               /home/tim/projects/uart/synthesis/uart/clk_wiz_0/clk_wiz_0_sim_netlist.vhdl
@@ -15,11 +15,12 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
-library UNIFAST;
+library unifast;
 entity clk_wiz_0_clk_wiz is
   port (
     clk_out1 : out STD_LOGIC;
     reset : in STD_LOGIC;
+    locked : out STD_LOGIC;
     clk_in1 : in STD_LOGIC
   );
 end clk_wiz_0_clk_wiz;
@@ -35,7 +36,6 @@ architecture STRUCTURE of clk_wiz_0_clk_wiz is
   signal NLW_plle2_adv_inst_CLKOUT4_UNCONNECTED : STD_LOGIC;
   signal NLW_plle2_adv_inst_CLKOUT5_UNCONNECTED : STD_LOGIC;
   signal NLW_plle2_adv_inst_DRDY_UNCONNECTED : STD_LOGIC;
-  signal NLW_plle2_adv_inst_LOCKED_UNCONNECTED : STD_LOGIC;
   signal NLW_plle2_adv_inst_DO_UNCONNECTED : STD_LOGIC_VECTOR ( 15 downto 0 );
   attribute BOX_TYPE : string;
   attribute BOX_TYPE of clkf_buf : label is "PRIMITIVE";
@@ -120,7 +120,7 @@ plle2_adv_inst: entity unifast.PLLE2_ADV
       DO(15 downto 0) => NLW_plle2_adv_inst_DO_UNCONNECTED(15 downto 0),
       DRDY => NLW_plle2_adv_inst_DRDY_UNCONNECTED,
       DWE => '0',
-      LOCKED => NLW_plle2_adv_inst_LOCKED_UNCONNECTED,
+      LOCKED => locked,
       PWRDWN => '0',
       RST => reset
     );
@@ -133,6 +133,7 @@ entity clk_wiz_0 is
   port (
     clk_out1 : out STD_LOGIC;
     reset : in STD_LOGIC;
+    locked : out STD_LOGIC;
     clk_in1 : in STD_LOGIC
   );
   attribute NotValidForBitStream : boolean;
@@ -145,6 +146,7 @@ inst: entity work.clk_wiz_0_clk_wiz
      port map (
       clk_in1 => clk_in1,
       clk_out1 => clk_out1,
+      locked => locked,
       reset => reset
     );
 end STRUCTURE;

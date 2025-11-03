@@ -32,7 +32,6 @@
 library ieee;
     use ieee.std_logic_1164.all;
 
-library lib_cores;
 library lib_rtl;
 
 -- =====================================================================================================================
@@ -85,6 +84,7 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- Internal reset and clock
     signal internal_clk             : std_logic;
     signal internal_rst_n           : std_logic;
+    signal pll_locked               : std_logic;
 
     -- Resynchronization
     signal async_inputs_slv         : std_logic_vector(C_RESYNC_DEFAULT_VALUE'range);
@@ -101,20 +101,36 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal write_data               : std_logic_vector(16 - 1 downto 0);
     signal write_addr_valid         : std_logic;
 
+    -- =================================================================================================================
+    -- COMPONENTS
+    -- =================================================================================================================
+
+    -- vsg_off
+    component clk_wiz_0 is
+        port (
+            CLK_OUT1          : out   std_logic;
+            RESET             : in    std_logic;
+            LOCKED            : out   std_logic;
+            CLK_IN1           : in    std_logic
+        );
+    end component;
+    -- vsg_on
+
 begin
 
-    -- Toggle reset from BTN, which is active high
-    internal_rst_n <= not PAD_I_RST_H;
+    -- Toggle reset from BTN and when PLL is lock
+    internal_rst_n <= (not PAD_I_RST_H) and pll_locked;
 
     -- =================================================================================================================
     -- PLL
     -- =================================================================================================================
 
-    inst_pll : entity lib_cores.clk_wiz_0
+    inst_pll : component clk_wiz_0
         port map (
-            clk_in1  => PAD_I_CLK,
-            reset    => '0',
-            clk_out1 => internal_clk
+            clk_out1 => internal_clk,
+            reset    => PAD_I_RST_H,
+            locked   => pll_locked,
+            clk_in1  => PAD_I_CLK
         );
 
     -- =================================================================================================================
