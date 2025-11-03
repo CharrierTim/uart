@@ -239,12 +239,13 @@ class GHDL(Simulator):
 
     def configure(self, VU: VUnit) -> None:
         """Configure the GHDL simulator with specific settings."""
+        self.VU: VUnit = VU
         VU.set_compile_option(name="ghdl.a_flags", value=["--warn-no-hide"])
         VU.set_sim_option(name="ghdl.sim_flags", value=["--asserts=disable-at-0"])
 
         if self.uses_unisim or self.uses_unifast:
-            VU.add_compile_option("ghdl.a_flags", ["-fsynopsys", "-frelaxed"])
-            VU.set_sim_option("ghdl.elab_flags", ["-fsynopsys", "-frelaxed"])
+            VU.add_compile_option(name="ghdl.a_flags", value=["-fsynopsys", "-frelaxed"])
+            VU.set_sim_option(name="ghdl.elab_flags", value=["-fsynopsys", "-frelaxed"])
 
     def setup_coverage(self) -> None:
         """Set up code coverage for the simulator."""

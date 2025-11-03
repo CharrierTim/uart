@@ -49,7 +49,7 @@ from setup_vunit import Simulator, select_simulator
 simulator: Simulator = select_simulator()
 
 ## =====================================================================================================================
-# Define paths and libraries
+# Define library paths
 ## =====================================================================================================================
 
 SRC_ROOT: Path = Path(__file__).parent.parent.parent / "sources"
@@ -82,25 +82,26 @@ LIB_BENCH.add_source_files(pattern=MODEL_ROOT / "*.vhd")
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
 
 ## =====================================================================================================================
-# Configure compile and simulation options
+# Configure and run the simulation
 ## =====================================================================================================================
 
-coverage_specs: list[str] = [
-    "# NVC Coverage Specification File",
-    "# Collect coverage only on RTL sources, exclude testbench and models",
-    "",
-    "# Enable coverage on main RTL library",
-    "+hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.*",
-    "",
-    "# Exclude PLL/clock generation (vendor IP)",
-    "-block CLK_WIZ_0",
-    "",
-    "# Exclude testbench model",
-    "-hierarchy LIB_BENCH.TB_TOP_FPGA.INST_UART_MODEL.*",
-    "",
-]
+if VU.get_simulator_name() == "nvc":
+    coverage_specs: list[str] = [
+        "# NVC Coverage Specification File",
+        "# Collect coverage only on RTL sources, exclude testbench and models",
+        "",
+        "# Enable coverage on main RTL library",
+        "+hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.*",
+        "",
+        "# Exclude PLL/clock generation (vendor IP)",
+        "-block CLK_WIZ_0",
+        "",
+        "# Exclude testbench model",
+        "-hierarchy LIB_BENCH.TB_TOP_FPGA.INST_UART_MODEL.*",
+        "",
+    ]
+    simulator.setup_coverage(VU=VU, specifications=coverage_specs)
 
-simulator.setup_coverage(VU=VU, specifications=coverage_specs)
 simulator.configure(VU=VU)
 
 VU.main(post_run=simulator.post_run)
