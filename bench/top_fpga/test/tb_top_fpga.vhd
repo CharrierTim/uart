@@ -44,11 +44,6 @@ library vunit_lib;
 -- ENTITY
 -- =====================================================================================================================
 
--- For coverage, NVC is not currently supported. So to get the correct results, all testcase must be run within the same
--- simulator.
-
--- vunit: run_all_in_same_sim
-
 entity TB_TOP_FPGA is
     generic (
         RUNNER_CFG : string

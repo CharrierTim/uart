@@ -60,10 +60,13 @@ BENCH_ROOT: Path = Path(__file__).parent / "test"
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
-
 VU: VUnit = VUnit.from_argv()
 VU.add_vhdl_builtins()
 VU.add_verification_components()
+
+# Unisim and unifast libraries
+simulator.add_library(VU=VU, library_name="unisim", library_path="~/.nvc/lib/unisim.08")
+simulator.add_library(VU=VU, library_name="unifast", library_path="~/.nvc/lib/unifast.08")
 
 # IPs
 LIB_CORES: Library = VU.add_library(library_name="lib_cores")
@@ -82,6 +85,22 @@ LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
 # Configure compile and simulation options
 ## =====================================================================================================================
 
+coverage_specs: list[str] = [
+    "# NVC Coverage Specification File",
+    "# Collect coverage only on RTL sources, exclude testbench and models",
+    "",
+    "# Enable coverage on main RTL library",
+    "+hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.*",
+    "",
+    "# Exclude PLL/clock generation (vendor IP)",
+    "-block CLK_WIZ_0",
+    "",
+    "# Exclude testbench model",
+    "-hierarchy LIB_BENCH.TB_TOP_FPGA.INST_UART_MODEL.*",
+    "",
+]
+
+simulator.setup_coverage(VU=VU, specifications=coverage_specs)
 simulator.configure(VU=VU)
 
 VU.main(post_run=simulator.post_run)

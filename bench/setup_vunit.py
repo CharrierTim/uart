@@ -37,6 +37,8 @@ import subprocess
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+from vunit import VUnit
+
 
 class Simulator(ABC):
     """Abstract base class for simulators."""
@@ -58,8 +60,12 @@ class Simulator(ABC):
         """Set the operating system environment variables for the simulator."""
         pass
 
+    def add_library(self, VU: VUnit, library_name: str, library_path: str) -> None:
+        """Ädd a library to Vunit."""
+        VU.add_external_library(library_name=library_name, path=os.path.expanduser(path=library_path))
+
     @abstractmethod
-    def configure(self) -> None:
+    def configure(self, VU: VUnit) -> None:
         """Configure the simulator with specific settings."""
         pass
 
@@ -101,14 +107,32 @@ class NVC(Simulator):
         """Set the operating system environment variables for the NVC simulator."""
         os.environ["VUNIT_SIMULATOR"] = "nvc"
 
-    def configure(self, VU) -> None:
+    def configure(self, VU: VUnit) -> None:
         """Configure the NVC simulator with specific settings."""
         VU.set_sim_option(name="nvc.global_flags", value=["--ieee-warnings=off-at-0"])
 
-    def setup_coverage(self, VU, specifications: list[str] | None = None) -> None:
-        """Set up code coverage for the simulator."""
+        if not self.enable_coverage:
+            VU.set_attribute(name="run_all_in_same_sim", value=False)
+
+    def setup_coverage(self, VU: VUnit, specifications: list[str] | None = None) -> None:
+        """Set up code coverage for the simulator.
+
+        Parameters
+        ----------
+        VU : VUnit
+            The VUnit instance to configure.
+        specifications : list[str] | None
+            Optional list of coverage specifications to include.
+
+        Returns
+        -------
+        None
+        """
         self.enable_coverage = True
-        self.VU = VU
+        self.VU: VUnit = VU
+
+        # NVC is not "officially" supported for coverage, we need to run all sims in the same simulation
+        VU.set_attribute(name="run_all_in_same_sim", value=True)
 
         # Define coverage flags
         coverage_flags: list[str] = []
@@ -129,7 +153,15 @@ class NVC(Simulator):
         self,
         results,
     ) -> None:
-        """Actions to perform after the simulation run."""
+        """Actions to perform after the simulation run.
+
+        Creates a coverage report if coverage is enabled.
+
+        Parameters
+        ----------
+        results : TestResults
+            The results of the simulation run. Used internally by VUnit.
+        """
         # Generate coverage report if enabled
         if not self.enable_coverage:
             return
@@ -168,7 +200,7 @@ class GHDL(Simulator):
         """Set the operating system environment variables for the GHDL simulator."""
         os.environ["VUNIT_SIMULATOR"] = "ghdl"
 
-    def configure(self, VU) -> None:
+    def configure(self, VU: VUnit) -> None:
         """Configure the GHDL simulator with specific settings."""
         VU.set_compile_option(name="ghdl.a_flags", value=["--warn-no-hide"])
         VU.set_sim_option(name="ghdl.sim_flags", value=["--asserts=disable-at-0"])
