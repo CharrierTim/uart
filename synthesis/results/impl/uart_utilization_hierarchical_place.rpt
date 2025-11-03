@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Wed Oct 29 17:50:30 2025
+| Date         : Mon Nov  3 17:43:07 2025
 | Host         : L-FV0T324 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -hierarchical -file /home/tim/projects/uart/synthesis/results/impl/uart_utilization_hierarchical_place.rpt
 | Design       : TOP_FPGA
@@ -22,10 +22,10 @@ Table of Contents
 +-----------------+--------+------------+------------+---------+------+-----+--------+--------+------------+
 |     Instance    | Module | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | DSP Blocks |
 +-----------------+--------+------------+------------+---------+------+-----+--------+--------+------------+
-| TOP_FPGA        |  (top) |        149 |        149 |       0 |    0 | 155 |      0 |      0 |          0 |
+| TOP_FPGA        |  (top) |        152 |        152 |       0 |    0 | 155 |      0 |      0 |          0 |
 |   (TOP_FPGA)    |  (top) |          0 |          0 |       0 |    0 |   0 |      0 |      0 |          0 |
-|   inst_uart     |   UART |        149 |        149 |       0 |    0 | 112 |      0 |      0 |          0 |
-|     (inst_uart) |   UART |         60 |         60 |       0 |    0 |  36 |      0 |      0 |          0 |
+|   inst_uart     |   UART |        148 |        148 |       0 |    0 | 112 |      0 |      0 |          0 |
+|     (inst_uart) |   UART |         63 |         63 |       0 |    0 |  36 |      0 |      0 |          0 |
 +-----------------+--------+------------+------------+---------+------+-----+--------+--------+------------+
 * Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
 
