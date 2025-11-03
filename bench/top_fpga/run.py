@@ -70,7 +70,7 @@ simulator.add_unifast_library(VU=VU)
 
 # IPs
 LIB_CORES: Library = VU.add_library(library_name="lib_cores")
-LIB_CORES.add_source_file(file_name=CORES_ROOT / "pll" / "pll_sim.vhd")
+LIB_CORES.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
 
 # Add the source files to the library
 LIB_SRC: Library = VU.add_library(library_name="lib_rtl")

@@ -198,11 +198,11 @@ is_third_party = true
 # Custom libraries
 # ----------------------------------------------------------------------------------------------------------------------
 
-[libraries.lib_cores]
-files = ["cores/pll/pll_sim.vhd"]
-
 [libraries.lib_rtl]
 files = ["sources/**/*.vhd"]
 
 [libraries.lib_bench]
 files = ["bench/**/*.vhd"]
+
+[libraries.lib_cores]
+files = ["cores/pll/clk_wiz_0_sim_netlist.vhd"]
