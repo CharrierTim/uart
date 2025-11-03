@@ -44,7 +44,7 @@ class Simulator(ABC):
     """Abstract base class for simulators."""
 
     enable_coverage: bool = False
-    result_dir: Path = Path.cwd() / "results"
+    result_dir: Path = Path.cwd() / "bench" / "results"
 
     def __init__(self) -> None:
         self._simulator_in_path()
@@ -162,6 +162,8 @@ class NVC(Simulator):
         results : TestResults
             The results of the simulation run. Used internally by VUnit.
         """
+        self.copy_output_log()
+
         # Generate coverage report if enabled
         if not self.enable_coverage:
             return
@@ -186,6 +188,9 @@ class NVC(Simulator):
             args=nvc_coverage_cmd,
             check=True,
         )
+
+        # Also copy the ncdb file to the results directory
+        shutil.copy2(src=ncdb_file, dst=self.result_dir / "coverage.ncdb")
 
 
 class GHDL(Simulator):
@@ -213,7 +218,7 @@ class GHDL(Simulator):
     def post_run(self, results) -> None:
         """Actions to perform after the simulation run."""
         # GHDL only supports coverage with GCC backend, TODO: implement later
-        pass
+        self.copy_output_log()
 
 
 def select_simulator(simulator_name: str | None = None) -> Simulator:
