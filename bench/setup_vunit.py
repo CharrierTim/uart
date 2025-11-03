@@ -45,6 +45,8 @@ class Simulator(ABC):
 
     enable_coverage: bool = False
     result_dir: Path = Path.cwd() / "bench" / "results"
+    uses_unisim: bool = False
+    uses_unifast: bool = False
 
     def __init__(self) -> None:
         self._simulator_in_path()
@@ -63,6 +65,16 @@ class Simulator(ABC):
     def add_library(self, VU: VUnit, library_name: str, library_path: str) -> None:
         """Ädd a library to Vunit."""
         VU.add_external_library(library_name=library_name, path=os.path.expanduser(path=library_path))
+
+    @abstractmethod
+    def add_unisim_library(self, VU: VUnit, unisim_path: str) -> None:
+        """Add the Unisim library to VUnit."""
+        pass
+
+    @abstractmethod
+    def add_unifast_library(self, VU: VUnit, unifast_path: str) -> None:
+        """Add the Unifast library to VUnit."""
+        pass
 
     @abstractmethod
     def configure(self, VU: VUnit) -> None:
@@ -106,6 +118,16 @@ class NVC(Simulator):
     def _set_os_environment(self) -> None:
         """Set the operating system environment variables for the NVC simulator."""
         os.environ["VUNIT_SIMULATOR"] = "nvc"
+
+    def add_unisim_library(self, VU: VUnit, unisim_path: str = "~/.nvc/lib/unisim.08") -> None:
+        """Add the Unisim library to VUnit."""
+        self.add_library(VU=VU, library_name="unisim", library_path=os.path.expanduser(path=unisim_path))
+        self.uses_unisim = True
+
+    def add_unifast_library(self, VU: VUnit, unifast_path: str = "~/.nvc/lib/unifast.08") -> None:
+        """Add the Unifast library to VUnit."""
+        self.add_library(VU=VU, library_name="unifast", library_path=os.path.expanduser(path=unifast_path))
+        self.uses_unifast = True
 
     def configure(self, VU: VUnit) -> None:
         """Configure the NVC simulator with specific settings."""
@@ -205,10 +227,24 @@ class GHDL(Simulator):
         """Set the operating system environment variables for the GHDL simulator."""
         os.environ["VUNIT_SIMULATOR"] = "ghdl"
 
+    def add_unisim_library(self, VU: VUnit, unisim_path: str = "~/.ghdl/xilinx-vivado/unisim/v08") -> None:
+        """Add the Unisim library to VUnit."""
+        self.add_library(VU=VU, library_name="unisim", library_path=os.path.expanduser(path=unisim_path))
+        self.uses_unisim = True
+
+    def add_unifast_library(self, VU: VUnit, unifast_path: str = "~/.ghdl/xilinx-vivado/unifast/v08") -> None:
+        """Add the Unifast library to VUnit."""
+        self.add_library(VU=VU, library_name="unifast", library_path=os.path.expanduser(path=unifast_path))
+        self.uses_unifast = True
+
     def configure(self, VU: VUnit) -> None:
         """Configure the GHDL simulator with specific settings."""
         VU.set_compile_option(name="ghdl.a_flags", value=["--warn-no-hide"])
         VU.set_sim_option(name="ghdl.sim_flags", value=["--asserts=disable-at-0"])
+
+        if self.uses_unisim or self.uses_unifast:
+            VU.add_compile_option("ghdl.a_flags", ["-fsynopsys", "-frelaxed"])
+            VU.set_sim_option("ghdl.elab_flags", ["-fsynopsys", "-frelaxed"])
 
     def setup_coverage(self) -> None:
         """Set up code coverage for the simulator."""

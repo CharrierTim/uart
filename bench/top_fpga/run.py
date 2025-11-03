@@ -65,12 +65,12 @@ VU.add_vhdl_builtins()
 VU.add_verification_components()
 
 # Unisim and unifast libraries
-simulator.add_library(VU=VU, library_name="unisim", library_path="~/.nvc/lib/unisim.08")
-simulator.add_library(VU=VU, library_name="unifast", library_path="~/.nvc/lib/unifast.08")
+simulator.add_unisim_library(VU=VU)
+simulator.add_unifast_library(VU=VU)
 
 # IPs
 LIB_CORES: Library = VU.add_library(library_name="lib_cores")
-LIB_CORES.add_source_files(pattern=CORES_ROOT / "pll" / "pll_sim.vhd")
+LIB_CORES.add_source_file(file_name=CORES_ROOT / "pll" / "pll_sim.vhd")
 
 # Add the source files to the library
 LIB_SRC: Library = VU.add_library(library_name="lib_rtl")
