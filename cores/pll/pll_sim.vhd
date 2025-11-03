@@ -15,6 +15,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
+library UNIFAST;
 entity clk_wiz_0_clk_wiz is
   port (
     clk_out1 : out STD_LOGIC;
@@ -66,7 +67,7 @@ clkout1_buf: unisim.vcomponents.BUFG
       I => clk_out1_clk_wiz_0,
       O => clk_out1
     );
-plle2_adv_inst: unisim.vcomponents.PLLE2_ADV
+plle2_adv_inst: entity unifast.PLLE2_ADV
     generic map(
       BANDWIDTH => "OPTIMIZED",
       CLKFBOUT_MULT => 17,

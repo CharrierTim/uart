@@ -190,6 +190,10 @@ is_third_party = true
 files = ["/tools/Xilinx/2025.1/Vivado/data/vhdl/src/unisims/unisim_VCOMP.vhd"]
 is_third_party = true
 
+[libraries.unifast]
+files = ["/tools/Xilinx/2025.1/Vivado/data/vhdl/src/unifast/primitive/*.vhd"]
+is_third_party = true
+
 # ----------------------------------------------------------------------------------------------------------------------
 # Custom libraries
 # ----------------------------------------------------------------------------------------------------------------------
