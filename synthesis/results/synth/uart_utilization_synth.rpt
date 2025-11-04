@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Mon Nov  3 17:42:52 2025
+| Date         : Tue Nov  4 14:20:05 2025
 | Host         : L-FV0T324 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -file /home/tim/projects/uart/synthesis/results/synth/uart_utilization_synth.rpt
 | Design       : TOP_FPGA
@@ -31,8 +31,8 @@ Table of Contents
 +-------------------------+------+-------+------------+-----------+-------+
 |        Site Type        | Used | Fixed | Prohibited | Available | Util% |
 +-------------------------+------+-------+------------+-----------+-------+
-| Slice LUTs*             |  152 |     0 |          0 |     53200 |  0.29 |
-|   LUT as Logic          |  152 |     0 |          0 |     53200 |  0.29 |
+| Slice LUTs*             |  150 |     0 |          0 |     53200 |  0.28 |
+|   LUT as Logic          |  150 |     0 |          0 |     53200 |  0.28 |
 |   LUT as Memory         |    0 |     0 |          0 |     17400 |  0.00 |
 | Slice Registers         |  155 |     0 |          0 |    106400 |  0.15 |
 |   Register as Flip Flop |  155 |     0 |          0 |    106400 |  0.15 |
@@ -57,8 +57,8 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 | 0     |            _ |         Set |            - |
 | 0     |            _ |       Reset |            - |
 | 0     |          Yes |           - |            - |
-| 19    |          Yes |           - |          Set |
-| 136   |          Yes |           - |        Reset |
+| 16    |          Yes |           - |          Set |
+| 139   |          Yes |           - |        Reset |
 | 0     |          Yes |         Set |            - |
 | 0     |          Yes |       Reset |            - |
 +-------+--------------+-------------+--------------+
@@ -151,13 +151,13 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 +-----------+------+---------------------+
 |  Ref Name | Used | Functional Category |
 +-----------+------+---------------------+
-| FDCE      |  136 |        Flop & Latch |
-| LUT6      |   83 |                 LUT |
-| LUT4      |   36 |                 LUT |
-| LUT3      |   29 |                 LUT |
-| LUT5      |   28 |                 LUT |
-| LUT2      |   19 |                 LUT |
-| FDPE      |   19 |        Flop & Latch |
+| FDCE      |  139 |        Flop & Latch |
+| LUT6      |   79 |                 LUT |
+| LUT4      |   34 |                 LUT |
+| LUT5      |   32 |                 LUT |
+| LUT3      |   24 |                 LUT |
+| LUT2      |   23 |                 LUT |
+| FDPE      |   16 |        Flop & Latch |
 | IBUF      |    6 |                  IO |
 | OBUF      |    2 |                  IO |
 | BUFG      |    2 |               Clock |
