@@ -56,7 +56,7 @@ Inputs and Outputs
       - \-
       - Asynchronous input UART RX line
     - - ``O_BYTE``
-      - vector
+      - vector[7:0]
       - out
       - 0x00
       - Output byte

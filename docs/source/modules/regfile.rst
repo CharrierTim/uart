@@ -1,6 +1,145 @@
 Registers
 =========
 
+Description
+-----------
+
+Internal FPGA registers with read/write registers accessible via the UART line.
+
+Generics
+--------
+
+.. list-table::
+    :widths: 25 10 15 60
+    :header-rows: 1
+
+    - - Generic Name
+      - Type
+      - Default Value
+      - Description
+    - - ``G_GIT_ID_MSB``
+      - vector[15:0]
+      - 0x0000
+      - 16 MSB of the git ID containing the sources for the bitstream generation
+    - - ``G_GIT_ID_LSB``
+      - vector[15:0]
+      - 0x0000
+      - 16 LSB of the git ID containing the sources for the bitstream generation
+
+Inputs and Outputs
+------------------
+
+.. list-table::
+    :widths: 25 10 15 15 45
+    :header-rows: 1
+
+    - - Port Name
+      - Type
+      - Direction
+      - Default Value
+      - Description
+    - - ``CLK``
+      - std_logic
+      - in
+      - \-
+      - Input clock
+    - - ``RST_N``
+      - std_logic
+      - in
+      - \-
+      - Input asynchronous reset, active low
+    - - ``I_SWITCHES``
+      - vector[2:0]
+      - in
+      - \-
+      - Input vector containing the resynchronized switches value
+    - - ``I_READ_ADDR``
+      - vector[7:0]
+      - in
+      - \-
+      - Read address from the UART
+    - - ``I_READ_ADDR_VALID``
+      - std_logic
+      - in
+      - \-
+      - Read address valid flag
+    - - ``O_READ_DATA``
+      - vector[15:0]
+      - out
+      - ``G_GIT_ID_MSB``
+      - Read data at the address ``I_READ_ADDR``
+    - - ``O_READ_DATA_VALID``
+      - std_logic
+      - out
+      - 0
+      - Read data valid flag
+    - - ``I_WRITE_ADDR``
+      - vector[7:0]
+      - in
+      - \-
+      - Write address from the UART
+    - - ``I_WRITE_DATA``
+      - vector[15:0]
+      - in
+      - \-
+      - Write data to be written at ``I_WRITE_DATA``
+    - - ``I_WRITE_VALID``
+      - std_logic
+      - in
+      - \-
+      - Write address and data valid flag
+    - - ``O_LED_0``
+      - std_logic
+      - out
+      - 1
+      - LED 0 value
+
+Architecture
+------------
+
+Read Operations
+~~~~~~~~~~~~~~~
+
+The regfile module performs a read operation when ``I_READ_ADDR_VALID`` is asserted (set
+to '1'). The module responds by:
+
+1. Reading the data stored at the address specified by ``I_READ_ADDR``
+2. Asserting ``O_READ_DATA_VALID`` on the next clock cycle
+3. Outputting the retrieved value on ``O_READ_DATA``
+
+**Invalid Address Handling:**
+
+If the specified address does not correspond to a defined register, the module returns
+the sentinel value ``0xDEAD`` to indicate an invalid read operation.
+
+.. code-block:: text
+
+    Valid address:   I_READ_ADDR_VALID = '1' → O_READ_DATA = register[I_READ_ADDR]
+    Invalid address: I_READ_ADDR_VALID = '1' → O_READ_DATA = 0xDEAD
+
+Write Operations
+~~~~~~~~~~~~~~~~
+
+The regfile module performs a write operation when ``I_WRITE_VALID`` is asserted (set to
+'1'). The module writes the data from ``I_WRITE_DATA`` to the address specified by
+``I_WRITE_ADDR``.
+
+**Write Protection:**
+
+Not all registers are writable. If the specified address corresponds to:
+
+- A **read-only register**: The write operation is silently ignored, and the register
+  value remains unchanged
+- A **writable register**: The data is written on the next clock cycle
+- An **undefined address**: The write operation is ignored
+
+Overview
+--------
+
+A simplified view of the regfile module:
+
+.. image:: ../_static/svg/UART-REGFILE.svg
+
 Summary
 -------
 
@@ -22,6 +161,19 @@ REG_SWITCHES_   0xB1    R    Status from the input switches
 REG_LED_        0xEF    RW   Register with LSB bit writable controlling an LED
 REG_16_BITS_    0xFF    RW   Register with all bits writable
 =============== ======= ==== ===================================================
+
+Where:
+
+.. list-table::
+    :widths: 10 90
+    :header-rows: 1
+
+    - - Mode
+      - Description
+    - - **R**
+      - Read-only: Register value can be read but not modified via write operations
+    - - **RW**
+      - Read-Write: Register value can be both read and written
 
 Detailed register descriptions
 ------------------------------

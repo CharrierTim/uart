@@ -23,7 +23,7 @@ Generics
       - 0d8
       - Width of the input/output vector
     - - ``G_DEFAULT_VALUE``
-      - vector
+      - vector[G_WIDTH - 1:0]
       - 0x00
       - Default value of the output vector
 
@@ -50,12 +50,12 @@ Inputs and Outputs
       - \-
       - Input asynchronous reset, active low
     - - ``I_DATA_ASYNC``
-      - vector
+      - vector[G_WIDTH - 1:0]
       - in
       - \-
       - Input vector containing asynchronous signals
     - - ``O_DATA_SYNC``
-      - vector
+      - vector[G_WIDTH - 1:0]
       - out
       - ``G_DEFAULT_VALUE``
       - Input vector resynchronized in ``CLK`` domain

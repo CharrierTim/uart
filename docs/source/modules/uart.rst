@@ -68,7 +68,7 @@ Inputs and Outputs
       - 0x1
       - Output UART TX line
     - - ``O_READ_ADDR``
-      - vector
+      - vector[7:0]
       - out
       - 0x00
       - Output read address
@@ -78,7 +78,7 @@ Inputs and Outputs
       - 0x0
       - Output read address valid flag
     - - ``I_READ_DATA``
-      - vector
+      - vector[15:0]
       - in
       - \-
       - Input read data
@@ -88,12 +88,12 @@ Inputs and Outputs
       - \-
       - Input read data valid
     - - ``O_WRITE_ADDR``
-      - vector
+      - vector[7:0]
       - out
       - 0x00
       - Output write address
     - - ``O_WRITE_DATA``
-      - vector
+      - vector[15:0]
       - out
       - 0x0000
       - Output write data

@@ -47,7 +47,7 @@ Inputs and Outputs
       - \-
       - Input asynchronous reset, active low
     - - ``I_BYTE``
-      - vector
+      - vector[7:0]
       - in
       - \-
       - Input byte to send
