@@ -68,13 +68,10 @@ VU.add_verification_components()
 simulator.add_unisim_library(VU=VU)
 simulator.add_unifast_library(VU=VU)
 
-# IPs
-LIB_CORES: Library = VU.add_library(library_name="lib_cores")
-LIB_CORES.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
-
 # Add the source files to the library
 LIB_SRC: Library = VU.add_library(library_name="lib_rtl")
 LIB_SRC.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
+LIB_SRC.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
