@@ -43,7 +43,8 @@ entity UART is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
         G_BAUD_RATE_BPS : positive := 115_200;    -- Baud rate
-        G_SAMPLING_RATE : positive := 16          -- Sampling rate (number of clock cycles per bit)
+        G_SAMPLING_RATE : positive := 16;         -- Sampling rate (number of clock cycles per bit)
+        G_NB_DATA_BITS  : positive := 8           -- Number of data bits
     );
     port (
         -- Clock and reset
@@ -210,7 +211,8 @@ begin
         generic map (
             G_CLK_FREQ_HZ   => G_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => G_BAUD_RATE_BPS,
-            G_SAMPLING_RATE => G_SAMPLING_RATE
+            G_SAMPLING_RATE => G_SAMPLING_RATE,
+            G_NB_DATA_BITS  => G_NB_DATA_BITS
         )
         port map (
             CLK               => CLK,

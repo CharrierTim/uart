@@ -76,6 +76,7 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     constant C_CLK_FREQ_HZ          : positive := 50_000_000;
     constant C_BAUD_RATE_BPS        : positive := 115_200;
     constant C_SAMPLING_RATE        : positive := 16;
+    constant C_NB_DATA_BITS         : positive := 8;
 
     -- =================================================================================================================
     -- SIGNALS
@@ -164,7 +165,8 @@ begin
         generic map (
             G_CLK_FREQ_HZ   => C_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => C_BAUD_RATE_BPS,
-            G_SAMPLING_RATE => C_SAMPLING_RATE
+            G_SAMPLING_RATE => C_SAMPLING_RATE,
+            G_NB_DATA_BITS  => C_NB_DATA_BITS
         )
         port map (
             CLK               => internal_clk,
