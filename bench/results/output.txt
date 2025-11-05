@@ -1,5 +1,5 @@
-Seed for lib_bench.tb_top_fpga: 6915b4d429cc4f0f
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench -H 64m --ieee-warnings=off-at-0 -e --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/coverage.ncdb --cover-spec=/home/tim/projects/uart/vunit_out/coverage.spec tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_top_fpga_registers,,test_uart_robustness,,test_led_and_switches_toggling,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga_470465ddee2a14c0a0641caef7654e43cc6c7033/,seed : 6915b4d429cc4f0f,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga: cb21c9629a81c75e
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench -H 64m --ieee-warnings=off-at-0 -e --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/coverage.ncdb --cover-spec=/home/tim/projects/uart/vunit_out/coverage.spec tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_top_fpga_registers,,test_uart_robustness,,test_led_and_switches_toggling,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga_470465ddee2a14c0a0641caef7654e43cc6c7033/,seed : cb21c9629a81c75e,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
                0 ms - default              -    INFO - 
                0 ms - default              -    INFO - DUT has been reset.
                0 ms - default              -    INFO - 
@@ -122,11 +122,11 @@ Seed for lib_bench.tb_top_fpga: 6915b4d429cc4f0f
               27 ms - check                -    PASS - Check register C_REG_16_BITS: expected 0xABCD, got 0xABCD - Got 1010_1011_1100_1101 (43981).
               27 ms - default              -    INFO - 
               27 ms - default              -    INFO - DUT has been reset.
-              28 ms - default              -    INFO - 
-              28 ms - default              -    INFO - -----------------------------------------------------------------------------
-              28 ms - default              -    INFO -  Sending read command with invalid start bit in char 'R'
-              28 ms - default              -    INFO - -----------------------------------------------------------------------------
-              28 ms - default              -    INFO - Sending command R00\n -> Invalid start bit in 'R'
+              27 ms - default              -    INFO - 
+              27 ms - default              -    INFO - -----------------------------------------------------------------------------
+              27 ms - default              -    INFO -  Sending read command with invalid start bit in char 'R'
+              27 ms - default              -    INFO - -----------------------------------------------------------------------------
+              27 ms - default              -    INFO - Sending command R00\n -> Invalid start bit in 'R'
               29 ms - check                -    PASS - Ensuring UART not responding when sending read command with invalid start bit in char 'R' - Got true.
               29 ms - default              -    INFO - 
               29 ms - default              -    INFO - -----------------------------------------------------------------------------
@@ -160,12 +160,12 @@ Seed for lib_bench.tb_top_fpga: 6915b4d429cc4f0f
               31 ms - check                -    PASS - Time:     17.36 us  |  Range:     17.36 us +/-  173.61 ns
               31 ms - check                -    PASS - Time:     17.36 us  |  Range:     17.36 us +/-  173.61 ns
               31 ms - check                -    PASS - Time:       8.7 us  |  Range:      8.68 us +/-   86.81 ns
-              32 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
-              32 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
-              32 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
-              32 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
-              32 ms - check                -    PASS - Time:     17.36 us  |  Range:     17.36 us +/-  173.61 ns
-              32 ms - check                -    PASS - Time:     17.36 us  |  Range:     17.36 us +/-  173.61 ns
+              31 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
+              31 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
+              31 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
+              31 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
+              31 ms - check                -    PASS - Time:     17.36 us  |  Range:     17.36 us +/-  173.61 ns
+              31 ms - check                -    PASS - Time:     17.36 us  |  Range:     17.36 us +/-  173.61 ns
               32 ms - check                -    PASS - Time:       8.7 us  |  Range:      8.68 us +/-   86.81 ns
               32 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
               32 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
@@ -173,12 +173,12 @@ Seed for lib_bench.tb_top_fpga: 6915b4d429cc4f0f
               32 ms - check                -    PASS - Time:      8.68 us  |  Range:      8.68 us +/-   86.81 ns
               32 ms - check                -    PASS - Time:     17.36 us  |  Range:     17.36 us +/-  173.61 ns
               32 ms - check                -    PASS - Time:     17.36 us  |  Range:     17.36 us +/-  173.61 ns
-              33 ms - default              -    INFO - 
-              33 ms - default              -    INFO - -----------------------------------------------------------------------------
-              33 ms - default              -    INFO -  Sending read commands with invalid CR
-              33 ms - default              -    INFO - -----------------------------------------------------------------------------
-              33 ms - default              -    INFO - 
-              33 ms - default              -    INFO - DUT has been reset.
+              32 ms - default              -    INFO - 
+              32 ms - default              -    INFO - -----------------------------------------------------------------------------
+              32 ms - default              -    INFO -  Sending read commands with invalid CR
+              32 ms - default              -    INFO - -----------------------------------------------------------------------------
+              32 ms - default              -    INFO - 
+              32 ms - default              -    INFO - DUT has been reset.
               33 ms - default              -    INFO - 
               33 ms - default              -    INFO - Sending read command R01\n -> Missing \r
               34 ms - check                -    PASS - Ensuring UART not responding when sending read command with invalid \r - Got true.
@@ -194,100 +194,84 @@ Seed for lib_bench.tb_top_fpga: 6915b4d429cc4f0f
               35 ms - check                -    PASS - Check register C_REG_16_BITS: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
               35 ms - default              -    INFO - 
               35 ms - default              -    INFO - -----------------------------------------------------------------------------
-              35 ms - default              -    INFO -  Introducing noise spikes on the UART RX line.
+              35 ms - default              -    INFO -  Checking register REG_LED characteristics (read-write)
               35 ms - default              -    INFO - -----------------------------------------------------------------------------
               35 ms - default              -    INFO - 
               35 ms - default              -    INFO - DUT has been reset.
               35 ms - default              -    INFO - 
-              35 ms - default              -    INFO - Introducing noise spikes on the UART RX line.
-              35 ms - default              -    INFO - Reading value from register C_REG_GIT_ID_MSB at address 0x00
-              36 ms - check                -    PASS - Check register C_REG_GIT_ID_MSB: expected 0x1234, got 0x1234 - Got 0001_0010_0011_0100 (4660).
-              36 ms - default              -    INFO - Reading value from register C_REG_GIT_ID_MSB at address 0x00
-              37 ms - check                -    PASS - Check register C_REG_GIT_ID_MSB: expected 0x1234, got 0x1234 - Got 0001_0010_0011_0100 (4660).
-              37 ms - default              -    INFO - Reading value from register C_REG_GIT_ID_MSB at address 0x00
-              38 ms - check                -    PASS - Check register C_REG_GIT_ID_MSB: expected 0x1234, got 0x1234 - Got 0001_0010_0011_0100 (4660).
-              38 ms - default              -    INFO - Reading value from register C_REG_GIT_ID_MSB at address 0x00
-              39 ms - check                -    PASS - Check register C_REG_GIT_ID_MSB: expected 0x1234, got 0x1234 - Got 0001_0010_0011_0100 (4660).
-              39 ms - default              -    INFO - 
-              39 ms - default              -    INFO - -----------------------------------------------------------------------------
-              39 ms - default              -    INFO -  Checking register REG_LED characteristics (read-write)
-              39 ms - default              -    INFO - -----------------------------------------------------------------------------
-              39 ms - default              -    INFO - 
-              39 ms - default              -    INFO - DUT has been reset.
-              39 ms - default              -    INFO - 
-              39 ms - default              -    INFO - Checking register C_REG_LED value after reset
-              39 ms - default              -    INFO - Reading value from register C_REG_LED at address 0xEF
-              40 ms - check                -    PASS - Check register C_REG_LED: expected 0x0001, got 0x0001 - Got 0000_0000_0000_0001 (1).
+              35 ms - default              -    INFO - Checking register C_REG_LED value after reset
+              35 ms - default              -    INFO - Reading value from register C_REG_LED at address 0xEF
+              36 ms - check                -    PASS - Check register C_REG_LED: expected 0x0001, got 0x0001 - Got 0000_0000_0000_0001 (1).
+              36 ms - default              -    INFO - 
+              36 ms - default              -    INFO - Checking register C_REG_LED is in read-write
+              36 ms - default              -    INFO - Writing value 0xFFFE to register C_REG_LED at address 0xEF
+              37 ms - default              -    INFO - Reading value from register C_REG_LED at address 0xEF
+              38 ms - check                -    PASS - Check register C_REG_LED: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
+              38 ms - default              -    INFO - 
+              38 ms - default              -    INFO - -----------------------------------------------------------------------------
+              38 ms - default              -    INFO -  Toggling led_0 register
+              38 ms - default              -    INFO - -----------------------------------------------------------------------------
+              38 ms - default              -    INFO - 
+              38 ms - default              -    INFO - Writing value 0x0001 to register C_REG_LED at address 0xEF
+              40 ms - check                -    PASS - Ensuring tb_pad_o_led_0 stable at '1' during 0.7 ms - Got true.
               40 ms - default              -    INFO - 
-              40 ms - default              -    INFO - Checking register C_REG_LED is in read-write
-              40 ms - default              -    INFO - Writing value 0xFFFE to register C_REG_LED at address 0xEF
-              41 ms - default              -    INFO - Reading value from register C_REG_LED at address 0xEF
-              41 ms - check                -    PASS - Check register C_REG_LED: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
-              41 ms - default              -    INFO - 
-              41 ms - default              -    INFO - -----------------------------------------------------------------------------
-              41 ms - default              -    INFO -  Toggling led_0 register
-              41 ms - default              -    INFO - -----------------------------------------------------------------------------
-              41 ms - default              -    INFO - 
-              41 ms - default              -    INFO - Writing value 0x0001 to register C_REG_LED at address 0xEF
-              43 ms - check                -    PASS - Ensuring tb_pad_o_led_0 stable at '1' during 0.7 ms - Got true.
+              40 ms - default              -    INFO - Writing value 0x0000 to register C_REG_LED at address 0xEF
+              43 ms - check                -    PASS - Ensuring tb_pad_o_led_0 stable at '0' 2.3 ms - Got true.
               43 ms - default              -    INFO - 
-              43 ms - default              -    INFO - Writing value 0x0000 to register C_REG_LED at address 0xEF
-              46 ms - check                -    PASS - Ensuring tb_pad_o_led_0 stable at '0' 2.3 ms - Got true.
+              43 ms - default              -    INFO - Writing value 0x0001 to register C_REG_LED at address 0xEF
+              46 ms - check                -    PASS - Ensuring tb_pad_o_led_0 stable at '1' during 1.8 ms - Got true.
               46 ms - default              -    INFO - 
-              46 ms - default              -    INFO - Writing value 0x0001 to register C_REG_LED at address 0xEF
-              49 ms - check                -    PASS - Ensuring tb_pad_o_led_0 stable at '1' during 1.8 ms - Got true.
+              46 ms - default              -    INFO - -----------------------------------------------------------------------------
+              46 ms - default              -    INFO -  Checking register REG_SWITCHES characteristics (read-only)
+              46 ms - default              -    INFO - -----------------------------------------------------------------------------
+              46 ms - default              -    INFO - 
+              46 ms - default              -    INFO - DUT has been reset.
+              46 ms - default              -    INFO - 
+              46 ms - default              -    INFO - Checking register C_REG_SWITCHES value after reset
+              46 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
+              47 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
+              47 ms - default              -    INFO - 
+              47 ms - default              -    INFO - Checking register C_REG_SWITCHES is in read-only
+              47 ms - default              -    INFO - Writing value 0xFFFF to register C_REG_SWITCHES at address 0xB1
+              47 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
+              48 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
+              48 ms - default              -    INFO - 
+              48 ms - default              -    INFO - -----------------------------------------------------------------------------
+              48 ms - default              -    INFO -  Toggling input switches - Testing combinations
+              48 ms - default              -    INFO - -----------------------------------------------------------------------------
+              48 ms - default              -    INFO - 
+              48 ms - default              -    INFO - Testing combination : SW2='0' SW1='0' SW0='0'
+              48 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
+              49 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
               49 ms - default              -    INFO - 
-              49 ms - default              -    INFO - -----------------------------------------------------------------------------
-              49 ms - default              -    INFO -  Checking register REG_SWITCHES characteristics (read-only)
-              49 ms - default              -    INFO - -----------------------------------------------------------------------------
-              49 ms - default              -    INFO - 
-              49 ms - default              -    INFO - DUT has been reset.
-              49 ms - default              -    INFO - 
-              49 ms - default              -    INFO - Checking register C_REG_SWITCHES value after reset
+              49 ms - default              -    INFO - Testing combination : SW2='0' SW1='0' SW0='1'
               49 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
-              50 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
+              50 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0001, got 0x0001 - Got 0000_0000_0000_0001 (1).
               50 ms - default              -    INFO - 
-              50 ms - default              -    INFO - Checking register C_REG_SWITCHES is in read-only
-              50 ms - default              -    INFO - Writing value 0xFFFF to register C_REG_SWITCHES at address 0xB1
+              50 ms - default              -    INFO - Testing combination : SW2='0' SW1='1' SW0='0'
+              50 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
+              51 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0002, got 0x0002 - Got 0000_0000_0000_0010 (2).
+              51 ms - default              -    INFO - 
+              51 ms - default              -    INFO - Testing combination : SW2='0' SW1='1' SW0='1'
               51 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
-              52 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
+              51 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0003, got 0x0003 - Got 0000_0000_0000_0011 (3).
+              51 ms - default              -    INFO - 
+              51 ms - default              -    INFO - Testing combination : SW2='1' SW1='0' SW0='0'
+              51 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
+              52 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0004, got 0x0004 - Got 0000_0000_0000_0100 (4).
               52 ms - default              -    INFO - 
-              52 ms - default              -    INFO - -----------------------------------------------------------------------------
-              52 ms - default              -    INFO -  Toggling input switches - Testing combinations
-              52 ms - default              -    INFO - -----------------------------------------------------------------------------
-              52 ms - default              -    INFO - 
-              52 ms - default              -    INFO - Testing combination : SW2='0' SW1='0' SW0='0'
+              52 ms - default              -    INFO - Testing combination : SW2='1' SW1='0' SW0='1'
               52 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
-              52 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
-              52 ms - default              -    INFO - 
-              52 ms - default              -    INFO - Testing combination : SW2='0' SW1='0' SW0='1'
-              52 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
-              53 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0001, got 0x0001 - Got 0000_0000_0000_0001 (1).
+              53 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0005, got 0x0005 - Got 0000_0000_0000_0101 (5).
               53 ms - default              -    INFO - 
-              53 ms - default              -    INFO - Testing combination : SW2='0' SW1='1' SW0='0'
+              53 ms - default              -    INFO - Testing combination : SW2='1' SW1='1' SW0='0'
               53 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
-              54 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0002, got 0x0002 - Got 0000_0000_0000_0010 (2).
+              54 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0006, got 0x0006 - Got 0000_0000_0000_0110 (6).
               54 ms - default              -    INFO - 
-              54 ms - default              -    INFO - Testing combination : SW2='0' SW1='1' SW0='1'
+              54 ms - default              -    INFO - Testing combination : SW2='1' SW1='1' SW0='1'
               54 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
-              55 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0003, got 0x0003 - Got 0000_0000_0000_0011 (3).
-              55 ms - default              -    INFO - 
-              55 ms - default              -    INFO - Testing combination : SW2='1' SW1='0' SW0='0'
-              55 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
-              56 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0004, got 0x0004 - Got 0000_0000_0000_0100 (4).
-              56 ms - default              -    INFO - 
-              56 ms - default              -    INFO - Testing combination : SW2='1' SW1='0' SW0='1'
-              56 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
-              56 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0005, got 0x0005 - Got 0000_0000_0000_0101 (5).
-              56 ms - default              -    INFO - 
-              56 ms - default              -    INFO - Testing combination : SW2='1' SW1='1' SW0='0'
-              56 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
-              57 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0006, got 0x0006 - Got 0000_0000_0000_0110 (6).
-              57 ms - default              -    INFO - 
-              57 ms - default              -    INFO - Testing combination : SW2='1' SW1='1' SW0='1'
-              57 ms - default              -    INFO - Reading value from register C_REG_SWITCHES at address 0xB1
-              58 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0007, got 0x0007 - Got 0000_0000_0000_0111 (7).
-** Note: 58613565ns+13: STOP called with status 0
+              55 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0007, got 0x0007 - Got 0000_0000_0000_0111 (7).
+** Note: 55057955ns+13: STOP called with status 0
    Procedure STOP [INTEGER] at ../lib/std.08/env-body.vhd:27
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
