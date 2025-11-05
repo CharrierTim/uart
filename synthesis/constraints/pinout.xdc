@@ -34,7 +34,7 @@ set_property -dict {PACKAGE_PIN Y9   IOSTANDARD LVCMOS33}             [get_ports
 set_property -dict {PACKAGE_PIN R16  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_RST_H}];    # BTND
 
 # UART
-set_property -dict {PACKAGE_PIN Y11  IOSTANDARD LVCMOS33}             [get_ports {PAD_I_UART_RX}];  # JA1 - P1
+set_property -dict {PACKAGE_PIN Y11  IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_I_UART_RX}];  # JA1 - P1
 set_property -dict {PACKAGE_PIN AA11 IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_O_UART_TX}];  # JA2 - P2
 
 # Switches
