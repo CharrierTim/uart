@@ -210,7 +210,7 @@ begin
     begin
 
         -- Default assignment
-        next_state <= current_state;
+        next_state <= STATE_IDLE;
 
         case current_state is
 
