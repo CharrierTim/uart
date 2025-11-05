@@ -42,7 +42,8 @@ entity UART_RX is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
         G_BAUD_RATE_BPS : positive := 115_200;    -- Baud rate
-        G_SAMPLING_RATE : positive := 16          -- Sampling rate (number of clock cycles per bit)
+        G_SAMPLING_RATE : positive := 16;         -- Sampling rate (number of clock cycles per bit)
+        G_NB_DATA_BITS  : positive := 8           -- Number of data bits
     );
     port (
         -- Clock and reset
@@ -51,7 +52,7 @@ entity UART_RX is
         -- UART interface
         I_UART_RX         : in    std_logic;
         -- Output data interface
-        O_BYTE            : out   std_logic_vector(8 - 1 downto 0);
+        O_BYTE            : out   std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
         O_BYTE_VALID      : out   std_logic;
         -- Error flags
         O_START_BIT_ERROR : out   std_logic;
@@ -74,57 +75,64 @@ architecture UART_RX_ARCH of UART_RX is
         STATE_START_BIT,
         STATE_DATA_BITS,
         STATE_STOP_BIT,
-        STATE_DONE,
+        STATE_VALID,
         STATE_START_BIT_ERROR,
-        STATE_STOP_BIT_ERROR
+        STATE_STOP_BIT_ERROR,
+        STATE_ERROR_RECOVERY
     );
 
     -- =================================================================================================================
     -- CONSTANTS
     -- =================================================================================================================
 
-    -- UART RX clock (default is 16 times the baud rate)
-    constant C_RX_CLK_DIV_RATIO         : integer := G_CLK_FREQ_HZ / (G_BAUD_RATE_BPS * G_SAMPLING_RATE);
-    constant C_SAMPLE_COUNTER_WIDTH     : integer := integer(ceil(log2(real(C_RX_CLK_DIV_RATIO))));
+    -- UART RX clock
+    constant C_RX_CLK_DIV_RATIO     : integer := G_CLK_FREQ_HZ / (G_BAUD_RATE_BPS * G_SAMPLING_RATE);
+    constant C_SAMPLE_COUNTER_WIDTH : integer := integer(ceil(log2(real(C_RX_CLK_DIV_RATIO))));
 
     -- Sampling constants
-    constant C_OVERSAMPLE_COUNTER_WIDTH : integer := integer(ceil(log2(real(G_SAMPLING_RATE))));
-    constant C_OVERSAMPLE_MAX           : integer := G_SAMPLING_RATE - 1;
-    constant C_MID_BIT_SAMPLE_POINT     : integer := C_OVERSAMPLE_MAX / 2;
+    constant C_OVERSAMPLE_WIDTH     : integer := integer(ceil(log2(real(G_SAMPLING_RATE))));
+    constant C_MID_SAMPLE_POINT     : integer := G_SAMPLING_RATE / 2;
+    constant C_THREE_QUARTER_POINT  : integer := (G_SAMPLING_RATE * 3) / 4;
+
+    -- Recovery constants
+    constant C_NB_RECOVERY_BITS     : integer := G_NB_DATA_BITS + 1; -- Data + stop bits
+    constant C_RECOVERY_PERIOD      : integer := G_SAMPLING_RATE * C_NB_RECOVERY_BITS;
+    constant C_RECOVERY_CNT_WIDTH   : integer := integer(ceil(log2(real(C_RECOVERY_PERIOD))));
 
     -- =================================================================================================================
     -- SIGNAL
     -- =================================================================================================================
 
     -- Baud rate generators
-    signal rx_baud_counter              : unsigned(C_SAMPLE_COUNTER_WIDTH  - 1 downto 0);
-    signal rx_baud_tick                 : std_logic;
+    signal rx_baud_counter          : unsigned(C_SAMPLE_COUNTER_WIDTH - 1 downto 0);
+    signal rx_baud_tick             : std_logic;
 
-    -- Clock Domain Crossing and Filtering (5-stage shift register: 2 for metastability + 3 for filtering)
-    signal i_uart_rx_sr                 : std_logic_vector(5 - 1 downto 0);
-    signal i_uart_rx_filtered           : std_logic;
-    signal i_uart_rx_filtered_d1        : std_logic;
+    -- Sample count
+    signal oversample_counter       : unsigned(C_OVERSAMPLE_WIDTH - 1 downto 0);
+
+    -- Data count
+    signal data_counter             : unsigned(3 - 1 downto 0);
+
+    -- Recovery locked counter
+    signal recovery_counter         : unsigned(C_RECOVERY_CNT_WIDTH - 1 downto 0);
+    signal recovery_elapsed         : std_logic;
+
+    -- Clock Domain Crossing and Filtering (5-stage shift register: 2 for metastability + 2 for filtering)
+    signal i_uart_rx_sr             : std_logic_vector(5 - 1 downto 0);
+    signal i_uart_rx_filtered       : std_logic;
+    signal i_uart_rx_filtered_d1    : std_logic;
 
     -- Bit tick
-    signal uart_rx_mid_bit_samples      : std_logic_vector(3 - 1 downto 0);
-    signal uart_rx_sampled_bit          : std_logic;
+    signal uart_rx_sampled_bit      : std_logic;
 
     -- FSM
-    signal current_state                : t_rx_state;
-    signal next_state                   : t_rx_state;
-    signal next_o_byte_update           : std_logic;
-    signal next_start_bit_error         : std_logic;
-    signal next_stop_bit_error          : std_logic;
-    signal next_o_data_valid            : std_logic;
-
-    -- Counter of current oversampling ticks within a bit period
-    signal oversampling_count           : unsigned(C_OVERSAMPLE_COUNTER_WIDTH  - 1 downto 0);
-
-    -- Counter of current data bits received
-    signal data_bit_count               : unsigned(3 - 1 downto 0);
-
-    -- Current byte
-    signal received_byte                : std_logic_vector(O_BYTE'range);
+    signal current_state            : t_rx_state;
+    signal next_state               : t_rx_state;
+    signal next_start_bit_error     : std_logic;
+    signal next_stop_bit_error      : std_logic;
+    signal next_o_byte_valid        : std_logic;
+    signal next_o_byte_update       : std_logic;
+    signal next_o_byte              : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
 
 begin
 
@@ -132,13 +140,19 @@ begin
     -- Generate the RX baud rate tick, which is 16 times the baud rate.
     -- =================================================================================================================
 
-    p_rx_clock_divider : process (CLK, RST_N) is
+    p_baud_generator : process (CLK, RST_N) is
     begin
 
         if (RST_N = '0') then
 
-            rx_baud_counter <= (others => '0');
-            rx_baud_tick    <= '0';
+            rx_baud_counter    <= (others => '0');
+            rx_baud_tick       <= '0';
+
+            oversample_counter <= (others => '0');
+            data_counter       <= (others => '0');
+
+            recovery_counter   <= (others => '0');
+            recovery_elapsed   <= '0';
 
         elsif rising_edge(CLK) then
 
@@ -161,20 +175,62 @@ begin
                     rx_baud_tick    <= '0';
                 end if;
             else
-                rx_baud_counter <= (others => '0');
-                rx_baud_tick    <= '0';
-
+                rx_baud_counter    <= (others => '0');
+                rx_baud_tick       <= '0';
+                oversample_counter <= (others => '0');
+                data_counter       <= (others => '0');
             end if;
 
+            -- =========================================================================================================
+            -- Oversample and data counters
+            -- =========================================================================================================
+            -- Every 16x baud tick, increment the data counter
+            -- =========================================================================================================
+
+            if (rx_baud_tick = '1') then
+                if (oversample_counter = G_SAMPLING_RATE - 1) then
+                    oversample_counter <= (others => '0');
+
+                    if (data_counter = G_NB_DATA_BITS - 1) then
+                        data_counter <= (others => '0');
+                    elsif (current_state = STATE_DATA_BITS) then
+                        data_counter <= data_counter + 1;
+                    end if;
+
+                else
+                    oversample_counter <= oversample_counter + 1;
+                end if;
+            end if;
+
+            -- =========================================================================================================
+            -- Recovery counter
+            -- =========================================================================================================
+            -- "Lock" the FSM if an invalid start bit is detected for C_NB_TOTAL_BITS at the specified baudrate
+            -- =========================================================================================================
+
+            -- Recovery counter management
+            if (current_state = STATE_ERROR_RECOVERY) then
+                if (rx_baud_tick = '1') then
+
+                    if (recovery_counter >= C_RECOVERY_PERIOD - 1) then
+                        recovery_counter <= (others => '0');
+                        recovery_elapsed <= '1';
+                    else
+                        recovery_counter <= recovery_counter + 1;
+                        recovery_elapsed <= '0';
+                    end if;
+
+                end if;
+            end if;
         end if;
 
-    end process p_rx_clock_divider;
+    end process p_baud_generator;
 
     -- =================================================================================================================
     -- Resynchronize UART RX input into 16x baud clock domain and apply digital filtering
     -- =================================================================================================================
 
-    p_input_sync_filter : process (CLK, RST_N) is
+    p_rx_filtering_and_sampling : process (CLK, RST_N) is
     begin
 
         if (RST_N = '0') then
@@ -182,6 +238,7 @@ begin
             i_uart_rx_sr          <= (others => '1');
             i_uart_rx_filtered    <= '1';
             i_uart_rx_filtered_d1 <= '1';
+            uart_rx_sampled_bit   <= '1';
 
         elsif rising_edge(CLK) then
 
@@ -207,51 +264,8 @@ begin
             -- Update last value to detect falling edge for start bit detection and rising edge for stop bit validation
             i_uart_rx_filtered_d1 <= i_uart_rx_filtered;
 
-        end if;
-
-    end process p_input_sync_filter;
-
-    -- =================================================================================================================
-    -- Sampling control process: manages oversampling and majority voting
-    -- =================================================================================================================
-
-    p_sampling_control : process (CLK, RST_N) is
-    begin
-
-        if (RST_N = '0') then
-
-            oversampling_count      <= (others => '0');
-            data_bit_count          <= (others => '0');
-            uart_rx_mid_bit_samples <= (others => '0');
-            uart_rx_sampled_bit     <= '1';
-
-        elsif rising_edge(CLK) then
-
             -- =========================================================================================================
-            -- Baud tick counter and decoded bit counter
-            -- ========================================================================================================
-            -- Each bit period is 16 baud ticks. After 16 ticks, we have received one full bit, then the data bit count
-            -- is Incremented by one.
-            -- =========================================================================================================
-
-            if (rx_baud_tick = '1') then
-                if (oversampling_count = C_OVERSAMPLE_MAX) then
-
-                    -- One full bit period has passed (16 ticks at 16x oversampling)
-                    oversampling_count <= (others => '0');
-
-                    -- Increment the decoded bit count
-                    if (current_state = STATE_DATA_BITS) then
-                        data_bit_count <= data_bit_count    + 1;
-                    end if;
-
-                else
-                    oversampling_count <= oversampling_count + 1;
-                end if;
-            end if;
-
-            -- =========================================================================================================
-            -- UART RX Sampling: Majority Voting at Mid-Bit
+            -- UART RX Sampling: Sampled at mid bit
             -- =========================================================================================================
             --
             -- Visual representation of a data bit transition with 16x oversampling:
@@ -265,61 +279,21 @@ begin
             --                      \_________________________________________________________/
             --
             --   Tick:                 0  1  2  3  4  5  6  7  8  9  10  11  12  13  14  15
-            --   Samples:                                   ^  ^  ^
-            --                                          Sample Points (Ticks 7, 8, 9)
+            --   Samples:                                      ^
+            --                                            Sample Point
             --
             -- Sampling Logic:
-            --   - Tick 7: First sample  -> uart_rx_mid_bit_samples(0)
-            --   - Tick 8: Second sample -> uart_rx_mid_bit_samples(1)
-            --   - Tick 9: Third sample  -> uart_rx_mid_bit_samples(2)
+            --   - Tick 8: sample data
             --
             -- =========================================================================================================
 
-            -- Sampling at ticks 7, 8, and 9 (all - 1 because counting from 0)
-            if (oversampling_count = C_MID_BIT_SAMPLE_POINT  - 1 and rx_baud_tick = '1') then
-                uart_rx_mid_bit_samples(0) <= i_uart_rx_filtered;
-            elsif (oversampling_count = C_MID_BIT_SAMPLE_POINT  and rx_baud_tick = '1') then
-                uart_rx_mid_bit_samples(1) <= i_uart_rx_filtered;
-            elsif (oversampling_count = C_MID_BIT_SAMPLE_POINT  + 1 and rx_baud_tick = '1') then
-                uart_rx_mid_bit_samples(2) <= i_uart_rx_filtered;
+            if (oversample_counter = C_MID_SAMPLE_POINT - 1) then
+                uart_rx_sampled_bit <= i_uart_rx_filtered;
             end if;
-
-            -- =========================================================================================================
-            -- Majority Voting Logic
-            -- =========================================================================================================
-            -- Majority Voting Decision:
-            --   - If 2 or 3 samples are '0' -> bit value = '0'
-            --   - If 2 or 3 samples are '1' -> bit value = '1'
-            --   - This provides immunity against single-tick noise spikes
-            --
-            -- Example scenarios:
-            --   uart_rx_mid_bit_samples = "000" -> Clean '0', output = '0' -> OK
-            --   uart_rx_mid_bit_samples = "111" -> Clean '1', output = '1' -> OK
-            --   uart_rx_mid_bit_samples = "001" -> Noisy '0', output = '0' -> OK
-            --   uart_rx_mid_bit_samples = "110" -> Noisy '1', output = '1' -> OK
-            --   uart_rx_mid_bit_samples = "010" -> Ambiguous, keeps previous value
-            -- =========================================================================================================
-
-            case uart_rx_mid_bit_samples is
-
-                -- Majority is '0' (2 or 3 zeros)
-                when "000" | "001" | "010" | "100" =>
-
-                    uart_rx_sampled_bit <= '0';
-
-                -- Majority is '1' (2 or 3 ones)
-                when "111" | "110" | "101" | "011" =>
-
-                    uart_rx_sampled_bit <= '1';
-
-                -- Ambiguous cases (1 zero, 1 one, 1 unknown), keep previous value
-                when others =>
-
-            end case;
 
         end if;
 
-    end process p_sampling_control;
+    end process p_rx_filtering_and_sampling;
 
     -- =================================================================================================================
     -- FSM sequential process for state transitions
@@ -348,7 +322,7 @@ begin
     begin
 
         -- Default assignment
-        next_state <= current_state;
+        next_state <= STATE_IDLE;
 
         case current_state is
 
@@ -372,19 +346,62 @@ begin
             -- In start bit state, the module verifies that the start bit is valid by checking that the UART RX line
             -- remains low at the middle of the bit period.
             --     - If the start bit is valid, the module transitions to the DATA BITS state.
-            --     - If the start bit is invalid (line goes high), the module transitions to the START BIT ERROR state.
+            --     - If the start bit is invalid, the module transitions to the START BIT ERROR state.
             -- =========================================================================================================
 
             when STATE_START_BIT =>
 
-                if (rx_baud_tick = '1' and oversampling_count = C_OVERSAMPLE_MAX) then
+                if (oversample_counter = G_SAMPLING_RATE - 1 and rx_baud_tick = '1') then
+
                     if (uart_rx_sampled_bit = '0') then
                         next_state <= STATE_DATA_BITS;
                     else
                         next_state <= STATE_START_BIT_ERROR;
                     end if;
+
                 else
                     next_state <= STATE_START_BIT;
+                end if;
+
+            -- =========================================================================================================
+            -- STATE: DATA BITS
+            -- =========================================================================================================
+            -- In data bits state, the module samples the incoming data bits at the middle of each bit period.
+            -- After receiving 8 data bits, and when at the expected edge of the stop bit, the module transitions to
+            -- the STOP BIT state.
+            -- =========================================================================================================
+
+            when STATE_DATA_BITS =>
+
+                if ((data_counter = G_NB_DATA_BITS - 1) and
+                    (oversample_counter = G_SAMPLING_RATE - 1 and rx_baud_tick = '1')) then
+                    next_state <= STATE_STOP_BIT;
+                else
+                    next_state <= STATE_DATA_BITS;
+                end if;
+
+            -- =========================================================================================================
+            -- STATE: STOP BIT
+            -- =========================================================================================================
+            -- In stop bit state, the module verifies that the stop bit is valid by checking that the UART RX line
+            -- remains high at the middle of the bit period. To ensure detecting a burst, leave the state before the
+            -- expected end of the STOP bit (3/4 of it).
+            --    - If the stop bit is   valid ('1'), the module transitions to the VALID state.
+            --    - If the stop bit is invalid ('0'), the module transitions to the STOP BIT ERROR state.
+            -- =========================================================================================================
+
+            when STATE_STOP_BIT =>
+
+                if (oversample_counter = C_THREE_QUARTER_POINT - 1) then
+
+                    if (uart_rx_sampled_bit = '1') then
+                        next_state <= STATE_VALID;
+                    else
+                        next_state <= STATE_STOP_BIT_ERROR;
+                    end if;
+
+                else
+                    next_state <= STATE_STOP_BIT;
                 end if;
 
             -- =========================================================================================================
@@ -395,43 +412,7 @@ begin
 
             when STATE_START_BIT_ERROR =>
 
-                next_state <= STATE_IDLE;
-
-            -- =========================================================================================================
-            -- STATE: DATA BITS
-            -- =========================================================================================================
-            -- In data bits state, the module samples the incoming data bits at the middle of each bit period.
-            -- After receiving 8 data bits, the module transitions to the STOP BIT state.
-            -- =========================================================================================================
-
-            when STATE_DATA_BITS =>
-
-                if (data_bit_count = 7 and oversampling_count = C_OVERSAMPLE_MAX and rx_baud_tick = '1') then
-                    next_state <= STATE_STOP_BIT;
-                else
-                    next_state <= STATE_DATA_BITS;
-                end if;
-
-            -- =========================================================================================================
-            -- STATE: STOP BIT
-            -- =========================================================================================================
-            -- In stop bit state, the module verifies that the stop bit is valid by checking that the UART RX line
-            -- remains high at the middle of the bit period.
-            --    - If the stop bit is valid, the module transitions to the CLEANUP state.
-            --    - If the stop bit is invalid (line goes low), the module transitions to the STOP BIT ERROR state.
-            -- =========================================================================================================
-
-            when STATE_STOP_BIT =>
-
-                if (rx_baud_tick = '1' and oversampling_count = C_OVERSAMPLE_MAX) then
-                    if (uart_rx_sampled_bit = '1') then
-                        next_state <= STATE_DONE;
-                    else
-                        next_state <= STATE_STOP_BIT_ERROR;
-                    end if;
-                else
-                    next_state <= STATE_STOP_BIT;
-                end if;
+                next_state <= STATE_ERROR_RECOVERY;
 
             -- =========================================================================================================
             -- STATE: STOP BIT ERROR
@@ -443,20 +424,24 @@ begin
 
                 next_state <= STATE_IDLE;
 
+            when STATE_ERROR_RECOVERY =>
+
+                if (recovery_elapsed = '1') then
+                    next_state <= STATE_IDLE;
+                else
+                    next_state <= STATE_ERROR_RECOVERY;
+                end if;
+
             -- =========================================================================================================
-            -- STATE: CLEANUP
+            -- STATE: VALID
             -- =========================================================================================================
-            -- In cleanup state, the module asserts the data valid signal for one clock cycle and then
+            -- In this state, the module asserts the data valid signal for one clock cycle and then
             -- transitions back to the IDLE state.
             -- =========================================================================================================
 
-            when STATE_DONE =>
+            when STATE_VALID =>
 
                 next_state <= STATE_IDLE;
-
-            -- =========================================================================================================
-            -- DEFAULT CASE: should not occur
-            -- =========================================================================================================
 
             when others =>
 
@@ -473,118 +458,85 @@ begin
     p_fsm_output_comb : process (all) is
     begin
 
-        -- Default assignment
-        next_o_byte_update   <= '0';
         next_start_bit_error <= '0';
         next_stop_bit_error  <= '0';
-        next_o_data_valid    <= '0';
+        next_o_byte_valid    <= '0';
+        next_o_byte_update   <= '0';
 
         case current_state is
 
-            -- =========================================================================================================
-            -- STATE: IDLE
-            -- =========================================================================================================
-
             when STATE_IDLE =>
 
-            -- =========================================================================================================
-            -- STATE: START BIT
-            -- =========================================================================================================
-
             when STATE_START_BIT =>
-
-            -- =========================================================================================================
-            -- STATE: START BIT ERROR
-            -- =========================================================================================================
 
             when STATE_START_BIT_ERROR =>
 
                 next_start_bit_error <= '1';
 
-            -- =========================================================================================================
-            -- STATE: DATA BITS
-            -- =========================================================================================================
-
             when STATE_DATA_BITS =>
 
-                if (rx_baud_tick = '1' and oversampling_count = C_OVERSAMPLE_MAX) then
+                if (rx_baud_tick = '1' and oversample_counter = G_SAMPLING_RATE - 1) then
                     next_o_byte_update <= '1';
                 else
                     next_o_byte_update <= '0';
                 end if;
 
-            -- =========================================================================================================
-            -- STATE: STOP BIT
-            -- =========================================================================================================
-
             when STATE_STOP_BIT =>
-
-            -- =========================================================================================================
-            -- STATE: STOP BIT ERROR
-            -- =========================================================================================================
 
             when STATE_STOP_BIT_ERROR =>
 
                 next_stop_bit_error <= '1';
 
-            -- =========================================================================================================
-            -- STATE: CLEANUP
-            -- =========================================================================================================
+            when STATE_ERROR_RECOVERY =>
 
-            when STATE_DONE =>
+            when STATE_VALID =>
 
-                next_o_data_valid <= '1';
-
-            -- =========================================================================================================
-            -- DEFAULT CASE: should not occur
-            -- =========================================================================================================
+                next_o_byte_valid <= '1';
 
             when others =>
 
-                next_o_byte_update   <= '0';
                 next_start_bit_error <= '0';
                 next_stop_bit_error  <= '0';
-                next_o_data_valid    <= '0';
+                next_o_byte_valid    <= '0';
+                next_o_byte_update   <= '0';
 
         end case;
 
     end process p_fsm_output_comb;
 
     -- =================================================================================================================
-    -- Output registers
+    -- Output process
     -- =================================================================================================================
 
-    p_output_reg : process (CLK, RST_N) is
+    p_output : process (CLK, RST_N) is
     begin
 
         if (RST_N = '0') then
 
+            next_o_byte       <= (others => '0');
             O_BYTE            <= (others => '0');
             O_BYTE_VALID      <= '0';
             O_START_BIT_ERROR <= '0';
             O_STOP_BIT_ERROR  <= '0';
 
-            received_byte     <= (others => '0');
+        elsif rising_edge(CLK) then
 
-        elsif (rising_edge(CLK)) then
-
-            -- Update output byte (receive from LSB to MSB)
+            -- Current byte
             if (next_o_byte_update = '1') then
-                received_byte <= uart_rx_sampled_bit & received_byte(received_byte'high downto received_byte'low + 1);
+                next_o_byte <= uart_rx_sampled_bit & next_o_byte(next_o_byte'high downto next_o_byte'low + 1);
             end if;
 
-            -- If data is valid, latch the byte to output
-            if (next_o_data_valid = '1') then
-                O_BYTE <= received_byte;
+            -- Output byte only if valid flag is asserted
+            if (next_o_byte_valid = '1') then
+                O_BYTE <= next_o_byte;
             end if;
 
-            -- Update output signals
-            O_BYTE_VALID      <= next_o_data_valid;
             O_START_BIT_ERROR <= next_start_bit_error;
             O_STOP_BIT_ERROR  <= next_stop_bit_error;
+            O_BYTE_VALID      <= next_o_byte_valid;
 
         end if;
 
-    end process p_output_reg;
+    end process p_output;
 
 end architecture UART_RX_ARCH;
