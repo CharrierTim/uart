@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Tue Nov  4 14:20:05 2025
+| Date         : Wed Nov  5 17:01:19 2025
 | Host         : L-FV0T324 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_timing_summary -file /home/tim/projects/uart/synthesis/results/synth/uart_timing_synth.rpt
 | Design       : TOP_FPGA
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-     15.933        0.000                      0                  240        0.137        0.000                      0                  240        3.000        0.000                       0                   161  
+     15.936        0.000                      0                  256        0.140        0.000                      0                  256        3.000        0.000                       0                   168  
 
 
 All user specified timing constraints are met.
@@ -164,7 +164,7 @@ PAD_I_CLK             {0.000 5.000}      10.000          100.000
 Clock                     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
 -----                     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
 PAD_I_CLK                                                                                                                                                               3.000        0.000                       0                     1  
-  clk_out1_clk_wiz_0       15.933        0.000                      0                  240        0.137        0.000                      0                  240        9.500        0.000                       0                   157  
+  clk_out1_clk_wiz_0       15.936        0.000                      0                  256        0.140        0.000                      0                  256        9.500        0.000                       0                   164  
   clkfbout_clk_wiz_0                                                                                                                                                   17.845        0.000                       0                     3  
 
 
@@ -221,15 +221,15 @@ High Pulse Width  Slow    PLLE2_ADV/CLKIN1  n/a            2.000         5.000  
 From Clock:  clk_out1_clk_wiz_0
   To Clock:  clk_out1_clk_wiz_0
 
-Setup :            0  Failing Endpoints,  Worst Slack       15.933ns,  Total Violation        0.000ns
-Hold  :            0  Failing Endpoints,  Worst Slack        0.137ns,  Total Violation        0.000ns
+Setup :            0  Failing Endpoints,  Worst Slack       15.936ns,  Total Violation        0.000ns
+Hold  :            0  Failing Endpoints,  Worst Slack        0.140ns,  Total Violation        0.000ns
 PW    :            0  Failing Endpoints,  Worst Slack        9.500ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
 
 
 Max Delay Paths
 --------------------------------------------------------------------------------------
-Slack (MET) :             15.933ns  (required time - arrival time)
+Slack (MET) :             15.936ns  (required time - arrival time)
   Source:                 inst_uart/FSM_sequential_current_state_reg[2]/C
                             (rising edge-triggered cell FDCE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Destination:            inst_uart/FSM_sequential_current_state_reg[1]/D
@@ -237,7 +237,7 @@ Slack (MET) :             15.933ns  (required time - arrival time)
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
-  Data Path Delay:        3.858ns  (logic 1.045ns (27.087%)  route 2.813ns (72.913%))
+  Data Path Delay:        3.855ns  (logic 1.045ns (27.108%)  route 2.810ns (72.892%))
   Logic Levels:           3  (LUT4=1 LUT6=2)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    -2.744ns = ( 17.256 - 20.000 ) 
@@ -260,17 +260,17 @@ Slack (MET) :             15.933ns  (required time - arrival time)
                                                      -6.617    -4.542 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.800    -3.743    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.101    -3.642 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=155, unplaced)       0.584    -3.058    inst_uart/clk_out1
+                         net (fo=162, unplaced)       0.584    -3.058    inst_uart/clk_out1
                          FDCE                                         r  inst_uart/FSM_sequential_current_state_reg[2]/C
   -------------------------------------------------------------------    -------------------
                          FDCE (Prop_fdce_C_Q)         0.478    -2.580 r  inst_uart/FSM_sequential_current_state_reg[2]/Q
-                         net (fo=19, unplaced)        0.800    -1.780    inst_uart/current_state[2]
-                         LUT4 (Prop_lut4_I1_O)        0.319    -1.461 r  inst_uart/FSM_sequential_current_state[1]_i_6/O
-                         net (fo=1, unplaced)         1.111    -0.350    inst_uart/inst_uart_rx/FSM_sequential_current_state_reg[1]_1
-                         LUT6 (Prop_lut6_I0_O)        0.124    -0.226 r  inst_uart/inst_uart_rx/FSM_sequential_current_state[1]_i_2/O
-                         net (fo=1, unplaced)         0.902     0.676    inst_uart/inst_uart_rx/FSM_sequential_current_state[1]_i_2_n_0
-                         LUT6 (Prop_lut6_I1_O)        0.124     0.800 r  inst_uart/inst_uart_rx/FSM_sequential_current_state[1]_i_1/O
-                         net (fo=1, unplaced)         0.000     0.800    inst_uart/inst_uart_rx_n_3
+                         net (fo=17, unplaced)        0.797    -1.783    inst_uart/current_state[2]
+                         LUT4 (Prop_lut4_I1_O)        0.319    -1.464 r  inst_uart/FSM_sequential_current_state[1]_i_6/O
+                         net (fo=1, unplaced)         1.111    -0.353    inst_uart/inst_uart_rx/FSM_sequential_current_state_reg[1]_1
+                         LUT6 (Prop_lut6_I0_O)        0.124    -0.229 r  inst_uart/inst_uart_rx/FSM_sequential_current_state[1]_i_2/O
+                         net (fo=1, unplaced)         0.902     0.673    inst_uart/inst_uart_rx/FSM_sequential_current_state[1]_i_2_n_0
+                         LUT6 (Prop_lut6_I1_O)        0.124     0.797 r  inst_uart/inst_uart_rx/FSM_sequential_current_state[1]_i_1/O
+                         net (fo=1, unplaced)         0.000     0.797    inst_uart/inst_uart_rx_n_3
                          FDCE                                         r  inst_uart/FSM_sequential_current_state_reg[1]/D
   -------------------------------------------------------------------    -------------------
 
@@ -284,16 +284,16 @@ Slack (MET) :             15.933ns  (required time - arrival time)
                                                      -5.893    15.966 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.760    16.726    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.091    16.817 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=155, unplaced)       0.439    17.256    inst_uart/clk_out1
+                         net (fo=162, unplaced)       0.439    17.256    inst_uart/clk_out1
                          FDCE                                         r  inst_uart/FSM_sequential_current_state_reg[1]/C
                          clock pessimism             -0.458    16.797    
                          clock uncertainty           -0.108    16.690    
                          FDCE (Setup_fdce_C_D)        0.044    16.734    inst_uart/FSM_sequential_current_state_reg[1]
   -------------------------------------------------------------------
                          required time                         16.734    
-                         arrival time                          -0.800    
+                         arrival time                          -0.797    
   -------------------------------------------------------------------
-                         slack                                 15.933    
+                         slack                                 15.936    
 
 
 
@@ -301,16 +301,16 @@ Slack (MET) :             15.933ns  (required time - arrival time)
 
 Min Delay Paths
 --------------------------------------------------------------------------------------
-Slack (MET) :             0.137ns  (arrival time - required time)
-  Source:                 inst_uart/inst_uart_rx/uart_rx_mid_bit_samples_reg[0]/C
+Slack (MET) :             0.140ns  (arrival time - required time)
+  Source:                 inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[3]/C
                             (rising edge-triggered cell FDCE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
-  Destination:            inst_uart/inst_uart_rx/uart_rx_sampled_bit_reg/D
-                            (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[4]/D
+                            (rising edge-triggered cell FDCE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Hold (Min at Fast Process Corner)
   Requirement:            0.000ns  (clk_out1_clk_wiz_0 rise@0.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
-  Data Path Delay:        0.381ns  (logic 0.245ns (64.350%)  route 0.136ns (35.650%))
-  Logic Levels:           1  (LUT3=1)
+  Data Path Delay:        0.384ns  (logic 0.245ns (63.855%)  route 0.139ns (36.145%))
+  Logic Levels:           1  (LUT6=1)
   Clock Path Skew:        0.145ns (DCD - SCD - CPR)
     Destination Clock Delay (DCD):    -0.537ns
     Source Clock Delay      (SCD):    -0.870ns
@@ -328,14 +328,14 @@ Slack (MET) :             0.137ns  (arrival time - required time)
                                                      -1.719    -1.347 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.337    -1.010    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.026    -0.984 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=155, unplaced)       0.114    -0.870    inst_uart/inst_uart_rx/clk_out1
-                         FDCE                                         r  inst_uart/inst_uart_rx/uart_rx_mid_bit_samples_reg[0]/C
+                         net (fo=162, unplaced)       0.114    -0.870    inst_uart/inst_uart_rx/clk_out1
+                         FDCE                                         r  inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[3]/C
   -------------------------------------------------------------------    -------------------
-                         FDCE (Prop_fdce_C_Q)         0.147    -0.723 r  inst_uart/inst_uart_rx/uart_rx_mid_bit_samples_reg[0]/Q
-                         net (fo=2, unplaced)         0.136    -0.587    inst_uart/inst_uart_rx/uart_rx_mid_bit_samples_reg_n_0_[0]
-                         LUT3 (Prop_lut3_I2_O)        0.098    -0.489 r  inst_uart/inst_uart_rx/uart_rx_sampled_bit/O
-                         net (fo=1, unplaced)         0.000    -0.489    inst_uart/inst_uart_rx/uart_rx_sampled_bit_n_0
-                         FDPE                                         r  inst_uart/inst_uart_rx/uart_rx_sampled_bit_reg/D
+                         FDCE (Prop_fdce_C_Q)         0.147    -0.723 r  inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[3]/Q
+                         net (fo=3, unplaced)         0.139    -0.584    inst_uart/inst_uart_rx/FSM_onehot_current_state_reg_n_0_[3]
+                         LUT6 (Prop_lut6_I5_O)        0.098    -0.486 r  inst_uart/inst_uart_rx/FSM_onehot_current_state[4]_i_1/O
+                         net (fo=1, unplaced)         0.000    -0.486    inst_uart/inst_uart_rx/FSM_onehot_current_state[4]_i_1_n_0
+                         FDCE                                         r  inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[4]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
@@ -348,15 +348,15 @@ Slack (MET) :             0.137ns  (arrival time - required time)
                                                      -1.885    -1.180 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.355    -0.825    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.029    -0.796 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=155, unplaced)       0.259    -0.537    inst_uart/inst_uart_rx/clk_out1
-                         FDPE                                         r  inst_uart/inst_uart_rx/uart_rx_sampled_bit_reg/C
+                         net (fo=162, unplaced)       0.259    -0.537    inst_uart/inst_uart_rx/clk_out1
+                         FDCE                                         r  inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[4]/C
                          clock pessimism             -0.188    -0.725    
-                         FDPE (Hold_fdpe_C_D)         0.099    -0.626    inst_uart/inst_uart_rx/uart_rx_sampled_bit_reg
+                         FDCE (Hold_fdce_C_D)         0.099    -0.626    inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[4]
   -------------------------------------------------------------------
                          required time                          0.626    
-                         arrival time                          -0.489    
+                         arrival time                          -0.486    
   -------------------------------------------------------------------
-                         slack                                  0.137    
+                         slack                                  0.140    
 
 
 

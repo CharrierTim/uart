@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Tue Nov  4 14:20:13 2025
+| Date         : Wed Nov  5 17:01:25 2025
 | Host         : L-FV0T324 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_control_sets -verbose -file /home/tim/projects/uart/synthesis/results/impl/uart_control_sets.rpt
 | Design       : TOP_FPGA
@@ -23,11 +23,11 @@ Table of Contents
 +----------------------------------------------------------+-------+
 |                          Status                          | Count |
 +----------------------------------------------------------+-------+
-| Total control sets                                       |    13 |
-|    Minimum number of control sets                        |    13 |
+| Total control sets                                       |    14 |
+|    Minimum number of control sets                        |    14 |
 |    Addition due to synthesis replication                 |     0 |
 |    Addition due to physical synthesis replication        |     0 |
-| Unused register locations in slices containing registers |    37 |
+| Unused register locations in slices containing registers |    38 |
 +----------------------------------------------------------+-------+
 * Control sets can be merged at opt_design using control_set_merge or merge_equivalent_drivers
 ** Run report_qor_suggestions for automated merging and remapping suggestions
@@ -39,11 +39,11 @@ Table of Contents
 +--------------------+-------+
 |       Fanout       | Count |
 +--------------------+-------+
-| Total control sets |    13 |
+| Total control sets |    14 |
 | >= 0 to < 4        |     0 |
 | >= 4 to < 6        |     7 |
 | >= 6 to < 8        |     0 |
-| >= 8 to < 10       |     2 |
+| >= 8 to < 10       |     3 |
 | >= 10 to < 12      |     0 |
 | >= 12 to < 14      |     0 |
 | >= 14 to < 16      |     1 |
@@ -59,10 +59,10 @@ Table of Contents
 | Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
 +--------------+-----------------------+------------------------+-----------------+--------------+
 | No           | No                    | No                     |               0 |            0 |
-| No           | No                    | Yes                    |              65 |           21 |
+| No           | No                    | Yes                    |              63 |           19 |
 | No           | Yes                   | No                     |               0 |            0 |
 | Yes          | No                    | No                     |               0 |            0 |
-| Yes          | No                    | Yes                    |              90 |           29 |
+| Yes          | No                    | Yes                    |              99 |           32 |
 | Yes          | Yes                   | No                     |               0 |            0 |
 +--------------+-----------------------+------------------------+-----------------+--------------+
 
@@ -70,22 +70,23 @@ Table of Contents
 4. Detailed Control Set Information
 -----------------------------------
 
-+-------------------------+---------------------------------------------+---------------------------------------+------------------+----------------+--------------+
-|       Clock Signal      |                Enable Signal                |            Set/Reset Signal           | Slice Load Count | Bel Load Count | Bels / Slice |
-+-------------------------+---------------------------------------------+---------------------------------------+------------------+----------------+--------------+
-|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/rx_baud_tick_reg_n_0 | inst_uart/inst_uart_rx/plle2_adv_inst |                2 |              4 |         2.00 |
-|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/O_WRITE_ADDR[1]      | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
-|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/E[2]                 | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
-|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/O_WRITE_ADDR[0]      | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
-|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/E[1]                 | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
-|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/E[3]                 | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
-|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/E[0]                 | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
-|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/next_o_data_valid    | inst_uart/inst_uart_rx/plle2_adv_inst |                3 |              8 |         2.67 |
-|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/next_o_byte_update   | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              8 |         8.00 |
-|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_tx/tx_current_bit_index | inst_uart/inst_uart_rx/plle2_adv_inst |                5 |             14 |         2.80 |
-|  inst_pll/inst/clk_out1 | inst_uart/O_WRITE_ADDR_reg[4]_1[0]          | inst_uart/inst_uart_rx/plle2_adv_inst |                3 |             16 |         5.33 |
-|  inst_pll/inst/clk_out1 | inst_uart/E[0]                              | inst_uart/inst_uart_rx/plle2_adv_inst |                9 |             16 |         1.78 |
-|  inst_pll/inst/clk_out1 |                                             | inst_uart/inst_uart_rx/plle2_adv_inst |               21 |             65 |         3.10 |
-+-------------------------+---------------------------------------------+---------------------------------------+------------------+----------------+--------------+
++-------------------------+------------------------------------------------------+---------------------------------------+------------------+----------------+--------------+
+|       Clock Signal      |                     Enable Signal                    |            Set/Reset Signal           | Slice Load Count | Bel Load Count | Bels / Slice |
++-------------------------+------------------------------------------------------+---------------------------------------+------------------+----------------+--------------+
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/E[0]                          | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/E[1]                          | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/oversample_counter[3]_i_1_n_0 | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/E[2]                          | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/E[3]                          | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/O_WRITE_ADDR[0]               | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/O_WRITE_ADDR[1]               | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              4 |         4.00 |
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/next_o_byte_valid             | inst_uart/inst_uart_rx/plle2_adv_inst |                2 |              8 |         4.00 |
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/next_o_byte_update            | inst_uart/inst_uart_rx/plle2_adv_inst |                1 |              8 |         8.00 |
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_rx/recovery_elapsed_0            | inst_uart/inst_uart_rx/plle2_adv_inst |                2 |              9 |         4.50 |
+|  inst_pll/inst/clk_out1 | inst_uart/inst_uart_tx/tx_current_bit_index          | inst_uart/inst_uart_rx/plle2_adv_inst |                4 |             14 |         3.50 |
+|  inst_pll/inst/clk_out1 | inst_uart/O_WRITE_ADDR_reg[4]_0[0]                   | inst_uart/inst_uart_rx/plle2_adv_inst |                5 |             16 |         3.20 |
+|  inst_pll/inst/clk_out1 | inst_uart/E[0]                                       | inst_uart/inst_uart_rx/plle2_adv_inst |               11 |             16 |         1.45 |
+|  inst_pll/inst/clk_out1 |                                                      | inst_uart/inst_uart_rx/plle2_adv_inst |               19 |             63 |         3.32 |
++-------------------------+------------------------------------------------------+---------------------------------------+------------------+----------------+--------------+
 
 

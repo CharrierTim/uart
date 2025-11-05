@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version              : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date                      : Tue Nov  4 14:20:13 2025
+| Date                      : Wed Nov  5 17:01:25 2025
 | Host                      : L-FV0T324 running 64-bit Ubuntu 24.04.3 LTS
 | Command                   : report_io -file /home/tim/projects/uart/synthesis/results/impl/uart_io.rpt
 | Design                    : TOP_FPGA
@@ -507,7 +507,7 @@ Table of Contents
 | Y8         |                | High Range | IO_L12N_T1_MRCC_13      | User IO     |             |      13 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | Y9         | PAD_I_CLK      | High Range | IO_L12P_T1_MRCC_13      | INPUT       | LVCMOS33    |      13 |            |      |                     |                 NONE |         | FIXED      |           |          |      | NONE             |              |                   |              |
 | Y10        |                | High Range | IO_L10N_T1_13           | User IO     |             |      13 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
-| Y11        | PAD_I_UART_RX  | High Range | IO_L10P_T1_13           | INPUT       | LVCMOS33    |      13 |            |      |                     |                 NONE |         | FIXED      |           |          |      | NONE             |              |                   |              |
+| Y11        | PAD_I_UART_RX  | High Range | IO_L10P_T1_13           | INPUT       | LVCMOS33    |      13 |            |      |                     |                 NONE |         | FIXED      | PULLUP    |          |      | NONE             |              |                   |              |
 | Y12        |                |            | GND                     | GND         |             |         |            |      |                     |                      |     0.0 |            |           |          |      |                  |              |                   |              |
 | Y13        |                | High Range | IO_L23P_T3_33           | User IO     |             |      33 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | Y14        |                | High Range | IO_L22P_T3_33           | User IO     |             |      33 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
