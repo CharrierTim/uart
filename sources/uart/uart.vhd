@@ -284,9 +284,9 @@ begin
                 tx_byte_count         <= (others => '0');
                 tx_byte_to_send_valid <= '0';
             elsif (
-                   (I_READ_DATA_VALID = '1')                                          -- First byte to send
+                   (I_READ_DATA_VALID = '1') -- First byte to send
                    or
-                   (tx_byte_send = '1' and current_state = STATE_READ_MODE_SEND_DATA) -- Other bytes to send
+                   (tx_byte_send = '1')      -- Other bytes to send
                ) then
                 tx_byte_count         <= tx_byte_count + 1;
                 tx_byte_to_send_valid <= '1';
