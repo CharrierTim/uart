@@ -145,6 +145,10 @@ The FPGA instantiates the :doc:`uart` module with the following generics:
       - positive
       - 0d16
       - Sampling rate (number of clock cycles per bit)
+    - - ``G_NB_DATA_BITS``
+      - positive
+      - 0d8
+      - Number of data bits
 
 Regfile
 ~~~~~~~

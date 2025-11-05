@@ -29,7 +29,7 @@ Pin Name       Pin Number Direction Resistor Slew IOSTANDARD
 ============== ========== ========= ======== ==== ==========
 PAD_I_CLK      Y9         in        \-       \-   LVCMOS33
 PAD_RST_H      BTN6       in        \-       \-   LVCMOS18
-PAD_I_UART_RX  Y11        in        \-       \-   LVCMOS33
+PAD_I_UART_RX  Y11        in        PULL-UP  \-   LVCMOS33
 PAD_O_UART_TX  AA11       out       PULL-UP  \-   LVCMOS33
 PAD_I_SWITCH_0 F22        in        \-       \-   LVCMOS18
 PAD_I_SWITCH_1 G22        in        \-       \-   LVCMOS18
