@@ -443,10 +443,6 @@ begin
 
                 next_state <= STATE_IDLE;
 
-            when others =>
-
-                next_state <= STATE_IDLE;
-
         end case;
 
     end process p_next_state_comb;
@@ -492,13 +488,6 @@ begin
             when STATE_VALID =>
 
                 next_o_byte_valid <= '1';
-
-            when others =>
-
-                next_start_bit_error <= '0';
-                next_stop_bit_error  <= '0';
-                next_o_byte_valid    <= '0';
-                next_o_byte_update   <= '0';
 
         end case;
 
