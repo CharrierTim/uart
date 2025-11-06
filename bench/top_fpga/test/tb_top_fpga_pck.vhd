@@ -65,7 +65,6 @@ package tb_top_fpga_pkg is
 
     -- UART model constants
     constant C_BAUD_RATE_BPS       : positive := 115_200;
-    constant C_OVER_SAMPLING_RATE  : positive := 16;
     constant C_BIT_TIME            : time     := 1 sec / C_BAUD_RATE_BPS;
     constant C_BIT_TIME_ACCURACY   : time     := 0.01 * C_BIT_TIME;
     constant C_WRITE_NB_BITS       : positive := 10 * 8; -- 10 bits , 8 chars in total

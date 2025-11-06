@@ -663,12 +663,8 @@ begin
                 wait for C_BIT_TIME;
                 tb_i_uart_rx_manual <= '0'; -- Bit 7
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Stop bit
-                wait for 0.25 * C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Sudden change to low
-                wait for 0.75 * C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1';
-                wait for 1.1 * C_BIT_TIME;
+                tb_i_uart_rx_manual <= '0'; -- Stop bit
+                wait for 2 * C_BIT_TIME;
 
                 -- Send valid 2 bytes 0x30
                 proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
@@ -736,6 +732,9 @@ begin
                 -- Reset DUT
                 proc_reset_dut;
                 wait for 100 us;
+
+                -- Read default value before write attempt
+                proc_uart_check(C_REG_16_BITS, C_REG_16_BITS.data);
 
                 info("");
                 info("Sending write command WFFABCD\n -> Missing \r");
