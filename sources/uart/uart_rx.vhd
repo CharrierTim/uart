@@ -99,6 +99,9 @@ architecture UART_RX_ARCH of UART_RX is
     constant C_RECOVERY_PERIOD      : integer := G_SAMPLING_RATE * C_NB_RECOVERY_BITS;
     constant C_RECOVERY_CNT_WIDTH   : integer := integer(ceil(log2(real(C_RECOVERY_PERIOD))));
 
+    -- Counter bit width
+    constant C_DATA_COUNT_WIDTH     : integer := integer(ceil(log2(real(G_NB_DATA_BITS))));
+
     -- =================================================================================================================
     -- SIGNAL
     -- =================================================================================================================
@@ -111,7 +114,7 @@ architecture UART_RX_ARCH of UART_RX is
     signal oversample_counter       : unsigned(C_OVERSAMPLE_WIDTH - 1 downto 0);
 
     -- Data count
-    signal data_counter             : unsigned(3 - 1 downto 0);
+    signal data_counter             : unsigned(C_DATA_COUNT_WIDTH - 1 downto 0);
 
     -- Recovery locked counter
     signal recovery_counter         : unsigned(C_RECOVERY_CNT_WIDTH - 1 downto 0);
