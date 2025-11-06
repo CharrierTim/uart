@@ -244,6 +244,22 @@ Receiving byte ``0x5A`` (``0b01011010``):
 The byte is complete after 8 bits and ready to be latched to the output if the stop bit
 is valid.
 
+Error Recovery Mechanism
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+When an invalid start bit is detected, the module enters an error recovery state to
+prevent false triggering on glitches or noise.
+
+The module then waits for the following time before going back to idle and accept new RX
+requests: .. math:
+
+::
+
+    \text{RECOVERY\_PERIOD} = G\_SAMPLING\_RATE \times (G\_NB\_DATA\_BITS + 1)
+
+This represents the time for almost one complete UART frame (data bits + stop bit) at
+the configured baud rate.
+
 FSM
 ~~~
 
@@ -254,7 +270,7 @@ The UART RX FSM is defined as:
 Where the following transitions are defined:
 
 .. list-table:: FSM transitions
-    :widths: 25 75
+    :widths: 15 75
     :header-rows: 1
 
     - - Transition
@@ -285,3 +301,11 @@ Where the following transitions are defined:
         1`` **AND** ``uart_rx_sampled_bit = 1`` (valid stop bit = 1)
     - - T9
       - Automatic
+
+.. note::
+
+    **Early Stop Bit Exit for Burst Support**
+
+    The module exits the stop bit at **3/4 of the bit period** (tick 12 of 16) after
+    validation at mid-point (tick 8). This enables zero-gap back-to-back frame reception
+    for burst transmissions.

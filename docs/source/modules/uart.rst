@@ -256,7 +256,7 @@ The UART FSM handling the above protocol is defined as:
 Where the following transitions are defined:
 
 .. list-table:: FSM transitions
-    :widths: 25 75
+    :widths: 15 75
     :header-rows: 1
 
     - - Transition
