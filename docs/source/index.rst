@@ -6,10 +6,20 @@ Documentation of the UART Project.
 Tools Versions
 --------------
 
-- **NVC**: ``nvc 1.18.1 (Using LLVM 18.1.3)``
-- **Vunit**: ``commit 4e30fa124ea84609af0f957dbc55b82adaed1d76``
-- **VSG**: ``VHDL Style Guide (VSG) version: 3.35.0``
-- **Vivado**: ``2025.1``
+.. list-table::
+    :widths: 20 80
+    :header-rows: 1
+
+    - - Tool
+      - Version
+    - - **NVC**
+      - ``nvc 1.19-devel (1.18.0.r65.geafa86e1) (Using LLVM 18.1.3)``
+    - - **Vunit**
+      - ``commit 4e30fa124ea84609af0f957dbc55b82adaed1d76``
+    - - **VSG**
+      - ``VHDL Style Guide (VSG) version: 3.35.0``
+    - - **Vivado**
+      - ``2025.1``
 
 Clocking Configuration
 ----------------------
