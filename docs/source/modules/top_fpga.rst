@@ -116,7 +116,7 @@ The FPGA instantiates the :doc:`resync_slv` module with the following generics:
       - 0d3
       - Width of the input/output vector
     - - ``G_DEFAULT_VALUE``
-      - vector[G_WIDTH - 1:0]
+      - vector [G_WIDTH - 1:0]
       - 0b000
       - Default value of the output vector
 
