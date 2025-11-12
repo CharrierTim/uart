@@ -55,3 +55,9 @@ PAD_O_LED_0    T22        out       \-       \-   LVCMOS33
     modules/resync_slv
     modules/regfile
     modules/uart
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Testbench:
+
+    bench
