@@ -292,7 +292,7 @@ begin
     end process p_next_state_comb;
 
     -- =================================================================================================================
-    -- Resynchronize UART RX input into 16x baud clock domain and apply digital filtering
+    -- Resynchronize UART RX input into input clock domain and apply digital filtering
     -- =================================================================================================================
 
     p_rx_filtering_and_sampling : process (CLK, RST_N) is
