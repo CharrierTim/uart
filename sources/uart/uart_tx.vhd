@@ -88,7 +88,6 @@ architecture UART_TX_ARCH of UART_TX is
 
     -- Baud rate generators
     signal tx_baud_counter       : unsigned(C_BAUD_COUNTER_BITS - 1 downto 0);
-    signal tx_baud_tick          : std_logic;
     signal tx_current_bit_index  : unsigned(C_TX_COUNT_WIDTH - 1 downto 0);
 
     -- FSM signals
@@ -189,7 +188,6 @@ begin
         if (RST_N = '0') then
 
             tx_baud_counter      <= (others => '0');
-            tx_baud_tick         <= '0';
             tx_data_reg          <= (others => '1');
             tx_current_bit_index <= (others => '0');
 
@@ -204,7 +202,6 @@ begin
                 if (tx_baud_counter >= C_TX_CLK_DIV_RATIO - 1) then
 
                     tx_baud_counter <= (others => '0');
-                    tx_baud_tick    <= '1';
 
                     -- Shift right to transmit next bit (LSB is output to TX line)
                     tx_data_reg <= '1' & tx_data_reg(tx_data_reg'high downto tx_data_reg'low + 1);
@@ -214,7 +211,6 @@ begin
 
                 else
                     tx_baud_counter <= tx_baud_counter + 1;
-                    tx_baud_tick    <= '0';
                 end if;
 
             else
@@ -223,7 +219,6 @@ begin
                 -- =====================================================================================================
 
                 tx_baud_counter      <= (others => '0');
-                tx_baud_tick         <= '0';
                 tx_current_bit_index <= (others => '0');
 
                 -- Preload shift register
