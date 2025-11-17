@@ -247,15 +247,50 @@ class GHDL(Simulator):
             VU.add_compile_option(name="ghdl.a_flags", value=["-fsynopsys", "-frelaxed"])
             VU.set_sim_option(name="ghdl.elab_flags", value=["-fsynopsys", "-frelaxed"])
 
-    def setup_coverage(self) -> None:
+    def setup_coverage(self, LIB_SRC, LIB_BENCH) -> None:
         """Set up code coverage for the simulator."""
-        # GHDL only supports coverage with GCC backend, TODO: implement later
-        pass
+        LIB_SRC.set_compile_option("enable_coverage", True)
+        LIB_BENCH.set_compile_option("enable_coverage", True)
+        LIB_BENCH.set_sim_option("enable_coverage", True)
 
     def post_run(self, results) -> None:
         """Actions to perform after the simulation run."""
-        # GHDL only supports coverage with GCC backend, TODO: implement later
-        self.copy_output_log()
+        output_folder: Path = Path(f"{self.VU._output_path}/coverage_report")
+
+        # Create the output folder if it does not exist
+        output_folder.mkdir(parents=True, exist_ok=True)
+        results.merge_coverage(file_name=output_folder)
+
+        if results._simulator_if._backend == "gcc":
+            subprocess.run(
+                args=[
+                    "lcov",
+                    "--capture",
+                    "--directory",
+                    output_folder,
+                    "--output-file",
+                    f"{output_folder}/code_coverage.info",
+                    "--rc",
+                    "branch_coverage=1",
+                    "--ignore-errors",
+                    "mismatch",
+                ],
+                check=True,
+            )
+
+            subprocess.run(
+                [
+                    "genhtml",
+                    f"{output_folder}/code_coverage.info",
+                    "--output-directory",
+                    f"{output_folder}/html_report",
+                    "--ignore-errors",
+                    "source",
+                    "--ignore-errors",
+                    "unmapped",
+                ],
+                check=True,
+            )
 
 
 def select_simulator(simulator_name: str | None = None) -> Simulator:
