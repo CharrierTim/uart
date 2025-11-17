@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date             : Wed Nov 12 12:16:48 2025
-| Host             : L-FV0T324 running 64-bit Ubuntu 24.04.3 LTS
+| Date             : Mon Nov 17 14:22:13 2025
+| Host             : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command          : report_power -file /home/tim/projects/uart/synthesis/results/impl/uart_power.rpt
 | Design           : TOP_FPGA
 | Device           : xc7z020clg484-1
@@ -53,12 +53,11 @@ Table of Contents
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
 | Clocks         |    <0.001 |        5 |       --- |             --- |
-| Slice Logic    |    <0.001 |      359 |       --- |             --- |
-|   LUT as Logic |    <0.001 |      158 |     53200 |            0.30 |
+| Slice Logic    |    <0.001 |      362 |       --- |             --- |
+|   LUT as Logic |    <0.001 |      156 |     53200 |            0.29 |
 |   Register     |    <0.001 |      159 |    106400 |            0.15 |
 |   Others       |     0.000 |        7 |       --- |             --- |
-|   F7/F8 Muxes  |     0.000 |        1 |     53200 |           <0.01 |
-| Signals        |    <0.001 |      273 |       --- |             --- |
+| Signals        |    <0.001 |      279 |       --- |             --- |
 | PLL            |     0.099 |        1 |         4 |           25.00 |
 | I/O            |    <0.001 |        8 |       200 |            4.00 |
 | Static Power   |     0.107 |          |           |                 |
