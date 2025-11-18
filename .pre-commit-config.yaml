@@ -29,7 +29,7 @@ repos:
       - id: vsg
         args:
           - --jobs=4
-          - --configuration=tools/vsg/.vsg.yaml
+          - --configuration=lint/config/.vsg.yaml
 
   # RestructuredText hooks
   - repo: https://github.com/LilSpazJoekp/docstrfmt
