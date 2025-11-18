@@ -86,7 +86,6 @@ if {[file exists $IP_XCI_FILE]} {
 
     # Generate all target files
     generate_target all [get_files clk_wiz_0.xci]
-
 } else {
     puts "ERROR: IP XCI file does not exist: $IP_XCI_FILE"
 }
@@ -158,9 +157,9 @@ synth_design -top $TOP_ENTITY -part $FPGA_PART
 file mkdir "${RESULTS_DIR}/synth"
 
 # Generate synthesis reports
-report_timing_summary       -file               "${RESULTS_DIR}/synth/${PROJECT_NAME}_timing_synth.rpt"
-report_utilization          -hierarchical -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_hierarchical_synth.rpt"
-report_utilization          -file               "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_synth.rpt"
+report_timing_summary               -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_timing_synth.rpt"
+report_utilization    -hierarchical -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_hierarchical_synth.rpt"
+report_utilization                  -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_synth.rpt"
 
 # Optimize
 opt_design -directive "default"
@@ -176,22 +175,22 @@ place_design -directive "default"
 file mkdir "${RESULTS_DIR}/impl"
 
 # Generate placement reports
-report_utilization          -hierarchical -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_utilization_hierarchical_place.rpt"
-report_utilization          -file               "${RESULTS_DIR}/impl/${PROJECT_NAME}_utilization_place.rpt"
-report_io                   -file               "${RESULTS_DIR}/impl/${PROJECT_NAME}_io.rpt"
-report_control_sets         -verbose -file      "${RESULTS_DIR}/impl/${PROJECT_NAME}_control_sets.rpt"
-report_clock_utilization    -file               "${RESULTS_DIR}/impl/${PROJECT_NAME}_clock_utilization.rpt"
+report_utilization       -hierarchical -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_utilization_hierarchical_place.rpt"
+report_utilization                     -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_utilization_place.rpt"
+report_io                              -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_io.rpt"
+report_control_sets      -verbose      -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_control_sets.rpt"
+report_clock_utilization               -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_clock_utilization.rpt"
 
 # Routing
-route_design                -directive "default"
-phys_opt_design             -directive "default"
+route_design    -directive "default"
+phys_opt_design -directive "default"
 
 # Generate routing reports
-report_timing_summary       -no_header -no_detailed_paths
-report_route_status         -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_route_status.rpt"
-report_drc                  -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_drc.rpt"
-report_timing_summary       -datasheet -max_paths 10 -file  "${RESULTS_DIR}/impl/${PROJECT_NAME}_timing.rpt"
-report_power                -file                           "${RESULTS_DIR}/impl/${PROJECT_NAME}_power.rpt"
+report_timing_summary -no_header -no_detailed_paths
+report_route_status                                 -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_route_status.rpt"
+report_drc                                          -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_drc.rpt"
+report_timing_summary -datasheet -max_paths 10      -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_timing.rpt"
+report_power                                        -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_power.rpt"
 
 ## =====================================================================================================================
 # Bitstream generation
