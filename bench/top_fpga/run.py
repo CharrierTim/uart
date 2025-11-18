@@ -60,6 +60,7 @@ BENCH_ROOT: Path = Path(__file__).parent / "test"
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
+
 VU: VUnit = VUnit.from_argv()
 VU.add_vhdl_builtins()
 VU.add_verification_components()
@@ -98,6 +99,9 @@ if VU.get_simulator_name() == "nvc":
         "",
     ]
     simulator.setup_coverage(VU=VU, specifications=coverage_specs)
+elif VU.get_simulator_name() == "ghdl":
+    simulator.setup_coverage(LIB_SRC=LIB_SRC, LIB_BENCH=LIB_BENCH)
+
 
 simulator.configure(VU=VU)
 

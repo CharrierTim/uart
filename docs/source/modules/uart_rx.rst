@@ -27,6 +27,10 @@ Generics
       - positive
       - 0d16
       - Sampling rate (number of clock cycles per bit)
+    - - ``G_NB_DATA_BITS``
+      - positive
+      - 0d8
+      - Number of data bits
 
 Inputs and Outputs
 ------------------
@@ -142,9 +146,6 @@ The filter uses a simple majority voting algorithm on the last 3 stages:
       - Keep previous value
       - Insufficient agreement
 
-This filtering approach requires **3 consecutive identical samples** before changing the
-output, providing excellent noise rejection.
-
 .. important::
 
     The first 2 bits of the shift register are potentially metastable and must NOT be
@@ -167,7 +168,7 @@ each bit period contains 16 ticks.
 
 **Tick Counting**
 
-The ``oversampling_count`` counter tracks the position within the current bit period:
+The ``oversampling_counter`` counter tracks the position within the current bit period:
 
 - Increments on each ``rx_baud_tick``
 - Resets to 0 after reaching ``C_OVERSAMPLE_MAX`` (15 for 16× oversampling)
@@ -186,12 +187,12 @@ The ``oversampling_count`` counter tracks the position within the current bit pe
                        \_________________________________________________________/
 
     Tick:                 0  1  2  3  4  5  6  7  8  9  10  11  12  13  14  15
-    Samples:                                   ^  ^  ^
-                                           Sample Points (Ticks 7, 8, 9)
+    Samples:                                      ^
+                                           Sample Point
 
     Legend:
     - 16 ticks per bit period (numbered 0-15)
-    - Samples taken at ticks 7, 8, 9 (center of bit period)
+    - Samples taken at tick
     - Provides maximum timing margin from bit edges
 
 **Sample Point Selection**
@@ -200,90 +201,17 @@ The mid-bit sample point is calculated as:
 
 .. math::
 
-    \text{mid bit} = \frac{G\_BAUD\_RATE\_BPS - 1}{2} = \frac{15}{2} = 7
-
-Three consecutive samples are taken at ticks mid bit - 1, mid bit and mid bit + 1.
-
-Majority Voting
-~~~~~~~~~~~~~~~
-
-To determine the actual value of each received bit, the receiver uses majority voting on
-three consecutive samples taken at the center of the bit period.
-
-**Sampling Process**
-
-At each bit center, three samples are captured:
-
-.. list-table:: Sample Timing
-    :widths: 30 70
-    :header-rows: 1
-
-    - - Tick Number
-      - Action
-    - - 7 (C_MID_BIT_SAMPLE_POINT - 1)
-      - Capture ``uart_rx_mid_bit_samples(0)``
-    - - 8 (C_MID_BIT_SAMPLE_POINT)
-      - Capture ``uart_rx_mid_bit_samples(1)``
-    - - 9 (C_MID_BIT_SAMPLE_POINT + 1)
-      - Capture ``uart_rx_mid_bit_samples(2)``
-
-**Voting Logic**
-
-The sampled bit value is determined by majority vote:
-
-.. list-table:: Majority Voting Truth Table
-    :widths: 30 20 50
-    :header-rows: 1
-
-    - - Samples [2:0]
-      - Result
-      - Description
-    - - ``000``
-      - ``0``
-      - Clean zero (3/3 agree)
-    - - ``001``
-      - ``0``
-      - Majority zero (2/3 agree)
-    - - ``010``
-      - ``0``
-      - Majority zero (2/3 agree)
-    - - ``100``
-      - ``0``
-      - Majority zero (2/3 agree)
-    - - ``111``
-      - ``1``
-      - Clean one (3/3 agree)
-    - - ``110``
-      - ``1``
-      - Majority one (2/3 agree)
-    - - ``101``
-      - ``1``
-      - Majority one (2/3 agree)
-    - - ``011``
-      - ``1``
-      - Majority one (2/3 agree)
-
-.. note::
-
-    This majority voting scheme provides immunity against single-tick noise spikes,
-    significantly improving reception reliability in noisy environments.
+    \text{mid bit} = \frac{G\_BAUD\_RATE\_BPS - 1}{2}
 
 Bit Counter
 ~~~~~~~~~~~
 
-The ``data_bit_count`` counter tracks how many data bits have been received:
-
-- Initialized to 0 at the start of data reception
-- Increments by 1 after each complete bit period (when ``oversampling_count`` wraps)
-- Only increments in the ``STATE_DATA_BITS`` state
-- After reaching 7 (8 bits total: 0-7), transitions to stop bit state
-
-This ensures exactly 8 data bits are received per frame.
+The ``data_counter`` counter tracks how many data bits have been received.
 
 Data Shift Register
 ~~~~~~~~~~~~~~~~~~~
 
-The ``received_byte`` register accumulates the incoming data bits.
+The ``next_o_byte`` register accumulates the incoming data bits.
 
 **Shifting Operation**
 
@@ -292,7 +220,7 @@ Data is received **LSB first** (UART standard). Each new bit is shifted in from 
 
 .. code-block:: vhdl
 
-    received_byte <= uart_rx_sampled_bit & received_byte(7 downto 1);
+    next_o_byte <= uart_rx_sampled_bit & next_o_byte(7 downto 1);
 
 **Example Reception Sequence**
 
@@ -300,21 +228,37 @@ Receiving byte ``0x5A`` (``0b01011010``):
 
 .. code-block:: none
 
-    Initial:      received_byte = xxxxxxxx
+    Initial:      next_o_byte = xxxxxxxx
 
-    Bit 0 (D0=0): received_byte = 0xxxxxxx  (shift in 0)
-    Bit 1 (D1=1): received_byte = 10xxxxxx  (shift in 1)
-    Bit 2 (D2=0): received_byte = 010xxxxx  (shift in 0)
-    Bit 3 (D3=1): received_byte = 1010xxxx  (shift in 1)
-    Bit 4 (D4=1): received_byte = 11010xxx  (shift in 1)
-    Bit 5 (D5=0): received_byte = 011010xx  (shift in 0)
-    Bit 6 (D6=1): received_byte = 1011010x  (shift in 1)
-    Bit 7 (D7=0): received_byte = 01011010  (shift in 0)
+    Bit 0 (D0=0): next_o_byte = 0xxxxxxx  (shift in 0)
+    Bit 1 (D1=1): next_o_byte = 10xxxxxx  (shift in 1)
+    Bit 2 (D2=0): next_o_byte = 010xxxxx  (shift in 0)
+    Bit 3 (D3=1): next_o_byte = 1010xxxx  (shift in 1)
+    Bit 4 (D4=1): next_o_byte = 11010xxx  (shift in 1)
+    Bit 5 (D5=0): next_o_byte = 011010xx  (shift in 0)
+    Bit 6 (D6=1): next_o_byte = 1011010x  (shift in 1)
+    Bit 7 (D7=0): next_o_byte = 01011010  (shift in 0)
 
-    Final:        received_byte = 0x5A ✓
+    Final:        next_o_byte = 0x5A ✓
 
 The byte is complete after 8 bits and ready to be latched to the output if the stop bit
 is valid.
+
+Error Recovery Mechanism
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+When an invalid start bit is detected, the module enters an error recovery state to
+prevent false triggering on glitches or noise.
+
+The module then waits for the following time before going back to idle and accept new RX
+requests: .. math:
+
+::
+
+    \text{RECOVERY\_PERIOD} = G\_SAMPLING\_RATE \times (G\_NB\_DATA\_BITS + 1)
+
+This represents the time for almost one complete UART frame (data bits + stop bit) at
+the configured baud rate.
 
 FSM
 ~~~
@@ -326,7 +270,7 @@ The UART RX FSM is defined as:
 Where the following transitions are defined:
 
 .. list-table:: FSM transitions
-    :widths: 25 75
+    :widths: 15 75
     :header-rows: 1
 
     - - Transition
@@ -335,23 +279,33 @@ Where the following transitions are defined:
       - ``i_uart_rx_filtered_d1 = 1`` **AND** ``i_uart_rx_filtered = 0`` (falling edge
         on the UART line)
     - - T1
-      - ``rx_baud_tick = 1`` **AND** ``oversampling_count = 15`` **AND**
-        ``uart_rx_sampled_bit = 1`` (start bit = 1)
+      - ``rx_baud_tick = 1`` **AND** ``oversampling_counter = G_SAMPLING_RATE - 1``
+        **AND** ``uart_rx_sampled_bit = 1`` (invalid start bit = 1)
     - - T2
       - Automatic
     - - T3
-      - ``rx_baud_tick = 1`` **AND** ``oversampling_count = 15`` **AND**
-        ``uart_rx_sampled_bit = 0`` (start bit = 0)
+      - ``recovery_elapsed = 1``
     - - T4
-      - ``rx_baud_tick = 1`` **AND** ``oversampling_count = 15`` **AND**
-        ``data_bit_count = 7``
+      - ``rx_baud_tick = 1`` **AND** ``oversampling_counter = G_SAMPLING_RATE - 1``
+        **AND** ``uart_rx_sampled_bit = 0`` (valid start bit = 0)
     - - T5
-      - ``rx_baud_tick = 1`` **AND** ``oversampling_count = 15`` **AND**
-        ``uart_rx_sampled_bit = 0`` (stop bit = 0)
+      - ``rx_baud_tick = 1`` **AND** ``oversampling_counter = G_SAMPLING_RATE - 1``
+        **AND** ``data_counter = G_NB_DATA_BITS - 1``
     - - T6
-      - Automatic
+      - ``rx_baud_tick = 1`` **AND** ``oversampling_counter = C_THREE_QUARTER_POINT -
+        1`` **AND** ``uart_rx_sampled_bit = 0`` (invalid stop bit = 0)
     - - T7
-      - ``rx_baud_tick = 1`` **AND** ``oversampling_count = 15`` **AND**
-        ``uart_rx_sampled_bit = 1`` (stop bit = 1)
-    - - T8
       - Automatic
+    - - T8
+      - ``rx_baud_tick = 1`` **AND** ``oversampling_counter = C_THREE_QUARTER_POINT -
+        1`` **AND** ``uart_rx_sampled_bit = 1`` (valid stop bit = 1)
+    - - T9
+      - Automatic
+
+.. note::
+
+    **Early Stop Bit Exit for Burst Support**
+
+    The module exits the stop bit at **3/4 of the bit period** (tick 12 of 16) after
+    validation at mid-point (tick 8). This enables zero-gap back-to-back frame reception
+    for burst transmissions.

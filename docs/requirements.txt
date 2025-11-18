@@ -1,0 +1,6 @@
+pydata_sphinx_theme
+sphinx_copybutton
+sphinx
+sphinxcontrib.bibtex
+sphinxcontrib.wavedrom
+numpydoc

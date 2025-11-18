@@ -88,13 +88,11 @@ architecture UART_TX_ARCH of UART_TX is
 
     -- Baud rate generators
     signal tx_baud_counter       : unsigned(C_BAUD_COUNTER_BITS - 1 downto 0);
-    signal tx_baud_tick          : std_logic;
     signal tx_current_bit_index  : unsigned(C_TX_COUNT_WIDTH - 1 downto 0);
 
     -- FSM signals
     signal current_state         : t_tx_state;
     signal next_state            : t_tx_state;
-    signal next_tx_data          : std_logic_vector(8 - 1 downto 0);
     signal next_o_uart_tx        : std_logic;
     signal next_o_done           : std_logic;
 
@@ -102,86 +100,6 @@ architecture UART_TX_ARCH of UART_TX is
     signal tx_data_reg           : std_logic_vector(C_TX_NB_BITS - 1 downto 0);
 
 begin
-
-    -- =================================================================================================================
-    -- Generate the TX baud rate tick
-    -- =================================================================================================================
-
-    p_tx_clock_divider : process (CLK, RST_N) is
-    begin
-
-        if (RST_N = '0') then
-
-            tx_baud_counter <= (others => '0');
-            tx_baud_tick    <= '0';
-
-        elsif rising_edge(CLK) then
-
-            -- =========================================================================================================
-            -- Baud rate counter
-            -- =========================================================================================================
-            -- The baud rate counter increments on each clock cycle.
-            -- =========================================================================================================
-
-            -- Counter handling
-            if (current_state = STATE_SEND_BYTE) then
-                if (tx_baud_counter >= C_TX_CLK_DIV_RATIO - 1) then
-
-                    tx_baud_counter <= (others => '0');
-                    tx_baud_tick    <= '1';
-
-                else
-                    tx_baud_counter <= tx_baud_counter + 1;
-                    tx_baud_tick    <= '0';
-                end if;
-            else
-                tx_baud_counter <= (others => '0');
-                tx_baud_tick    <= '0';
-            end if;
-
-        end if;
-
-    end process p_tx_clock_divider;
-
-    -- =================================================================================================================
-    -- Bit counter for data bits transmission
-    -- =================================================================================================================
-
-    p_bit_counter : process (CLK, RST_N) is
-    begin
-
-        if (RST_N = '0') then
-
-            tx_data_reg          <= (others => '0');
-            tx_current_bit_index <= (others => '0');
-
-        elsif rising_edge(CLK) then
-
-            -- =========================================================================================================
-            -- Data register loading or shifting
-            -- =========================================================================================================
-
-            if (current_state /= STATE_SEND_BYTE) then
-
-                -- Set the data
-                tx_data_reg <= '1' & next_tx_data & '0'; -- 1 for stop bit, 0 for start bit
-
-                -- Reset counter
-                tx_current_bit_index <= (others => '0');
-
-            elsif (tx_baud_tick = '1') then
-
-                -- Shift the data
-                tx_data_reg <= '1' & tx_data_reg(tx_data_reg'high downto tx_data_reg'low + 1);
-
-                -- Increment counter
-                tx_current_bit_index <= tx_current_bit_index + 1;
-
-            end if;
-
-        end if;
-
-    end process p_bit_counter;
 
     -- =================================================================================================================
     -- FSM sequential process for state transitions
@@ -210,7 +128,7 @@ begin
     begin
 
         -- Default assignment
-        next_state <= current_state;
+        next_state <= STATE_IDLE;
 
         case current_state is
 
@@ -236,7 +154,7 @@ begin
 
             when STATE_SEND_BYTE =>
 
-                if (tx_current_bit_index >= C_TX_NB_BITS and tx_baud_tick = '1') then
+                if (tx_current_bit_index >= C_TX_NB_BITS) then
                     next_state <= STATE_DONE;
                 else
                     next_state <= STATE_SEND_BYTE;
@@ -252,17 +170,65 @@ begin
 
                 next_state <= STATE_IDLE;
 
-            -- =========================================================================================================
-            -- DEFAULT CASE: should not occur
-            -- =========================================================================================================
-
-            when others =>
-
-                next_state <= STATE_IDLE;
-
         end case;
 
     end process p_next_state_comb;
+
+    -- =================================================================================================================
+    -- TX Baud Rate Generator and Serial Shift Register
+    -- =================================================================================================================
+    -- Generates the transmission baud rate clock from the system clock and manages the serial bit stream.
+    --
+    -- Transmission Order: Start bit first (0), then data LSB to MSB, then stop bit (1)
+    -- =================================================================================================================
+
+    p_tx_clock_divider : process (CLK, RST_N) is
+    begin
+
+        if (RST_N = '0') then
+
+            tx_baud_counter      <= (others => '0');
+            tx_data_reg          <= (others => '1');
+            tx_current_bit_index <= (others => '0');
+
+        elsif rising_edge(CLK) then
+
+            if (current_state = STATE_SEND_BYTE) then
+
+                -- =====================================================================================================
+                -- Active Transmission State
+                -- =====================================================================================================
+
+                if (tx_baud_counter >= C_TX_CLK_DIV_RATIO - 1) then
+
+                    tx_baud_counter <= (others => '0');
+
+                    -- Shift right to transmit next bit (LSB is output to TX line)
+                    tx_data_reg <= '1' & tx_data_reg(tx_data_reg'high downto tx_data_reg'low + 1);
+
+                    -- Track current bit index
+                    tx_current_bit_index <= tx_current_bit_index + 1;
+
+                else
+                    tx_baud_counter <= tx_baud_counter + 1;
+                end if;
+
+            else
+                -- =====================================================================================================
+                -- Prepare for next transmission
+                -- =====================================================================================================
+
+                tx_baud_counter      <= (others => '0');
+                tx_current_bit_index <= (others => '0');
+
+                -- Preload shift register
+                tx_data_reg <= '1' & I_BYTE & '0';
+
+            end if;
+
+        end if;
+
+    end process p_tx_clock_divider;
 
     -- =================================================================================================================
     -- Next output logic
@@ -272,7 +238,6 @@ begin
     begin
 
         -- Default assignments
-        next_tx_data   <= (others => '0');
         next_o_uart_tx <= '1';
         next_o_done    <= '0';
 
@@ -283,8 +248,6 @@ begin
             -- =========================================================================================================
 
             when STATE_IDLE =>
-
-                next_tx_data <= I_BYTE;
 
             -- =========================================================================================================
             -- STATE: SEND BYTE
@@ -301,16 +264,6 @@ begin
             when STATE_DONE =>
 
                 next_o_done <= '1';
-
-            -- =========================================================================================================
-            -- DEFAULT CASE: should not occur
-            -- =========================================================================================================
-
-            when others =>
-
-                next_tx_data   <= (others => '0');
-                next_o_uart_tx <= '1';
-                next_o_done    <= '0';
 
         end case;
 

@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Tue Nov  4 14:20:43 2025
-| Host         : L-FV0T324 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Mon Nov 17 14:22:12 2025
+| Host         : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_drc -file /home/tim/projects/uart/synthesis/results/impl/uart_drc.rpt
 | Design       : TOP_FPGA
 | Device       : xc7z020clg484-1

@@ -43,7 +43,8 @@ entity UART is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
         G_BAUD_RATE_BPS : positive := 115_200;    -- Baud rate
-        G_SAMPLING_RATE : positive := 16          -- Sampling rate (number of clock cycles per bit)
+        G_SAMPLING_RATE : positive := 16;         -- Sampling rate (number of clock cycles per bit)
+        G_NB_DATA_BITS  : positive := 8           -- Number of data bits
     );
     port (
         -- Clock and reset
@@ -210,7 +211,8 @@ begin
         generic map (
             G_CLK_FREQ_HZ   => G_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => G_BAUD_RATE_BPS,
-            G_SAMPLING_RATE => G_SAMPLING_RATE
+            G_SAMPLING_RATE => G_SAMPLING_RATE,
+            G_NB_DATA_BITS  => G_NB_DATA_BITS
         )
         port map (
             CLK               => CLK,
@@ -282,9 +284,9 @@ begin
                 tx_byte_count         <= (others => '0');
                 tx_byte_to_send_valid <= '0';
             elsif (
-                   (I_READ_DATA_VALID = '1')                                          -- First byte to send
+                   (I_READ_DATA_VALID = '1') -- First byte to send
                    or
-                   (tx_byte_send = '1' and current_state = STATE_READ_MODE_SEND_DATA) -- Other bytes to send
+                   (tx_byte_send = '1')      -- Other bytes to send
                ) then
                 tx_byte_count         <= tx_byte_count + 1;
                 tx_byte_to_send_valid <= '1';
@@ -432,14 +434,6 @@ begin
 
                 next_state <= STATE_IDLE;
 
-            -- =========================================================================================================
-            -- DEFAULT CASE
-            -- =========================================================================================================
-
-            when others =>
-
-                next_state <= STATE_IDLE;
-
         end case;
 
     end process p_next_state_comb;
@@ -538,16 +532,6 @@ begin
             when STATE_WRITE_MODE_END =>
 
                 next_write_valid <= '1';
-
-            -- =========================================================================================================
-            -- DEFAULT CASE
-            -- =========================================================================================================
-
-            when others =>
-
-                next_read_valid  <= '0';
-                next_write_valid <= '0';
-                tx_byte_to_send  <= (others => '0');
 
         end case;
 

@@ -23,7 +23,7 @@ Generics
       - 0d8
       - Width of the input/output vector
     - - ``G_DEFAULT_VALUE``
-      - vector[G_WIDTH - 1:0]
+      - vector [G_WIDTH - 1:0]
       - 0x00
       - Default value of the output vector
 

@@ -79,20 +79,11 @@ Clock Divider
 A clock operating at the baud rate is generated internally to control the bit timing.
 This clock is activated when the transmitter enters the ``STATE_SEND_BYTE`` state.
 
-The clock divider process generates a pulse (``tx_baud_tick``) each time a bit period
-has elapsed. This pulse serves as the timing reference for all bit-level operations
-during transmission.
-
-.. note::
-
-    The ``tx_baud_tick`` pulse ensures precise bit timing and synchronization with the
-    receiver's expected baud rate.
+The clock divider process increment the bit count and shift the data every time it
+reaches one baud tick.
 
 Bit Counter
 ~~~~~~~~~~~
-
-In the ``STATE_SEND_BYTE`` state, a counter increments on each ``tx_baud_tick`` pulse to
-track the number of bits transmitted.
 
 This counter ensures that:
 
@@ -135,7 +126,7 @@ The frame is constructed as follows:
 **STATE_SEND_BYTE Mode**
 
 In the ``STATE_SEND_BYTE`` state, the shift register is shifted right by one position at
-each ``tx_baud_tick`` pulse. A logic '1' is shifted in from the left (MSB) side.
+each baud tick overflow. A logic '1' is shifted in from the left (MSB) side.
 
 This right-shift operation ensures that:
 
@@ -168,7 +159,7 @@ The UART FSM handling is defined as:
 Where the following transitions are defined:
 
 .. list-table:: FSM transitions
-    :widths: 25 75
+    :widths: 15 75
     :header-rows: 1
 
     - - Transition
@@ -176,6 +167,6 @@ Where the following transitions are defined:
     - - T0
       - ``I_BYTE_VALID = 1``
     - - T1
-      - ``tx_current_bit_index >= 9`` **AND** ``tx_baud_tick = 1``
+      - ``tx_current_bit_index >= 9``
     - - T2
       - Automatic
