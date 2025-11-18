@@ -26,7 +26,7 @@ jobs:
         shell: bash
         run: |
           cd ./lint/script
-          python3 script.py
+          python3 lint.py
 
       # Upload Linting results
       - name: Upload Linting results
