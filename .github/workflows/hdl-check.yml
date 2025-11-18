@@ -1,0 +1,38 @@
+name: HDL-check
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      #General Setup
+      - name: Setup node
+        uses: actions/setup-node@v4
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      # Setup environment
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+        with:
+          os: ${{ runner.os }}
+
+      # Run Linting
+      - name: Run Linting
+        shell: bash
+        run: |
+          cd ./lint/script
+          python3 lint.py
+
+      # Upload Linting results
+      - name: Upload Linting results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linting-artifacts
+          path: |
+            lint/report/vsg_vhdl.xml
