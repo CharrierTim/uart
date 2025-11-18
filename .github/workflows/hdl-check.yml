@@ -9,7 +9,7 @@ jobs:
   linting:
     runs-on: ubuntu-latest
     steps:
-      #General Setup
+      # General Setup
       - name: Setup node
         uses: actions/setup-node@v4
       - name: Checkout repo
