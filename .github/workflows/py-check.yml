@@ -1,0 +1,22 @@
+name: Python-check
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+
+jobs:
+    linting:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+
+            - name: Run Ruff linter
+              uses: astral-sh/ruff-action@v3
+              with:
+                  args: "check --output-format=github"
+
+            - name: Run Ruff formatter
+              uses: astral-sh/ruff-action@v3
+              with:
+                  args: "format --check"
