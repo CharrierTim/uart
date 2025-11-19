@@ -184,7 +184,7 @@ All Modules
 
 
 
-# Location of BUFG Primitives 
+# Location of BUFG Primitives
 set_property LOC BUFGCTRL_X0Y1 [get_cells inst_pll/inst/clkf_buf]
 set_property LOC BUFGCTRL_X0Y0 [get_cells inst_pll/inst/clkout1_buf]
 

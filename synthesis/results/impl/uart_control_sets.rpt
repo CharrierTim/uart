@@ -88,5 +88,3 @@ Table of Contents
 |  inst_pll/inst/clk_out1 | inst_uart/O_WRITE_ADDR_reg[4]_0[0]                   | inst_uart/inst_uart_rx/plle2_adv_inst |                3 |             16 |         5.33 |
 |  inst_pll/inst/clk_out1 |                                                      | inst_uart/inst_uart_rx/plle2_adv_inst |               18 |             61 |         3.39 |
 +-------------------------+------------------------------------------------------+---------------------------------------+------------------+----------------+--------------+
-
-
