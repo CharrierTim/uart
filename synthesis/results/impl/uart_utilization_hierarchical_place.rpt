@@ -29,5 +29,3 @@ Table of Contents
 |     inst_uart_rx | UART_RX |         56 |         56 |       0 |    0 |  54 |      0 |      0 |          0 |
 +------------------+---------+------------+------------+---------+------+-----+--------+--------+------------+
 * Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
-
-

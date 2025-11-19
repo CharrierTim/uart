@@ -29,11 +29,11 @@ Timing Summary Report
   Merge Timing Exceptions                    :  Yes
   Inter-SLR Compensation                     :  Conservative
 
-  Corner  Analyze    Analyze    
-  Name    Max Paths  Min Paths  
-  ------  ---------  ---------  
-  Slow    Yes        Yes        
-  Fast    Yes        Yes        
+  Corner  Analyze    Analyze
+  Name    Max Paths  Min Paths
+  ------  ---------  ---------
+  Slow    Yes        Yes
+  Fast    Yes        Yes
 
 
 ------------------------------------------------------------------------------------------------
@@ -136,9 +136,9 @@ Table of Contents
 | ---------------------
 ------------------------------------------------------------------------------------------------
 
-    WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
-    -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-     15.934        0.000                      0                  253        0.053        0.000                      0                  253        3.000        0.000                       0                   165  
+    WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints
+    -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------
+     15.934        0.000                      0                  253        0.053        0.000                      0                  253        3.000        0.000                       0                   165
 
 
 All user specified timing constraints are met.
@@ -151,9 +151,9 @@ All user specified timing constraints are met.
 
 Clock                 Waveform(ns)       Period(ns)      Frequency(MHz)
 -----                 ------------       ----------      --------------
-PAD_I_CLK             {0.000 5.000}      10.000          100.000         
-  clk_out1_clk_wiz_0  {0.000 10.000}     20.000          50.000          
-  clkfbout_clk_wiz_0  {0.000 10.000}     20.000          50.000          
+PAD_I_CLK             {0.000 5.000}      10.000          100.000
+  clk_out1_clk_wiz_0  {0.000 10.000}     20.000          50.000
+  clkfbout_clk_wiz_0  {0.000 10.000}     20.000          50.000
 
 
 ------------------------------------------------------------------------------------------------
@@ -161,11 +161,11 @@ PAD_I_CLK             {0.000 5.000}      10.000          100.000
 | -----------------
 ------------------------------------------------------------------------------------------------
 
-Clock                     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
------                     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-PAD_I_CLK                                                                                                                                                               3.000        0.000                       0                     1  
-  clk_out1_clk_wiz_0       15.934        0.000                      0                  253        0.053        0.000                      0                  253        9.500        0.000                       0                   161  
-  clkfbout_clk_wiz_0                                                                                                                                                   17.845        0.000                       0                     3  
+Clock                     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints
+-----                     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------
+PAD_I_CLK                                                                                                                                                               3.000        0.000                       0                     1
+  clk_out1_clk_wiz_0       15.934        0.000                      0                  253        0.053        0.000                      0                  253        9.500        0.000                       0                   161
+  clkfbout_clk_wiz_0                                                                                                                                                   17.845        0.000                       0                     3
 
 
 ------------------------------------------------------------------------------------------------
@@ -173,8 +173,8 @@ PAD_I_CLK                                                                       
 | -----------------
 ------------------------------------------------------------------------------------------------
 
-From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
-----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints
+----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------
 
 
 ------------------------------------------------------------------------------------------------
@@ -182,8 +182,8 @@ From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS
 | -----------------------
 ------------------------------------------------------------------------------------------------
 
-Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
-----------    ----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints
+----------    ----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------
 
 
 ------------------------------------------------------------------------------------------------
@@ -242,7 +242,7 @@ Slack (MET) :             15.934ns  (required time - arrival time)
   Data Path Delay:        3.622ns  (logic 0.854ns (23.580%)  route 2.768ns (76.420%))
   Logic Levels:           3  (LUT2=2 LUT6=1)
   Clock Path Skew:        -0.068ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.894ns = ( 18.106 - 20.000 ) 
+    Destination Clock Delay (DCD):    -1.894ns = ( 18.106 - 20.000 )
     Source Clock Delay      (SCD):    -2.240ns
     Clock Pessimism Removal (CPR):    -0.413ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -253,7 +253,7 @@ Slack (MET) :             15.934ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -277,7 +277,7 @@ Slack (MET) :             15.934ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -288,14 +288,14 @@ Slack (MET) :             15.934ns  (required time - arrival time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.408 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         1.697    18.106    inst_uart/clk_out1
     SLICE_X109Y46        FDCE                                         r  inst_uart/O_WRITE_DATA_reg[0]/C
-                         clock pessimism             -0.413    17.692    
-                         clock uncertainty           -0.108    17.585    
+                         clock pessimism             -0.413    17.692
+                         clock uncertainty           -0.108    17.585
     SLICE_X109Y46        FDCE (Setup_fdce_C_D)       -0.269    17.316    inst_uart/O_WRITE_DATA_reg[0]
   -------------------------------------------------------------------
-                         required time                         17.316    
-                         arrival time                          -1.382    
+                         required time                         17.316
+                         arrival time                          -1.382
   -------------------------------------------------------------------
-                         slack                                 15.934    
+                         slack                                 15.934
 
 Slack (MET) :             15.970ns  (required time - arrival time)
   Source:                 inst_uart/inst_uart_rx/O_BYTE_reg[1]/C
@@ -308,7 +308,7 @@ Slack (MET) :             15.970ns  (required time - arrival time)
   Data Path Delay:        3.622ns  (logic 0.854ns (23.580%)  route 2.768ns (76.420%))
   Logic Levels:           3  (LUT2=2 LUT6=1)
   Clock Path Skew:        -0.068ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.894ns = ( 18.106 - 20.000 ) 
+    Destination Clock Delay (DCD):    -1.894ns = ( 18.106 - 20.000 )
     Source Clock Delay      (SCD):    -2.240ns
     Clock Pessimism Removal (CPR):    -0.413ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -319,7 +319,7 @@ Slack (MET) :             15.970ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -343,7 +343,7 @@ Slack (MET) :             15.970ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -354,14 +354,14 @@ Slack (MET) :             15.970ns  (required time - arrival time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.408 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         1.697    18.106    inst_uart/clk_out1
     SLICE_X108Y46        FDCE                                         r  inst_uart/O_WRITE_DATA_reg[12]/C
-                         clock pessimism             -0.413    17.692    
-                         clock uncertainty           -0.108    17.585    
+                         clock pessimism             -0.413    17.692
+                         clock uncertainty           -0.108    17.585
     SLICE_X108Y46        FDCE (Setup_fdce_C_D)       -0.233    17.352    inst_uart/O_WRITE_DATA_reg[12]
   -------------------------------------------------------------------
-                         required time                         17.352    
-                         arrival time                          -1.382    
+                         required time                         17.352
+                         arrival time                          -1.382
   -------------------------------------------------------------------
-                         slack                                 15.970    
+                         slack                                 15.970
 
 Slack (MET) :             15.978ns  (required time - arrival time)
   Source:                 inst_uart/inst_uart_rx/O_BYTE_reg[1]/C
@@ -374,7 +374,7 @@ Slack (MET) :             15.978ns  (required time - arrival time)
   Data Path Delay:        3.614ns  (logic 0.854ns (23.629%)  route 2.760ns (76.371%))
   Logic Levels:           3  (LUT2=2 LUT6=1)
   Clock Path Skew:        -0.067ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.893ns = ( 18.107 - 20.000 ) 
+    Destination Clock Delay (DCD):    -1.893ns = ( 18.107 - 20.000 )
     Source Clock Delay      (SCD):    -2.240ns
     Clock Pessimism Removal (CPR):    -0.413ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -385,7 +385,7 @@ Slack (MET) :             15.978ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -409,7 +409,7 @@ Slack (MET) :             15.978ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -420,14 +420,14 @@ Slack (MET) :             15.978ns  (required time - arrival time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.408 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         1.698    18.107    inst_uart/clk_out1
     SLICE_X108Y47        FDCE                                         r  inst_uart/O_WRITE_DATA_reg[4]/C
-                         clock pessimism             -0.413    17.693    
-                         clock uncertainty           -0.108    17.586    
+                         clock pessimism             -0.413    17.693
+                         clock uncertainty           -0.108    17.586
     SLICE_X108Y47        FDCE (Setup_fdce_C_D)       -0.233    17.353    inst_uart/O_WRITE_DATA_reg[4]
   -------------------------------------------------------------------
-                         required time                         17.353    
-                         arrival time                          -1.375    
+                         required time                         17.353
+                         arrival time                          -1.375
   -------------------------------------------------------------------
-                         slack                                 15.978    
+                         slack                                 15.978
 
 Slack (MET) :             15.992ns  (required time - arrival time)
   Source:                 inst_uart/O_WRITE_ADDR_reg[3]/C
@@ -440,7 +440,7 @@ Slack (MET) :             15.992ns  (required time - arrival time)
   Data Path Delay:        3.599ns  (logic 0.962ns (26.726%)  route 2.637ns (73.274%))
   Logic Levels:           2  (LUT5=2)
   Clock Path Skew:        -0.026ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 ) 
+    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 )
     Source Clock Delay      (SCD):    -2.240ns
     Clock Pessimism Removal (CPR):    -0.373ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -451,7 +451,7 @@ Slack (MET) :             15.992ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -473,7 +473,7 @@ Slack (MET) :             15.992ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -484,14 +484,14 @@ Slack (MET) :             15.992ns  (required time - arrival time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.408 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         1.699    18.108    inst_regfile/clk_out1
     SLICE_X111Y46        FDPE                                         r  inst_regfile/reg_read_reg[2]/C
-                         clock pessimism             -0.373    17.734    
-                         clock uncertainty           -0.108    17.627    
+                         clock pessimism             -0.373    17.734
+                         clock uncertainty           -0.108    17.627
     SLICE_X111Y46        FDPE (Setup_fdpe_C_D)       -0.275    17.352    inst_regfile/reg_read_reg[2]
   -------------------------------------------------------------------
-                         required time                         17.352    
-                         arrival time                          -1.360    
+                         required time                         17.352
+                         arrival time                          -1.360
   -------------------------------------------------------------------
-                         slack                                 15.992    
+                         slack                                 15.992
 
 Slack (MET) :             16.072ns  (required time - arrival time)
   Source:                 inst_uart/inst_uart_rx/O_BYTE_reg[3]/C
@@ -504,7 +504,7 @@ Slack (MET) :             16.072ns  (required time - arrival time)
   Data Path Delay:        3.835ns  (logic 1.058ns (27.590%)  route 2.777ns (72.410%))
   Logic Levels:           3  (LUT4=1 LUT6=2)
   Clock Path Skew:        -0.067ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.893ns = ( 18.107 - 20.000 ) 
+    Destination Clock Delay (DCD):    -1.893ns = ( 18.107 - 20.000 )
     Source Clock Delay      (SCD):    -2.240ns
     Clock Pessimism Removal (CPR):    -0.413ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -515,7 +515,7 @@ Slack (MET) :             16.072ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -539,7 +539,7 @@ Slack (MET) :             16.072ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -550,14 +550,14 @@ Slack (MET) :             16.072ns  (required time - arrival time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.408 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         1.698    18.107    inst_uart/clk_out1
     SLICE_X108Y48        FDCE                                         r  inst_uart/FSM_sequential_current_state_reg[1]/C
-                         clock pessimism             -0.413    17.693    
-                         clock uncertainty           -0.108    17.586    
+                         clock pessimism             -0.413    17.693
+                         clock uncertainty           -0.108    17.586
     SLICE_X108Y48        FDCE (Setup_fdce_C_D)        0.081    17.667    inst_uart/FSM_sequential_current_state_reg[1]
   -------------------------------------------------------------------
-                         required time                         17.667    
-                         arrival time                          -1.595    
+                         required time                         17.667
+                         arrival time                          -1.595
   -------------------------------------------------------------------
-                         slack                                 16.072    
+                         slack                                 16.072
 
 Slack (MET) :             16.085ns  (required time - arrival time)
   Source:                 inst_uart/O_WRITE_ADDR_reg[6]/C
@@ -570,7 +570,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
   Data Path Delay:        3.375ns  (logic 0.792ns (23.470%)  route 2.583ns (76.530%))
   Logic Levels:           2  (LUT3=1 LUT6=1)
   Clock Path Skew:        -0.026ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 ) 
+    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 )
     Source Clock Delay      (SCD):    -2.240ns
     Clock Pessimism Removal (CPR):    -0.373ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -581,7 +581,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -603,7 +603,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -614,14 +614,14 @@ Slack (MET) :             16.085ns  (required time - arrival time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.408 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         1.699    18.108    inst_regfile/clk_out1
     SLICE_X110Y46        FDCE                                         r  inst_regfile/reg_16_bits_reg[12]/C
-                         clock pessimism             -0.373    17.734    
-                         clock uncertainty           -0.108    17.627    
+                         clock pessimism             -0.373    17.734
+                         clock uncertainty           -0.108    17.627
     SLICE_X110Y46        FDCE (Setup_fdce_C_CE)      -0.407    17.220    inst_regfile/reg_16_bits_reg[12]
   -------------------------------------------------------------------
-                         required time                         17.220    
-                         arrival time                          -1.135    
+                         required time                         17.220
+                         arrival time                          -1.135
   -------------------------------------------------------------------
-                         slack                                 16.085    
+                         slack                                 16.085
 
 Slack (MET) :             16.085ns  (required time - arrival time)
   Source:                 inst_uart/O_WRITE_ADDR_reg[6]/C
@@ -634,7 +634,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
   Data Path Delay:        3.375ns  (logic 0.792ns (23.470%)  route 2.583ns (76.530%))
   Logic Levels:           2  (LUT3=1 LUT6=1)
   Clock Path Skew:        -0.026ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 ) 
+    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 )
     Source Clock Delay      (SCD):    -2.240ns
     Clock Pessimism Removal (CPR):    -0.373ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -645,7 +645,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -667,7 +667,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -678,14 +678,14 @@ Slack (MET) :             16.085ns  (required time - arrival time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.408 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         1.699    18.108    inst_regfile/clk_out1
     SLICE_X110Y46        FDCE                                         r  inst_regfile/reg_16_bits_reg[13]/C
-                         clock pessimism             -0.373    17.734    
-                         clock uncertainty           -0.108    17.627    
+                         clock pessimism             -0.373    17.734
+                         clock uncertainty           -0.108    17.627
     SLICE_X110Y46        FDCE (Setup_fdce_C_CE)      -0.407    17.220    inst_regfile/reg_16_bits_reg[13]
   -------------------------------------------------------------------
-                         required time                         17.220    
-                         arrival time                          -1.135    
+                         required time                         17.220
+                         arrival time                          -1.135
   -------------------------------------------------------------------
-                         slack                                 16.085    
+                         slack                                 16.085
 
 Slack (MET) :             16.085ns  (required time - arrival time)
   Source:                 inst_uart/O_WRITE_ADDR_reg[6]/C
@@ -698,7 +698,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
   Data Path Delay:        3.375ns  (logic 0.792ns (23.470%)  route 2.583ns (76.530%))
   Logic Levels:           2  (LUT3=1 LUT6=1)
   Clock Path Skew:        -0.026ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 ) 
+    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 )
     Source Clock Delay      (SCD):    -2.240ns
     Clock Pessimism Removal (CPR):    -0.373ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -709,7 +709,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -731,7 +731,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -742,14 +742,14 @@ Slack (MET) :             16.085ns  (required time - arrival time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.408 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         1.699    18.108    inst_regfile/clk_out1
     SLICE_X110Y46        FDCE                                         r  inst_regfile/reg_16_bits_reg[14]/C
-                         clock pessimism             -0.373    17.734    
-                         clock uncertainty           -0.108    17.627    
+                         clock pessimism             -0.373    17.734
+                         clock uncertainty           -0.108    17.627
     SLICE_X110Y46        FDCE (Setup_fdce_C_CE)      -0.407    17.220    inst_regfile/reg_16_bits_reg[14]
   -------------------------------------------------------------------
-                         required time                         17.220    
-                         arrival time                          -1.135    
+                         required time                         17.220
+                         arrival time                          -1.135
   -------------------------------------------------------------------
-                         slack                                 16.085    
+                         slack                                 16.085
 
 Slack (MET) :             16.085ns  (required time - arrival time)
   Source:                 inst_uart/O_WRITE_ADDR_reg[6]/C
@@ -762,7 +762,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
   Data Path Delay:        3.375ns  (logic 0.792ns (23.470%)  route 2.583ns (76.530%))
   Logic Levels:           2  (LUT3=1 LUT6=1)
   Clock Path Skew:        -0.026ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 ) 
+    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 )
     Source Clock Delay      (SCD):    -2.240ns
     Clock Pessimism Removal (CPR):    -0.373ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -773,7 +773,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -795,7 +795,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -806,14 +806,14 @@ Slack (MET) :             16.085ns  (required time - arrival time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.408 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         1.699    18.108    inst_regfile/clk_out1
     SLICE_X110Y46        FDCE                                         r  inst_regfile/reg_16_bits_reg[15]/C
-                         clock pessimism             -0.373    17.734    
-                         clock uncertainty           -0.108    17.627    
+                         clock pessimism             -0.373    17.734
+                         clock uncertainty           -0.108    17.627
     SLICE_X110Y46        FDCE (Setup_fdce_C_CE)      -0.407    17.220    inst_regfile/reg_16_bits_reg[15]
   -------------------------------------------------------------------
-                         required time                         17.220    
-                         arrival time                          -1.135    
+                         required time                         17.220
+                         arrival time                          -1.135
   -------------------------------------------------------------------
-                         slack                                 16.085    
+                         slack                                 16.085
 
 Slack (MET) :             16.085ns  (required time - arrival time)
   Source:                 inst_uart/O_WRITE_ADDR_reg[6]/C
@@ -826,7 +826,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
   Data Path Delay:        3.375ns  (logic 0.792ns (23.470%)  route 2.583ns (76.530%))
   Logic Levels:           2  (LUT3=1 LUT6=1)
   Clock Path Skew:        -0.026ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 ) 
+    Destination Clock Delay (DCD):    -1.892ns = ( 18.108 - 20.000 )
     Source Clock Delay      (SCD):    -2.240ns
     Clock Pessimism Removal (CPR):    -0.373ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -837,7 +837,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -859,7 +859,7 @@ Slack (MET) :             16.085ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -870,14 +870,14 @@ Slack (MET) :             16.085ns  (required time - arrival time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.408 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         1.699    18.108    inst_regfile/clk_out1
     SLICE_X110Y46        FDCE                                         r  inst_regfile/reg_16_bits_reg[1]/C
-                         clock pessimism             -0.373    17.734    
-                         clock uncertainty           -0.108    17.627    
+                         clock pessimism             -0.373    17.734
+                         clock uncertainty           -0.108    17.627
     SLICE_X110Y46        FDCE (Setup_fdce_C_CE)      -0.407    17.220    inst_regfile/reg_16_bits_reg[1]
   -------------------------------------------------------------------
-                         required time                         17.220    
-                         arrival time                          -1.135    
+                         required time                         17.220
+                         arrival time                          -1.135
   -------------------------------------------------------------------
-                         slack                                 16.085    
+                         slack                                 16.085
 
 
 
@@ -903,7 +903,7 @@ Slack (MET) :             0.053ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -923,7 +923,7 @@ Slack (MET) :             0.053ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -934,13 +934,13 @@ Slack (MET) :             0.053ns  (arrival time - required time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029    -1.164 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         0.911    -0.253    inst_uart/inst_uart_rx/clk_out1
     SLICE_X108Y49        FDCE                                         r  inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[5]/C
-                         clock pessimism              0.038    -0.215    
+                         clock pessimism              0.038    -0.215
     SLICE_X108Y49        FDCE (Hold_fdce_C_D)         0.121    -0.094    inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[5]
   -------------------------------------------------------------------
-                         required time                          0.094    
-                         arrival time                          -0.042    
+                         required time                          0.094
+                         arrival time                          -0.042
   -------------------------------------------------------------------
-                         slack                                  0.053    
+                         slack                                  0.053
 
 Slack (MET) :             0.060ns  (arrival time - required time)
   Source:                 inst_uart/inst_uart_rx/uart_rx_sampled_bit_reg/C
@@ -960,7 +960,7 @@ Slack (MET) :             0.060ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -980,7 +980,7 @@ Slack (MET) :             0.060ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -991,13 +991,13 @@ Slack (MET) :             0.060ns  (arrival time - required time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029    -1.164 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         0.911    -0.253    inst_uart/inst_uart_rx/clk_out1
     SLICE_X108Y49        FDCE                                         r  inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[4]/C
-                         clock pessimism              0.038    -0.215    
+                         clock pessimism              0.038    -0.215
     SLICE_X108Y49        FDCE (Hold_fdce_C_D)         0.121    -0.094    inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[4]
   -------------------------------------------------------------------
-                         required time                          0.094    
-                         arrival time                          -0.034    
+                         required time                          0.094
+                         arrival time                          -0.034
   -------------------------------------------------------------------
-                         slack                                  0.060    
+                         slack                                  0.060
 
 Slack (MET) :             0.124ns  (arrival time - required time)
   Source:                 inst_uart/inst_uart_rx/next_o_byte_reg[5]/C
@@ -1008,7 +1008,7 @@ Slack (MET) :             0.124ns  (arrival time - required time)
   Path Type:              Hold (Min at Fast Process Corner)
   Requirement:            0.000ns  (clk_out1_clk_wiz_0 rise@0.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
   Data Path Delay:        0.410ns  (logic 0.128ns (31.201%)  route 0.282ns (68.799%))
-  Logic Levels:           0  
+  Logic Levels:           0
   Clock Path Skew:        0.273ns (DCD - SCD - CPR)
     Destination Clock Delay (DCD):    -0.252ns
     Source Clock Delay      (SCD):    -0.488ns
@@ -1017,7 +1017,7 @@ Slack (MET) :             0.124ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -1035,7 +1035,7 @@ Slack (MET) :             0.124ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -1046,13 +1046,13 @@ Slack (MET) :             0.124ns  (arrival time - required time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029    -1.164 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         0.912    -0.252    inst_uart/inst_uart_rx/clk_out1
     SLICE_X110Y49        FDCE                                         r  inst_uart/inst_uart_rx/O_BYTE_reg[5]/C
-                         clock pessimism              0.038    -0.214    
+                         clock pessimism              0.038    -0.214
     SLICE_X110Y49        FDCE (Hold_fdce_C_D)         0.013    -0.201    inst_uart/inst_uart_rx/O_BYTE_reg[5]
   -------------------------------------------------------------------
-                         required time                          0.201    
-                         arrival time                          -0.077    
+                         required time                          0.201
+                         arrival time                          -0.077
   -------------------------------------------------------------------
-                         slack                                  0.124    
+                         slack                                  0.124
 
 Slack (MET) :             0.152ns  (arrival time - required time)
   Source:                 inst_uart/inst_uart_rx/oversample_counter_reg[0]/C
@@ -1072,7 +1072,7 @@ Slack (MET) :             0.152ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -1092,7 +1092,7 @@ Slack (MET) :             0.152ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -1103,13 +1103,13 @@ Slack (MET) :             0.152ns  (arrival time - required time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029    -1.164 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         0.908    -0.256    inst_uart/inst_uart_rx/clk_out1
     SLICE_X108Y50        FDPE                                         r  inst_uart/inst_uart_rx/uart_rx_sampled_bit_reg/C
-                         clock pessimism             -0.220    -0.476    
+                         clock pessimism             -0.220    -0.476
     SLICE_X108Y50        FDPE (Hold_fdpe_C_D)         0.121    -0.355    inst_uart/inst_uart_rx/uart_rx_sampled_bit_reg
   -------------------------------------------------------------------
-                         required time                          0.355    
-                         arrival time                          -0.203    
+                         required time                          0.355
+                         arrival time                          -0.203
   -------------------------------------------------------------------
-                         slack                                  0.152    
+                         slack                                  0.152
 
 Slack (MET) :             0.156ns  (arrival time - required time)
   Source:                 inst_uart/inst_uart_tx/tx_data_reg_reg[7]/C
@@ -1129,7 +1129,7 @@ Slack (MET) :             0.156ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -1149,7 +1149,7 @@ Slack (MET) :             0.156ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -1160,13 +1160,13 @@ Slack (MET) :             0.156ns  (arrival time - required time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029    -1.164 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         0.910    -0.254    inst_uart/inst_uart_tx/clk_out1
     SLICE_X109Y44        FDPE                                         r  inst_uart/inst_uart_tx/tx_data_reg_reg[6]/C
-                         clock pessimism             -0.221    -0.475    
+                         clock pessimism             -0.221    -0.475
     SLICE_X109Y44        FDPE (Hold_fdpe_C_D)         0.092    -0.383    inst_uart/inst_uart_tx/tx_data_reg_reg[6]
   -------------------------------------------------------------------
-                         required time                          0.383    
-                         arrival time                          -0.227    
+                         required time                          0.383
+                         arrival time                          -0.227
   -------------------------------------------------------------------
-                         slack                                  0.156    
+                         slack                                  0.156
 
 Slack (MET) :             0.158ns  (arrival time - required time)
   Source:                 inst_uart/inst_uart_rx/recovery_counter_reg[4]/C
@@ -1186,7 +1186,7 @@ Slack (MET) :             0.158ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -1206,7 +1206,7 @@ Slack (MET) :             0.158ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -1217,13 +1217,13 @@ Slack (MET) :             0.158ns  (arrival time - required time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029    -1.164 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         0.907    -0.257    inst_uart/inst_uart_rx/clk_out1
     SLICE_X107Y53        FDCE                                         r  inst_uart/inst_uart_rx/recovery_counter_reg[1]/C
-                         clock pessimism             -0.220    -0.477    
+                         clock pessimism             -0.220    -0.477
     SLICE_X107Y53        FDCE (Hold_fdce_C_D)         0.092    -0.385    inst_uart/inst_uart_rx/recovery_counter_reg[1]
   -------------------------------------------------------------------
-                         required time                          0.385    
-                         arrival time                          -0.226    
+                         required time                          0.385
+                         arrival time                          -0.226
   -------------------------------------------------------------------
-                         slack                                  0.158    
+                         slack                                  0.158
 
 Slack (MET) :             0.162ns  (arrival time - required time)
   Source:                 inst_uart/inst_uart_rx/recovery_counter_reg[7]/C
@@ -1243,7 +1243,7 @@ Slack (MET) :             0.162ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -1263,7 +1263,7 @@ Slack (MET) :             0.162ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -1274,13 +1274,13 @@ Slack (MET) :             0.162ns  (arrival time - required time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029    -1.164 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         0.907    -0.257    inst_uart/inst_uart_rx/clk_out1
     SLICE_X106Y53        FDCE                                         r  inst_uart/inst_uart_rx/recovery_counter_reg[4]/C
-                         clock pessimism             -0.220    -0.477    
+                         clock pessimism             -0.220    -0.477
     SLICE_X106Y53        FDCE (Hold_fdce_C_D)         0.092    -0.385    inst_uart/inst_uart_rx/recovery_counter_reg[4]
   -------------------------------------------------------------------
-                         required time                          0.385    
-                         arrival time                          -0.223    
+                         required time                          0.385
+                         arrival time                          -0.223
   -------------------------------------------------------------------
-                         slack                                  0.162    
+                         slack                                  0.162
 
 Slack (MET) :             0.167ns  (arrival time - required time)
   Source:                 inst_uart/O_WRITE_DATA_reg[8]/C
@@ -1291,7 +1291,7 @@ Slack (MET) :             0.167ns  (arrival time - required time)
   Path Type:              Hold (Min at Fast Process Corner)
   Requirement:            0.000ns  (clk_out1_clk_wiz_0 rise@0.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
   Data Path Delay:        0.246ns  (logic 0.141ns (57.351%)  route 0.105ns (42.649%))
-  Logic Levels:           0  
+  Logic Levels:           0
   Clock Path Skew:        0.016ns (DCD - SCD - CPR)
     Destination Clock Delay (DCD):    -0.252ns
     Source Clock Delay      (SCD):    -0.486ns
@@ -1300,7 +1300,7 @@ Slack (MET) :             0.167ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -1318,7 +1318,7 @@ Slack (MET) :             0.167ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -1329,13 +1329,13 @@ Slack (MET) :             0.167ns  (arrival time - required time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029    -1.164 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         0.912    -0.252    inst_regfile/clk_out1
     SLICE_X112Y48        FDCE                                         r  inst_regfile/reg_16_bits_reg[8]/C
-                         clock pessimism             -0.218    -0.470    
+                         clock pessimism             -0.218    -0.470
     SLICE_X112Y48        FDCE (Hold_fdce_C_D)         0.063    -0.407    inst_regfile/reg_16_bits_reg[8]
   -------------------------------------------------------------------
-                         required time                          0.407    
-                         arrival time                          -0.240    
+                         required time                          0.407
+                         arrival time                          -0.240
   -------------------------------------------------------------------
-                         slack                                  0.167    
+                         slack                                  0.167
 
 Slack (MET) :             0.168ns  (arrival time - required time)
   Source:                 inst_uart/inst_uart_rx/data_counter_reg[0]/C
@@ -1355,7 +1355,7 @@ Slack (MET) :             0.168ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -1375,7 +1375,7 @@ Slack (MET) :             0.168ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -1386,13 +1386,13 @@ Slack (MET) :             0.168ns  (arrival time - required time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029    -1.164 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         0.908    -0.256    inst_uart/inst_uart_rx/clk_out1
     SLICE_X108Y50        FDCE                                         r  inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[3]/C
-                         clock pessimism             -0.197    -0.453    
+                         clock pessimism             -0.197    -0.453
     SLICE_X108Y50        FDCE (Hold_fdce_C_D)         0.121    -0.332    inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[3]
   -------------------------------------------------------------------
-                         required time                          0.332    
-                         arrival time                          -0.163    
+                         required time                          0.332
+                         arrival time                          -0.163
   -------------------------------------------------------------------
-                         slack                                  0.168    
+                         slack                                  0.168
 
 Slack (MET) :             0.175ns  (arrival time - required time)
   Source:                 inst_uart/inst_uart_rx/next_o_byte_reg[7]/C
@@ -1403,7 +1403,7 @@ Slack (MET) :             0.175ns  (arrival time - required time)
   Path Type:              Hold (Min at Fast Process Corner)
   Requirement:            0.000ns  (clk_out1_clk_wiz_0 rise@0.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
   Data Path Delay:        0.467ns  (logic 0.128ns (27.386%)  route 0.339ns (72.614%))
-  Logic Levels:           0  
+  Logic Levels:           0
   Clock Path Skew:        0.273ns (DCD - SCD - CPR)
     Destination Clock Delay (DCD):    -0.252ns
     Source Clock Delay      (SCD):    -0.488ns
@@ -1412,7 +1412,7 @@ Slack (MET) :             0.175ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -1430,7 +1430,7 @@ Slack (MET) :             0.175ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -1441,13 +1441,13 @@ Slack (MET) :             0.175ns  (arrival time - required time)
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029    -1.164 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, routed)         0.912    -0.252    inst_uart/inst_uart_rx/clk_out1
     SLICE_X110Y49        FDCE                                         r  inst_uart/inst_uart_rx/O_BYTE_reg[7]/C
-                         clock pessimism              0.038    -0.214    
+                         clock pessimism              0.038    -0.214
     SLICE_X110Y49        FDCE (Hold_fdce_C_D)         0.019    -0.195    inst_uart/inst_uart_rx/O_BYTE_reg[7]
   -------------------------------------------------------------------
-                         required time                          0.195    
-                         arrival time                          -0.020    
+                         required time                          0.195
+                         arrival time                          -0.020
   -------------------------------------------------------------------
-                         slack                                  0.175    
+                         slack                                  0.175
 
 
 
@@ -1559,6 +1559,3 @@ Clock     | Clock       | Dest:Rise(ns) | Corner  | Dest:Fall(ns) | Corner  | De
 ----------+-------------+---------------+---------+---------------+---------+---------------+---------+---------------+---------+
 PAD_I_CLK | PAD_I_CLK   |         4.066 | SLOW    |               |         |               |         |               |         |
 ----------+-------------+---------------+---------+---------------+---------+---------------+---------+---------------+---------+
-
-
-

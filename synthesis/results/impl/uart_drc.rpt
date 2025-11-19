@@ -34,8 +34,6 @@ Table of Contents
 2. REPORT DETAILS
 -----------------
 ZPS7-1#1 Warning
-PS7 block required  
+PS7 block required
 The PS7 cell must be used in this Zynq design in order to enable correct default configuration.
 Related violations: <none>
-
-

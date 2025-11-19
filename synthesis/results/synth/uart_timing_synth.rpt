@@ -29,11 +29,11 @@ Timing Summary Report
   Merge Timing Exceptions                    :  Yes
   Inter-SLR Compensation                     :  Conservative
 
-  Corner  Analyze    Analyze    
-  Name    Max Paths  Min Paths  
-  ------  ---------  ---------  
-  Slow    Yes        Yes        
-  Fast    Yes        Yes        
+  Corner  Analyze    Analyze
+  Name    Max Paths  Min Paths
+  ------  ---------  ---------
+  Slow    Yes        Yes
+  Fast    Yes        Yes
 
 
 ------------------------------------------------------------------------------------------------
@@ -136,9 +136,9 @@ Table of Contents
 | ---------------------
 ------------------------------------------------------------------------------------------------
 
-    WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
-    -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-     15.936        0.000                      0                  253        0.132        0.000                      0                  253        3.000        0.000                       0                   165  
+    WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints
+    -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------
+     15.936        0.000                      0                  253        0.132        0.000                      0                  253        3.000        0.000                       0                   165
 
 
 All user specified timing constraints are met.
@@ -151,9 +151,9 @@ All user specified timing constraints are met.
 
 Clock                 Waveform(ns)       Period(ns)      Frequency(MHz)
 -----                 ------------       ----------      --------------
-PAD_I_CLK             {0.000 5.000}      10.000          100.000         
-  clk_out1_clk_wiz_0  {0.000 10.000}     20.000          50.000          
-  clkfbout_clk_wiz_0  {0.000 10.000}     20.000          50.000          
+PAD_I_CLK             {0.000 5.000}      10.000          100.000
+  clk_out1_clk_wiz_0  {0.000 10.000}     20.000          50.000
+  clkfbout_clk_wiz_0  {0.000 10.000}     20.000          50.000
 
 
 ------------------------------------------------------------------------------------------------
@@ -161,11 +161,11 @@ PAD_I_CLK             {0.000 5.000}      10.000          100.000
 | -----------------
 ------------------------------------------------------------------------------------------------
 
-Clock                     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
------                     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-PAD_I_CLK                                                                                                                                                               3.000        0.000                       0                     1  
-  clk_out1_clk_wiz_0       15.936        0.000                      0                  253        0.132        0.000                      0                  253        9.500        0.000                       0                   161  
-  clkfbout_clk_wiz_0                                                                                                                                                   17.845        0.000                       0                     3  
+Clock                     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints
+-----                     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------
+PAD_I_CLK                                                                                                                                                               3.000        0.000                       0                     1
+  clk_out1_clk_wiz_0       15.936        0.000                      0                  253        0.132        0.000                      0                  253        9.500        0.000                       0                   161
+  clkfbout_clk_wiz_0                                                                                                                                                   17.845        0.000                       0                     3
 
 
 ------------------------------------------------------------------------------------------------
@@ -173,8 +173,8 @@ PAD_I_CLK                                                                       
 | -----------------
 ------------------------------------------------------------------------------------------------
 
-From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
-----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints
+----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------
 
 
 ------------------------------------------------------------------------------------------------
@@ -182,8 +182,8 @@ From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS
 | -----------------------
 ------------------------------------------------------------------------------------------------
 
-Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
-----------    ----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints
+----------    ----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------
 
 
 ------------------------------------------------------------------------------------------------
@@ -240,7 +240,7 @@ Slack (MET) :             15.936ns  (required time - arrival time)
   Data Path Delay:        3.855ns  (logic 1.045ns (27.108%)  route 2.810ns (72.892%))
   Logic Levels:           3  (LUT4=1 LUT6=2)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -2.744ns = ( 17.256 - 20.000 ) 
+    Destination Clock Delay (DCD):    -2.744ns = ( 17.256 - 20.000 )
     Source Clock Delay      (SCD):    -3.058ns
     Clock Pessimism Removal (CPR):    -0.458ns
   Clock Uncertainty:      0.108ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
@@ -251,7 +251,7 @@ Slack (MET) :             15.936ns  (required time - arrival time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
@@ -275,7 +275,7 @@ Slack (MET) :             15.936ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                     20.000    20.000 r  
+                                                     20.000    20.000 r
     Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
@@ -286,14 +286,14 @@ Slack (MET) :             15.936ns  (required time - arrival time)
                          BUFG (Prop_bufg_I_O)         0.091    16.817 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, unplaced)       0.439    17.256    inst_uart/clk_out1
                          FDCE                                         r  inst_uart/FSM_sequential_current_state_reg[1]/C
-                         clock pessimism             -0.458    16.797    
-                         clock uncertainty           -0.108    16.690    
+                         clock pessimism             -0.458    16.797
+                         clock uncertainty           -0.108    16.690
                          FDCE (Setup_fdce_C_D)        0.044    16.734    inst_uart/FSM_sequential_current_state_reg[1]
   -------------------------------------------------------------------
-                         required time                         16.734    
-                         arrival time                          -0.797    
+                         required time                         16.734
+                         arrival time                          -0.797
   -------------------------------------------------------------------
-                         slack                                 15.936    
+                         slack                                 15.936
 
 
 
@@ -319,7 +319,7 @@ Slack (MET) :             0.132ns  (arrival time - required time)
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.258     0.258 r  inst_pll/inst/clkin1_ibufg/O
@@ -339,7 +339,7 @@ Slack (MET) :             0.132ns  (arrival time - required time)
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
-                                                      0.000     0.000 r  
+                                                      0.000     0.000 r
     Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
                          net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
     Y9                   IBUF (Prop_ibuf_I_O)         0.446     0.446 r  inst_pll/inst/clkin1_ibufg/O
@@ -350,13 +350,13 @@ Slack (MET) :             0.132ns  (arrival time - required time)
                          BUFG (Prop_bufg_I_O)         0.029    -0.796 r  inst_pll/inst/clkout1_buf/O
                          net (fo=159, unplaced)       0.259    -0.537    inst_uart/inst_uart_rx/clk_out1
                          FDCE                                         r  inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[7]/C
-                         clock pessimism             -0.188    -0.725    
+                         clock pessimism             -0.188    -0.725
                          FDCE (Hold_fdce_C_D)         0.099    -0.626    inst_uart/inst_uart_rx/FSM_onehot_current_state_reg[7]
   -------------------------------------------------------------------
-                         required time                          0.626    
-                         arrival time                          -0.494    
+                         required time                          0.626
+                         arrival time                          -0.494
   -------------------------------------------------------------------
-                         slack                                  0.132    
+                         slack                                  0.132
 
 
 
@@ -397,6 +397,3 @@ Sources:            { inst_pll/inst/plle2_adv_inst/CLKFBOUT }
 Check Type  Corner  Lib Pin            Reference Pin  Required(ns)  Actual(ns)  Slack(ns)  Location  Pin
 Min Period  n/a     BUFG/I             n/a            2.155         20.000      17.845               inst_pll/inst/clkf_buf/I
 Max Period  n/a     PLLE2_ADV/CLKFBIN  n/a            52.633        20.000      32.633               inst_pll/inst/plle2_adv_inst/CLKFBIN
-
-
-
