@@ -3,7 +3,15 @@ on:
     push:
         branches:
             - main
+        paths:
+            - "**/*.py"
+            - "pyproject.toml"
+            - ".github/workflows/py-check.yml"
     pull_request:
+        paths:
+            - "**/*.py"
+            - "pyproject.toml"
+            - ".github/workflows/py-check.yml"
 
 jobs:
     linting:
