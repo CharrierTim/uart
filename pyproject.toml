@@ -1,14 +1,22 @@
 [project]
 name = "uart"
 version = "1.0"
-dependencies = [
-    "pytest",
-    "ruff",
-    "vsg",
-    "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
-    "docformatter",
-    "docstrfmt",
-    "pre-commit",
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = ["vunit-hdl @ git+https://github.com/VUnit/vunit.git@master"]
+
+[project.optional-dependencies]
+
+all = ["uart[dev]", "uart[docs]"]
+
+dev = ["docformatter", "docstrfmt", "pre-commit", "pytest", "ruff", "vsg"]
+
+docs = [
+    "pydata_sphinx_theme",
+    "sphinx_copybutton",
+    "sphinx",
+    "sphinxcontrib.wavedrom",
+    "numpydoc",
 ]
 
 [tool.ruff]
