@@ -3186,7 +3186,7 @@ rule:
         # This rule checks the colons are in the same column for all declarations in the package declarative part.
         blank_line_ends_group: no
         case_control_statements_ends_group: no
-        comment_line_ends_group: yes
+        comment_line_ends_group: no
         compact_alignment: yes
         if_control_statements_ends_group: no
         include_type_is_keyword: no

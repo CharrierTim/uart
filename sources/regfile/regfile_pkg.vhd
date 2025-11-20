@@ -57,19 +57,19 @@ package REGFILE_PKG is
     constant C_REG_16_BITS_ADDR    : std_logic_vector(8 - 1 downto 0) := 8x"FF"; -- 0xFF
 
     -- Read-only registers
-    constant C_REG_12_DATA : std_logic_vector(16 - 1 downto 0) := 16x"1212";
-    constant C_REG_34_DATA : std_logic_vector(16 - 1 downto 0) := 16x"3434";
-    constant C_REG_56_DATA : std_logic_vector(16 - 1 downto 0) := 16x"5656";
-    constant C_REG_78_DATA : std_logic_vector(16 - 1 downto 0) := 16x"7878";
-    constant C_REG_9A_DATA : std_logic_vector(16 - 1 downto 0) := 16x"9A9A";
-    constant C_REG_CD_DATA : std_logic_vector(16 - 1 downto 0) := 16x"CDCD";
-    constant C_REG_EF_DATA : std_logic_vector(16 - 1 downto 0) := 16x"EFEF";
+    constant C_REG_12_DATA         : std_logic_vector(16 - 1 downto 0) := 16x"1212";
+    constant C_REG_34_DATA         : std_logic_vector(16 - 1 downto 0) := 16x"3434";
+    constant C_REG_56_DATA         : std_logic_vector(16 - 1 downto 0) := 16x"5656";
+    constant C_REG_78_DATA         : std_logic_vector(16 - 1 downto 0) := 16x"7878";
+    constant C_REG_9A_DATA         : std_logic_vector(16 - 1 downto 0) := 16x"9A9A";
+    constant C_REG_CD_DATA         : std_logic_vector(16 - 1 downto 0) := 16x"CDCD";
+    constant C_REG_EF_DATA         : std_logic_vector(16 - 1 downto 0) := 16x"EFEF";
 
     -- Read-Write registers value at reset
-    constant C_REG_LED_RST     : std_logic                         := '1';
-    constant C_REG_16_BITS_RST : std_logic_vector(16 - 1 downto 0) := x"0000";
+    constant C_REG_LED_RST         : std_logic                         := '1';
+    constant C_REG_16_BITS_RST     : std_logic_vector(16 - 1 downto 0) := x"0000";
 
     -- Specific values for undefined registers
-    constant C_REG_DEAD : std_logic_vector(16 - 1 downto 0) := x"DEAD";
+    constant C_REG_DEAD            : std_logic_vector(16 - 1 downto 0) := x"DEAD";
 
 end package REGFILE_PKG;
