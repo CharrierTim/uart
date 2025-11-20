@@ -13,7 +13,7 @@ Tools Versions
     - - Tool
       - Version
     - - **NVC**
-      - ``nvc 1.19-devel (1.18.0.r65.geafa86e1) (Using LLVM 18.1.3)``
+      - ``nvc 1.18.2 (1.18.2.r0.g8893318a5) (Using LLVM 18.1.3)``
     - - **Vunit**
       - ``commit 4e30fa124ea84609af0f957dbc55b82adaed1d76``
     - - **VSG**

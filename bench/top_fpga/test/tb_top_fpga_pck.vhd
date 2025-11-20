@@ -57,11 +57,11 @@ package tb_top_fpga_pkg is
     -- =================================================================================================================
 
     -- Clock period for the testbench
-    constant C_FREQ_HZ    : positive := 100_000_000;
-    constant C_CLK_PERIOD : time     := 1 sec / C_FREQ_HZ;
+    constant C_FREQ_HZ             : positive := 100_000_000;
+    constant C_CLK_PERIOD          : time     := 1 sec / C_FREQ_HZ;
 
     -- DUT generics
-    constant C_GIT_ID : std_logic_vector(32 - 1 downto 0) := x"12345678";
+    constant C_GIT_ID              : std_logic_vector(32 - 1 downto 0) := x"12345678";
 
     -- UART model constants
     constant C_BAUD_RATE_BPS       : positive := 115_200;

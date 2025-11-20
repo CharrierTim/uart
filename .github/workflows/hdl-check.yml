@@ -3,7 +3,19 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "sources/**/*.vhd"
+      - "bench/**/*.vhd"
+      - "lint/**"
+      - ".github/workflows/hdl-check.yml"
+      - ".github/actions/setup-environment/**"
   pull_request:
+    paths:
+      - "sources/**/*.vhd"
+      - "bench/**/*.vhd"
+      - "lint/**"
+      - ".github/workflows/hdl-check.yml"
+      - ".github/actions/setup-environment/**"
 
 jobs:
   linting:

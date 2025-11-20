@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Tue Nov 18 15:54:21 2025
+| Date         : Thu Nov 20 11:25:54 2025
 | Host         : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -hierarchical -file /home/tim/projects/uart/synthesis/results/impl/uart_utilization_hierarchical_place.rpt
 | Design       : TOP_FPGA
@@ -22,10 +22,10 @@ Table of Contents
 +------------------+---------+------------+------------+---------+------+-----+--------+--------+------------+
 |     Instance     |  Module | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | DSP Blocks |
 +------------------+---------+------------+------------+---------+------+-----+--------+--------+------------+
-| TOP_FPGA         |   (top) |        155 |        155 |       0 |    0 | 159 |      0 |      0 |          0 |
+| TOP_FPGA         |   (top) |        156 |        156 |       0 |    0 | 159 |      0 |      0 |          0 |
 |   (TOP_FPGA)     |   (top) |          0 |          0 |       0 |    0 |   0 |      0 |      0 |          0 |
-|   inst_uart      |    UART |        153 |        153 |       0 |    0 | 116 |      0 |      0 |          0 |
-|     (inst_uart)  |    UART |         62 |         62 |       0 |    0 |  36 |      0 |      0 |          0 |
+|   inst_uart      |    UART |        154 |        154 |       0 |    0 | 116 |      0 |      0 |          0 |
+|     (inst_uart)  |    UART |         63 |         63 |       0 |    0 |  36 |      0 |      0 |          0 |
 |     inst_uart_rx | UART_RX |         56 |         56 |       0 |    0 |  54 |      0 |      0 |          0 |
 +------------------+---------+------------+------------+---------+------+-----+--------+--------+------------+
 * Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
