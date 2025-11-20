@@ -43,18 +43,18 @@ package REGFILE_PKG is
     -- =================================================================================================================
 
     -- Registers addresses
-    constant C_REG_GIT_ID_MSB_ADDR : std_logic_vector(8 - 1 downto 0) := 8x"00"; -- 0x00
-    constant C_REG_GIT_ID_LSB_ADDR : std_logic_vector(8 - 1 downto 0) := 8x"01"; -- 0x01
-    constant C_REG_12_ADDR         : std_logic_vector(8 - 1 downto 0) := 8x"02"; -- 0x02
-    constant C_REG_34_ADDR         : std_logic_vector(8 - 1 downto 0) := 8x"03"; -- 0x03
-    constant C_REG_56_ADDR         : std_logic_vector(8 - 1 downto 0) := 8x"04"; -- 0x04
-    constant C_REG_78_ADDR         : std_logic_vector(8 - 1 downto 0) := 8x"05"; -- 0x05
-    constant C_REG_9A_ADDR         : std_logic_vector(8 - 1 downto 0) := 8x"AB"; -- 0xAB
-    constant C_REG_CD_ADDR         : std_logic_vector(8 - 1 downto 0) := 8x"AC"; -- 0xAC
-    constant C_REG_SWITCHES_ADDR   : std_logic_vector(8 - 1 downto 0) := 8x"B1"; -- 0xB1
-    constant C_REG_EF_ADDR         : std_logic_vector(8 - 1 downto 0) := 8x"DC"; -- 0xDC
-    constant C_REG_LED_ADDR        : std_logic_vector(8 - 1 downto 0) := 8x"EF"; -- 0xEF
-    constant C_REG_16_BITS_ADDR    : std_logic_vector(8 - 1 downto 0) := 8x"FF"; -- 0xFF
+    constant C_REG_GIT_ID_MSB_ADDR : std_logic_vector( 8 - 1 downto 0) := 8x"00"; -- 0x00
+    constant C_REG_GIT_ID_LSB_ADDR : std_logic_vector( 8 - 1 downto 0) := 8x"01"; -- 0x01
+    constant C_REG_12_ADDR         : std_logic_vector( 8 - 1 downto 0) := 8x"02"; -- 0x02
+    constant C_REG_34_ADDR         : std_logic_vector( 8 - 1 downto 0) := 8x"03"; -- 0x03
+    constant C_REG_56_ADDR         : std_logic_vector( 8 - 1 downto 0) := 8x"04"; -- 0x04
+    constant C_REG_78_ADDR         : std_logic_vector( 8 - 1 downto 0) := 8x"05"; -- 0x05
+    constant C_REG_9A_ADDR         : std_logic_vector( 8 - 1 downto 0) := 8x"AB"; -- 0xAB
+    constant C_REG_CD_ADDR         : std_logic_vector( 8 - 1 downto 0) := 8x"AC"; -- 0xAC
+    constant C_REG_SWITCHES_ADDR   : std_logic_vector( 8 - 1 downto 0) := 8x"B1"; -- 0xB1
+    constant C_REG_EF_ADDR         : std_logic_vector( 8 - 1 downto 0) := 8x"DC"; -- 0xDC
+    constant C_REG_LED_ADDR        : std_logic_vector( 8 - 1 downto 0) := 8x"EF"; -- 0xEF
+    constant C_REG_16_BITS_ADDR    : std_logic_vector( 8 - 1 downto 0) := 8x"FF"; -- 0xFF
 
     -- Read-only registers
     constant C_REG_12_DATA         : std_logic_vector(16 - 1 downto 0) := 16x"1212";
