@@ -100,8 +100,7 @@ if VU.get_simulator_name() == "nvc":
     ]
     simulator.setup_coverage(VU=VU, specifications=coverage_specs)
 elif VU.get_simulator_name() == "ghdl":
-    simulator.setup_coverage(LIB_SRC=LIB_SRC, LIB_BENCH=LIB_BENCH)
-
+    simulator.setup_coverage(VU=VU, libraries=(LIB_SRC, LIB_BENCH))
 
 simulator.configure(VU=VU)
 
