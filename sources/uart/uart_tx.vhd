@@ -42,7 +42,8 @@ entity UART_TX is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
         G_BAUD_RATE_BPS : positive := 115_200     -- Baud rate
-    );port (
+    );
+    port (
         -- Clock and reset
         CLK          : in    std_logic;
         RST_N        : in    std_logic;
@@ -97,7 +98,7 @@ architecture UART_TX_ARCH of UART_TX is
     signal next_o_done           : std_logic;
 
     -- Data register
-    signal tx_data_reg           : std_logic_vector(C_TX_NB_BITS - 1 downto 0);
+    signal reg_tx_data           : std_logic_vector(C_TX_NB_BITS - 1 downto 0);
 
 begin
 
@@ -188,7 +189,7 @@ begin
         if (RST_N = '0') then
 
             tx_baud_counter      <= (others => '0');
-            tx_data_reg          <= (others => '1');
+            reg_tx_data          <= (others => '1');
             tx_current_bit_index <= (others => '0');
 
         elsif rising_edge(CLK) then
@@ -204,7 +205,7 @@ begin
                     tx_baud_counter <= (others => '0');
 
                     -- Shift right to transmit next bit (LSB is output to TX line)
-                    tx_data_reg <= '1' & tx_data_reg(tx_data_reg'high downto tx_data_reg'low + 1);
+                    reg_tx_data <= '1' & reg_tx_data(reg_tx_data'high downto reg_tx_data'low + 1);
 
                     -- Track current bit index
                     tx_current_bit_index <= tx_current_bit_index + 1;
@@ -222,7 +223,7 @@ begin
                 tx_current_bit_index <= (others => '0');
 
                 -- Preload shift register
-                tx_data_reg <= '1' & I_BYTE & '0';
+                reg_tx_data <= '1' & I_BYTE & '0';
 
             end if;
 
@@ -255,7 +256,7 @@ begin
 
             when STATE_SEND_BYTE =>
 
-                next_o_uart_tx <= tx_data_reg(tx_data_reg'low);
+                next_o_uart_tx <= reg_tx_data(reg_tx_data'low);
 
             -- =========================================================================================================
             -- STATE: DONE
