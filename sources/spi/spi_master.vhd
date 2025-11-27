@@ -63,7 +63,7 @@ entity SPI_MASTER is
         G_SPI_FREQ_HZ  : positive  := 500_000;    -- SPI clock frequency in Hz
         G_NB_DATA_BITS : positive  := 8;          -- Number of data bits
         G_CLK_POLARITY : std_logic := '0';        -- SPI clock polarity
-        G_CLK_PHASE    : std_logic := '1'         -- SPI clock phase
+        G_CLK_PHASE    : std_logic := '0'         -- SPI clock phase
     );
     port (
         -- Clock and reset
@@ -93,7 +93,12 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     -- =================================================================================================================
 
     type t_state is (
-        STATE_IDLE
+        STATE_IDLE,
+        STATE_DEAD_TIME_BEFORE,
+        STATE_WAIT_LEADING_EDGE,
+        STATE_SEND_BITS,
+        STATE_DEAD_TIME_AFTER,
+        STATE_DONE
     );
 
     -- =================================================================================================================
@@ -102,6 +107,7 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
 
     constant C_HALF_PERIOD_CYCLES  : positive := G_CLK_FREQ_HZ / G_SPI_FREQ_HZ / 2;
     constant C_COUNTER_WIDTH       : positive := positive(ceil(log2(real(C_HALF_PERIOD_CYCLES))));
+    constant C_BIT_COUNTER_WITDH   : positive := positive(ceil(log2(real(G_NB_DATA_BITS))));
 
     -- =================================================================================================================
     -- SIGNALS
@@ -122,6 +128,18 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     -- FSM signals
     signal current_state           : t_state;
     signal next_state              : t_state;
+    signal next_o_tx_byte_sr       : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
+    signal next_o_mosi             : std_logic;
+    signal next_o_cs               : std_logic;
+    signal next_o_rx_byte          : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
+    signal next_o_valid            : std_logic;
+
+    -- Bit count
+    signal bit_counter             : unsigned(C_BIT_COUNTER_WITDH - 1 downto 0);
+
+    -- Internal registers
+    signal reg_i_tx_byte           : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
+    signal reg_o_rx_byte_sr        : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
 
 begin
 
@@ -187,15 +205,15 @@ begin
     end generate gen_clk_polarity;
 
     -- =================================================================================================================
-    -- Sampling and shifting on according leading/trailing edges
+    -- Sampling and shifting on according leading/trailing edges based on clock phase configuration
     -- =================================================================================================================
 
     gen_clk_phase : if G_CLK_PHASE = '0' generate
-        spi_enable_sampling <= core_clk_n_en; -- Sample RX data on a falling edge
-        spi_enable_shifting <= core_clk_en;   -- Shift  TX data on a rising edge
+        spi_enable_sampling <= core_clk_en;
+        spi_enable_shifting <= core_clk_n_en;
     else generate
-        spi_enable_sampling <= core_clk_en;   -- Sample RX data on a rising edge
-        spi_enable_shifting <= core_clk_n_en; -- Shift  TX data on a rising edge
+        spi_enable_sampling <= core_clk_n_en;
+        spi_enable_shifting <= core_clk_en;
     end generate gen_clk_phase;
 
     -- =================================================================================================================
@@ -212,7 +230,7 @@ begin
 
         elsif rising_edge(CLK) then
 
-            if (current_state = STATE_IDLE) then -- TO-DO
+            if (current_state = STATE_SEND_BITS and next_state = STATE_SEND_BITS) then
                 reg_o_sclk <= spi_clk;
             else
                 reg_o_sclk <= G_CLK_POLARITY;
@@ -223,5 +241,266 @@ begin
         end if;
 
     end process p_sclk;
+
+    -- =================================================================================================================
+    -- Bit counter, increments on leading edge
+    -- =================================================================================================================
+
+    p_bit_count : process (CLK, RST_N) is
+    begin
+
+        if (RST_N = '0') then
+
+            bit_counter <= (others => '0');
+
+        elsif rising_edge(CLK) then
+
+            if (current_state = STATE_SEND_BITS) then
+
+                if (spi_enable_shifting = '1') then
+                    bit_counter <= bit_counter + 1;
+                end if;
+
+            else
+                bit_counter <= (others => '0');
+            end if;
+
+        end if;
+
+    end process p_bit_count;
+
+    -- =================================================================================================================
+    -- Register the input data when valid
+    -- =================================================================================================================
+
+    p_internal_reg : process (CLK, RST_N) is
+    begin
+
+        if (RST_N = '0') then
+
+            reg_i_tx_byte <= (others => '0');
+
+        elsif rising_edge(CLK) then
+
+            if (I_TX_BYTE_VALID = '1') then
+                reg_i_tx_byte <= I_TX_BYTE;
+            end if;
+
+        end if;
+
+    end process p_internal_reg;
+
+    -- =================================================================================================================
+    -- FSM sequential process for state transitions
+    -- =================================================================================================================
+
+    p_fsm_seq : process (CLK, RST_N) is
+    begin
+
+        if (RST_N = '0') then
+
+            current_state <= STATE_IDLE;
+
+        elsif rising_edge(CLK) then
+
+            current_state <= next_state;
+
+        end if;
+
+    end process p_fsm_seq;
+
+    -- =================================================================================================================
+    -- FSM combinatorial process for next state logic
+    -- =================================================================================================================
+
+    p_next_state_comb : process (all) is
+    begin
+
+        -- Default assignment
+        next_state <= STATE_IDLE;
+
+        case current_state is
+
+            -- =========================================================================================================
+            -- STATE: IDLE
+            -- =========================================================================================================
+            -- In idle state, the module awaits a valid data signal to initiate transmission.
+            -- =========================================================================================================
+
+            when STATE_IDLE =>
+
+                if (I_TX_BYTE_VALID = '1') then
+                    next_state <= STATE_DEAD_TIME_BEFORE;
+                else
+                    next_state <= STATE_IDLE;
+                end if;
+
+            -- =========================================================================================================
+            -- STATE: DEAD TIME BEFORE
+            -- =========================================================================================================
+            -- In
+            -- =========================================================================================================
+
+            when STATE_DEAD_TIME_BEFORE =>
+
+                if (spi_enable_sampling = '1') then
+                    next_state <= STATE_WAIT_LEADING_EDGE;
+                else
+                    next_state <= STATE_DEAD_TIME_BEFORE;
+                end if;
+
+            -- =========================================================================================================
+            -- STATE: WAIT LEADING EDGE
+            -- =========================================================================================================
+            -- In
+            -- =========================================================================================================
+
+            when STATE_WAIT_LEADING_EDGE =>
+
+                if (spi_enable_shifting = '1') then
+                    next_state <= STATE_SEND_BITS;
+                else
+                    next_state <= STATE_WAIT_LEADING_EDGE;
+                end if;
+
+            -- =========================================================================================================
+            -- STATE: SEND BITS
+            -- =========================================================================================================
+            -- In
+            -- =========================================================================================================
+
+            when STATE_SEND_BITS =>
+
+                if (bit_counter >= G_NB_DATA_BITS - 1 and spi_enable_shifting = '1') then
+                    next_state <= STATE_DEAD_TIME_AFTER;
+                else
+                    next_state <= STATE_SEND_BITS;
+                end if;
+
+            -- =========================================================================================================
+            -- STATE: DEAD TIME AFTER
+            -- =========================================================================================================
+            -- In
+            -- =========================================================================================================
+
+            when STATE_DEAD_TIME_AFTER =>
+
+                if (spi_enable_sampling = '1') then
+                    next_state <= STATE_DONE;
+                else
+                    next_state <= STATE_DEAD_TIME_AFTER;
+                end if;
+
+            -- =========================================================================================================
+            -- STATE: DONE
+            -- =========================================================================================================
+            -- In
+            -- =========================================================================================================
+
+            when STATE_DONE =>
+
+                next_state <= STATE_IDLE;
+
+        end case;
+
+    end process p_next_state_comb;
+
+    -- =================================================================================================================
+    -- FSM combinatorial process for next outputs
+    -- =================================================================================================================
+
+    p_next_outputs_comb : process (all) is
+    begin
+
+        -- Default assignment
+        next_o_tx_byte_sr <= (others => '0');
+        next_o_mosi       <= '0';
+        next_o_cs         <= '1';
+        next_o_rx_byte    <= (others => '0');
+        next_o_valid      <= '0';
+
+        case current_state is
+
+            -- =========================================================================================================
+            -- STATE: IDLE
+            -- =========================================================================================================
+
+            when STATE_IDLE =>
+
+            -- =========================================================================================================
+            -- STATE: DEAD TIME BEFORE
+            -- =========================================================================================================
+
+            when STATE_DEAD_TIME_BEFORE =>
+
+            -- =========================================================================================================
+            -- STATE: WAIT LEADING EDGE
+            -- =========================================================================================================
+
+            when STATE_WAIT_LEADING_EDGE =>
+
+                next_o_cs <= '0';
+
+            -- =========================================================================================================
+            -- STATE: SEND BITS
+            -- =========================================================================================================
+
+            when STATE_SEND_BITS =>
+
+                -- Shift TX data
+                next_o_tx_byte_sr <= std_logic_vector(shift_left(unsigned(reg_i_tx_byte), to_integer(bit_counter)));
+                next_o_mosi       <= next_o_tx_byte_sr(next_o_tx_byte_sr'high);
+                next_o_cs         <= '0';
+
+            -- =========================================================================================================
+            -- STATE: DEAD TIME AFTER
+            -- =========================================================================================================
+
+            when STATE_DEAD_TIME_AFTER =>
+
+                next_o_cs <= '0';
+
+            -- =========================================================================================================
+            -- STATE: DONE
+            -- =========================================================================================================
+
+            when STATE_DONE =>
+
+                next_o_valid <= '1';
+
+        end case;
+
+    end process p_next_outputs_comb;
+
+    -- =================================================================================================================
+    -- Registered outputs
+    -- =================================================================================================================
+
+    p_outputs_seq : process (CLK, RST_N) is
+    begin
+
+        if (RST_N = '0') then
+
+            O_MOSI           <= '0';
+            O_CS             <= '1';
+            O_RX_BYTE        <= (others => '0');
+            O_RX_BYTE_VALID  <= '0';
+
+            reg_o_rx_byte_sr <= (others => '0');
+
+        elsif rising_edge(CLK) then
+
+            if (current_state = STATE_SEND_BITS and spi_enable_sampling = '1') then
+                reg_o_rx_byte_sr <= reg_o_rx_byte_sr(reg_o_rx_byte_sr'high - 1 downto reg_o_rx_byte_sr'low) & I_MISO;
+            end if;
+
+            O_MOSI          <= next_o_mosi;
+            O_CS            <= next_o_cs;
+            O_RX_BYTE       <= reg_o_rx_byte_sr;
+            O_RX_BYTE_VALID <= next_o_valid;
+
+        end if;
+
+    end process p_outputs_seq;
 
 end architecture SPI_MASTER_ARCH;
