@@ -131,7 +131,6 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     signal next_o_tx_byte_sr       : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
     signal next_o_mosi             : std_logic;
     signal next_o_cs               : std_logic;
-    signal next_o_rx_byte          : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
     signal next_o_valid            : std_logic;
 
     -- Bit count
@@ -416,7 +415,6 @@ begin
         next_o_tx_byte_sr <= (others => '0');
         next_o_mosi       <= '0';
         next_o_cs         <= '1';
-        next_o_rx_byte    <= (others => '0');
         next_o_valid      <= '0';
 
         case current_state is
