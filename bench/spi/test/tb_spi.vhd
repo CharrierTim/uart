@@ -190,7 +190,6 @@ begin
                 v_start_bit_time := now;
             end if;
 
-            info(time'image(v_start_bit_time));
         end loop;
 
         -- We can only check 7 periods
