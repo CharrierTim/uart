@@ -86,10 +86,10 @@ architecture TB_SPI_ARCH of TB_SPI is
     signal tb_o_mosi            : std_logic;
     signal tb_i_miso            : std_logic;
     signal tb_o_cs              : std_logic;
-    signal tb_i_tx_byte         : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
-    signal tb_i_tx_byte_valid   : std_logic;
-    signal tb_o_rx_byte         : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
-    signal tb_o_rx_byte_valid   : std_logic;
+    signal tb_i_tx_data         : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
+    signal tb_i_tx_data_valid   : std_logic;
+    signal tb_o_rx_data         : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
+    signal tb_o_rx_data_valid   : std_logic;
 
     signal tb_random_data       : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
 
@@ -116,10 +116,10 @@ begin
             O_MOSI          => tb_o_mosi,
             I_MISO          => tb_i_miso,
             O_CS            => tb_o_cs,
-            I_TX_BYTE       => tb_i_tx_byte,
-            I_TX_BYTE_VALID => tb_i_tx_byte_valid,
-            O_RX_BYTE       => tb_o_rx_byte,
-            O_RX_BYTE_VALID => tb_o_rx_byte_valid
+            I_TX_DATA       => tb_i_tx_data,
+            I_TX_DATA_VALID => tb_i_tx_data_valid,
+            O_RX_DATA       => tb_o_rx_data,
+            O_RX_DATA_VALID => tb_o_rx_data_valid
         );
 
     -- =================================================================================================================
@@ -203,7 +203,7 @@ begin
 
     p_test_runner : process is
 
-        variable v_spi_slave_data : std_logic_vector(tb_i_tx_byte'range);
+        variable v_spi_slave_data : std_logic_vector(tb_i_tx_data'range);
         variable v_random_data    : randomptype;
 
         -- =============================================================================================================
@@ -227,8 +227,8 @@ begin
 
             -- Reset the DUT by setting the input state to all zeros
             tb_rst_n             <= '0';
-            tb_i_tx_byte         <= (others => '0');
-            tb_i_tx_byte_valid   <= '0';
+            tb_i_tx_data         <= (others => '0');
+            tb_i_tx_data_valid   <= '0';
             tb_random_data       <= (others => '0');
             tb_check_spi_timings <= '0';
 
@@ -269,17 +269,17 @@ begin
             info("Sending value 0x" & to_hstring(value) & " to SPI master");
 
             -- Ensure valid is low
-            tb_i_tx_byte_valid <= '0';
+            tb_i_tx_data_valid <= '0';
             wait for 2 * C_CLK_PERIOD;
 
             -- Apply data
-            tb_i_tx_byte       <= value;
+            tb_i_tx_data       <= value;
             wait for C_CLK_PERIOD;
 
             -- Pulse valid signal
-            tb_i_tx_byte_valid <= '1';
+            tb_i_tx_data_valid <= '1';
             wait for 2 * C_CLK_PERIOD;
-            tb_i_tx_byte_valid <= '0';
+            tb_i_tx_data_valid <= '0';
 
         end procedure proc_spi_write;
 
@@ -317,7 +317,7 @@ begin
                 "MOSI Verification: Slave received correct data from Master");
 
             -- Verify MISO path
-            check_equal(tb_o_rx_byte, value,
+            check_equal(tb_o_rx_data, value,
                 "MISO Verification: Master received correct data from Slave");
 
         end procedure proc_spi_check;
@@ -380,6 +380,26 @@ begin
                 tb_check_spi_timings <= '0';
 
                 wait for C_SPI_TRANSACTION_TIME;
+
+                proc_spi_write(x"AB");
+                tb_check_spi_timings <= '1';
+                wait for 2 * C_CLK_PERIOD;
+                tb_check_spi_timings <= '0';
+
+                wait for C_SPI_TRANSACTION_TIME;
+
+            elsif (run("test_spi_configuration")) then
+
+                -- Reset values
+                proc_reset_dut;
+                wait for 10 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing SPI default clock polarity value");
+                info("-----------------------------------------------------------------------------");
+
+                check_equal(tb_o_sclk, G_CLK_POLARITY, "Checking clock polarity when idle.");
 
             end if;
 
