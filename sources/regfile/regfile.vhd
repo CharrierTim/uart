@@ -64,7 +64,9 @@ entity REGFILE is
         I_WRITE_VALID     : in    std_logic;
 
         -- Output
-        O_LED_0           : out   std_logic
+        O_LED_0           : out   std_logic;
+        O_SPI_DATA        : out   std_logic_vector(8 - 1 downto 0);
+        O_SPI_DATA_VALID  : out   std_logic
     );
 end entity REGFILE;
 
@@ -79,6 +81,7 @@ architecture REGFILE_ARCH of REGFILE is
     -- =================================================================================================================
 
     -- RW registers
+    signal reg_spi     : std_logic_vector(C_REG_SPI_RST'range);
     signal reg_led     : std_logic;
     signal reg_16_bits : std_logic_vector(16 - 1 downto 0);
 
@@ -100,6 +103,7 @@ begin
             O_READ_DATA_VALID <= '0';
 
             -- RW registers
+            reg_spi     <= C_REG_SPI_RST;
             reg_led     <= C_REG_LED_RST;
             reg_16_bits <= C_REG_16_BITS_RST;
 
@@ -146,6 +150,10 @@ begin
 
                         reg_read <= C_REG_78_DATA;
 
+                    when C_REG_SPI_ADDR =>
+
+                        reg_read <= 7b"0" & reg_spi;
+
                     when C_REG_9A_ADDR =>
 
                         reg_read <= C_REG_9A_DATA;
@@ -186,6 +194,10 @@ begin
 
                 case I_WRITE_ADDR is
 
+                    when C_REG_SPI_ADDR =>
+
+                        reg_spi <= I_WRITE_DATA(reg_spi'range);
+
                     when C_REG_LED_ADDR =>
 
                         reg_led <= I_WRITE_DATA(0);
@@ -208,7 +220,9 @@ begin
     -- OUTPUTS
     -- =================================================================================================================
 
-    O_READ_DATA <= reg_read;
-    O_LED_0     <= reg_led;
+    O_READ_DATA      <= reg_read;
+    O_LED_0          <= reg_led;
+    O_SPI_DATA       <= reg_spi(reg_spi'high - 1 downto reg_spi'low);
+    O_SPI_DATA_VALID <= reg_spi(reg_spi'high);
 
 end architecture REGFILE_ARCH;

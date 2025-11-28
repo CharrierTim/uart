@@ -51,6 +51,12 @@ entity TOP_FPGA is
         PAD_I_UART_RX  : in    std_logic;
         PAD_O_UART_TX  : out   std_logic;
 
+        -- SPI
+        PAD_O_SCLK     : out   std_logic;
+        PAD_O_MOSI     : out   std_logic;
+        PAD_I_MISO     : in    std_logic;
+        PAD_O_CS       : out   std_logic;
+
         -- Switches and LED
         PAD_I_SWITCH_0 : in    std_logic;
         PAD_I_SWITCH_1 : in    std_logic;
@@ -76,7 +82,13 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     constant C_CLK_FREQ_HZ          : positive := 50_000_000;
     constant C_BAUD_RATE_BPS        : positive := 115_200;
     constant C_SAMPLING_RATE        : positive := 16;
-    constant C_NB_DATA_BITS         : positive := 8;
+    constant C_UART_NB_DATA_BITS    : positive := 8;
+
+    -- SPI
+    constant C_SPI_FREQ_HZ          : positive  := 1_000_000;
+    constant C_SPI_NB_DATA_BITS     : positive  := 8;
+    constant C_CLK_POLARITY         : std_logic := '0';
+    constant C_CLK_PHASE            : std_logic := '0';
 
     -- =================================================================================================================
     -- SIGNALS
@@ -101,6 +113,10 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal write_addr               : std_logic_vector( 8 - 1 downto 0);
     signal write_data               : std_logic_vector(16 - 1 downto 0);
     signal write_addr_valid         : std_logic;
+
+    -- SPI data
+    signal spi_data                 : std_logic_vector( 8 - 1 downto 0);
+    signal spi_data_valid           : std_logic;
 
     -- =================================================================================================================
     -- COMPONENTS
@@ -166,7 +182,7 @@ begin
             G_CLK_FREQ_HZ   => C_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => C_BAUD_RATE_BPS,
             G_SAMPLING_RATE => C_SAMPLING_RATE,
-            G_NB_DATA_BITS  => C_NB_DATA_BITS
+            G_NB_DATA_BITS  => C_UART_NB_DATA_BITS
         )
         port map (
             CLK               => internal_clk,
@@ -202,7 +218,34 @@ begin
             I_WRITE_ADDR      => write_addr,
             I_WRITE_DATA      => write_data,
             I_WRITE_VALID     => write_addr_valid,
-            O_LED_0           => PAD_O_LED_0
+            O_LED_0           => PAD_O_LED_0,
+            O_SPI_DATA        => spi_data,
+            O_SPI_DATA_VALID  => spi_data_valid
+        );
+
+    -- =================================================================================================================
+    -- REGFILE MODULE
+    -- =================================================================================================================
+
+    inst_spi_master : entity lib_rtl.spi_master
+        generic map (
+            G_CLK_FREQ_HZ  => C_CLK_FREQ_HZ,
+            G_SPI_FREQ_HZ  => C_SPI_FREQ_HZ,
+            G_NB_DATA_BITS => C_SPI_NB_DATA_BITS,
+            G_CLK_POLARITY => C_CLK_POLARITY,
+            G_CLK_PHASE    => C_CLK_PHASE
+        )
+        port map (
+            CLK             => internal_clk,
+            RST_N           => internal_rst_n,
+            O_SCLK          => PAD_O_SCLK,
+            O_MOSI          => PAD_O_MOSI,
+            I_MISO          => PAD_I_MISO,
+            O_CS            => PAD_O_CS,
+            I_TX_DATA       => spi_data,
+            I_TX_DATA_VALID => spi_data_valid,
+            O_RX_DATA       => open,
+            O_RX_DATA_VALID => open
         );
 
 end architecture TOP_FPGA_ARCH;
