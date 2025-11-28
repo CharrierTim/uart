@@ -291,6 +291,7 @@ begin
                 reg_i_tx_data <= I_TX_DATA;
             end if;
 
+            -- 2 DFF stage resynchronizing async MISO to system clock domain
             reg_resync_i_miso <= reg_resync_i_miso(reg_resync_i_miso'high - 1 downto reg_resync_i_miso'low) & I_MISO;
 
         end if;
