@@ -40,7 +40,7 @@ library vunit_lib;
 -- PACKAGE
 -- =====================================================================================================================
 
-package tb_top_fpga_pkg is
+package TB_TOP_FPGA_PKG is
 
     -- =================================================================================================================
     -- TYPES
@@ -99,9 +99,9 @@ package tb_top_fpga_pkg is
         message       : string := ""
     );
 
-end package tb_top_fpga_pkg;
+end package TB_TOP_FPGA_PKG;
 
-package body tb_top_fpga_pkg is
+package body TB_TOP_FPGA_PKG is
 
     -- =================================================================================================================
     -- FUNCTIONS

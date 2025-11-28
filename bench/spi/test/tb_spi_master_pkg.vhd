@@ -40,7 +40,7 @@ library vunit_lib;
 -- PACKAGE
 -- =====================================================================================================================
 
-package tb_spi_master_pkg is
+package TB_SPI_MASTER_PKG is
 
     -- =================================================================================================================
     -- CONSTANTS
@@ -70,9 +70,9 @@ package tb_spi_master_pkg is
         message       : string := ""
     );
 
-end package tb_spi_master_pkg;
+end package TB_SPI_MASTER_PKG;
 
-package body tb_spi_master_pkg is
+package body TB_SPI_MASTER_PKG is
 
     -- =================================================================================================================
     -- FUNCTIONS
