@@ -65,6 +65,10 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     signal tb_pad_i_rst_h          : std_logic;
     signal tb_pad_i_uart_rx        : std_logic;
     signal tb_pad_o_uart_tx        : std_logic;
+    signal tb_pad_o_sclk           : std_logic;
+    signal tb_pad_o_mosi           : std_logic;
+    signal tb_pad_i_miso           : std_logic;
+    signal tb_pad_o_cs             : std_logic;
     signal tb_pad_i_switch_0       : std_logic;
     signal tb_pad_i_switch_1       : std_logic;
     signal tb_pad_i_switch_2       : std_logic;
@@ -100,6 +104,10 @@ begin
             PAD_I_RST_h    => tb_pad_i_rst_h,
             PAD_I_UART_RX  => tb_i_uart_rx,
             PAD_O_UART_TX  => tb_pad_o_uart_tx,
+            PAD_O_SCLK     => tb_pad_o_sclk,
+            PAD_O_MOSI     => tb_pad_o_mosi,
+            PAD_I_MISO     => tb_pad_i_miso,
+            PAD_O_CS       => tb_pad_o_cs,
             PAD_I_SWITCH_0 => tb_pad_i_switch_0,
             PAD_I_SWITCH_1 => tb_pad_i_switch_1,
             PAD_I_SWITCH_2 => tb_pad_i_switch_2,
@@ -836,6 +844,33 @@ begin
 
                     proc_uart_check(C_REG_SWITCHES, std_logic_vector(to_unsigned(i, 16)));
                 end loop;
+
+            elsif (run("test_spi")) then
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing SPI register");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Check default value
+                proc_uart_check_default_value(C_REG_SPI);
+
+                -- Check register is in read-write
+                proc_uart_check_read_write(C_REG_SPI, "0000000111111111");
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing SPI output");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_write(C_REG_SPI, x"0000");
+                proc_uart_write(C_REG_SPI, x"0155");
+
+                wait for C_UART_READ_CMD_TIME;
 
             end if;
 
