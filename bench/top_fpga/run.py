@@ -76,7 +76,7 @@ LIB_SRC.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vh
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
-LIB_BENCH.add_source_files(pattern=MODEL_ROOT / "*.vhd")
+LIB_BENCH.add_source_files(pattern=MODEL_ROOT / "**" / "*.vhd")
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
 
 ## =====================================================================================================================
