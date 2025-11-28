@@ -22,7 +22,7 @@
 --  SOFTWARE.
 -- =====================================================================================================================
 -- @project uart
--- @file    tb_spi_pkg.vhd
+-- @file    tb_spi_master_pkg.vhd
 -- @version 1.0
 -- @brief   Package for the SPI master testbench
 -- @author  Timothee Charrier
@@ -40,7 +40,7 @@ library vunit_lib;
 -- PACKAGE
 -- =====================================================================================================================
 
-package tb_spi_pkg is
+package tb_spi_master_pkg is
 
     -- =================================================================================================================
     -- CONSTANTS
@@ -70,9 +70,9 @@ package tb_spi_pkg is
         message       : string := ""
     );
 
-end package tb_spi_pkg;
+end package tb_spi_master_pkg;
 
-package body tb_spi_pkg is
+package body tb_spi_master_pkg is
 
     -- =================================================================================================================
     -- FUNCTIONS

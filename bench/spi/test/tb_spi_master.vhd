@@ -22,7 +22,7 @@
 --  SOFTWARE.
 -- =====================================================================================================================
 -- @project uart
--- @file    tb_spi.vhd
+-- @file    tb_spi_master.vhd
 -- @version 1.0
 -- @brief   SPI master testbench
 -- @author  Timothee Charrier
@@ -45,25 +45,25 @@ library osvvm;
 
 library lib_bench;
     use lib_bench.spi_pkg.all;
-    use lib_bench.tb_spi_pkg.all;
+    use lib_bench.tb_spi_master_pkg.all;
 
 -- =====================================================================================================================
 -- ENTITY
 -- =====================================================================================================================
 
-entity TB_SPI is
+entity TB_SPI_MASTER is
     generic (
         RUNNER_CFG     : string;
         G_CLK_POLARITY : std_logic;
         G_CLK_PHASE    : std_logic
     );
-end entity TB_SPI;
+end entity TB_SPI_MASTER;
 
 -- =====================================================================================================================
 -- ARCHITECTURE
 -- =====================================================================================================================
 
-architecture TB_SPI_ARCH of TB_SPI is
+architecture TB_SPI_MASTER_ARCH of TB_SPI_MASTER is
 
     -- =================================================================================================================
     -- SIGNALS
@@ -410,4 +410,4 @@ begin
 
     end process p_test_runner;
 
-end architecture TB_SPI_ARCH;
+end architecture TB_SPI_MASTER_ARCH;
