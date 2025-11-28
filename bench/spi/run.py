@@ -117,7 +117,7 @@ def generate_spi_tests(obj, cpol_values, cpha_values):
         obj.add_config(name=config_name, generics={"G_CLK_POLARITY": f"'{cpol}'", "G_CLK_PHASE": f"'{cpha}'"})
 
 
-TB_SPI: TestBench = LIB_BENCH.test_bench("tb_spi")
+TB_SPI: TestBench = LIB_BENCH.test_bench("tb_spi_master")
 
 # Generate tests for all SPI modes (CPOL=0/1, CPHA=0/1)
 generate_spi_tests(TB_SPI, cpol_values=[0, 1], cpha_values=[0, 1])
