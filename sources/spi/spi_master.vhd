@@ -26,21 +26,23 @@
 -- @version 1.0
 -- @brief   SPI master module supporting all four SPI modes (0-3).
 --
---          SPI Mode Configuration:
+--          SPI Mode Configuration (adapted from Texas Instruments KeyStone Architecture Serial Peripheral Interface
+--         (SPI) User Guide, SPRUGP2A, March 2012):
+--
 --          +------+----------+-------+-----------------------------------------------------------------------+
 --          | MODE | POLARITY | PHASE | Description                                                           |
 --          +------+----------+-------+-----------------------------------------------------------------------+
---          |0     | 0        | 0     | Data is output on the rising edge of SCLK.                            |
+--          | 0    | 0        | 0     | Data is output on the rising edge of SCLK.                            |
 --          |      |          |       | Input data is latched on the falling edge.                            |
 --          +------+----------+-------+-----------------------------------------------------------------------+
---          |1     | 0        | 1     | Data is output one half-cycle before the first rising edge of SCLK    |
+--          | 1    | 0        | 1     | Data is output one half-cycle before the first rising edge of SCLK    |
 --          |      |          |       | and on subsequent falling edges.                                      |
 --          |      |          |       | Input data is latched on the rising edge of SCLK.                     |
 --          +------+----------+-------+-----------------------------------------------------------------------+
---          |2     | 1        | 0     | Data is output on the falling edge of SCLK.                           |
+--          | 2    | 1        | 0     | Data is output on the falling edge of SCLK.                           |
 --          |      |          |       | Input data is latched on the rising edge.                             |
 --          +------+----------+-------+-----------------------------------------------------------------------+
---          |3     | 1        | 1     | Data is output one half-cycle before the first falling edge of SCLK   |
+--          | 3    | 1        | 1     | Data is output one half-cycle before the first falling edge of SCLK   |
 --          |      |          |       | and on subsequent rising edges.                                       |
 --          |      |          |       | Input data is latched on the falling edge of SCLK.                    |
 --          +------+----------+-------+-----------------------------------------------------------------------+
