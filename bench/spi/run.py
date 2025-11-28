@@ -86,7 +86,7 @@ if VU.get_simulator_name() == "nvc":
         "# Collect coverage only on RTL sources, exclude testbench and models",
         "",
         "# Enable coverage on main RTL library",
-        "+hierarchy LIB_BENCH.TB_SPI.DUT.*",
+        "+hierarchy LIB_BENCH.TB_SPI_MASTER.DUT.*",
         "",
         "# Exclude testbench model",
         "-hierarchy LIB_BENCH.TB_SPI_MASTER.INST_SPI_SLAVE_MODEL.*",
