@@ -128,7 +128,6 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     -- FSM signals
     signal current_state           : t_state;
     signal next_state              : t_state;
-    signal next_o_tx_byte_sr       : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
     signal next_o_mosi             : std_logic;
     signal next_o_cs               : std_logic;
     signal next_o_valid            : std_logic;
@@ -412,10 +411,9 @@ begin
     begin
 
         -- Default assignment
-        next_o_tx_byte_sr <= (others => '0');
-        next_o_mosi       <= '0';
-        next_o_cs         <= '1';
-        next_o_valid      <= '0';
+        next_o_mosi  <= '0';
+        next_o_cs    <= '1';
+        next_o_valid <= '0';
 
         case current_state is
 
@@ -446,9 +444,8 @@ begin
             when STATE_SEND_BITS =>
 
                 -- Shift TX data
-                next_o_tx_byte_sr <= std_logic_vector(shift_left(unsigned(reg_i_tx_byte), to_integer(bit_counter)));
-                next_o_mosi       <= next_o_tx_byte_sr(next_o_tx_byte_sr'high);
-                next_o_cs         <= '0';
+                next_o_mosi <= reg_i_tx_byte(to_integer(reg_i_tx_byte'length - 1 - bit_counter));
+                next_o_cs   <= '0';
 
             -- =========================================================================================================
             -- STATE: DEAD TIME AFTER
