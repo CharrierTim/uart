@@ -75,10 +75,10 @@ entity SPI_MASTER is
         I_MISO          : in    std_logic; -- Master In Slave Out
         O_CS            : out   std_logic; -- Chip select
         -- Data interface
-        I_TX_BYTE       : in    std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
-        I_TX_BYTE_VALID : in    std_logic;
-        O_RX_BYTE       : out   std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
-        O_RX_BYTE_VALID : out   std_logic
+        I_TX_DATA       : in    std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
+        I_TX_DATA_VALID : in    std_logic;
+        O_RX_DATA       : out   std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
+        O_RX_DATA_VALID : out   std_logic
     );
 end entity SPI_MASTER;
 
@@ -136,8 +136,9 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     signal bit_counter             : unsigned(C_BIT_COUNTER_WITDH - 1 downto 0);
 
     -- Internal registers
-    signal reg_i_tx_byte           : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
-    signal reg_o_rx_byte_sr        : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
+    signal reg_resync_i_miso       : std_logic_vector(2 - 1 downto 0);
+    signal reg_i_tx_data           : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
+    signal reg_o_rx_data_sr        : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
 
 begin
 
@@ -268,7 +269,7 @@ begin
     end process p_bit_count;
 
     -- =================================================================================================================
-    -- Register the input data when valid
+    -- Register the input data when valid and I_MISO resynchronization to input clock domain
     -- =================================================================================================================
 
     p_internal_reg : process (CLK, RST_N) is
@@ -276,13 +277,16 @@ begin
 
         if (RST_N = '0') then
 
-            reg_i_tx_byte <= (others => '0');
+            reg_i_tx_data     <= (others => '0');
+            reg_resync_i_miso <= (others => '0');
 
         elsif rising_edge(CLK) then
 
-            if (I_TX_BYTE_VALID = '1') then
-                reg_i_tx_byte <= I_TX_BYTE;
+            if (I_TX_DATA_VALID = '1') then
+                reg_i_tx_data <= I_TX_DATA;
             end if;
+
+            reg_resync_i_miso <= reg_resync_i_miso(reg_resync_i_miso'high - 1 downto reg_resync_i_miso'low) & I_MISO;
 
         end if;
 
@@ -327,7 +331,7 @@ begin
 
             when STATE_IDLE =>
 
-                if (I_TX_BYTE_VALID = '1') then
+                if (I_TX_DATA_VALID = '1') then
                     next_state <= STATE_DEAD_TIME_BEFORE;
                 else
                     next_state <= STATE_IDLE;
@@ -444,7 +448,8 @@ begin
             when STATE_SEND_BITS =>
 
                 -- Shift TX data
-                next_o_mosi <= reg_i_tx_byte(to_integer(reg_i_tx_byte'length - 1 - bit_counter));
+                next_o_mosi <= reg_i_tx_data(to_integer(reg_i_tx_data'length - 1 - bit_counter));
+
                 next_o_cs   <= '0';
 
             -- =========================================================================================================
@@ -478,21 +483,22 @@ begin
 
             O_MOSI           <= '0';
             O_CS             <= '1';
-            O_RX_BYTE        <= (others => '0');
-            O_RX_BYTE_VALID  <= '0';
+            O_RX_DATA        <= (others => '0');
+            O_RX_DATA_VALID  <= '0';
 
-            reg_o_rx_byte_sr <= (others => '0');
+            reg_o_rx_data_sr <= (others => '0');
 
         elsif rising_edge(CLK) then
 
             if (current_state = STATE_SEND_BITS and spi_enable_sampling = '1') then
-                reg_o_rx_byte_sr <= reg_o_rx_byte_sr(reg_o_rx_byte_sr'high - 1 downto reg_o_rx_byte_sr'low) & I_MISO;
+                reg_o_rx_data_sr <= reg_o_rx_data_sr(reg_o_rx_data_sr'high - 1 downto reg_o_rx_data_sr'low) &
+                                    reg_resync_i_miso(reg_resync_i_miso'high);
             end if;
 
             O_MOSI          <= next_o_mosi;
             O_CS            <= next_o_cs;
-            O_RX_BYTE       <= reg_o_rx_byte_sr;
-            O_RX_BYTE_VALID <= next_o_valid;
+            O_RX_DATA       <= reg_o_rx_data_sr;
+            O_RX_DATA_VALID <= next_o_valid;
 
         end if;
 
