@@ -27,7 +27,7 @@
 ##  @brief   Configuration file for VHDL Style Guide (VSG). Some part are adapted from:
 ##              - https://github.com/open-logic/open-logic/blob/main/lint/config/vsg_config.yml | By Patrick Studer
 ##  @author  Timothee Charrier
-##  @date    11/20/2025
+##  @date    11/28/2025
 ## =====================================================================================================================
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -3134,8 +3134,7 @@ rule:
 
     package_008:
         # This rule checks the package name has proper case on the end package declaration.
-        case: lower
-        disable: true
+        case: upper
         case_exceptions: []
         prefix_exceptions: []
         suffix_exceptions: []
@@ -3146,8 +3145,7 @@ rule:
 
     package_010:
         # This rule checks the package name has proper case in the package declaration.
-        case: lower
-        disable: true
+        case: upper
         case_exceptions: []
         prefix_exceptions: []
         suffix_exceptions: []
@@ -3318,8 +3316,7 @@ rule:
 
     package_body_502:
         # This rule checks the package name has proper case in the package declaration.
-        case: lower
-        disable: true
+        case: upper
         case_exceptions: []
         prefix_exceptions: []
         suffix_exceptions: []
@@ -3342,8 +3339,7 @@ rule:
 
     package_body_507:
         # This rule checks the package name has proper case on the end package declaration.
-        case: lower
-        disable: true
+        case: upper
         case_exceptions: []
         prefix_exceptions: []
         suffix_exceptions: []
