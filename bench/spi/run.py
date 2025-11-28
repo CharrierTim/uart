@@ -89,7 +89,7 @@ if VU.get_simulator_name() == "nvc":
         "+hierarchy LIB_BENCH.TB_SPI.DUT.*",
         "",
         "# Exclude testbench model",
-        "-hierarchy LIB_BENCH.TB_TOP_FPGA.INST_SPI_SLAVE_MODEL.*",
+        "-hierarchy LIB_BENCH.TB_SPI_MASTER.INST_SPI_SLAVE_MODEL.*",
         "",
     ]
     simulator.setup_coverage(VU=VU, specifications=coverage_specs)
