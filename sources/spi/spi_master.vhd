@@ -142,6 +142,7 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     signal bit_counter             : unsigned(C_BIT_COUNTER_WIDTH - 1 downto 0);
 
     -- Internal registers
+    signal reg_i_tx_data_valid_d1  : std_logic;
     signal reg_resync_i_miso       : std_logic_vector(2 - 1 downto 0);
     signal reg_i_tx_data           : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
     signal reg_o_rx_data_sr        : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
@@ -282,12 +283,15 @@ begin
 
         if (RST_N = '0') then
 
-            reg_i_tx_data     <= (others => '0');
-            reg_resync_i_miso <= (others => '0');
+            reg_i_tx_data_valid_d1 <= '0';
+            reg_i_tx_data          <= (others => '0');
+            reg_resync_i_miso      <= (others => '0');
 
         elsif rising_edge(CLK) then
 
-            if (I_TX_DATA_VALID = '1') then
+            reg_i_tx_data_valid_d1 <= I_TX_DATA_VALID;
+
+            if (reg_i_tx_data_valid_d1 = '0' and I_TX_DATA_VALID = '1') then
                 reg_i_tx_data <= I_TX_DATA;
             end if;
 
@@ -337,7 +341,7 @@ begin
 
             when STATE_IDLE =>
 
-                if (I_TX_DATA_VALID = '1') then
+                if (reg_i_tx_data_valid_d1 = '0' and I_TX_DATA_VALID = '1') then
                     next_state <= STATE_DEAD_TIME_BEFORE;
                 else
                     next_state <= STATE_IDLE;
