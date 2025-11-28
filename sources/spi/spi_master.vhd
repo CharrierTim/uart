@@ -27,7 +27,7 @@
 -- @brief   SPI master module supporting all four SPI modes (0-3).
 --
 --          SPI Mode Configuration (adapted from Texas Instruments KeyStone Architecture Serial Peripheral Interface
---         (SPI) User Guide, SPRUGP2A, March 2012):
+--          (SPI) User Guide, SPRUGP2A, March 2012):
 --
 --          +------+----------+-------+-----------------------------------------------------------------------+
 --          | MODE | POLARITY | PHASE | Description                                                           |
