@@ -24,25 +24,26 @@
 -- @project uart
 -- @file    spi_master.vhd
 -- @version 1.0
--- @brief   SPI master module.
+-- @brief   SPI master module supporting all four SPI modes (0-3).
 --
---              +----------+-------+-----------------------------------------------------------------------+
---              | POLARITY | PHASE | Action                                                                |
---              +----------+-------+-----------------------------------------------------------------------+
---              | 0        | 0     | Data is output on the rising edge of SPICLK.                          |
---              |          |       | Input data is latched on the falling edge.                            |
---              +----------+-------+-----------------------------------------------------------------------+
---              | 0        | 1     | Data is output one half-cycle before the first rising edge of SPICLK  |
---              |          |       | and on subsequent falling edges.                                      |
---              |          |       | Input data is latched on the rising edge of SPICLK.                   |
---              +----------+-------+-----------------------------------------------------------------------+
---              | 1        | 0     | Data is output on the falling edge of SPICLK.                         |
---              |          |       | Input data is latched on the rising edge.                             |
---              +----------+-------+-----------------------------------------------------------------------+
---              | 1        | 1     | Data is output one half-cycle before the first falling edge of SPICLK |
---              |          |       | and on subsequent rising edges.                                       |
---              |          |       | Input data is latched on the falling edge of SPICLK.                  |
---              +----------+-------+-----------------------------------------------------------------------+
+--          SPI Mode Configuration:
+--          +------+----------+-------+-----------------------------------------------------------------------+
+--          | MODE | POLARITY | PHASE | Description                                                           |
+--          +------+----------+-------+-----------------------------------------------------------------------+
+--          |0     | 0        | 0     | Data is output on the rising edge of SCLK.                            |
+--          |      |          |       | Input data is latched on the falling edge.                            |
+--          +------+----------+-------+-----------------------------------------------------------------------+
+--          |1     | 0        | 1     | Data is output one half-cycle before the first rising edge of SCLK    |
+--          |      |          |       | and on subsequent falling edges.                                      |
+--          |      |          |       | Input data is latched on the rising edge of SCLK.                     |
+--          +------+----------+-------+-----------------------------------------------------------------------+
+--          |2     | 1        | 0     | Data is output on the falling edge of SCLK.                           |
+--          |      |          |       | Input data is latched on the rising edge.                             |
+--          +------+----------+-------+-----------------------------------------------------------------------+
+--          |3     | 1        | 1     | Data is output one half-cycle before the first falling edge of SCLK   |
+--          |      |          |       | and on subsequent rising edges.                                       |
+--          |      |          |       | Input data is latched on the falling edge of SCLK.                    |
+--          +------+----------+-------+-----------------------------------------------------------------------+
 --
 -- @author  Timothee Charrier
 -- @date    24/11/2025
@@ -105,9 +106,12 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     -- CONSTANTS
     -- =================================================================================================================
 
+    -- SPI clock generation
     constant C_HALF_PERIOD_CYCLES  : positive := G_CLK_FREQ_HZ / G_SPI_FREQ_HZ / 2;
     constant C_COUNTER_WIDTH       : positive := positive(ceil(log2(real(C_HALF_PERIOD_CYCLES))));
-    constant C_BIT_COUNTER_WITDH   : positive := positive(ceil(log2(real(G_NB_DATA_BITS))));
+
+    -- Bit counter
+    constant C_BIT_COUNTER_WIDTH   : positive := positive(ceil(log2(real(G_NB_DATA_BITS))));
 
     -- =================================================================================================================
     -- SIGNALS
@@ -133,7 +137,7 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     signal next_o_valid            : std_logic;
 
     -- Bit count
-    signal bit_counter             : unsigned(C_BIT_COUNTER_WITDH - 1 downto 0);
+    signal bit_counter             : unsigned(C_BIT_COUNTER_WIDTH - 1 downto 0);
 
     -- Internal registers
     signal reg_resync_i_miso       : std_logic_vector(2 - 1 downto 0);
@@ -145,10 +149,9 @@ begin
     -- =================================================================================================================
     -- CLOCK GENERATION
     -- =================================================================================================================
-    -- This section implements the same clock generation scheme as the reference design:
-    --      1. Generate 2x SPI base clock
-    --      2. Generate the positive and negative core clock and clock enable
-    --      3. Select appropriate clock based on G_CLK_POLARITY indicating clock polarity
+    -- Generates the SPI clock by dividing the system clock by (G_CLK_FREQ_HZ / G_SPI_FREQ_HZ).
+    -- Creates complementary clock signals (core_clk and core_clk_n) with associated enable pulses.
+    -- The enable pulses are used to synchronize sampling and shifting operations across the FSM.
     -- =================================================================================================================
 
     p_core_clock_gen : process (CLK, RST_N) is
@@ -340,7 +343,7 @@ begin
             -- =========================================================================================================
             -- STATE: DEAD TIME BEFORE
             -- =========================================================================================================
-            -- In
+            -- In dead time before, the module awaits for a trailing edge
             -- =========================================================================================================
 
             when STATE_DEAD_TIME_BEFORE =>
@@ -354,7 +357,8 @@ begin
             -- =========================================================================================================
             -- STATE: WAIT LEADING EDGE
             -- =========================================================================================================
-            -- In
+            -- In wait leading edge, the module awaits for half a SPI clock period before sending the data bits and
+            -- drives chip select low
             -- =========================================================================================================
 
             when STATE_WAIT_LEADING_EDGE =>
@@ -368,7 +372,8 @@ begin
             -- =========================================================================================================
             -- STATE: SEND BITS
             -- =========================================================================================================
-            -- In
+            -- In send bits state, the module serializes the data to mosi and de-serializes miso and drives chip select
+            -- low
             -- =========================================================================================================
 
             when STATE_SEND_BITS =>
@@ -382,7 +387,7 @@ begin
             -- =========================================================================================================
             -- STATE: DEAD TIME AFTER
             -- =========================================================================================================
-            -- In
+            -- In dead time after, the module awaits for a leading edge and drives chip select low
             -- =========================================================================================================
 
             when STATE_DEAD_TIME_AFTER =>
@@ -396,7 +401,7 @@ begin
             -- =========================================================================================================
             -- STATE: DONE
             -- =========================================================================================================
-            -- In
+            -- In done state, the module asserts the o_rx_data_valid flag for a system clock period
             -- =========================================================================================================
 
             when STATE_DONE =>
