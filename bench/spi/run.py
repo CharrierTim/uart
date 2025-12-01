@@ -105,8 +105,8 @@ def generate_spi_tests(obj, cpol_values, cpha_values):
 
     Args:
         obj: VUnit test bench or test case object
-        cpol_values: List of clock polarity values (typically [0, 1])
-        cpha_values: List of clock phase values (typically [0, 1])
+        cpol_values: List of clock polarity values ([0, 1])
+        cpha_values: List of clock phase values    ([0, 1])
     """
     for cpol, cpha in product(cpol_values, cpha_values):
         # SPI Mode mapping: Mode 0 (CPOL=0,CPHA=0), Mode 1 (CPOL=0,CPHA=1),
