@@ -596,10 +596,10 @@ begin
             info("Sending value 0x" & to_hstring(value) & " to SPI master");
 
             -- Reset C_REG_SPI before for the rising edge detection
-            proc_uart_write(C_REG_SPI, x"0000");
+            proc_uart_write(C_REG_SPI_TX, x"0000");
 
             -- Write the data
-            proc_uart_write(C_REG_SPI, x"01" & value);
+            proc_uart_write(C_REG_SPI_TX, x"01" & value);
 
         end procedure proc_spi_write;
 
@@ -635,6 +635,9 @@ begin
             -- Verify MOSI path
             check_equal(v_spi_slave_data, value,
                 "MOSI Verification: Slave received correct data from Master");
+
+            -- Read MISO register data
+            proc_uart_check(C_REG_SPI_RX, x"00" & value);
 
         end procedure proc_spi_check;
 
@@ -975,7 +978,7 @@ begin
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Testing SPI register");
+                info(" Testing SPI TX and RX registers");
                 info("-----------------------------------------------------------------------------");
 
                 -- Reset DUT
@@ -983,15 +986,16 @@ begin
                 wait for 100 us;
 
                 -- Check default value
-                proc_uart_check_default_value(C_REG_SPI);
+                proc_uart_check_default_value(C_REG_SPI_TX);
+                proc_uart_check_default_value(C_REG_SPI_RX);
 
-                -- Check register is in read-write
-                proc_uart_check_read_write(C_REG_SPI, x"01FF");
+                -- Check RX register is in read-only
+                proc_uart_check_read_only(C_REG_SPI_RX);
 
+                -- Check TX register is in read-write and check data is matching
+                proc_uart_check_read_write(C_REG_SPI_TX, x"01FF");
                 pop_stream(net, C_SLAVE_STREAM, v_spi_slave_data);
-
-                -- Verify MOSI path
-                check_equal(v_spi_slave_data, not(C_REG_SPI.data(8 - 1 downto 0)),
+                check_equal(v_spi_slave_data, not(C_REG_SPI_TX.data(8 - 1 downto 0)),
                     "MOSI Verification: Slave received correct data from Master");
 
                 info("");

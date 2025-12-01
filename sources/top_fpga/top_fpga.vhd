@@ -26,7 +26,7 @@
 -- @version 1.0
 -- @brief   Top-Level of the FPGA
 -- @author  Timothee Charrier
--- @date    20/10/2025
+-- @date    01/12/2025
 -- =====================================================================================================================
 
 library ieee;
@@ -115,8 +115,10 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal write_addr_valid         : std_logic;
 
     -- SPI data
-    signal spi_data                 : std_logic_vector( 8 - 1 downto 0);
-    signal spi_data_valid           : std_logic;
+    signal spi_tx_data              : std_logic_vector( 8 - 1 downto 0);
+    signal spi_tx_data_valid        : std_logic;
+    signal spi_rx_data              : std_logic_vector( 8 - 1 downto 0);
+    signal spi_rx_data_valid        : std_logic;
 
     -- =================================================================================================================
     -- COMPONENTS
@@ -208,19 +210,21 @@ begin
             G_GIT_ID_LSB => G_GIT_ID(15 downto  0)
         )
         port map (
-            CLK               => internal_clk,
-            RST_N             => internal_rst_n,
-            I_SWITCHES        => sync_inputs_slv,
-            I_READ_ADDR       => read_addr,
-            I_READ_ADDR_VALID => read_addr_valid,
-            O_READ_DATA       => read_data,
-            O_READ_DATA_VALID => read_data_valid,
-            I_WRITE_ADDR      => write_addr,
-            I_WRITE_DATA      => write_data,
-            I_WRITE_VALID     => write_addr_valid,
-            O_LED_0           => PAD_O_LED_0,
-            O_SPI_DATA        => spi_data,
-            O_SPI_DATA_VALID  => spi_data_valid
+            CLK                 => internal_clk,
+            RST_N               => internal_rst_n,
+            I_SWITCHES          => sync_inputs_slv,
+            I_SPI_RX_DATA       => spi_rx_data,
+            I_SPI_RX_DATA_VALID => spi_rx_data_valid,
+            I_READ_ADDR         => read_addr,
+            I_READ_ADDR_VALID   => read_addr_valid,
+            O_READ_DATA         => read_data,
+            O_READ_DATA_VALID   => read_data_valid,
+            I_WRITE_ADDR        => write_addr,
+            I_WRITE_DATA        => write_data,
+            I_WRITE_VALID       => write_addr_valid,
+            O_LED_0             => PAD_O_LED_0,
+            O_SPI_TX_DATA       => spi_tx_data,
+            O_SPI_TX_DATA_VALID => spi_tx_data_valid
         );
 
     -- =================================================================================================================
@@ -242,10 +246,10 @@ begin
             O_MOSI          => PAD_O_MOSI,
             I_MISO          => PAD_I_MISO,
             O_CS            => PAD_O_CS,
-            I_TX_DATA       => spi_data,
-            I_TX_DATA_VALID => spi_data_valid,
-            O_RX_DATA       => open,
-            O_RX_DATA_VALID => open
+            I_TX_DATA       => spi_tx_data,
+            I_TX_DATA_VALID => spi_tx_data_valid,
+            O_RX_DATA       => spi_rx_data,
+            O_RX_DATA_VALID => spi_rx_data_valid
         );
 
 end architecture TOP_FPGA_ARCH;
