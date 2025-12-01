@@ -1,5 +1,5 @@
-Seed for lib_bench.tb_top_fpga: 3da0958681728ed6
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench -H 64m --ieee-warnings=off-at-0 -e --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/coverage.ncdb --cover-spec=/home/tim/projects/uart/vunit_out/coverage.spec tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_top_fpga_registers,,test_uart_robustness,,test_led_and_switches_toggling,,test_spi,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga_470465ddee2a14c0a0641caef7654e43cc6c7033/,seed : 3da0958681728ed6,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga: 559fe175a7ce2058
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench -H 64m --ieee-warnings=off-at-0 -e --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/coverage.ncdb --cover-spec=/home/tim/projects/uart/vunit_out/coverage.spec tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_top_fpga_registers,,test_uart_robustness,,test_led_and_switches_toggling,,test_spi,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga_470465ddee2a14c0a0641caef7654e43cc6c7033/,seed : 559fe175a7ce2058,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - DUT has been reset.
                0 ms - default              -    INFO -
@@ -275,67 +275,82 @@ Seed for lib_bench.tb_top_fpga: 3da0958681728ed6
               54 ms - check                -    PASS - Check register C_REG_SWITCHES: expected 0x0007, got 0x0007 - Got 0000_0000_0000_0111 (7).
               54 ms - default              -    INFO -
               54 ms - default              -    INFO - -----------------------------------------------------------------------------
-              54 ms - default              -    INFO -  Testing SPI register
+              54 ms - default              -    INFO -  Testing SPI TX and RX registers
               54 ms - default              -    INFO - -----------------------------------------------------------------------------
               54 ms - default              -    INFO -
               54 ms - default              -    INFO - DUT has been reset.
               54 ms - default              -    INFO -
-              54 ms - default              -    INFO - Checking register C_REG_SPI value after reset
-              54 ms - default              -    INFO - Reading value from register C_REG_SPI at address 0x06
-              55 ms - check                -    PASS - Check register C_REG_SPI: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
+              54 ms - default              -    INFO - Checking register C_REG_SPI_TX value after reset
+              54 ms - default              -    INFO - Reading value from register C_REG_SPI_TX at address 0x06
+              55 ms - check                -    PASS - Check register C_REG_SPI_TX: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
               55 ms - default              -    INFO -
-              55 ms - default              -    INFO - Checking register C_REG_SPI is in read-write
-              55 ms - default              -    INFO - Writing value 0xFFFF to register C_REG_SPI at address 0x06
-              56 ms - default              -    INFO - Reading value from register C_REG_SPI at address 0x06
-              56 ms - check                -    PASS - Check register C_REG_SPI: expected 0x01FF, got 0x01FF - Got 0000_0001_1111_1111 (511).
-              56 ms - check                -    PASS - MOSI Verification: Slave received correct data from Master - Got 1111_1111 (255).
+              55 ms - default              -    INFO - Checking register C_REG_SPI_RX value after reset
+              55 ms - default              -    INFO - Reading value from register C_REG_SPI_RX at address 0x07
+              56 ms - check                -    PASS - Check register C_REG_SPI_RX: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
               56 ms - default              -    INFO -
-              56 ms - default              -    INFO - -----------------------------------------------------------------------------
-              56 ms - default              -    INFO -  Testing SPI output
-              56 ms - default              -    INFO - -----------------------------------------------------------------------------
-              56 ms - default              -    INFO -
-              56 ms - default              -    INFO - DUT has been reset.
+              56 ms - default              -    INFO - Checking register C_REG_SPI_RX is in read-only
+              56 ms - default              -    INFO - Writing value 0xFFFF to register C_REG_SPI_RX at address 0x07
+              56 ms - default              -    INFO - Reading value from register C_REG_SPI_RX at address 0x07
+              57 ms - check                -    PASS - Check register C_REG_SPI_RX: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
               57 ms - default              -    INFO -
-              57 ms - default              -    INFO - Checking SPI transaction is correct.
-              57 ms - default              -    INFO - Sending value 0x55 to SPI master
-              57 ms - default              -    INFO - Writing value 0x0000 to register C_REG_SPI at address 0x06
-              57 ms - default              -    INFO - Writing value 0x0155 to register C_REG_SPI at address 0x06
-              58 ms - check                -    PASS - MOSI Verification: Slave received correct data from Master - Got 0101_0101 (85).
-              58 ms - default              -    INFO -
-              58 ms - default              -    INFO - Checking SPI transaction is correct.
-              58 ms - default              -    INFO - Sending value 0xAB to SPI master
-              58 ms - default              -    INFO - Writing value 0x0000 to register C_REG_SPI at address 0x06
-              59 ms - default              -    INFO - Writing value 0x01AB to register C_REG_SPI at address 0x06
-              60 ms - check                -    PASS - MOSI Verification: Slave received correct data from Master - Got 1010_1011 (171).
-              60 ms - default              -    INFO -
-              60 ms - default              -    INFO - Checking SPI transaction is correct.
-              60 ms - default              -    INFO - Sending value 0x1E to SPI master
-              60 ms - default              -    INFO - Writing value 0x0000 to register C_REG_SPI at address 0x06
-              60 ms - default              -    INFO - Writing value 0x011E to register C_REG_SPI at address 0x06
-              61 ms - check                -    PASS - MOSI Verification: Slave received correct data from Master - Got 0001_1110 (30).
+              57 ms - default              -    INFO - Checking register C_REG_SPI_TX is in read-write
+              57 ms - default              -    INFO - Writing value 0xFFFF to register C_REG_SPI_TX at address 0x06
+              58 ms - default              -    INFO - Reading value from register C_REG_SPI_TX at address 0x06
+              59 ms - check                -    PASS - Check register C_REG_SPI_TX: expected 0x01FF, got 0x01FF - Got 0000_0001_1111_1111 (511).
+              59 ms - check                -    PASS - MOSI Verification: Slave received correct data from Master - Got 1111_1111 (255).
+              59 ms - default              -    INFO -
+              59 ms - default              -    INFO - -----------------------------------------------------------------------------
+              59 ms - default              -    INFO -  Testing SPI output
+              59 ms - default              -    INFO - -----------------------------------------------------------------------------
+              59 ms - default              -    INFO -
+              59 ms - default              -    INFO - DUT has been reset.
+              59 ms - default              -    INFO -
+              59 ms - default              -    INFO - Checking SPI transaction is correct.
+              59 ms - default              -    INFO - Sending value 0x55 to SPI master
+              59 ms - default              -    INFO - Writing value 0x0000 to register C_REG_SPI_TX at address 0x06
+              60 ms - default              -    INFO - Writing value 0x0155 to register C_REG_SPI_TX at address 0x06
+              60 ms - check                -    PASS - MOSI Verification: Slave received correct data from Master - Got 0101_0101 (85).
+              60 ms - default              -    INFO - Reading value from register C_REG_SPI_RX at address 0x07
+              61 ms - check                -    PASS - Check register C_REG_SPI_RX: expected 0x0055, got 0x0055 - Got 0000_0000_0101_0101 (85).
               61 ms - default              -    INFO -
-              61 ms - default              -    INFO - -----------------------------------------------------------------------------
-              61 ms - default              -    INFO -  Testing SPI timings
-              61 ms - default              -    INFO - -----------------------------------------------------------------------------
-              61 ms - default              -    INFO - Sending value 0x55 to SPI master
-              61 ms - default              -    INFO - Writing value 0x0000 to register C_REG_SPI at address 0x06
-              62 ms - default              -    INFO - Writing value 0x0155 to register C_REG_SPI at address 0x06
+              61 ms - default              -    INFO - Checking SPI transaction is correct.
+              61 ms - default              -    INFO - Sending value 0xAB to SPI master
+              61 ms - default              -    INFO - Writing value 0x0000 to register C_REG_SPI_TX at address 0x06
+              62 ms - default              -    INFO - Writing value 0x01AB to register C_REG_SPI_TX at address 0x06
+              63 ms - check                -    PASS - MOSI Verification: Slave received correct data from Master - Got 1010_1011 (171).
+              63 ms - default              -    INFO - Reading value from register C_REG_SPI_RX at address 0x07
+              63 ms - check                -    PASS - Check register C_REG_SPI_RX: expected 0x00AB, got 0x00AB - Got 0000_0000_1010_1011 (171).
               63 ms - default              -    INFO -
-              63 ms - default              -    INFO - Checking SPI timings.
-              63 ms - default              -    INFO - Sending value 0xAB to SPI master
-              63 ms - default              -    INFO - Writing value 0x0000 to register C_REG_SPI at address 0x06
-              63 ms - default              -    INFO - Writing value 0x01AB to register C_REG_SPI at address 0x06
-              64 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
-              64 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
-              64 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
-              64 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
-              64 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
-              64 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
-              64 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
-              64 ms - check                -    PASS - Time:         7 us  |  Range:         7 us +/-      70 ns
-              64 ms - default              -    INFO -
-              64 ms - default              -    INFO - Checking SPI timings.
-** Note: 64722378888400fs+10: STOP called with status 0
+              63 ms - default              -    INFO - Checking SPI transaction is correct.
+              63 ms - default              -    INFO - Sending value 0x1E to SPI master
+              63 ms - default              -    INFO - Writing value 0x0000 to register C_REG_SPI_TX at address 0x06
+              64 ms - default              -    INFO - Writing value 0x011E to register C_REG_SPI_TX at address 0x06
+              65 ms - check                -    PASS - MOSI Verification: Slave received correct data from Master - Got 0001_1110 (30).
+              65 ms - default              -    INFO - Reading value from register C_REG_SPI_RX at address 0x07
+              66 ms - check                -    PASS - Check register C_REG_SPI_RX: expected 0x001E, got 0x001E - Got 0000_0000_0001_1110 (30).
+              66 ms - default              -    INFO -
+              66 ms - default              -    INFO - -----------------------------------------------------------------------------
+              66 ms - default              -    INFO -  Testing SPI timings
+              66 ms - default              -    INFO - -----------------------------------------------------------------------------
+              66 ms - default              -    INFO - Sending value 0x55 to SPI master
+              66 ms - default              -    INFO - Writing value 0x0000 to register C_REG_SPI_TX at address 0x06
+              67 ms - default              -    INFO - Writing value 0x0155 to register C_REG_SPI_TX at address 0x06
+              67 ms - default              -    INFO -
+              67 ms - default              -    INFO - Checking SPI timings.
+              67 ms - default              -    INFO - Sending value 0xAB to SPI master
+              67 ms - default              -    INFO - Writing value 0x0000 to register C_REG_SPI_TX at address 0x06
+              68 ms - default              -    INFO - Writing value 0x01AB to register C_REG_SPI_TX at address 0x06
+              69 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
+              69 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
+              69 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
+              69 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
+              69 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
+              69 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
+              69 ms - check                -    PASS - Time:         1 us  |  Range:         1 us +/-      10 ns
+              69 ms - check                -    PASS - Time:         7 us  |  Range:         7 us +/-      70 ns
+              69 ms - default              -    INFO -
+              69 ms - default              -    INFO - Checking SPI timings.
+** Note: 69360890555360fs+10: STOP called with status 0
    Procedure STOP [INTEGER] at ../lib/std.08/env-body.vhd:27
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
