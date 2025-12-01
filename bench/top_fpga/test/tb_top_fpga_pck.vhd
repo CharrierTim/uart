@@ -33,8 +33,13 @@ library ieee;
     use ieee.std_logic_1164.all;
     use ieee.math_real.all;
 
+library lib_bench;
+    use lib_bench.spi_pkg.all;
+
 library vunit_lib;
     context vunit_lib.vunit_context;
+    context vunit_lib.com_context;
+    use vunit_lib.stream_slave_pkg.all;
 
 -- =====================================================================================================================
 -- PACKAGE
@@ -88,6 +93,15 @@ package TB_TOP_FPGA_PKG is
     constant C_REG_16_BITS    : t_reg := (addr => 8x"FF", data => 16x"0000", name => "C_REG_16_BITS");
     constant C_REG_DEAD       : t_reg := (addr => 8x"CC", data => 16x"DEAD", name => "C_REG_DEAD");
     -- vsg_on
+
+    -- SPI
+    constant C_CLK_POLARITY        : std_logic      := '0';
+    constant C_CLK_PHASE           : std_logic      := '0';
+    constant C_SLAVE_SPI           : spi_slave_t    := new_spi_slave(
+            cpol_mode => C_CLK_POLARITY,
+            cpha_mode => C_CLK_PHASE
+        );
+    constant C_SLAVE_STREAM        : stream_slave_t := as_stream(C_SLAVE_SPI);
 
     -- =================================================================================================================
     -- PROCEDURES

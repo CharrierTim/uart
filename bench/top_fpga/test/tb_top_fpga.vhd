@@ -35,10 +35,13 @@ library ieee;
 
 library lib_rtl;
 library lib_bench;
+    use lib_bench.spi_pkg.all;
     use lib_bench.tb_top_fpga_pkg.all;
 
 library vunit_lib;
     context vunit_lib.vunit_context;
+    context vunit_lib.com_context;
+    use vunit_lib.stream_slave_pkg.all;
 
 -- =====================================================================================================================
 -- ENTITY
@@ -139,6 +142,21 @@ begin
                     tb_pad_i_uart_rx;
 
     -- =================================================================================================================
+    -- SPI slave model
+    -- =================================================================================================================
+
+    inst_spi_slave_model : entity lib_bench.spi_slave_model
+        generic map (
+            SPI => C_SLAVE_SPI
+        )
+        port map (
+            sclk => tb_pad_o_sclk,
+            ss_n => tb_pad_o_cs,
+            mosi => tb_pad_o_mosi,
+            miso => tb_pad_i_miso
+        );
+
+    -- =================================================================================================================
     -- CLK GENERATION
     -- =================================================================================================================
 
@@ -218,6 +236,8 @@ begin
     -- =================================================================================================================
 
     p_test_runner : process is
+
+        variable v_spi_slave_data : std_logic_vector(8 - 1 downto 0);
 
         -- =============================================================================================================
         -- proc_reset_dut
@@ -511,6 +531,71 @@ begin
             proc_uart_check(reg, expected_value);
 
         end procedure proc_uart_check_read_write;
+
+        -- =============================================================================================================
+        -- proc_spi_write
+        -- Description: Writes a byte value to the SPI master module.
+        --
+        -- Parameters:
+        --   value - 8-bit data to transmit via SPI
+        --
+        -- Example:
+        --   proc_spi_write(x"AB");
+        --
+        -- Notes:
+        --  - This procedure applies the data on I_TX_BYTE and pulses I_TX_BYTE_VALID.
+        --  - Appropriate setup and hold times are observed.
+        -- =============================================================================================================
+
+        procedure proc_spi_write (
+            constant value : std_logic_vector(8 - 1 downto 0)
+        ) is
+        begin
+
+            info("Sending value 0x" & to_hstring(value) & " to SPI master");
+
+            -- Reset C_REG_SPI before for the rising edge detection
+            proc_uart_write(C_REG_SPI, x"0000");
+
+            -- Write the data
+            proc_uart_write(C_REG_SPI, x"01" & value);
+
+        end procedure proc_spi_write;
+
+        -- =============================================================================================================
+        -- proc_spi_check
+        -- Description: Writes a value to SPI master and verifies correct transmission and reception.
+        --
+        -- Parameters:
+        --   value - 8-bit data to transmit and verify
+        --
+        -- Example:
+        --   proc_spi_check(x"CD");
+        --
+        -- Notes:
+        --  - This procedure verifies both MOSI (master output) and MISO (master input) paths.
+        --  - Uses VUnit stream verification for MOSI path.
+        --  - Directly checks O_RX_BYTE for MISO path.
+        -- =============================================================================================================
+
+        procedure proc_spi_check (
+            constant value : std_logic_vector(8 - 1 downto 0)
+        ) is
+        begin
+
+            info("");
+            info("Checking SPI transaction is correct.");
+
+            proc_spi_write(value);
+
+            -- Retrieve data from SPI slave stream (MOSI path verification)
+            pop_stream(net, C_SLAVE_STREAM, v_spi_slave_data);
+
+            -- Verify MOSI path
+            check_equal(v_spi_slave_data, value,
+                "MOSI Verification: Slave received correct data from Master");
+
+        end procedure proc_spi_check;
 
     begin
 
@@ -860,15 +945,26 @@ begin
                 proc_uart_check_default_value(C_REG_SPI);
 
                 -- Check register is in read-write
-                proc_uart_check_read_write(C_REG_SPI, "0000000111111111");
+                proc_uart_check_read_write(C_REG_SPI, x"01FF");
+
+                pop_stream(net, C_SLAVE_STREAM, v_spi_slave_data);
+
+                -- Verify MOSI path
+                check_equal(v_spi_slave_data, not(C_REG_SPI.data(8 - 1 downto 0)),
+                    "MOSI Verification: Slave received correct data from Master");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Testing SPI output");
                 info("-----------------------------------------------------------------------------");
 
-                proc_uart_write(C_REG_SPI, x"0000");
-                proc_uart_write(C_REG_SPI, x"0155");
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                proc_spi_check(x"55");
+                proc_spi_check(x"AB");
+                proc_spi_check(x"1E");
 
                 wait for C_UART_READ_CMD_TIME;
 
