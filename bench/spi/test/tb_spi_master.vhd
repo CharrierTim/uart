@@ -401,6 +401,39 @@ begin
 
                 check_equal(tb_o_sclk, G_CLK_POLARITY, "Checking clock polarity when idle.");
 
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Ensure data remains stable if rx_data_valid is not de-asserted");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset values
+                proc_reset_dut;
+                wait for 10 us;
+
+                info("Sending value 0x6E to SPI master");
+
+                -- Ensure valid is low
+                tb_i_tx_data_valid <= '0';
+                wait for 2 * C_CLK_PERIOD;
+
+                -- Apply data
+                tb_i_tx_data <= x"6E";
+                wait for C_CLK_PERIOD;
+
+                -- Pulse valid signal
+                tb_i_tx_data_valid <= '1';
+                wait for 2 * C_CLK_PERIOD;
+
+                wait for 3 * C_SPI_TRANSACTION_TIME;
+
+                -- Verify o_mosi, rx_data and rx_data_valid remain stable
+                check_equal(tb_o_mosi'stable(2 * C_SPI_TRANSACTION_TIME),    True, "O_MISO must remain stable");
+                check_equal(tb_o_rx_data'stable(2 * C_SPI_TRANSACTION_TIME), True, "O_RX_DATA must remain stable");
+                check_equal(
+                    tb_o_rx_data_valid'stable(2 * C_SPI_TRANSACTION_TIME),
+                    True,
+                    "O_RX_DATA_VALID must remain stable");
+
             end if;
 
         end loop;
