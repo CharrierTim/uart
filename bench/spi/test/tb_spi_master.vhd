@@ -26,7 +26,7 @@
 -- @version 1.0
 -- @brief   SPI master testbench
 -- @author  Timothee Charrier
--- @date    27/11/2025
+-- @date    01/12/2025
 -- =====================================================================================================================
 
 library ieee;
@@ -374,17 +374,17 @@ begin
                 info(" Testing SPI timings");
                 info("-----------------------------------------------------------------------------");
 
-                proc_spi_write(x"55");
                 tb_check_spi_timings <= '1';
                 wait for 2 * C_CLK_PERIOD;
                 tb_check_spi_timings <= '0';
+                proc_spi_write(x"55");
 
                 wait for C_SPI_TRANSACTION_TIME;
 
-                proc_spi_write(x"AB");
                 tb_check_spi_timings <= '1';
                 wait for 2 * C_CLK_PERIOD;
                 tb_check_spi_timings <= '0';
+                proc_spi_write(x"AB");
 
                 wait for C_SPI_TRANSACTION_TIME;
 

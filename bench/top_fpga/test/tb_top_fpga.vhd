@@ -1016,19 +1016,19 @@ begin
                 info(" Testing SPI timings");
                 info("-----------------------------------------------------------------------------");
 
+                tb_check_spi_timings <= '1';
+                wait for 2 * C_CLK_PERIOD;
+                tb_check_spi_timings <= '0';
                 proc_spi_write(x"55");
+
+                wait for 2 * C_SPI_TRANSACTION_TIME;
+
                 tb_check_spi_timings <= '1';
                 wait for 2 * C_CLK_PERIOD;
                 tb_check_spi_timings <= '0';
-
-                wait for C_SPI_TRANSACTION_TIME;
-
                 proc_spi_write(x"AB");
-                tb_check_spi_timings <= '1';
-                wait for 2 * C_CLK_PERIOD;
-                tb_check_spi_timings <= '0';
 
-                wait for C_SPI_TRANSACTION_TIME;
+                wait for 2 * C_SPI_TRANSACTION_TIME;
 
             end if;
 
