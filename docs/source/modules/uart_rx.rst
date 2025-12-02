@@ -253,7 +253,7 @@ prevent false triggering on glitches or noise.
 The module then waits for the following time before going back to idle and accept new RX
 requests:
 
-::
+.. math::
 
     \text{RECOVERY\_PERIOD} = G\_SAMPLING\_RATE \times (G\_NB\_DATA\_BITS + 1)
 
