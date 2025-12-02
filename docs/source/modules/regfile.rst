@@ -53,6 +53,16 @@ Inputs and Outputs
       - in
       - \-
       - Input vector containing the resynchronized switches value
+    - - ``I_SPI_RX_DATA``
+      - vector[7:0]
+      - in
+      - \-
+      - Input vector containing the SPI data sent by the slave
+    - - ``I_SPI_RX_DATA_VALID``
+      - std_logic
+      - in
+      - \-
+      - Input vector containing the SPI data sent flag valid
     - - ``I_READ_ADDR``
       - vector[7:0]
       - in
@@ -88,6 +98,16 @@ Inputs and Outputs
       - in
       - \-
       - Write address and data valid flag
+    - - ``O_SPI_TX_DATA``
+      - vector[7:0]
+      - out
+      - \-
+      - Input vector containing the SPI data to be send
+    - - ``O_SPI_TX_DATA_VALID``
+      - std_logic
+      - out
+      - \-
+      - Input vector containing the SPI data flag valid
     - - ``O_LED_0``
       - std_logic
       - out
@@ -143,24 +163,26 @@ A simplified view of the regfile module:
 Summary
 -------
 
-=============== ======= ==== ===================================================
-Name            Address Mode Description
-=============== ======= ==== ===================================================
-REG_GIT_ID_MSB_ 0x00    R    16 MSB of the git ID containing the sources for the
-                             bitstream generation
-REG_GIT_ID_LSB_ 0x01    R    16 LSB of the git ID containing the sources for the
-                             bitstream generation
-REG_12_         0x02    R    Internal register 1
-REG_34_         0x03    R    Internal register 2
-REG_56_         0x04    R    Internal register 3
-REG_78_         0x05    R    Internal register 4
-REG_9A_         0xAB    R    Internal register 5
-REG_CD_         0xAC    R    Internal register 6
-REG_EF_         0xDC    R    Internal register 7
-REG_SWITCHES_   0xB1    R    Status from the input switches
-REG_LED_        0xEF    RW   Register with LSB bit writable controlling an LED
-REG_16_BITS_    0xFF    RW   Register with all bits writable
-=============== ======= ==== ===================================================
+================== ======= ==== ===================================================
+Name               Address Mode Description
+================== ======= ==== ===================================================
+REG_GIT_ID_MSB_    0x00    R    16 MSB of the git ID containing the sources for the
+                                bitstream generation
+REG_GIT_ID_LSB_    0x01    R    16 LSB of the git ID containing the sources for the
+                                bitstream generation
+REG_12_            0x02    R    Internal register 1
+REG_34_            0x03    R    Internal register 2
+REG_56_            0x04    R    Internal register 3
+REG_78_            0x05    R    Internal register 4
+C_REG_SPI_TX_ADDR_ 0x06    RW   Register controlling the SPI data to send
+C_REG_SPI_RX_ADDR_ 0x07    R    Register containing the SPI slave data
+REG_9A_            0xAB    R    Internal register 5
+REG_CD_            0xAC    R    Internal register 6
+REG_EF_            0xDC    R    Internal register 7
+REG_SWITCHES_      0xB1    R    Status from the input switches
+REG_LED_           0xEF    RW   Register with LSB bit writable controlling an LED
+REG_16_BITS_       0xFF    RW   Register with all bits writable
+================== ======= ==== ===================================================
 
 Where:
 
@@ -264,6 +286,45 @@ Bits Reset  Name Description
 ==== ====== ==== ===========
 15:0 0x5656      Constant
 ==== ====== ==== ===========
+
+C_REG_SPI_TX_ADDR
+~~~~~~~~~~~~~~~~~
+
+SPI TX data register
+
+- Address: ``0x06``
+- Reset default: ``0x0000``
+
+.. wavedrom::
+
+    {"reg": [{"name": "TX_DATA", "bits": 8, "attr": ["rw"], "rotate": 0, "type": 3}, {"name": "TX_DATA_VALID", "bits": 1, "attr": ["rw"], "rotate": -90, "type": 3}, {"name": "Reserved", "bits": 7, "attr": ["ro"], "rotate": 0, "type": 2}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80, "bits": 16}}
+
+==== ===== ============= ================================
+Bits Reset Name          Description
+==== ===== ============= ================================
+15:9 0x0                 Reserved
+8    0x0   TX_DATA_VALID 0 -> 1 start the SPI transaction
+7:0  0x0   TX_DATA       TX data to be sent
+==== ===== ============= ================================
+
+C_REG_SPI_RX_ADDR
+~~~~~~~~~~~~~~~~~
+
+SPI RX data register
+
+- Address: ``0x07``
+- Reset default: ``0x0000``
+
+.. wavedrom::
+
+    {"reg": [{"name": "RX_DATA", "bits": 8, "attr": ["ro"], "rotate": 0, "type": 3}, {"name": "Reserved", "bits": 8, "attr": ["ro"], "rotate": 0, "type": 2}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80, "bits": 16}}
+
+==== ===== ======= ============================
+Bits Reset Name    Description
+==== ===== ======= ============================
+15:8 0x0           Reserved
+7:0  0x0   RX_DATA Received data from SPI slave
+==== ===== ======= ============================
 
 REG_78
 ~~~~~~
