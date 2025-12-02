@@ -172,6 +172,7 @@ FSM
 The UART FSM handling is defined as:
 
 .. image:: ../_static/svg/UART-SPI-MASTER-FSM.svg
+    :align: center
 
 Where the following transitions are defined:
 
