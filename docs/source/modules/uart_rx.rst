@@ -255,7 +255,7 @@ requests:
 
 .. math::
 
-    \text{RECOVERY\_PERIOD} = G\_SAMPLING\_RATE \times (G\_NB\_DATA\_BITS + 1)
+    \text{RECOVERY_PERIOD} = \text{G_SAMPLING_RATE} \times (\text{G_NB_DATA_BITS} + 1)
 
 This represents the time for almost one complete UART frame (data bits + stop bit) at
 the configured baud rate.
