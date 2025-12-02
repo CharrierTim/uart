@@ -252,6 +252,7 @@ FSM
 The UART FSM handling the above protocol is defined as:
 
 .. image:: ../_static/svg/UART-UART_FSM.svg
+    :align: center
 
 Where the following transitions are defined:
 

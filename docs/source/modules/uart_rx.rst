@@ -266,6 +266,7 @@ FSM
 The UART RX FSM is defined as:
 
 .. image:: ../_static/svg/UART-UART-RX_FSM.svg
+    :align: center
 
 Where the following transitions are defined:
 

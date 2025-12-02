@@ -155,6 +155,7 @@ FSM
 The UART FSM handling is defined as:
 
 .. image:: ../_static/svg/UART-UART-TX_FSM.svg
+    :align: center
 
 Where the following transitions are defined:
 
