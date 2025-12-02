@@ -171,3 +171,37 @@ The FPGA instantiates the :doc:`regfile` module with the following generics:
       - vector[15:0]
       - ``G_GIT_ID[15:0]``
       - 16 LSB of the git ID containing the sources for the bitstream generation
+
+SPI Master
+~~~~~~~~~~
+
+The FPGA instantiates the :doc:`spi_master` module with the following generics:
+
+.. list-table::
+    :widths: 25 10 15 60
+    :header-rows: 1
+
+    - - Generic Name
+      - Type
+      - Default Value
+      - Description
+    - - ``G_CLK_FREQ_HZ``
+      - positive
+      - 0d50\_000\_000
+      - Clock frequency in Hz of ``internal_clk``
+    - - ``G_SPI_FREQ_HZ``
+      - positive
+      - 0d1\_000\_000
+      - SPI clock frequency in Hz
+    - - ``G_NB_DATA_BITS``
+      - positive
+      - 0d8
+      - Number of data bits within the SPI transaction
+    - - ``G_CLK_POLARITY``
+      - std_logic
+      - 0b0
+      - Generated SPI clock polarity
+    - - ``G_CLK_PHASE``
+      - std_logic
+      - 0b0
+      - Generated SPI clock phase

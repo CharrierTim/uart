@@ -41,6 +41,10 @@ PAD_I_CLK      Y9         in        \-       \-   LVCMOS33
 PAD_RST_H      BTN6       in        \-       \-   LVCMOS18
 PAD_I_UART_RX  Y11        in        PULL-UP  \-   LVCMOS33
 PAD_O_UART_TX  AA11       out       PULL-UP  \-   LVCMOS33
+PAD_O_SCLK     W12        out       \-       \-   LVCMOS33
+PAD_O_MOSI     W11        out       \-       \-   LVCMOS33
+PAD_I_MISO     W10        in        \-       \-   LVCMOS33
+PAD_O_CS       W8         out       PULL-UP  \-   LVCMOS33
 PAD_I_SWITCH_0 F22        in        \-       \-   LVCMOS18
 PAD_I_SWITCH_1 G22        in        \-       \-   LVCMOS18
 PAD_I_SWITCH_2 H22        in        \-       \-   LVCMOS18
@@ -55,6 +59,7 @@ PAD_O_LED_0    T22        out       \-       \-   LVCMOS33
     modules/resync_slv
     modules/regfile
     modules/uart
+    modules/spi_master
 
 .. toctree::
     :maxdepth: 2

@@ -50,7 +50,12 @@ DIR = "../.."
 
 # Not linted files
 NOT_LINTED = []
-NOT_LINTED_DIR: list[str] = ["../../cores", "../../.venv", "../../vunit_out"]  # 3rd party libraries
+NOT_LINTED_DIR: list[str] = [
+    "../../cores",
+    "../../.venv",
+    "../../vunit_out",
+    "../../bench/models/spi",
+]  # 3rd party libraries
 
 
 def files_to_string(string, file_paths):

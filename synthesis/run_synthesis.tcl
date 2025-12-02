@@ -101,6 +101,7 @@ set VHDL_SOURCES [list \
     [list lib_rtl "$SOURCES_DIR/uart/uart_rx.vhd"        2008] \
     [list lib_rtl "$SOURCES_DIR/uart/uart_tx.vhd"        2008] \
     [list lib_rtl "$SOURCES_DIR/uart/uart.vhd"           2008] \
+    [list lib_rtl "$SOURCES_DIR/spi/spi_master.vhd"      2008] \
     [list lib_rtl "$SOURCES_DIR/top_fpga/top_fpga.vhd"   2008] \
 ]
 

@@ -10,7 +10,7 @@ ci:
   skip: []
   submodules: false
 
-exclude: "^cores/"
+exclude: "^(cores|bench/models/spi)/"
 
 repos:
   # Simple hooks

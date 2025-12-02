@@ -22,93 +22,43 @@
 --  SOFTWARE.
 -- =====================================================================================================================
 -- @project uart
--- @file    tb_top_fpga_pck.vhd
+-- @file    tb_uart_pkg.vhd
 -- @version 1.0
--- @brief   Package for the Top-Level testbench
+-- @brief   Package for the SPI master testbench
 -- @author  Timothee Charrier
--- @date    01/12/2025
+-- @date    27/11/2025
 -- =====================================================================================================================
 
 library ieee;
     use ieee.std_logic_1164.all;
     use ieee.math_real.all;
 
-library lib_bench;
-    use lib_bench.spi_pkg.all;
-
 library vunit_lib;
     context vunit_lib.vunit_context;
-    context vunit_lib.com_context;
-    use vunit_lib.stream_slave_pkg.all;
 
 -- =====================================================================================================================
 -- PACKAGE
 -- =====================================================================================================================
 
-package TB_TOP_FPGA_PKG is
-
-    -- =================================================================================================================
-    -- TYPES
-    -- =================================================================================================================
-
-    type t_reg is record
-        name : string;                            -- Name
-        addr : std_logic_vector( 8 - 1 downto 0); -- Address
-        data : std_logic_vector(16 - 1 downto 0); -- Value at reset
-    end record t_reg;
+package TB_UART_PKG is
 
     -- =================================================================================================================
     -- CONSTANTS
     -- =================================================================================================================
 
-    -- Clock period for the testbench
-    constant C_FREQ_HZ                : positive := 100_000_000;
-    constant C_CLK_PERIOD             : time     := 1 sec / C_FREQ_HZ;
+    -- Clock configuration
+    constant C_CLK_FREQ_HZ           : positive := 50_000_000;
+    constant C_CLK_PERIOD            : time     := 1 sec / C_CLK_FREQ_HZ;
 
     -- DUT generics
-    constant C_GIT_ID                 : std_logic_vector(32 - 1 downto 0) := x"12345678";
+    constant C_BAUD_RATE_BPS         : positive := 115_200;
+    constant C_NB_DATA_BITS          : positive := 8;
+    constant C_SAMPLING_RATE         : positive := 16;
 
-    -- UART model constants
-    constant C_UART_BAUD_RATE_BPS     : positive := 115_200;
-    constant C_UART_BIT_TIME          : time     := 1 sec / C_UART_BAUD_RATE_BPS;
-    constant C_UART_BIT_TIME_ACCURACY : time     := 0.01 * C_UART_BIT_TIME;
-    constant C_UART_WRITE_NB_BITS     : positive := 10 * 8; -- 10 bits , 8 chars in total
-    constant C_UART_WRITE_CMD_TIME    : time     := C_UART_BIT_TIME * C_UART_WRITE_NB_BITS;
-    constant C_UART_READ_NB_BITS      : positive := 10 * 9; -- 10 bits , 9 chars in total
-    constant C_UART_READ_CMD_TIME     : time     := C_UART_BIT_TIME * C_UART_READ_NB_BITS;
-
-    -- vsg_off
-    constant C_REG_GIT_ID_MSB : t_reg := (addr => 8x"00", data => 16x"1234", name => "C_REG_GIT_ID_MSB");
-    constant C_REG_GIT_ID_LSB : t_reg := (addr => 8x"01", data => 16x"5678", name => "C_REG_GIT_ID_LSB");
-    constant C_REG_12         : t_reg := (addr => 8x"02", data => 16x"1212", name => "C_REG_12");
-    constant C_REG_34         : t_reg := (addr => 8x"03", data => 16x"3434", name => "C_REG_34");
-    constant C_REG_56         : t_reg := (addr => 8x"04", data => 16x"5656", name => "C_REG_56");
-    constant C_REG_78         : t_reg := (addr => 8x"05", data => 16x"7878", name => "C_REG_78");
-    constant C_REG_SPI_TX     : t_reg := (addr => 8x"06", data => 16x"0000", name => "C_REG_SPI_TX");
-    constant C_REG_SPI_RX     : t_reg := (addr => 8x"07", data => 16x"0000", name => "C_REG_SPI_RX");
-    constant C_REG_9A         : t_reg := (addr => 8x"AB", data => 16x"9A9A", name => "C_REG_9A");
-    constant C_REG_CD         : t_reg := (addr => 8x"AC", data => 16x"CDCD", name => "C_REG_CD");
-    constant C_REG_EF         : t_reg := (addr => 8x"DC", data => 16x"EFEF", name => "C_REG_EF");
-    constant C_REG_SWITCHES   : t_reg := (addr => 8x"B1", data => 16x"0000", name => "C_REG_SWITCHES");
-    constant C_REG_LED        : t_reg := (addr => 8x"EF", data => 16x"0001", name => "C_REG_LED");
-    constant C_REG_16_BITS    : t_reg := (addr => 8x"FF", data => 16x"0000", name => "C_REG_16_BITS");
-    constant C_REG_DEAD       : t_reg := (addr => 8x"CC", data => 16x"DEAD", name => "C_REG_DEAD");
-    -- vsg_on
-
-    -- SPI
-    constant C_SPI_FREQ_HZ            : positive  := 1_000_000;
-    constant C_SPI_BIT_TIME           : time      := 1 sec / C_SPI_FREQ_HZ;
-    constant C_SPI_BIT_TIME_ACCURACY  : time      := 0.01 * C_SPI_BIT_TIME;
-    constant C_SPI_NB_DATA_BITS       : positive  := 8;
-    constant C_SPI_TRANSACTION_TIME   : time      := (C_SPI_NB_DATA_BITS + 2) * C_SPI_BIT_TIME;
-    constant C_CLK_POLARITY           : std_logic := '0';
-    constant C_CLK_PHASE              : std_logic := '0';
-
-    constant C_SLAVE_SPI              : spi_slave_t    := new_spi_slave(
-            cpol_mode => C_CLK_POLARITY,
-            cpha_mode => C_CLK_PHASE
-        );
-    constant C_SLAVE_STREAM           : stream_slave_t := as_stream(C_SLAVE_SPI);
+    -- UART constants
+    constant C_BIT_TIME              : time := 1 sec / C_BAUD_RATE_BPS;
+    constant C_BIT_TIME_ACCURACY     : time := 0.01 * C_BIT_TIME;
+    constant C_UART_TRANSACTION_TIME : time := (C_NB_DATA_BITS + 2) * C_BIT_TIME;
 
     -- =================================================================================================================
     -- PROCEDURES
@@ -121,9 +71,9 @@ package TB_TOP_FPGA_PKG is
         message       : string := ""
     );
 
-end package TB_TOP_FPGA_PKG;
+end package TB_UART_PKG;
 
-package body TB_TOP_FPGA_PKG is
+package body TB_UART_PKG is
 
     -- =================================================================================================================
     -- FUNCTIONS

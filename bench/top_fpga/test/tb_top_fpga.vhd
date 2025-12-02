@@ -26,7 +26,7 @@
 -- @version 1.0
 -- @brief   Top-Level Testbench
 -- @author  Timothee Charrier
--- @date    20/10/2025
+-- @date    01/12/2025
 -- =====================================================================================================================
 
 library ieee;
@@ -35,10 +35,13 @@ library ieee;
 
 library lib_rtl;
 library lib_bench;
+    use lib_bench.spi_pkg.all;
     use lib_bench.tb_top_fpga_pkg.all;
 
 library vunit_lib;
     context vunit_lib.vunit_context;
+    context vunit_lib.com_context;
+    use vunit_lib.stream_slave_pkg.all;
 
 -- =====================================================================================================================
 -- ENTITY
@@ -65,6 +68,10 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     signal tb_pad_i_rst_h          : std_logic;
     signal tb_pad_i_uart_rx        : std_logic;
     signal tb_pad_o_uart_tx        : std_logic;
+    signal tb_pad_o_sclk           : std_logic;
+    signal tb_pad_o_mosi           : std_logic;
+    signal tb_pad_i_miso           : std_logic;
+    signal tb_pad_o_cs             : std_logic;
     signal tb_pad_i_switch_0       : std_logic;
     signal tb_pad_i_switch_1       : std_logic;
     signal tb_pad_i_switch_2       : std_logic;
@@ -85,6 +92,9 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     -- UART timing verification
     signal tb_check_uart_timings   : std_logic;
 
+    -- SPI timing verification
+    signal tb_check_spi_timings    : std_logic;
+
 begin
 
     -- =================================================================================================================
@@ -100,6 +110,10 @@ begin
             PAD_I_RST_h    => tb_pad_i_rst_h,
             PAD_I_UART_RX  => tb_i_uart_rx,
             PAD_O_UART_TX  => tb_pad_o_uart_tx,
+            PAD_O_SCLK     => tb_pad_o_sclk,
+            PAD_O_MOSI     => tb_pad_o_mosi,
+            PAD_I_MISO     => tb_pad_i_miso,
+            PAD_O_CS       => tb_pad_o_cs,
             PAD_I_SWITCH_0 => tb_pad_i_switch_0,
             PAD_I_SWITCH_1 => tb_pad_i_switch_1,
             PAD_I_SWITCH_2 => tb_pad_i_switch_2,
@@ -112,7 +126,7 @@ begin
 
     inst_uart_model : entity lib_bench.uart_model
         generic map (
-            G_BAUD_RATE_BPS => C_BAUD_RATE_BPS
+            G_BAUD_RATE_BPS => C_UART_BAUD_RATE_BPS
         )
         port map (
             I_UART_RX            => tb_pad_o_uart_tx,
@@ -129,6 +143,21 @@ begin
     -- Select between manual RX input and model RX input
     tb_i_uart_rx <= tb_i_uart_rx_manual when tb_i_uart_select = '1' else
                     tb_pad_i_uart_rx;
+
+    -- =================================================================================================================
+    -- SPI slave model
+    -- =================================================================================================================
+
+    inst_spi_slave_model : entity lib_bench.spi_slave_model
+        generic map (
+            SPI => C_SLAVE_SPI
+        )
+        port map (
+            sclk => tb_pad_o_sclk,
+            ss_n => tb_pad_o_cs,
+            mosi => tb_pad_o_mosi,
+            miso => tb_pad_i_miso
+        );
 
     -- =================================================================================================================
     -- CLK GENERATION
@@ -174,31 +203,31 @@ begin
             end if;
 
             wait until rising_edge(tb_pad_o_uart_tx);
-            proc_check_time_in_range(now - v_start_bit_time, C_BIT_TIME, C_BIT_TIME_ACCURACY);
+            proc_check_time_in_range(now - v_start_bit_time, C_UART_BIT_TIME, C_UART_BIT_TIME_ACCURACY);
             v_start_bit_time := now;
 
             wait until falling_edge(tb_pad_o_uart_tx);
-            proc_check_time_in_range(now - v_start_bit_time, C_BIT_TIME, C_BIT_TIME_ACCURACY);
+            proc_check_time_in_range(now - v_start_bit_time, C_UART_BIT_TIME, C_UART_BIT_TIME_ACCURACY);
             v_start_bit_time := now;
 
             wait until rising_edge(tb_pad_o_uart_tx);
-            proc_check_time_in_range(now - v_start_bit_time, C_BIT_TIME, C_BIT_TIME_ACCURACY);
+            proc_check_time_in_range(now - v_start_bit_time, C_UART_BIT_TIME, C_UART_BIT_TIME_ACCURACY);
             v_start_bit_time := now;
 
             wait until falling_edge(tb_pad_o_uart_tx);
-            proc_check_time_in_range(now - v_start_bit_time, C_BIT_TIME, C_BIT_TIME_ACCURACY);
+            proc_check_time_in_range(now - v_start_bit_time, C_UART_BIT_TIME, C_UART_BIT_TIME_ACCURACY);
             v_start_bit_time := now;
 
             wait until rising_edge(tb_pad_o_uart_tx);
-            proc_check_time_in_range(now - v_start_bit_time, C_BIT_TIME, C_BIT_TIME_ACCURACY);
+            proc_check_time_in_range(now - v_start_bit_time, C_UART_BIT_TIME, C_UART_BIT_TIME_ACCURACY);
             v_start_bit_time := now;
 
             wait until falling_edge(tb_pad_o_uart_tx);
-            proc_check_time_in_range(now - v_start_bit_time, 2.0 * C_BIT_TIME, 2.0 * C_BIT_TIME_ACCURACY);
+            proc_check_time_in_range(now - v_start_bit_time, 2.0 * C_UART_BIT_TIME, 2.0 * C_UART_BIT_TIME_ACCURACY);
             v_start_bit_time := now;
 
             wait until rising_edge(tb_pad_o_uart_tx);
-            proc_check_time_in_range(now - v_start_bit_time, 2.0 * C_BIT_TIME, 2.0 * C_BIT_TIME_ACCURACY);
+            proc_check_time_in_range(now - v_start_bit_time, 2.0 * C_UART_BIT_TIME, 2.0 * C_UART_BIT_TIME_ACCURACY);
             v_start_bit_time := now;
 
         end loop;
@@ -206,10 +235,48 @@ begin
     end process p_check_uart_timings;
 
     -- =================================================================================================================
+    -- SPI TIMINGS VERIFICATION
+    -- =================================================================================================================
+
+    p_check_spi_timings : process is
+
+        variable v_start_time     : time;
+        variable v_start_bit_time : time;
+
+    begin
+        wait until rising_edge(tb_check_spi_timings);
+
+        info("");
+        info("Checking SPI timings.");
+
+        -- For each bit
+        for bits in 1 to 8 loop
+
+            -- CPHA = 0 and CPOL = 0
+            wait until rising_edge(tb_pad_o_sclk);
+
+            if (bits = 1) then
+                v_start_time     := now;
+                v_start_bit_time := now;
+            else
+                proc_check_time_in_range(now - v_start_bit_time, C_SPI_BIT_TIME, C_SPI_BIT_TIME_ACCURACY);
+                v_start_bit_time := now;
+            end if;
+
+        end loop;
+
+        -- We can only check 7 periods
+        proc_check_time_in_range(now - v_start_time, 7 * C_SPI_BIT_TIME, 7 * C_SPI_BIT_TIME_ACCURACY);
+
+    end process p_check_spi_timings;
+
+    -- =================================================================================================================
     -- TESTBENCH PROCESS
     -- =================================================================================================================
 
     p_test_runner : process is
+
+        variable v_spi_slave_data : std_logic_vector(8 - 1 downto 0);
 
         -- =============================================================================================================
         -- proc_reset_dut
@@ -246,6 +313,8 @@ begin
             tb_i_write_valid        <= '0';
 
             tb_check_uart_timings   <= '0';
+
+            tb_check_spi_timings    <= '0';
 
             wait for c_clock_cycles * C_CLK_PERIOD;
 
@@ -287,17 +356,17 @@ begin
 
             -- Start bit
             uart_rx <= '0';
-            wait for C_BIT_TIME;
+            wait for C_UART_BIT_TIME;
 
             -- Data bits (LSB to MSB)
             for bit_idx in byte_to_send'low to byte_to_send'high loop
                 uart_rx <= byte_to_send(bit_idx);
-                wait for C_BIT_TIME;
+                wait for C_UART_BIT_TIME;
             end loop;
 
             -- Stop bit
             uart_rx <= '1';
-            wait for 1.1 * C_BIT_TIME;
+            wait for 1.1 * C_UART_BIT_TIME;
 
         end procedure proc_uart_send_byte;
 
@@ -504,6 +573,74 @@ begin
 
         end procedure proc_uart_check_read_write;
 
+        -- =============================================================================================================
+        -- proc_spi_write
+        -- Description: Writes a byte value to the SPI master module.
+        --
+        -- Parameters:
+        --   value - 8-bit data to transmit via SPI
+        --
+        -- Example:
+        --   proc_spi_write(x"AB");
+        --
+        -- Notes:
+        --  - This procedure applies the data on I_TX_BYTE and pulses I_TX_BYTE_VALID.
+        --  - Appropriate setup and hold times are observed.
+        -- =============================================================================================================
+
+        procedure proc_spi_write (
+            constant value : std_logic_vector(8 - 1 downto 0)
+        ) is
+        begin
+
+            info("Sending value 0x" & to_hstring(value) & " to SPI master");
+
+            -- Reset C_REG_SPI before for the rising edge detection
+            proc_uart_write(C_REG_SPI_TX, x"0000");
+
+            -- Write the data
+            proc_uart_write(C_REG_SPI_TX, x"01" & value);
+
+        end procedure proc_spi_write;
+
+        -- =============================================================================================================
+        -- proc_spi_check
+        -- Description: Writes a value to SPI master and verifies correct transmission and reception.
+        --
+        -- Parameters:
+        --   value - 8-bit data to transmit and verify
+        --
+        -- Example:
+        --   proc_spi_check(x"CD");
+        --
+        -- Notes:
+        --  - This procedure verifies both MOSI (master output) and MISO (master input) paths.
+        --  - Uses VUnit stream verification for MOSI path.
+        --  - Directly checks O_RX_BYTE for MISO path.
+        -- =============================================================================================================
+
+        procedure proc_spi_check (
+            constant value : std_logic_vector(8 - 1 downto 0)
+        ) is
+        begin
+
+            info("");
+            info("Checking SPI transaction is correct.");
+
+            proc_spi_write(value);
+
+            -- Retrieve data from SPI slave stream (MOSI path verification)
+            pop_stream(net, C_SLAVE_STREAM, v_spi_slave_data);
+
+            -- Verify MOSI path
+            check_equal(v_spi_slave_data, value,
+                "MOSI Verification: Slave received correct data from Master");
+
+            -- Read MISO register data
+            proc_uart_check(C_REG_SPI_RX, x"00" & value);
+
+        end procedure proc_spi_check;
+
     begin
 
         -- Set up the test runner
@@ -592,27 +729,27 @@ begin
 
                 -- Send a byte (0x52) with invalid start bit
                 tb_i_uart_rx_manual <= '0';
-                wait for 0.25 * C_BIT_TIME; -- Invalid start bit (too short)
-                tb_i_uart_rx_manual <= '1'; -- Sudden change to high
-                wait for 0.75 * C_BIT_TIME; -- Complete the rest of the start bit duration
-                tb_i_uart_rx_manual <= '0'; -- Bit 0
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 1
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 2
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 3
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 4
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 5
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 6
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 7
-                wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Stop bit
-                wait for 1.1 * C_BIT_TIME;
+                wait for 0.25 * C_UART_BIT_TIME; -- Invalid start bit (too short)
+                tb_i_uart_rx_manual <= '1';      -- Sudden change to high
+                wait for 0.75 * C_UART_BIT_TIME; -- Complete the rest of the start bit duration
+                tb_i_uart_rx_manual <= '0';      -- Bit 0
+                wait for C_UART_BIT_TIME;
+                tb_i_uart_rx_manual <= '1';      -- Bit 1
+                wait for C_UART_BIT_TIME;
+                tb_i_uart_rx_manual <= '0';      -- Bit 2
+                wait for C_UART_BIT_TIME;
+                tb_i_uart_rx_manual <= '0';      -- Bit 3
+                wait for C_UART_BIT_TIME;
+                tb_i_uart_rx_manual <= '1';      -- Bit 4
+                wait for C_UART_BIT_TIME;
+                tb_i_uart_rx_manual <= '0';      -- Bit 5
+                wait for C_UART_BIT_TIME;
+                tb_i_uart_rx_manual <= '1';      -- Bit 6
+                wait for C_UART_BIT_TIME;
+                tb_i_uart_rx_manual <= '0';      -- Bit 7
+                wait for C_UART_BIT_TIME;
+                tb_i_uart_rx_manual <= '1';      -- Stop bit
+                wait for 1.1 * C_UART_BIT_TIME;
 
                 -- Send valid 2 bytes 0x30
                 proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
@@ -646,25 +783,25 @@ begin
 
                 -- Send a byte (0x52) with invalid stop bit
                 tb_i_uart_rx_manual <= '0';
-                wait for C_BIT_TIME;
+                wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '0'; -- Bit 0
-                wait for C_BIT_TIME;
+                wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '1'; -- Bit 1
-                wait for C_BIT_TIME;
+                wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '0'; -- Bit 2
-                wait for C_BIT_TIME;
+                wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '0'; -- Bit 3
-                wait for C_BIT_TIME;
+                wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '1'; -- Bit 4
-                wait for C_BIT_TIME;
+                wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '0'; -- Bit 5
-                wait for C_BIT_TIME;
+                wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '1'; -- Bit 6
-                wait for C_BIT_TIME;
+                wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '0'; -- Bit 7
-                wait for C_BIT_TIME;
+                wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '0'; -- Stop bit
-                wait for 2 * C_BIT_TIME;
+                wait for 2 * C_UART_BIT_TIME;
 
                 -- Send valid 2 bytes 0x30
                 proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
@@ -836,6 +973,62 @@ begin
 
                     proc_uart_check(C_REG_SWITCHES, std_logic_vector(to_unsigned(i, 16)));
                 end loop;
+
+            elsif (run("test_spi")) then
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing SPI TX and RX registers");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Check default value
+                proc_uart_check_default_value(C_REG_SPI_TX);
+                proc_uart_check_default_value(C_REG_SPI_RX);
+
+                -- Check RX register is in read-only
+                proc_uart_check_read_only(C_REG_SPI_RX);
+
+                -- Check TX register is in read-write and check data is matching
+                proc_uart_check_read_write(C_REG_SPI_TX, x"01FF");
+                pop_stream(net, C_SLAVE_STREAM, v_spi_slave_data);
+                check_equal(v_spi_slave_data, not(C_REG_SPI_TX.data(8 - 1 downto 0)),
+                    "MOSI Verification: Slave received correct data from Master");
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing SPI output");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                proc_spi_check(x"55");
+                proc_spi_check(x"AB");
+                proc_spi_check(x"1E");
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing SPI timings");
+                info("-----------------------------------------------------------------------------");
+
+                tb_check_spi_timings <= '1';
+                wait for 2 * C_CLK_PERIOD;
+                tb_check_spi_timings <= '0';
+                proc_spi_write(x"55");
+
+                wait for 2 * C_SPI_TRANSACTION_TIME;
+
+                tb_check_spi_timings <= '1';
+                wait for 2 * C_CLK_PERIOD;
+                tb_check_spi_timings <= '0';
+                proc_spi_write(x"AB");
+
+                wait for 2 * C_SPI_TRANSACTION_TIME;
 
             end if;
 

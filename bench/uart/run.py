@@ -26,7 +26,7 @@
 ## @file    run.py
 ## @version 1.0
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
-##          Top-level module.
+##          UART modules.
 ## @author  Timothee Charrier
 ## @date    17/10/2025
 ## =====================================================================================================================
@@ -37,7 +37,7 @@ from pathlib import Path
 from vunit import VUnit
 from vunit.ui.library import Library
 
-# Add the directory containing the utils.py file to the Python path
+# Add the directory containing the utils. py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
 
 from setup_vunit import Simulator, select_simulator
@@ -53,8 +53,6 @@ simulator: Simulator = select_simulator()
 ## =====================================================================================================================
 
 SRC_ROOT: Path = Path(__file__).parent.parent.parent / "sources"
-CORES_ROOT: Path = Path(__file__).parent.parent.parent / "cores"
-MODEL_ROOT: Path = Path(__file__).parent.parent / "models"
 BENCH_ROOT: Path = Path(__file__).parent / "test"
 
 ## =====================================================================================================================
@@ -64,19 +62,14 @@ BENCH_ROOT: Path = Path(__file__).parent / "test"
 VU: VUnit = VUnit.from_argv()
 VU.add_vhdl_builtins()
 VU.add_verification_components()
-
-# Unisim and unifast libraries
-simulator.add_unisim_library(VU=VU)
-simulator.add_unifast_library(VU=VU)
+VU.add_random()
 
 # Add the source files to the library
 LIB_SRC: Library = VU.add_library(library_name="lib_rtl")
-LIB_SRC.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
-LIB_SRC.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
+LIB_SRC.add_source_files(pattern=SRC_ROOT / "uart" / "*.vhd")
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
-LIB_BENCH.add_source_files(pattern=MODEL_ROOT / "**" / "*.vhd")
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
 
 ## =====================================================================================================================
@@ -89,13 +82,12 @@ if VU.get_simulator_name() == "nvc":
         "# Collect coverage only on RTL sources, exclude testbench and models",
         "",
         "# Enable coverage on main RTL library",
-        "+hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.*",
-        "",
-        "# Exclude PLL/clock generation (vendor IP)",
-        "-block CLK_WIZ_0",
+        "+hierarchy LIB_BENCH.TB_UART_TX.DUT.*",
+        "+hierarchy LIB_BENCH.TB_UART_RX.DUT.*",
         "",
         "# Exclude testbench model",
-        "-hierarchy LIB_BENCH.TB_TOP_FPGA.INST_UART_MODEL.*",
+        "-hierarchy LIB_BENCH.TB_UART_TX.INST_UART_SLAVE.*",
+        "-hierarchy LIB_BENCH.TB_UART_RX.INST_UART_MASTER.*",
         "",
     ]
     simulator.setup_coverage(VU=VU, specifications=coverage_specs)

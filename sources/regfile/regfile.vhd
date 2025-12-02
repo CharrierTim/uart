@@ -26,7 +26,7 @@
 -- @version 1.0
 -- @brief   Registers for the FPGA
 -- @author  Timothee Charrier
--- @date    20/10/2025
+-- @date    01/12/2025
 -- =====================================================================================================================
 
 library ieee;
@@ -46,25 +46,31 @@ entity REGFILE is
     );
     port (
         -- Clock and reset
-        CLK               : in    std_logic;
-        RST_N             : in    std_logic;
+        CLK                 : in    std_logic;
+        RST_N               : in    std_logic;
 
         -- Inputs switches
-        I_SWITCHES        : in    std_logic_vector(3 - 1 downto 0);
+        I_SWITCHES          : in    std_logic_vector(3 - 1 downto 0);
+
+        -- Input SPI
+        I_SPI_RX_DATA       : in    std_logic_vector(8 - 1 downto 0);
+        I_SPI_RX_DATA_VALID : in    std_logic;
 
         -- Read data interface
-        I_READ_ADDR       : in    std_logic_vector( 8 - 1 downto 0);
-        I_READ_ADDR_VALID : in    std_logic;
-        O_READ_DATA       : out   std_logic_vector(16 - 1 downto 0);
-        O_READ_DATA_VALID : out   std_logic;
+        I_READ_ADDR         : in    std_logic_vector( 8 - 1 downto 0);
+        I_READ_ADDR_VALID   : in    std_logic;
+        O_READ_DATA         : out   std_logic_vector(16 - 1 downto 0);
+        O_READ_DATA_VALID   : out   std_logic;
 
         -- Write data interface
-        I_WRITE_ADDR      : in    std_logic_vector( 8 - 1 downto 0);
-        I_WRITE_DATA      : in    std_logic_vector(16 - 1 downto 0);
-        I_WRITE_VALID     : in    std_logic;
+        I_WRITE_ADDR        : in    std_logic_vector( 8 - 1 downto 0);
+        I_WRITE_DATA        : in    std_logic_vector(16 - 1 downto 0);
+        I_WRITE_VALID       : in    std_logic;
 
         -- Output
-        O_LED_0           : out   std_logic
+        O_LED_0             : out   std_logic;
+        O_SPI_TX_DATA       : out   std_logic_vector(8 - 1 downto 0);
+        O_SPI_TX_DATA_VALID : out   std_logic
     );
 end entity REGFILE;
 
@@ -79,6 +85,8 @@ architecture REGFILE_ARCH of REGFILE is
     -- =================================================================================================================
 
     -- RW registers
+    signal reg_spi_tx  : std_logic_vector(C_REG_SPI_TX_RST'range);
+    signal reg_spi_rx  : std_logic_vector(C_REG_SPI_RX_RST'range);
     signal reg_led     : std_logic;
     signal reg_16_bits : std_logic_vector(16 - 1 downto 0);
 
@@ -100,6 +108,8 @@ begin
             O_READ_DATA_VALID <= '0';
 
             -- RW registers
+            reg_spi_tx  <= C_REG_SPI_TX_RST;
+            reg_spi_rx  <= C_REG_SPI_RX_RST;
             reg_led     <= C_REG_LED_RST;
             reg_16_bits <= C_REG_16_BITS_RST;
 
@@ -113,6 +123,14 @@ begin
             -- =========================================================================================================
 
             O_READ_DATA_VALID <= I_READ_ADDR_VALID;
+
+            -- =========================================================================================================
+            -- Update SPI RX data when valid
+            -- =========================================================================================================
+
+            if (I_SPI_RX_DATA_VALID = '1') then
+                reg_spi_rx <= I_SPI_RX_DATA;
+            end if;
 
             -- =========================================================================================================
             -- READ HANDLING
@@ -145,6 +163,14 @@ begin
                     when C_REG_78_ADDR =>
 
                         reg_read <= C_REG_78_DATA;
+
+                    when C_REG_SPI_TX_ADDR =>
+
+                        reg_read <= 7b"0" & reg_spi_tx;
+
+                    when C_REG_SPI_RX_ADDR =>
+
+                        reg_read <= 8b"0" & reg_spi_rx;
 
                     when C_REG_9A_ADDR =>
 
@@ -186,6 +212,10 @@ begin
 
                 case I_WRITE_ADDR is
 
+                    when C_REG_SPI_TX_ADDR =>
+
+                        reg_spi_tx <= I_WRITE_DATA(reg_spi_tx'range);
+
                     when C_REG_LED_ADDR =>
 
                         reg_led <= I_WRITE_DATA(0);
@@ -208,7 +238,9 @@ begin
     -- OUTPUTS
     -- =================================================================================================================
 
-    O_READ_DATA <= reg_read;
-    O_LED_0     <= reg_led;
+    O_READ_DATA         <= reg_read;
+    O_LED_0             <= reg_led;
+    O_SPI_TX_DATA       <= reg_spi_tx(reg_spi_tx'high - 1 downto reg_spi_tx'low);
+    O_SPI_TX_DATA_VALID <= reg_spi_tx(reg_spi_tx'high);
 
 end architecture REGFILE_ARCH;
