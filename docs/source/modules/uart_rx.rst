@@ -251,7 +251,7 @@ When an invalid start bit is detected, the module enters an error recovery state
 prevent false triggering on glitches or noise.
 
 The module then waits for the following time before going back to idle and accept new RX
-requests: .. math:
+requests:
 
 ::
 
