@@ -25,7 +25,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v6
       - name: Checkout repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # Setup environment
       - name: Setup environment
