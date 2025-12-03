@@ -20,3 +20,6 @@ synthesis/uart
 **/*.backup.log
 **/*.backup.jou
 **/*.bit
+
+# MkDocs
+site/

@@ -24,41 +24,35 @@
 ## @project uart
 ## @file    Makefile
 ## @version 1.0
-## @brief   Compilation file for the UART project documentation
+## @brief   Compilation file for the UART project documentation using MkDocs
 ## @author  Timothee Charrier
-## @date    23/10/2025
+## @date    03/12/2025
 ## =====================================================================================================================
 
-# You can set these variables from the command line, and also from the environment for the first two.
-SPHINXOPTS    ?=
-SPHINXBUILD   ?= sphinx-build
-SOURCEDIR     = source
-BUILDDIR      = build
-
-# Put it first so that "make" without argument is like "make help".
+# Default target
+.PHONY: help
 help:
-	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@echo "UART Project Documentation - MkDocs"
+	@echo ""
+	@echo "Available targets:"
+	@echo "  build  - Build the documentation"
+	@echo "  serve  - Start development server"
+	@echo "  clean  - Remove built documentation"
+	@echo ""
 
-# Custom target to build both PDF and HTML with PDF moved to HTML directory
-all: latexpdf html movepdf
+# Build the documentation
+.PHONY: build
+build:
+	@cd .. && mkdocs build
 
-latexpdf:
-	@$(SPHINXBUILD) -M latexpdf "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+# Start the development server
+.PHONY: serve
+serve:
+	@cd .. && mkdocs serve
 
-html:
-	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+# Clean the built documentation
+.PHONY: clean
+clean:
+	@cd .. && rm -rf site/
+	@echo "Documentation cleaned"
 
-movepdf:
-	@if ls "$(BUILDDIR)/latex/"*.pdf >/dev/null 2>&1; then \
-		cp "$(BUILDDIR)/latex/"*.pdf "$(BUILDDIR)/html/"; \
-		echo "PDF moved to HTML build directory"; \
-	else \
-		echo "No PDF found in latex build directory"; \
-	fi
-
-.PHONY: help Makefile all latexpdf html movepdf
-
-# Catch-all target: route all unknown targets to Sphinx using the new
-# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-%: Makefile
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
