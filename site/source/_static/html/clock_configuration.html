@@ -1,0 +1,84 @@
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background-color: #333;
+        color: white;
+        text-align: left;
+        padding: 8px;
+    }
+
+    td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .section-header {
+        background-color: #e0e0e0;
+        font-weight: bold;
+        font-size: 1.1em;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .note {
+        font-size: 0.9em;
+        color: #555;
+    }
+
+    code {
+        font-size: 1em;
+        font-family: Consolas, monospace;
+        background-color: #f4f4f4;
+        padding: 2px 4px;
+    }
+</style>
+
+<table>
+    <thead>
+        <tr>
+            <th>Signal Name</th>
+            <th>Type</th>
+            <th>Frequency</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="section-header">
+            <td colspan="4">PLL Input</td>
+        </tr>
+        <tr>
+            <td><code>clk_in1</code></td>
+            <td>Clock</td>
+            <td>100 MHz</td>
+            <td>Input clock from <code>PAD_I_CLK</code> (Y9)</td>
+        </tr>
+        <tr class="section-header">
+            <td colspan="4">PLL Outputs</td>
+        </tr>
+        <tr>
+            <td><code>clk_out1</code></td>
+            <td>Clock</td>
+            <td>50 MHz</td>
+            <td>Internal system clock (<code>internal_clk</code>)</td>
+        </tr>
+        <tr>
+            <td><code>locked</code></td>
+            <td>Status</td>
+            <td>-</td>
+            <td>PLL lock indicator (<code>pll_locked</code>)</td>
+        </tr>
+    </tbody>
+</table>

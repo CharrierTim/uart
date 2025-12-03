@@ -12,11 +12,9 @@ all = ["uart[dev]", "uart[docs]"]
 dev = ["docformatter", "docstrfmt", "pre-commit", "pytest", "ruff", "vsg"]
 
 docs = [
-    "pydata_sphinx_theme",
-    "sphinx_copybutton",
-    "sphinx",
-    "sphinxcontrib.wavedrom",
-    "numpydoc",
+    "mkdocs",
+    "mkdocs-material",
+    "pymdown-extensions",
 ]
 
 [tool.ruff]
