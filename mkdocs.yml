@@ -1,0 +1,70 @@
+site_name: UART Project
+
+theme:
+  name: material
+
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  font:
+    text: Inter
+    code: Fira Code
+
+  features:
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+    - announce.dismiss
+    - navigation.tabs
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.preview
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.top
+    - navigation.tracking
+    - search.suggest
+    - toc.follow
+
+plugins:
+  - drawio
+
+markdown_extensions:
+  # Figures
+  - attr_list
+  - md_in_html
+  - pymdownx.blocks.caption
+  # Tables
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  # Formatting
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+
+extra_javascript:
+  # Drawio
+  - https://viewer.diagrams.net/js/viewer-static.min.js
+  # Wavedrom
+  - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.1.0/skins/default.js
+  - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.1.0/wavedrom.min.js
+  # Events
+  - assets/javascripts/onload-events.js
+
+extra_css:
+  - assets/stylesheets/extras.css
