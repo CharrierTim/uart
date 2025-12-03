@@ -24,7 +24,7 @@
 -- @project uart
 -- @file    tb_uart_pkg.vhd
 -- @version 1.0
--- @brief   Package for the SPI master testbench
+-- @brief   Package for the UART testbench
 -- @author  Timothee Charrier
 -- @date    27/11/2025
 -- =====================================================================================================================
