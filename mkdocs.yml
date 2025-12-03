@@ -67,4 +67,4 @@ extra_javascript:
   - assets/javascripts/onload-events.js
 
 extra_css:
-  - assets/stylesheets/extras.css
+  - assets/stylesheets/style.css
