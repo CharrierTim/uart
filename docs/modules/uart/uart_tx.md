@@ -100,7 +100,7 @@ Value:   0     0    1    0    1    1    0    1    0    1
 
 The UART FSM handling is defined as:
 
-![UART TX FSM](../../assets/uart.drawio){ page="UART-TX-FSM" })
+![UART TX FSM](../../assets/uart.drawio){ page="UART-TX-FSM" }
 
 Where the following transitions are defined:
 

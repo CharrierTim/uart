@@ -93,6 +93,8 @@ Reply                  : DEAD\r
 Bytes received    (hex): 0x44 0x45 0x39 0x44 0x0D
 ```
 
+---
+
 #### Write Mode
 
 The write mode allows writing a 16-bit value to a specified 8-bit register address.
@@ -156,6 +158,8 @@ Result     : Returns the data at address 0x00
              No write operation is performed
 ```
 
+---
+
 ### FSM
 
 The UART FSM handling the above protocol is defined as:
@@ -177,6 +181,8 @@ Where the following transitions are defined:
 | T8         | `I_READ_DATA_VALID = 1`                                                        |
 | T9         | `rx_byte /= CR (\r) character` **AND** `rx_byte_count >= 7`                    |
 | T10        | `rx_byte = CR (\r) character` **AND** `rx_byte_count >= 7`                     |
+
+---
 
 ### Data decoding
 
@@ -210,6 +216,8 @@ To do so, the signal `rx_byte_decoded` receives:
 | --------------- | ----------- | -------------- |
 | Default/Invalid | `0x00`      | No match found |
 
+---
+
 ### Data encoding
 
 The transmit data needs to be encoded from hexadecimal to ASCII before being sent over UART.
@@ -242,3 +250,5 @@ To do so, the signal `tx_byte_to_send_encoded` receives:
 | -------------------- | ----------- | --------------------------------- |
 | Carriage Return (CR) | `0x0D`      | `tx_byte_count = C_TX_DATA_BYTES` |
 | Default/Invalid      | `0x00`      | No match found                    |
+
+---
