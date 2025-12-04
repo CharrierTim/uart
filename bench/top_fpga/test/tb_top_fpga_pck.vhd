@@ -101,12 +101,12 @@ package TB_TOP_FPGA_PKG is
     constant C_SPI_BIT_TIME_ACCURACY  : time      := 0.01 * C_SPI_BIT_TIME;
     constant C_SPI_NB_DATA_BITS       : positive  := 8;
     constant C_SPI_TRANSACTION_TIME   : time      := (C_SPI_NB_DATA_BITS + 2) * C_SPI_BIT_TIME;
-    constant C_CLK_POLARITY           : std_logic := '0';
-    constant C_CLK_PHASE              : std_logic := '0';
+    constant C_SPI_CLK_POLARITY       : std_logic := '0';
+    constant C_SPI_CLK_PHASE          : std_logic := '0';
 
     constant C_SLAVE_SPI              : spi_slave_t    := new_spi_slave(
-            cpol_mode => C_CLK_POLARITY,
-            cpha_mode => C_CLK_PHASE
+            cpol_mode => C_SPI_CLK_POLARITY,
+            cpha_mode => C_SPI_CLK_PHASE
         );
     constant C_SLAVE_STREAM           : stream_slave_t := as_stream(C_SLAVE_SPI);
 
