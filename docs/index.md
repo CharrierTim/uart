@@ -2,6 +2,33 @@
 
 Documentation of the UART Project.
 
+## List of Abbreviations
+
+| Abbreviation | Definition                                          |
+| ------------ | --------------------------------------------------- |
+| ASCII        | American Standard Code for Information Interchange  |
+| CR           | Carriage Return                                     |
+| CS           | Chip Select                                         |
+| FIFO         | First In, First Out                                 |
+| FPGA         | Field-Programmable Gate Array                       |
+| FSM          | Finite State Machine                                |
+| I/O          | Input/Output                                        |
+| LF           | Line Feed                                           |
+| LSB          | Least Significant Bit                               |
+| LVCMOS       | Low Voltage Complementary Metal-Oxide-Semiconductor |
+| MISO         | Master In Slave Out                                 |
+| MOSI         | Master Out Slave In                                 |
+| MSB          | Most Significant Bit                                |
+| PLL          | Phase-Locked Loop                                   |
+| RTL          | Register Transfer Level                             |
+| RX           | Receive                                             |
+| SCLK         | Serial Clock                                        |
+| SPI          | Serial Peripheral Interface                         |
+| TX           | Transmit                                            |
+| UART         | Universal Asynchronous Receiver-Transmitter         |
+| VHDL         | VHSIC Hardware Description Language                 |
+| VHSIC        | Very High Speed Integrated Circuit                  |
+
 ## Tools Versions
 
 | Tool       | Version                                                  |
