@@ -43,6 +43,8 @@ In this mode:
 - Data is output on the rising edge of SCLK
 - Input data is sampled on the falling edge of SCLK
 
+---
+
 #### Mode 1: CPOL=0, CPHA=1
 
 ![SPI timing diagram for CPOL=0, CPHA=1](../../assets/uart.drawio){ page="SPI-MASTER-CPOL0-CPHA1" }
@@ -52,6 +54,8 @@ In this mode:
 - Clock idles low
 - Data is output on the falling edge of SCLK
 - Input data is sampled on the rising edge of SCLK
+
+---
 
 #### Mode 2: CPOL=1, CPHA=0
 
@@ -63,6 +67,8 @@ In this mode:
 - Data is output on the falling edge of SCLK
 - Input data is sampled on the rising edge of SCLK
 
+---
+
 #### Mode 3: CPOL=1, CPHA=1
 
 ![SPI timing diagram for CPOL=1, CPHA=1](../../assets/uart.drawio){ page="SPI-MASTER-CPOL1-CPHA1" }
@@ -72,6 +78,8 @@ In this mode:
 - Clock idles high
 - Data is output on the rising edge of SCLK
 - Input data is sampled on the falling edge of SCLK
+
+---
 
 !!! note
     "Output" refers to when data is driven onto the MOSI/MISO lines. "Sampled" refers to when data is captured/registered
