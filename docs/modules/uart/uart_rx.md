@@ -167,7 +167,7 @@ This represents the time for almost one complete UART frame (data bits + stop bi
 
 The UART RX FSM is defined as:
 
-![UART RX FSM](../../assets/uart.drawio){ page="UART-RX-FSM" })
+![UART RX FSM](../../assets/uart.drawio){ page="UART-RX-FSM" }
 
 Where the following transitions are defined:
 
