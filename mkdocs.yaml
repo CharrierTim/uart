@@ -1,4 +1,7 @@
 site_name: UART Project
+site_author: Timothée Charrier
+site_description: Documentation for the UART Project
+copyright: Copyright &copy; 2025 Timothée Charrier
 
 theme:
   name: material
@@ -23,23 +26,26 @@ theme:
     code: Fira Code
 
   features:
-    - content.tabs.link
+    - announce.dismiss
     - content.code.annotate
     - content.code.copy
-    - announce.dismiss
-    - navigation.tabs
+    - content.tabs.link
     - navigation.instant
     - navigation.instant.prefetch
     - navigation.instant.preview
     - navigation.instant.progress
     - navigation.path
+    - navigation.sections
+    - navigation.tabs
     - navigation.top
     - navigation.tracking
     - search.suggest
     - toc.follow
+    - toc.integrate
 
 plugins:
   - drawio
+  - search
 
 markdown_extensions:
   # Figures
@@ -68,3 +74,19 @@ extra_javascript:
 
 extra_css:
   - assets/stylesheets/style.css
+
+nav:
+  - index.md
+  - Modules:
+      - modules/top_fpga.md
+      - modules/resync_slv/resync_slv.md
+      - modules/regfile/regfile.md
+      - UART:
+          - modules/uart/uart.md
+          - modules/uart/uart_rx.md
+          - modules/uart/uart_tx.md
+      - SPI:
+          - modules/spi/spi_master.md
+
+  - Testbench:
+      - modules/tb_top_fpga.md
