@@ -31,18 +31,16 @@ Internal FPGA registers with read/write registers accessible via the UART line.
 | `O_SPI_TX_DATA_VALID` | std_logic    | out       | -              | Input vector containing the SPI data flag valid           |
 | `O_LED_0`             | std_logic    | out       | 1              | LED 0 value                                               |
 
-
-
 ## Architecture
 
 ### Read Operations
 
 The regfile module performs a read operation when `I_READ_ADDR_VALID` is
-asserted (set to \'1\'). The module responds by:
+asserted (set to '1'). The module responds by:
 
-1.   Reading the data stored at the address specified by `I_READ_ADDR`
-2.  Asserting `O_READ_DATA_VALID` on the next clock cycle
-3.  Outputting the retrieved value on `O_READ_DATA`
+1. Reading the data stored at the address specified by `I_READ_ADDR`
+2. Asserting `O_READ_DATA_VALID` on the next clock cycle
+3. Outputting the retrieved value on `O_READ_DATA`
 
 **Invalid Address Handling:**
 
@@ -58,7 +56,7 @@ Invalid address: I_READ_ADDR_VALID = '1' → O_READ_DATA = 0xDEAD
 ### Write Operations
 
 The regfile module performs a write operation when `I_WRITE_VALID` is
-asserted (set to \'1\'). The module writes the data from `I_WRITE_DATA`
+asserted (set to '1'). The module writes the data from `I_WRITE_DATA`
 to the address specified by `I_WRITE_ADDR`.
 
 **Write Protection:**
@@ -161,7 +159,6 @@ Where:
     }
 }
 </script>
-
 
 | Bits | Reset | Name       | Description                                    |
 | ---- | ----- | ---------- | ---------------------------------------------- |
@@ -426,8 +423,6 @@ Internal register 5
 | Bits | Reset  | Name | Description |
 | ---- | ------ | ---- | ----------- |
 | 15:0 | 0x9A9A |      | Constant    |
-
-
 
 ### REG_CD
 

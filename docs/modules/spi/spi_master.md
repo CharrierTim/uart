@@ -29,15 +29,13 @@
 
 ## Architecture
 
-### Configuration
+### Configurations
 
 The SPI master supports all four standard SPI modes, determined by the Clock Polarity (CPOL) and Clock Phase (CPHA) settings:
 
 #### Mode 0: CPOL=0, CPHA=0
 
 ![SPI timing diagram for CPOL=0, CPHA=0](../../assets/uart.drawio){ page="SPI-MASTER-CPOL0-CPHA0" }
-
-*Clock configuration with POLARITY = 0 and PHASE = 0*
 
 In this mode:
 
@@ -49,8 +47,6 @@ In this mode:
 
 ![SPI timing diagram for CPOL=0, CPHA=1](../../assets/uart.drawio){ page="SPI-MASTER-CPOL0-CPHA1" }
 
-*Clock configuration with POLARITY = 0 and PHASE = 1*
-
 In this mode:
 
 - Clock idles low
@@ -60,8 +56,6 @@ In this mode:
 #### Mode 2: CPOL=1, CPHA=0
 
 ![SPI timing diagram for CPOL=1, CPHA=0](../../assets/uart.drawio){ page="SPI-MASTER-CPOL1-CPHA0" }
-
-*Clock configuration with POLARITY = 1 and PHASE = 0*
 
 In this mode:
 
@@ -73,8 +67,6 @@ In this mode:
 
 ![SPI timing diagram for CPOL=1, CPHA=1](../../assets/uart.drawio){ page="SPI-MASTER-CPOL1-CPHA1" }
 
-*Clock configuration with POLARITY = 1 and PHASE = 1*
-
 In this mode:
 
 - Clock idles high
@@ -82,7 +74,8 @@ In this mode:
 - Input data is sampled on the falling edge of SCLK
 
 !!! note
-    "Output" refers to when data is driven onto the MOSI/MISO lines. "Sampled" refers to when data is captured/registered from the input line.
+    "Output" refers to when data is driven onto the MOSI/MISO lines. "Sampled" refers to when data is captured/registered
+    from the input line.
 
 ### FSM
 

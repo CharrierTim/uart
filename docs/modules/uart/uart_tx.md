@@ -22,11 +22,13 @@
 
 ## Architecture
 
-The UART transmitter consists of three main components that work together to serialize and transmit data at the configured baud rate.
+The UART transmitter consists of three main components that work together to serialize and transmit data at the
+configured baud rate.
 
 ### Clock Divider
 
-A clock operating at the baud rate is generated internally to control the bit timing. This clock is activated when the transmitter enters the `STATE_SEND_BYTE` state.
+A clock operating at the baud rate is generated internally to control the bit timing. This clock is activated when the
+transmitter enters the `STATE_SEND_BYTE` state.
 
 The clock divider process increment the bit count and shift the data every time it reaches one baud tick.
 
@@ -50,9 +52,10 @@ The transmission sequence includes:
 
 The transmitter operates in two distinct modes for data handling:
 
-**STATE_IDLE Mode**
+#### STATE_IDLE Mode
 
-In the `STATE_IDLE` state, the shift register is loaded with the complete transmission frame when the valid flag is asserted. The frame structure is:
+In the `STATE_IDLE` state, the shift register is loaded with the complete transmission frame when the valid flag is
+asserted. The frame structure is:
 
 ```none
   [Stop bit | Data byte | Start bit]
@@ -68,9 +71,10 @@ The frame is constructed as follows:
 - **Bits 1-8**: Data byte (D0 to D7)
 - **Bit 9** (MSB): Stop bit (logic '1')
 
-**STATE_SEND_BYTE Mode**
+#### STATE_SEND_BYTE Mode
 
-In the `STATE_SEND_BYTE` state, the shift register is shifted right by one position at each baud tick overflow. A logic '1' is shifted in from the left (MSB) side.
+In the `STATE_SEND_BYTE` state, the shift register is shifted right by one position at each baud tick overflow. A logic
+'1' is shifted in from the left (MSB) side.
 
 This right-shift operation ensures that:
 
@@ -78,9 +82,10 @@ This right-shift operation ensures that:
 - After all data bits are sent, logic '1' values (stop bit) are transmitted
 - The shift register naturally returns to an idle-high state
 
-**Output Signal**
+#### Output Signal
 
-The output signal `O_UART_TX` continuously reflects the LSB (bit 0) of the shift register, which contains the current bit being transmitted.
+The output signal `O_UART_TX` continuously reflects the LSB (bit 0) of the shift register, which contains the current
+bit being transmitted.
 
 ```none
 Transmission sequence for data byte 0x5A (0b01011010):

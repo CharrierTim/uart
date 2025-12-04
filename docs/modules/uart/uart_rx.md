@@ -25,26 +25,31 @@
 
 ## Architecture
 
-The UART receiver must synchronize to incoming data, sample at the correct time, handle noise, and detect framing errors. The receiver uses oversampling, digital filtering, and majority voting to ensure reliable data reception.
+The UART receiver must synchronize to incoming data, sample at the correct time, handle noise, and detect framing errors.
+The receiver uses oversampling, digital filtering, and majority voting to ensure reliable data reception.
 
 ### Oversampling Clock
 
-The receiver generates an internal sampling clock that runs at a multiple of the baud rate (configured by `G_SAMPLING_RATE`, typically 16).
+The receiver generates an internal sampling clock that runs at a multiple of the baud rate (configured by `G_SAMPLING_RATE`,
+ typically 16).
 
-The oversampling clock divider generates a tick (`rx_baud_tick`) at the oversampling rate. For example, with 16× oversampling and 115200 baud:
+The oversampling clock divider generates a tick (`rx_baud_tick`) at the oversampling rate. For example, with
+16× oversampling and 115200 baud:
 
 $$f_{oversample} = 115200 \times 16 = 1.8432\text{ MHz}$$
 
-The clock divider is enabled during active reception and reset during idle to ensure proper synchronization with incoming data.
+The clock divider is enabled during active reception and reset during idle to ensure proper synchronization with
+incoming data.
 
 !!! note
-    The oversampling rate is configurable via the `G_SAMPLING_RATE` generic. A higher rate provides better noise immunity but requires a faster system clock.
+    The oversampling rate is configurable via the `G_SAMPLING_RATE` generic. A higher rate provides better noise
+     immunity but requires a faster system clock.
 
 ### Input Synchronization and Filtering
 
 The asynchronous UART RX input must be properly synchronized to prevent metastability and filtered to remove noise.
 
-**Synchronization Chain**
+#### Synchronization Chain
 
 A 5-stage shift register processes the incoming signal:
 
@@ -54,7 +59,7 @@ Stage 2-4: Digital filtering (3 consecutive samples)
 I_UART_RX → [FF] → [FF] → [Filter] → [Filter] → [Filter] → i_uart_rx_filtered
 ```
 
-**Digital Filtering Logic**
+#### Digital Filtering Logic
 
 The filter uses a simple majority voting algorithm on the last 3 stages:
 
@@ -65,9 +70,10 @@ The filter uses a simple majority voting algorithm on the last 3 stages:
 | Other patterns           | Keep previous value | Insufficient agreement |
 
 !!! important
-    The first 2 bits of the shift register are potentially metastable and must NOT be used for any logic decisions. Only bits [4:2] are used for filtering. (I made this mistake)
+    The first 2 bits of the shift register are potentially metastable and must NOT be used for any logic decisions.
+    Only bits [4:2] are used for filtering. (I made this mistake)
 
-**Edge Detection**
+#### Edge Detection
 
 A delayed version of the filtered signal (`i_uart_rx_filtered_d1`) is maintained to detect edges:
 
@@ -78,7 +84,7 @@ A delayed version of the filtered signal (`i_uart_rx_filtered_d1`) is maintained
 
 Each UART bit period is divided into multiple sampling intervals. With 16× oversampling, each bit period contains 16 ticks.
 
-**Tick Counting**
+#### Tick Counting
 
 The `oversampling_counter` counter tracks the position within the current bit period:
 
@@ -86,7 +92,7 @@ The `oversampling_counter` counter tracks the position within the current bit pe
 - Resets to 0 after reaching `C_OVERSAMPLE_MAX` (15 for 16× oversampling)
 - When it wraps, one complete bit period has elapsed
 
-**Visual Timing Diagram**
+#### Visual Timing Diagram
 
 ```none
 Idle/Previous Bit                           Current Data Bit                           Next Bit
@@ -105,7 +111,7 @@ Legend:
 - Provides maximum timing margin from bit edges
 ```
 
-**Sample Point Selection**
+#### Sample Point Selection
 
 The mid-bit sample point is calculated as:
 
@@ -119,7 +125,7 @@ The `data_counter` counter tracks how many data bits have been received.
 
 The `next_o_byte` register accumulates the incoming data bits.
 
-**Shifting Operation**
+#### Shifting Operation
 
 Data is received **LSB first** (UART standard). Each new bit is shifted in from the left (MSB side):
 
@@ -127,7 +133,7 @@ Data is received **LSB first** (UART standard). Each new bit is shifted in from 
 next_o_byte <= uart_rx_sampled_bit & next_o_byte(7 downto 1);
 ```
 
-**Example Reception Sequence**
+#### Example Reception Sequence
 
 Receiving byte `0x5A` (`0b01011010`):
 
@@ -148,7 +154,8 @@ The byte is complete after 8 bits and ready to be latched to the output if the s
 
 ### Error Recovery Mechanism
 
-When an invalid start bit is detected, the module enters an error recovery state to prevent false triggering on glitches or noise.
+When an invalid start bit is detected, the module enters an error recovery state to prevent false triggering on
+glitches or noise.
 
 The module then waits for the following time before going back to idle and accept new RX requests:
 
@@ -179,5 +186,5 @@ Where the following transitions are defined:
 
 !!! note
     **Early Stop Bit Exit for Burst Support**
-
-    The module exits the stop bit at **3/4 of the bit period** (tick 12 of 16) after validation at mid-point (tick 8). This enables zero-gap back-to-back frame reception for burst transmissions.
+    The module exits the stop bit at **3/4 of the bit period** (tick 12 of 16) after validation at mid-point
+    (tick 8).This enables zero-gap back-to-back frame reception for burst transmissions.
