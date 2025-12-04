@@ -30,6 +30,7 @@ theme:
     - content.code.annotate
     - content.code.copy
     - content.tabs.link
+    - header.autohide
     - navigation.instant
     - navigation.instant.prefetch
     - navigation.instant.preview
@@ -40,7 +41,6 @@ theme:
     - navigation.top
     - navigation.tracking
     - search.suggest
-    - toc.follow
     - toc.integrate
 
 plugins:
@@ -76,17 +76,16 @@ extra_css:
   - assets/stylesheets/style.css
 
 nav:
-  - index.md
+  - Home: index.md
   - Modules:
-      - modules/top_fpga.md
-      - modules/resync_slv/resync_slv.md
-      - modules/regfile/regfile.md
+      - Top FPGA: modules/top_fpga.md
+      - Resynchronisation: modules/resync_slv/resync_slv.md
+      - Internal Registers: modules/regfile/regfile.md
       - UART:
-          - modules/uart/uart.md
-          - modules/uart/uart_rx.md
-          - modules/uart/uart_tx.md
+          - UART Top: modules/uart/uart.md
+          - UART RX: modules/uart/uart_rx.md
+          - UART TX: modules/uart/uart_tx.md
       - SPI:
-          - modules/spi/spi_master.md
-
+          - SPI Master: modules/spi/spi_master.md
   - Testbench:
-      - modules/tb_top_fpga.md
+      - Top FPGA TB: modules/tb_top_fpga.md
