@@ -36,11 +36,6 @@ default: true
 # Path to configuration file to extend
 extends: null
 
-# MD001/heading-increment : Heading levels should only increment by one level at a time : https://github.com/DavidAnson/markdownlint/blob/v0.40.0/doc/md001.md
-MD001:
-  # RegExp for matching title in front matter
-  front_matter_title: "^\\s*title\\s*[:=]"
-
 # MD003/heading-style : Heading style : https://github.com/DavidAnson/markdownlint/blob/v0.40.0/doc/md003.md
 MD003:
   # Heading style
@@ -67,8 +62,6 @@ MD007:
 MD009:
   # Spaces for line break
   br_spaces: 2
-  # Include code blocks
-  code_blocks: false
   # Allow spaces for empty lines in list items
   list_item_empty_lines: false
   # Include unnecessary breaks
