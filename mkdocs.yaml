@@ -62,6 +62,9 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.mark
   - pymdownx.tilde
+  - toc:
+      permalink: true
+      toc_depth: 3
 
 extra_javascript:
   # Drawio
