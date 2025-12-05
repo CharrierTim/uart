@@ -96,4 +96,5 @@ nav:
       - SPI:
           - SPI Master: modules/spi/spi_master.md
   - Testbench:
-      - Top FPGA TB: modules/tb_top_fpga.md
+      - Top FPGA TB: modules/testbench/tb_top_fpga.md
+      - Testcases: modules/testbench/testcases.md

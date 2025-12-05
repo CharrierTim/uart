@@ -4,7 +4,7 @@
 
 The following figure depicts the Testbench:
 
-![Testbench Diagram](../assets/uart.drawio){ page="TB-TOP-FPGA" }
+![Testbench Diagram](../../assets/uart.drawio){ page="TB-TOP-FPGA" }
 
 ## Types
 
