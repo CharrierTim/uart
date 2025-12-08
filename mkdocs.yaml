@@ -56,7 +56,6 @@ markdown_extensions:
   # Figures
   - attr_list
   - md_in_html
-  - pymdownx.blocks.caption
   # Tables
   - admonition
   - pymdownx.details
