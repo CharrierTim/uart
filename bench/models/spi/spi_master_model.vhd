@@ -102,7 +102,6 @@ begin
         variable reply_msg : msg_t;
         variable frequency : natural := spi.p_frequency;
         variable msg_type  : msg_type_t;
-        variable din       : std_logic_vector(7 downto 0);
 
     begin
 
