@@ -76,22 +76,22 @@ A simplified view of the regfile module:
 
 ## Summary
 
-| Name                                    | Address | Mode | Description                                                              |
-| --------------------------------------- | ------- | ---- | ------------------------------------------------------------------------ |
-| [REG_GIT_ID_MSB](#reg_git_id_msb)       | 0x00    | R    | 16 MSB of the git ID containing the sources for the bitstream generation |
-| [REG_GIT_ID_LSB](#reg_git_id_lsb)       | 0x01    | R    | 16 LSB of the git ID containing the sources for the bitstream generation |
-| [REG_12](#reg_12)                       | 0x02    | R    | Internal register 1                                                      |
-| [REG_34](#reg_34)                       | 0x03    | R    | Internal register 2                                                      |
-| [REG_56](#reg_56)                       | 0x04    | R    | Internal register 3                                                      |
-| [REG_78](#reg_78)                       | 0x05    | R    | Internal register 4                                                      |
-| [C_REG_SPI_TX_ADDR](#c_reg_spi_tx_addr) | 0x06    | RW   | Register controlling the SPI data to send                                |
-| [C_REG_SPI_RX_ADDR](#c_reg_spi_rx_addr) | 0x07    | R    | Register containing the SPI slave data                                   |
-| [REG_9A](#reg_9a)                       | 0xAB    | R    | Internal register 5                                                      |
-| [REG_CD](#reg_cd)                       | 0xAC    | R    | Internal register 6                                                      |
-| [REG_EF](#reg_ef)                       | 0xDC    | R    | Internal register 7                                                      |
-| [REG_SWITCHES](#reg_switches)           | 0xB1    | R    | Status from the input switches                                           |
-| [REG_LED](#reg_led)                     | 0xEF    | RW   | Register with LSB bit writable controlling an LED                        |
-| [REG_16_BITS](#reg_16_bits)             | 0xFF    | RW   | Register with all bits writable                                          |
+| Name                              | Address | Mode | Description                                                              |
+| --------------------------------- | ------- | ---- | ------------------------------------------------------------------------ |
+| [REG_GIT_ID_MSB](#reg_git_id_msb) | 0x00    | R    | 16 MSB of the git ID containing the sources for the bitstream generation |
+| [REG_GIT_ID_LSB](#reg_git_id_lsb) | 0x01    | R    | 16 LSB of the git ID containing the sources for the bitstream generation |
+| [REG_12](#reg_12)                 | 0x02    | R    | Internal register 1                                                      |
+| [REG_34](#reg_34)                 | 0x03    | R    | Internal register 2                                                      |
+| [REG_56](#reg_56)                 | 0x04    | R    | Internal register 3                                                      |
+| [REG_78](#reg_78)                 | 0x05    | R    | Internal register 4                                                      |
+| [REG_SPI_TX](#reg_spi_tx)         | 0x06    | RW   | Register controlling the SPI data to send                                |
+| [REG_SPI_RX](#reg_spi_rx)         | 0x07    | R    | Register containing the SPI slave data                                   |
+| [REG_9A](#reg_9a)                 | 0xAB    | R    | Internal register 5                                                      |
+| [REG_CD](#reg_cd)                 | 0xAC    | R    | Internal register 6                                                      |
+| [REG_EF](#reg_ef)                 | 0xDC    | R    | Internal register 7                                                      |
+| [REG_SWITCHES](#reg_switches)     | 0xB1    | R    | Status from the input switches                                           |
+| [REG_LED](#reg_led)               | 0xEF    | RW   | Register with LSB bit writable controlling an LED                        |
+| [REG_16_BITS](#reg_16_bits)       | 0xFF    | RW   | Register with all bits writable                                          |
 
 Where:
 
@@ -262,7 +262,7 @@ Internal register 3
 | ---- | ------ | ---- | ----------- |
 | 15:0 | 0x5656 |      | Constant    |
 
-### C_REG_SPI_TX_ADDR
+### REG_SPI_TX
 
 SPI TX data register
 
@@ -315,7 +315,7 @@ SPI TX data register
 | 8    | 0x0   | TX_DATA_VALID | 0 -> 1 start the SPI transaction |
 | 7:0  | 0x0   | TX_DATA       | TX data to be sent               |
 
-### C_REG_SPI_RX_ADDR
+### REG_SPI_RX
 
 SPI RX data register
 
