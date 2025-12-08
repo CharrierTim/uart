@@ -93,7 +93,7 @@ package body spi_pkg is
             p_actor      => new_actor,
             p_cpol_mode  => cpol_mode,
             p_cpha_mode  => cpha_mode,
-            p_idle_state => default_idle_state,
+            p_idle_state => idle_state,
             p_frequency  => initial_frequency
         );
 
