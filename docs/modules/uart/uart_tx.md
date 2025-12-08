@@ -92,7 +92,7 @@ Transmission sequence for data byte 0x5A (0b01011010):
 Time →
 Bit  : [START| D0 | D1 | D2 | D3 | D4 | D5 | D6 | D7 |STOP]
 Value:   0     0    1    0    1    1    0    1    0    1
-         └──────────────────────────────────────────────┘
+         └─────────────────────────────────────────────┘
                    Transmitted on O_UART_TX
 ```
 
