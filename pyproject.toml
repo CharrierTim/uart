@@ -9,15 +9,9 @@ dependencies = ["vunit-hdl @ git+https://github.com/VUnit/vunit.git@master"]
 
 all = ["uart[dev]", "uart[docs]"]
 
-dev = ["docformatter", "docstrfmt", "pre-commit", "pytest", "ruff", "vsg"]
+dev = ["docstrfmt", "pre-commit", "pytest", "ruff", "vsg"]
 
-docs = [
-    "pydata_sphinx_theme",
-    "sphinx_copybutton",
-    "sphinx",
-    "sphinxcontrib.wavedrom",
-    "numpydoc",
-]
+docs = ["mkdocs", "mkdocs-material", "pymdown-extensions", "mkdocs-drawio"]
 
 [tool.ruff]
 exclude = [
@@ -89,10 +83,6 @@ ignore = [
     "PLR0911", # Too many return statements (preference)
     "PLW1641", # __eq__ without __hash__ (mypy compatibility)
 ]
-
-[tool.ruff.lint.isort]
-known-first-party = ["cocotb", "cocotb_tools", "pygpi"]
-known-third-party = ["pytest"]
 
 [tool.ruff.format]
 quote-style = "double"

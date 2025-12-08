@@ -19,18 +19,18 @@
 ## Inputs and Outputs
 
 | Port Name                | Type         | Direction | Default Value | Description                          |
-| ------------------------ | ------------ | --------- | ------------- | ------------------------------------ |
-| `CLK`                    | std_logic    | in        | -             | Input clock                          |
-| `RST_N`                  | std_logic    | in        | -             | Input asynchronous reset, active low |
-| `I_UART_RX`              | std_logic    | in        | -             | Asynchronous input UART RX line      |
-| `O_UART_TX`              | std_logic    | out       | 0x1           | Output UART TX line                  |
-| `O_READ_ADDR`            | vector[7:0]  | out       | 0x00          | Output read address                  |
-| `O_READ_ADDR_VALID`      | std_logic    | out       | 0x0           | Output read address valid flag       |
-| `I_READ_DATA`            | vector[15:0] | in        | -             | Input read data                      |
-| `I_READ_DATA_ADDR_VALID` | std_logic    | in        | -             | Input read data valid                |
-| `O_WRITE_ADDR`           | vector[7:0]  | out       | 0x00          | Output write address                 |
-| `O_WRITE_DATA`           | vector[15:0] | out       | 0x0000        | Output write data                    |
-| `O_WRITE_VALID`          | std_logic    | out       | 0x0           | Output write valid flag              |
+| ------------------------ | ------------ | :-------: | :-----------: | ------------------------------------ |
+| `CLK`                    | std_logic    |    in     |       -       | Input clock                          |
+| `RST_N`                  | std_logic    |    in     |       -       | Input asynchronous reset, active low |
+| `I_UART_RX`              | std_logic    |    in     |       -       | Asynchronous input UART RX line      |
+| `O_UART_TX`              | std_logic    |    out    |      0b1      | Output UART TX line                  |
+| `O_READ_ADDR`            | vector[7:0]  |    out    |     0x00      | Output read address                  |
+| `O_READ_ADDR_VALID`      | std_logic    |    out    |      0b0      | Output read address valid flag       |
+| `I_READ_DATA`            | vector[15:0] |    in     |       -       | Input read data                      |
+| `I_READ_DATA_ADDR_VALID` | std_logic    |    in     |       -       | Input read data valid                |
+| `O_WRITE_ADDR`           | vector[7:0]  |    out    |     0x00      | Output write address                 |
+| `O_WRITE_DATA`           | vector[15:0] |    out    |    0x0000     | Output write data                    |
+| `O_WRITE_VALID`          | std_logic    |    out    |      0b0      | Output write valid flag              |
 
 ## Architecture
 

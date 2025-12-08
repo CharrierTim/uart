@@ -100,8 +100,9 @@ The FPGA defines the following inputs/outputs:
 
 ## Design architecture
 
-- [top_fpga](modules/top_fpga.md)
+- [FPGA modules](modules/top_fpga.md)
 
 ## Testbench
 
-- [bench](modules/tb_top_fpga.md)
+- [Testbench description](modules/testbench/tb_top_fpga.md)
+- [Testcases description](modules/testbench/testcases.md)
