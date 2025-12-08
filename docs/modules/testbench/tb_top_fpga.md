@@ -385,7 +385,7 @@ Start an SPI transaction with procedure proc_spi_write
 Pop data from C_SLAVE_STREAM into v_spi_slave_data
 
 # Verify MOSI path
-Check that v_spi_slave_data equals value with procedure check_equal
+Check that v_spi_slave_data equals `value` with procedure check_equal
 
 # Read and verify MISO register data
 Check that sampled SPI data from slave is matching the one decoded in the REG_SPI_RX register with procedure proc_uart_check
