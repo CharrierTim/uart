@@ -12,13 +12,13 @@
 ## Inputs and Outputs
 
 | Port Name      | Type        | Direction | Default Value | Description                          |
-| -------------- | ----------- | --------- | ------------- | ------------------------------------ |
-| `CLK`          | std_logic   | in        | -             | Input clock                          |
-| `RST_N`        | std_logic   | in        | -             | Input asynchronous reset, active low |
-| `I_BYTE`       | vector[7:0] | in        | -             | Input byte to send                   |
-| `I_BYTE_VALID` | std_logic   | in        | -             | Input byte to send valid flag        |
-| `O_UART_TX`    | std_logic   | out       | 0x1           | Output UART TX line                  |
-| `O_DONE`       | std_logic   | out       | 0x0           | Byte send flag                       |
+| -------------- | ----------- | :-------: | :-----------: | ------------------------------------ |
+| `CLK`          | std_logic   |    in     |       -       | Input clock                          |
+| `RST_N`        | std_logic   |    in     |       -       | Input asynchronous reset, active low |
+| `I_BYTE`       | vector[7:0] |    in     |       -       | Input byte to send                   |
+| `I_BYTE_VALID` | std_logic   |    in     |       -       | Input byte to send valid flag        |
+| `O_UART_TX`    | std_logic   |    out    |      0b1      | Output UART TX line                  |
+| `O_DONE`       | std_logic   |    out    |      0b0      | Byte send flag                       |
 
 ## Architecture
 

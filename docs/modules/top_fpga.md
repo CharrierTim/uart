@@ -19,19 +19,19 @@ The following figure depicts the Top-Level:
 ## Inputs and Outputs
 
 | Port Name        | Type      | Direction | Default Value | Description                           |
-| ---------------- | --------- | --------- | ------------- | ------------------------------------- |
-| `PAD_I_CLK`      | std_logic | in        | -             | Input clock                           |
-| `PAD_RST_H`      | std_logic | in        | -             | Input asynchronous reset, active high |
-| `PAD_I_UART_RX`  | std_logic | in        | -             | Input UART RX line                    |
-| `PAD_O_UART_TX`  | std_logic | out       | 1             | Output UART TX line                   |
-| `PAD_O_SCLK`     | std_logic | out       | 0             | Output SPI serial clock               |
-| `PAD_O_MOSI`     | std_logic | out       | 0             | Output SPI Master Output Slave Input  |
-| `PAD_I_MISO`     | std_logic | in        | -             | Output SPI Master Input Slave Input   |
-| `PAD_O_CS`       | std_logic | out       | 1             | Output SPI Chip Select                |
-| `PAD_I_SWITCH_0` | std_logic | in        | -             | Input switch 0                        |
-| `PAD_I_SWITCH_1` | std_logic | in        | -             | Input switch 1                        |
-| `PAD_I_SWITCH_2` | std_logic | in        | -             | Input switch 2                        |
-| `PAD_O_LED_0`    | std_logic | out       | 1             | Output LED 0                          |
+| ---------------- | --------- | :-------: | :-----------: | ------------------------------------- |
+| `PAD_I_CLK`      | std_logic |    in     |       -       | Input clock                           |
+| `PAD_RST_H`      | std_logic |    in     |       -       | Input asynchronous reset, active high |
+| `PAD_I_UART_RX`  | std_logic |    in     |       -       | Input UART RX line                    |
+| `PAD_O_UART_TX`  | std_logic |    out    |      0b1      | Output UART TX line                   |
+| `PAD_O_SCLK`     | std_logic |    out    |      0b0      | Output SPI serial clock               |
+| `PAD_O_MOSI`     | std_logic |    out    |      0b0      | Output SPI Master Output Slave Input  |
+| `PAD_I_MISO`     | std_logic |    in     |       -       | Output SPI Master Input Slave Input   |
+| `PAD_O_CS`       | std_logic |    out    |      0b1      | Output SPI Chip Select                |
+| `PAD_I_SWITCH_0` | std_logic |    in     |       -       | Input switch 0                        |
+| `PAD_I_SWITCH_1` | std_logic |    in     |       -       | Input switch 1                        |
+| `PAD_I_SWITCH_2` | std_logic |    in     |       -       | Input switch 2                        |
+| `PAD_O_LED_0`    | std_logic |    out    |      0b1      | Output LED 0                          |
 
 ## Architecture
 

@@ -14,22 +14,22 @@ Internal FPGA registers with read/write registers accessible via the UART line.
 ## Inputs and Outputs
 
 | Port Name             | Type         | Direction | Default Value  | Description                                               |
-| --------------------- | ------------ | --------- | -------------- | --------------------------------------------------------- |
-| `CLK`                 | std_logic    | in        | -              | Input clock                                               |
-| `RST_N`               | std_logic    | in        | -              | Input asynchronous reset, active low                      |
-| `I_SWITCHES`          | vector[2:0]  | in        | -              | Input vector containing the resynchronized switches value |
-| `I_SPI_RX_DATA`       | vector[7:0]  | in        | -              | Input vector containing the SPI data sent by the slave    |
-| `I_SPI_RX_DATA_VALID` | std_logic    | in        | -              | Input vector containing the SPI data sent flag valid      |
-| `I_READ_ADDR`         | vector[7:0]  | in        | -              | Read address from the UART                                |
-| `I_READ_ADDR_VALID`   | std_logic    | in        | -              | Read address valid flag                                   |
-| `O_READ_DATA`         | vector[15:0] | out       | `G_GIT_ID_MSB` | Read data at the address `I_READ_ADDR`                    |
-| `O_READ_DATA_VALID`   | std_logic    | out       | 0              | Read data valid flag                                      |
-| `I_WRITE_ADDR`        | vector[7:0]  | in        | -              | Write address from the UART                               |
-| `I_WRITE_DATA`        | vector[15:0] | in        | -              | Write data to be written at `I_WRITE_DATA`                |
-| `I_WRITE_VALID`       | std_logic    | in        | -              | Write address and data valid flag                         |
-| `O_SPI_TX_DATA`       | vector[7:0]  | out       | -              | Input vector containing the SPI data to be send           |
-| `O_SPI_TX_DATA_VALID` | std_logic    | out       | -              | Input vector containing the SPI data flag valid           |
-| `O_LED_0`             | std_logic    | out       | 1              | LED 0 value                                               |
+| --------------------- | ------------ | :-------: | :------------: | --------------------------------------------------------- |
+| `CLK`                 | std_logic    |    in     |       -        | Input clock                                               |
+| `RST_N`               | std_logic    |    in     |       -        | Input asynchronous reset, active low                      |
+| `I_SWITCHES`          | vector[2:0]  |    in     |       -        | Input vector containing the resynchronized switches value |
+| `I_SPI_RX_DATA`       | vector[7:0]  |    in     |       -        | Input vector containing the SPI data sent by the slave    |
+| `I_SPI_RX_DATA_VALID` | std_logic    |    in     |       -        | Input vector containing the SPI data sent flag valid      |
+| `I_READ_ADDR`         | vector[7:0]  |    in     |       -        | Read address from the UART                                |
+| `I_READ_ADDR_VALID`   | std_logic    |    in     |       -        | Read address valid flag                                   |
+| `O_READ_DATA`         | vector[15:0] |    out    | `G_GIT_ID_MSB` | Read data at the address `I_READ_ADDR`                    |
+| `O_READ_DATA_VALID`   | std_logic    |    out    |      0x00      | Read data valid flag                                      |
+| `I_WRITE_ADDR`        | vector[7:0]  |    in     |       -        | Write address from the UART                               |
+| `I_WRITE_DATA`        | vector[15:0] |    in     |       -        | Write data to be written at `I_WRITE_DATA`                |
+| `I_WRITE_VALID`       | std_logic    |    in     |       -        | Write address and data valid flag                         |
+| `O_SPI_TX_DATA`       | vector[7:0]  |    out    |      0x00      | Input vector containing the SPI data to be send           |
+| `O_SPI_TX_DATA_VALID` | std_logic    |    out    |      0b0       | Input vector containing the SPI data flag valid           |
+| `O_LED_0`             | std_logic    |    out    |      0b1       | LED 0 value                                               |
 
 ## Architecture
 
