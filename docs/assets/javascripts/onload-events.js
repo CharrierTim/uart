@@ -7,3 +7,17 @@ document$.subscribe(({ body }) => {
 window.addEventListener("load", function () {
     WaveDrom.ProcessAll();
 });
+
+// Mathjax
+window.MathJax = {
+    tex: {
+        inlineMath: [["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"]],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    options: {
+        ignoreHtmlClass: ".*|",
+        processHtmlClass: "arithmatex"
+    }
+};
