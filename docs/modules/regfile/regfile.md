@@ -6,30 +6,38 @@ Internal FPGA registers with read/write registers accessible via the UART line.
 
 ## Generics
 
+<div class="generics-table" markdown="1">
+
 | Generic Name   | Type         | Default Value | Description                                                              |
 | -------------- | ------------ | ------------- | ------------------------------------------------------------------------ |
 | `G_GIT_ID_MSB` | vector[15:0] | 0x0000        | 16 MSB of the git ID containing the sources for the bitstream generation |
 | `G_GIT_ID_LSB` | vector[15:0] | 0x0000        | 16 LSB of the git ID containing the sources for the bitstream generation |
 
+</div>
+
 ## Inputs and Outputs
 
+<div class="ports-table" markdown="1">
+
 | Port Name             | Type         | Direction | Default Value  | Description                                               |
-| --------------------- | ------------ | :-------: | :------------: | --------------------------------------------------------- |
-| `CLK`                 | std_logic    |    in     |       -        | Input clock                                               |
-| `RST_N`               | std_logic    |    in     |       -        | Input asynchronous reset, active low                      |
-| `I_SWITCHES`          | vector[2:0]  |    in     |       -        | Input vector containing the resynchronized switches value |
-| `I_SPI_RX_DATA`       | vector[7:0]  |    in     |       -        | Input vector containing the SPI data sent by the slave    |
-| `I_SPI_RX_DATA_VALID` | std_logic    |    in     |       -        | Input vector containing the SPI data sent flag valid      |
-| `I_READ_ADDR`         | vector[7:0]  |    in     |       -        | Read address from the UART                                |
-| `I_READ_ADDR_VALID`   | std_logic    |    in     |       -        | Read address valid flag                                   |
+| --------------------- | ------------ | :-------: | -------------- | --------------------------------------------------------- |
+| `CLK`                 | std_logic    |    in     | -              | Input clock                                               |
+| `RST_N`               | std_logic    |    in     | -              | Input asynchronous reset, active low                      |
+| `I_SWITCHES`          | vector[2:0]  |    in     | -              | Input vector containing the resynchronized switches value |
+| `I_SPI_RX_DATA`       | vector[7:0]  |    in     | -              | Input vector containing the SPI data sent by the slave    |
+| `I_SPI_RX_DATA_VALID` | std_logic    |    in     | -              | Input vector containing the SPI data sent flag valid      |
+| `I_READ_ADDR`         | vector[7:0]  |    in     | -              | Read address from the UART                                |
+| `I_READ_ADDR_VALID`   | std_logic    |    in     | -              | Read address valid flag                                   |
 | `O_READ_DATA`         | vector[15:0] |    out    | `G_GIT_ID_MSB` | Read data at the address `I_READ_ADDR`                    |
-| `O_READ_DATA_VALID`   | std_logic    |    out    |      0x00      | Read data valid flag                                      |
-| `I_WRITE_ADDR`        | vector[7:0]  |    in     |       -        | Write address from the UART                               |
-| `I_WRITE_DATA`        | vector[15:0] |    in     |       -        | Write data to be written at `I_WRITE_DATA`                |
-| `I_WRITE_VALID`       | std_logic    |    in     |       -        | Write address and data valid flag                         |
-| `O_SPI_TX_DATA`       | vector[7:0]  |    out    |      0x00      | Input vector containing the SPI data to be send           |
-| `O_SPI_TX_DATA_VALID` | std_logic    |    out    |      0b0       | Input vector containing the SPI data flag valid           |
-| `O_LED_0`             | std_logic    |    out    |      0b1       | LED 0 value                                               |
+| `O_READ_DATA_VALID`   | std_logic    |    out    | 0x00           | Read data valid flag                                      |
+| `I_WRITE_ADDR`        | vector[7:0]  |    in     | -              | Write address from the UART                               |
+| `I_WRITE_DATA`        | vector[15:0] |    in     | -              | Write data to be written at `I_WRITE_DATA`                |
+| `I_WRITE_VALID`       | std_logic    |    in     | -              | Write address and data valid flag                         |
+| `O_SPI_TX_DATA`       | vector[7:0]  |    out    | 0x00           | Input vector containing the SPI data to be send           |
+| `O_SPI_TX_DATA_VALID` | std_logic    |    out    | 0b0            | Input vector containing the SPI data flag valid           |
+| `O_LED_0`             | std_logic    |    out    | 0b1            | LED 0 value                                               |
+
+</div>
 
 ## Architecture
 
@@ -192,9 +200,13 @@ Internal register 1
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset  | Name | Description |
 | ---- | ------ | ---- | ----------- |
 | 15:0 | 0x1212 |      | Constant    |
+
+</div>
 
 ### REG_34
 
@@ -225,9 +237,13 @@ Internal register 2
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset  | Name | Description |
 | ---- | ------ | ---- | ----------- |
-| 15:0 | 0x3434 |      | Constant    |
+| 15:0 | 0x3434 | -    | Constant    |
+
+</div>
 
 ### REG_56
 
@@ -258,9 +274,13 @@ Internal register 3
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset  | Name | Description |
 | ---- | ------ | ---- | ----------- |
-| 15:0 | 0x5656 |      | Constant    |
+| 15:0 | 0x5656 | -    | Constant    |
+
+</div>
 
 ### REG_SPI_TX
 
@@ -309,11 +329,15 @@ SPI TX data register
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset | Name          | Description                      |
 | ---- | ----- | ------------- | -------------------------------- |
-| 15:9 | 0x0   |               | Reserved                         |
+| 15:9 | 0x0   | -             | Reserved                         |
 | 8    | 0x0   | TX_DATA_VALID | 0 -> 1 start the SPI transaction |
 | 7:0  | 0x0   | TX_DATA       | TX data to be sent               |
+
+</div>
 
 ### REG_SPI_RX
 
@@ -353,10 +377,14 @@ SPI RX data register
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset | Name    | Description                  |
 | ---- | ----- | ------- | ---------------------------- |
-| 15:8 | 0x0   |         | Reserved                     |
+| 15:8 | 0x0   | -       | Reserved                     |
 | 7:0  | 0x0   | RX_DATA | Received data from SPI slave |
+
+</div>
 
 ### REG_78
 
@@ -387,9 +415,13 @@ Internal register 4
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset  | Name | Description |
 | ---- | ------ | ---- | ----------- |
-| 15:0 | 0x7878 |      | Constant    |
+| 15:0 | 0x7878 | -    | Constant    |
+
+</div>
 
 ### REG_9A
 
@@ -420,9 +452,13 @@ Internal register 5
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset  | Name | Description |
 | ---- | ------ | ---- | ----------- |
-| 15:0 | 0x9A9A |      | Constant    |
+| 15:0 | 0x9A9A | -    | Constant    |
+
+</div>
 
 ### REG_CD
 
@@ -453,9 +489,13 @@ Internal register 6
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset  | Name | Description |
 | ---- | ------ | ---- | ----------- |
-| 15:0 | 0xCDCD |      | Constant    |
+| 15:0 | 0xCDCD | -    | Constant    |
+
+</div>
 
 ### REG_EF
 
@@ -486,9 +526,13 @@ Internal register 7
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset  | Name | Description |
 | ---- | ------ | ---- | ----------- |
-| 15:0 | 0xEFEF |      | Constant    |
+| 15:0 | 0xEFEF | -    | Constant    |
+
+</div>
 
 ### REG_SWITCHES
 
@@ -545,12 +589,16 @@ Register returning the status of the input switches
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset | Name     | Description                |
 | ---- | ----- | -------- | -------------------------- |
-| 15:3 | 0x0   |          | Reserved                   |
+| 15:3 | 0x0   | -        | Reserved                   |
 | 2    | 0x0   | SWITCH_2 | Signal from PAD_I_SWITCH_2 |
 | 1    | 0x0   | SWITCH_1 | Signal from PAD_I_SWITCH_1 |
 | 0    | 0x0   | SWITCH_0 | Signal from PAD_I_SWITCH_0 |
+
+</div>
 
 ### REG_LED
 
@@ -589,10 +637,14 @@ Register with LSB bit writable controlling an LED
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset | Name  | Description  |
 | ---- | ----- | ----- | ------------ |
-| 15:1 | 0x0   |       | Reserved     |
+| 15:1 | 0x0   | -     | Reserved     |
 | 0    | 0x1   | LED_0 | Writable bit |
+
+</div>
 
 ### REG_16_BITS
 
@@ -622,6 +674,10 @@ Register with all bits writable
 }
 </script>
 
+<div class="register-bits-table" markdown="1">
+
 | Bits | Reset | Name | Description                |
 | ---- | ----- | ---- | -------------------------- |
 | 15:0 | 0x0   | DATA | 16-bit writable data field |
+
+</div>

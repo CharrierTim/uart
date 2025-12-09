@@ -12,26 +12,34 @@ The following figure depicts the Top-Level:
 
 ## Generics
 
+<div class="generics-table" markdown="1">
+
 | Generic Name | Type         | Default Value | Description                                                                                                       |
 | ------------ | ------------ | ------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `G_GIT_ID`   | vector[31:0] | 0x0000        | Git ID containing the sources for the bitstream generation. Automatically set by the `run_synthesis. tcl` script. |
 
+</div>
+
 ## Inputs and Outputs
 
+<div class="ports-table" markdown="1">
+
 | Port Name        | Type      | Direction | Default Value | Description                           |
-| ---------------- | --------- | :-------: | :-----------: | ------------------------------------- |
-| `PAD_I_CLK`      | std_logic |    in     |       -       | Input clock                           |
-| `PAD_RST_H`      | std_logic |    in     |       -       | Input asynchronous reset, active high |
-| `PAD_I_UART_RX`  | std_logic |    in     |       -       | Input UART RX line                    |
-| `PAD_O_UART_TX`  | std_logic |    out    |      0b1      | Output UART TX line                   |
-| `PAD_O_SCLK`     | std_logic |    out    |      0b0      | Output SPI serial clock               |
-| `PAD_O_MOSI`     | std_logic |    out    |      0b0      | Output SPI Master Output Slave Input  |
-| `PAD_I_MISO`     | std_logic |    in     |       -       | Output SPI Master Input Slave Input   |
-| `PAD_O_CS`       | std_logic |    out    |      0b1      | Output SPI Chip Select                |
-| `PAD_I_SWITCH_0` | std_logic |    in     |       -       | Input switch 0                        |
-| `PAD_I_SWITCH_1` | std_logic |    in     |       -       | Input switch 1                        |
-| `PAD_I_SWITCH_2` | std_logic |    in     |       -       | Input switch 2                        |
-| `PAD_O_LED_0`    | std_logic |    out    |      0b1      | Output LED 0                          |
+| ---------------- | --------- | :-------: | ------------- | ------------------------------------- |
+| `PAD_I_CLK`      | std_logic |    in     | -             | Input clock                           |
+| `PAD_RST_H`      | std_logic |    in     | -             | Input asynchronous reset, active high |
+| `PAD_I_UART_RX`  | std_logic |    in     | -             | Input UART RX line                    |
+| `PAD_O_UART_TX`  | std_logic |    out    | 0b1           | Output UART TX line                   |
+| `PAD_O_SCLK`     | std_logic |    out    | 0b0           | Output SPI serial clock               |
+| `PAD_O_MOSI`     | std_logic |    out    | 0b0           | Output SPI Master Output Slave Input  |
+| `PAD_I_MISO`     | std_logic |    in     | -             | Output SPI Master Input Slave Input   |
+| `PAD_O_CS`       | std_logic |    out    | 0b1           | Output SPI Chip Select                |
+| `PAD_I_SWITCH_0` | std_logic |    in     | -             | Input switch 0                        |
+| `PAD_I_SWITCH_1` | std_logic |    in     | -             | Input switch 1                        |
+| `PAD_I_SWITCH_2` | std_logic |    in     | -             | Input switch 2                        |
+| `PAD_O_LED_0`    | std_logic |    out    | 0b1           | Output LED 0                          |
+
+</div>
 
 ## Architecture
 
@@ -49,14 +57,20 @@ PLL has achieved lock.
 
 The FPGA instantiates the [resync_slv](resync_slv/resync_slv.md) module with the following generics:
 
+<div class="generics-table" markdown="1">
+
 | Generic Name      | Type                   | Default Value | Description                        |
 | ----------------- | ---------------------- | ------------- | ---------------------------------- |
 | `G_WIDTH`         | positive               | 0d3           | Width of the input/output vector   |
 | `G_DEFAULT_VALUE` | vector [G_WIDTH - 1:0] | 0b000         | Default value of the output vector |
 
+</div>
+
 ### UART
 
 The FPGA instantiates the [uart](uart/uart.md) module with the following generics:
+
+<div class="generics-table" markdown="1">
 
 | Generic Name      | Type     | Default Value | Description                                    |
 | ----------------- | -------- | ------------- | ---------------------------------------------- |
@@ -65,18 +79,26 @@ The FPGA instantiates the [uart](uart/uart.md) module with the following generic
 | `G_SAMPLING_RATE` | positive | 0d16          | Sampling rate (number of clock cycles per bit) |
 | `G_NB_DATA_BITS`  | positive | 0d8           | Number of data bits                            |
 
+</div>
+
 ### Regfile
 
 The FPGA instantiates the [regfile](regfile/regfile.md) module with the following generics:
+
+<div class="generics-table" markdown="1">
 
 | Generic Name   | Type         | Default Value     | Description                                                              |
 | -------------- | ------------ | ----------------- | ------------------------------------------------------------------------ |
 | `G_GIT_ID_MSB` | vector[15:0] | `G_GIT_ID[31:16]` | 16 MSB of the git ID containing the sources for the bitstream generation |
 | `G_GIT_ID_LSB` | vector[15:0] | `G_GIT_ID[15:0]`  | 16 LSB of the git ID containing the sources for the bitstream generation |
 
+</div>
+
 ### SPI Master
 
 The FPGA instantiates the [spi_master](spi/spi_master.md) module with the following generics:
+
+<div class="generics-table" markdown="1">
 
 | Generic Name     | Type      | Default Value | Description                                    |
 | ---------------- | --------- | ------------- | ---------------------------------------------- |
@@ -85,3 +107,5 @@ The FPGA instantiates the [spi_master](spi/spi_master.md) module with the follow
 | `G_NB_DATA_BITS` | positive  | 0d8           | Number of data bits within the SPI transaction |
 | `G_CLK_POLARITY` | std_logic | 0b0           | Generated SPI clock polarity                   |
 | `G_CLK_PHASE`    | std_logic | 0b0           | Generated SPI clock phase                      |
+
+</div>

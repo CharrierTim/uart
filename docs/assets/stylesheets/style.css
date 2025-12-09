@@ -9,6 +9,7 @@ td {
     border-top: none;
     word-wrap: break-word;
     word-break: break-word;
+    vertical-align: middle;
 }
 
 .md-typeset__table {
@@ -24,7 +25,7 @@ td {
 .md-typeset__table table:not([class]) {
     font-size: 0.74rem;
     border-right: none;
-    width: 100% !important;
+    width: 100%;
     table-layout: auto;
     display: table;
 }
@@ -34,6 +35,110 @@ td {
     padding: 9px;
     word-wrap: break-word;
     word-break: break-word;
+    vertical-align: middle;
+}
+
+/*
+ Register bit description tables
+*/
+.register-bits-table table {
+    table-layout: fixed ! important;
+    width: 100%;
+}
+
+/* Bits */
+.register-bits-table table th:nth-child(1),
+.register-bits-table table td:nth-child(1) {
+    width: 15%;
+}
+
+/* Reset */
+.register-bits-table table th:nth-child(2),
+.register-bits-table table td:nth-child(2) {
+    width: 15%;
+}
+
+/* Name */
+.register-bits-table table th:nth-child(3),
+.register-bits-table table td:nth-child(3) {
+    width: 25%;
+}
+
+/* Description */
+.register-bits-table table th:nth-child(4),
+.register-bits-table table td:nth-child(4) {
+    width: 45%;
+}
+
+/*
+ Generics table
+*/
+.generics-table table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Generic Name */
+.generics-table table th:nth-child(1),
+.generics-table table td:nth-child(1) {
+    width: 20%;
+}
+
+/* Type */
+.generics-table table th:nth-child(2),
+.generics-table table td:nth-child(2) {
+    width: 15%;
+}
+
+/* Default Value */
+.generics-table table th:nth-child(3),
+.generics-table table td:nth-child(3) {
+    width: 20%;
+}
+
+/* Description */
+.generics-table table th:nth-child(4),
+.generics-table table td:nth-child(4) {
+    width: 45%;
+}
+
+/*
+ Ports table
+*/
+.ports-table table {
+    table-layout: fixed ! important;
+    width: 100%;
+}
+
+/* Port Name */
+.ports-table table th:nth-child(1),
+.ports-table table td:nth-child(1) {
+    width: 20%;
+}
+
+/* Type */
+.ports-table table th:nth-child(2),
+.ports-table table td:nth-child(2) {
+    width: 15%;
+}
+
+/* Direction */
+.ports-table table th:nth-child(3),
+.ports-table table td:nth-child(3) {
+    width: 10%;
+    text-align: center;
+}
+
+/* Default Value */
+.ports-table table th:nth-child(4),
+.ports-table table td:nth-child(4) {
+    width: 13%;
+}
+
+/* Description */
+.ports-table table th:nth-child(5),
+.ports-table table td:nth-child(5) {
+    width: 42%;
 }
 
 /* light mode alternating table bg colors */
@@ -48,19 +153,19 @@ td {
 
 /* Navigation */
 .md-nav__title {
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.7rem;
 }
 
 /* Tables */
 .md-typeset table:not([class]) {
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: table;
+    overflow: hidden;
     table-layout: auto;
     width: 100% ! important;
-    display: table;
 }
 
 /* Code blocks */
