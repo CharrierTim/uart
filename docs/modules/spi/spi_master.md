@@ -4,6 +4,8 @@
 
 ## Generics
 
+<div class="generics-table" markdown="1">
+
 | Generic Name     | Type      | Default Value | Description                                    |
 | ---------------- | --------- | ------------- | ---------------------------------------------- |
 | `G_CLK_FREQ_HZ`  | positive  | 0d50_000_000  | Clock frequency in Hz of `internal_clk`        |
@@ -12,20 +14,26 @@
 | `G_CLK_POLARITY` | std_logic | 0b0           | Generated SPI clock polarity                   |
 | `G_CLK_PHASE`    | std_logic | 0b0           | Generated SPI clock phase                      |
 
+</div>
+
 ## Inputs and Outputs
 
-| Port Name         | Type                       | Direction |  Default Value   | Description                                                                         |
-| ----------------- | -------------------------- | :-------: | :--------------: | ----------------------------------------------------------------------------------- |
-| `CLK`             | std_logic                  |    in     |        -         | Input clock                                                                         |
-| `RST_N`           | std_logic                  |    in     |        -         | Input asynchronous reset, active low                                                |
+<div class="ports-table" markdown="1">
+
+| Port Name         | Type                       | Direction | Default Value    | Description                                                                         |
+| ----------------- | -------------------------- | :-------: | ---------------- | ----------------------------------------------------------------------------------- |
+| `CLK`             | std_logic                  |    in     | -                | Input clock                                                                         |
+| `RST_N`           | std_logic                  |    in     | -                | Input asynchronous reset, active low                                                |
 | `O_SCLK`          | std_logic                  |    out    | `G_CLK_POLARITY` | Output SPI serial clock                                                             |
-| `O_MOSI`          | std_logic                  |    out    |       0b0        | Output Master Out Slave In                                                          |
-| `I_MISO`          | std_logic                  |    in     |        -         | Input Master In Slave Out                                                           |
-| `O_CS`            | std_logic                  |    out    |       0b1        | Output chip select                                                                  |
-| `I_TX_DATA`       | vector[G_NB_DATA_BITS-1:0] |    in     |        -         | Data to be sent                                                                     |
-| `I_TX_DATA_VALID` | std_logic                  |    in     |        -         | Data to be sent flag valid. Must be a rising edge to start the transaction (0 -> 1) |
-| `O_TX_DATA`       | vector[G_NB_DATA_BITS-1:0] |    out    |       0x00       | Data received from the slave                                                        |
-| `O_TX_DATA_VALID` | std_logic                  |    out    |       0b0        | Data Data received from the slave flag valid                                        |
+| `O_MOSI`          | std_logic                  |    out    | 0b0              | Output Master Out Slave In                                                          |
+| `I_MISO`          | std_logic                  |    in     | -                | Input Master In Slave Out                                                           |
+| `O_CS`            | std_logic                  |    out    | 0b1              | Output chip select                                                                  |
+| `I_TX_DATA`       | vector[G_NB_DATA_BITS-1:0] |    in     | -                | Data to be sent                                                                     |
+| `I_TX_DATA_VALID` | std_logic                  |    in     | -                | Data to be sent flag valid. Must be a rising edge to start the transaction (0 -> 1) |
+| `O_TX_DATA`       | vector[G_NB_DATA_BITS-1:0] |    out    | 0x00             | Data received from the slave                                                        |
+| `O_TX_DATA_VALID` | std_logic                  |    out    | 0b0              | Data Data received from the slave flag valid                                        |
+
+</div>
 
 ## Architecture
 
