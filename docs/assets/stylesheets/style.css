@@ -122,3 +122,9 @@ html {
     max-width: 100%;
     height: auto;
 }
+
+/* Wavedrom */
+
+div[id^="WaveDrom_Display"]>svg {
+    width: 100%;
+}
