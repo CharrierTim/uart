@@ -9,96 +9,96 @@ repo_url: https://github.com/CharrierTim/uart
 edit_uri: edit/main/docs/
 
 theme:
-  name: material
+    name: material
 
-  palette:
-    # Palette toggle for light mode
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
+    palette:
+        # Palette toggle for light mode
+        - media: "(prefers-color-scheme: light)"
+          scheme: default
+          toggle:
+              icon: material/brightness-7
+              name: Switch to dark mode
 
-    # Palette toggle for dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
+        # Palette toggle for dark mode
+        - media: "(prefers-color-scheme: dark)"
+          scheme: slate
+          toggle:
+              icon: material/brightness-4
+              name: Switch to light mode
 
-  font:
-    text: Inter
-    code: Fira Code
+    font:
+        text: Inter
+        code: Fira Code
 
-  features:
-    - announce.dismiss
-    - content.code.annotate
-    - content.code.copy
-    - content.tabs.link
-    - header.autohide
-    - navigation.instant
-    - navigation.instant.prefetch
-    - navigation.instant.preview
-    - navigation.instant.progress
-    - navigation.path
-    - navigation.sections
-    - navigation.tabs
-    - navigation.top
-    - navigation.tracking
-    - search.suggest
-    - toc.integrate
+    features:
+        - announce.dismiss
+        - content.code.annotate
+        - content.code.copy
+        - content.tabs.link
+        - header.autohide
+        - navigation.instant
+        - navigation.instant.prefetch
+        - navigation.instant.preview
+        - navigation.instant.progress
+        - navigation.path
+        - navigation.sections
+        - navigation.tabs
+        - navigation.top
+        - navigation.tracking
+        - search.suggest
+        - toc.integrate
 
 plugins:
-  - drawio
-  - search
+    - drawio
+    - search
 
 markdown_extensions:
-  # Figures
-  - attr_list
-  - md_in_html
-  # Tables
-  - admonition
-  - pymdownx.details
-  - pymdownx.superfences
-  # Formatting
-  - pymdownx.critic
-  - pymdownx.caret
-  - pymdownx.keys
-  - pymdownx.mark
-  - pymdownx.tilde
-  - toc:
-      permalink: true
-      toc_depth: 3
-  # Mathjax
-  - pymdownx.arithmatex:
-      generic: true
+    # Figures
+    - attr_list
+    - md_in_html
+    # Tables
+    - admonition
+    - pymdownx.details
+    - pymdownx.superfences
+    # Formatting
+    - pymdownx.critic
+    - pymdownx.caret
+    - pymdownx.keys
+    - pymdownx.mark
+    - pymdownx.tilde
+    - toc:
+          permalink: true
+          toc_depth: 3
+    # Mathjax
+    - pymdownx.arithmatex:
+          generic: true
 
 extra_javascript:
-  # Drawio
-  - https://viewer.diagrams.net/js/viewer-static.min.js
-  # Wavedrom
-  - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js
-  - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js
-  # Events
-  - assets/javascripts/onload-events.js
-  # Mathjax
-  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-chtml.min.js
+    # Drawio
+    - https://viewer.diagrams.net/js/viewer-static.min.js
+    # Wavedrom
+    - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js
+    - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js
+    # Events
+    - assets/javascripts/onload-events.js
+    # Mathjax
+    - https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-chtml.min.js
 
 extra_css:
-  - assets/stylesheets/style.css
+    - assets/stylesheets/style.css
 
 nav:
-  - Home: index.md
-  - Modules:
-      - Top FPGA: modules/top_fpga.md
-      - Resynchronisation: modules/resync_slv/resync_slv.md
-      - Internal Registers: modules/regfile/regfile.md
-      - UART:
-          - UART Top: modules/uart/uart.md
-          - UART RX: modules/uart/uart_rx.md
-          - UART TX: modules/uart/uart_tx.md
-      - SPI:
-          - SPI Master: modules/spi/spi_master.md
-  - Testbench:
-      - Top FPGA TB: modules/testbench/tb_top_fpga.md
-      - Testcases: modules/testbench/testcases.md
+    - Home: index.md
+    - Modules:
+          - Top FPGA: modules/top_fpga.md
+          - Resynchronisation: modules/resync_slv/resync_slv.md
+          - Internal Registers: modules/regfile/regfile.md
+          - UART:
+                - UART Top: modules/uart/uart.md
+                - UART RX: modules/uart/uart_rx.md
+                - UART TX: modules/uart/uart_tx.md
+          - SPI:
+                - SPI Master: modules/spi/spi_master.md
+    - Testbench:
+          - Top FPGA TB: modules/testbench/tb_top_fpga.md
+          - Testcases: modules/testbench/testcases.md

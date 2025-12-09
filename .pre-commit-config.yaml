@@ -1,47 +1,47 @@
 ci:
-  autofix_commit_msg: |
-    [pre-commit.ci] auto fixes from pre-commit.com hooks
+    autofix_commit_msg: |
+        [pre-commit.ci] auto fixes from pre-commit.com hooks
 
-    for more information, see https://pre-commit.ci
-  autofix_prs: true
-  autoupdate_branch: ""
-  autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
-  autoupdate_schedule: weekly
-  skip: []
-  submodules: false
+        for more information, see https://pre-commit.ci
+    autofix_prs: true
+    autoupdate_branch: ""
+    autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
+    autoupdate_schedule: weekly
+    skip: []
+    submodules: false
 
 exclude: "^(cores|bench/models/spi)/"
 
 repos:
-  # Simple hooks
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
-    hooks:
-      - id: check-toml
-      - id: check-yaml
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
+    # Simple hooks
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v6.0.0
+      hooks:
+          - id: check-toml
+          - id: check-yaml
+          - id: end-of-file-fixer
+          - id: trailing-whitespace
 
-  # Python hooks
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.5
-    hooks:
-      - id: ruff-check
-        args: [--fix]
-      - id: ruff-format
-        args: [--config=pyproject.toml]
+    # Python hooks
+    - repo: https://github.com/astral-sh/ruff-pre-commit
+      rev: v0.14.5
+      hooks:
+          - id: ruff-check
+            args: [--fix]
+          - id: ruff-format
+            args: [--config=pyproject.toml]
 
-  # VHDL hooks
-  - repo: https://github.com/jeremiah-c-leary/vhdl-style-guide
-    rev: 3.35.0
-    hooks:
-      - id: vsg
-        args:
-          - --jobs=4
-          - --configuration=lint/config/.vsg.yaml
+    # VHDL hooks
+    - repo: https://github.com/jeremiah-c-leary/vhdl-style-guide
+      rev: 3.35.0
+      hooks:
+          - id: vsg
+            args:
+                - --jobs=4
+                - --configuration=lint/config/.vsg.yaml
 
-  - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.19.1
-    hooks:
-      - id: markdownlint-cli2
-        args: ["--fix", "--config", "lint/config/.markdownlint.yaml"]
+    - repo: https://github.com/DavidAnson/markdownlint-cli2
+      rev: v0.19.1
+      hooks:
+          - id: markdownlint-cli2
+            args: ["--fix", "--config", "lint/config/.markdownlint.yaml"]
