@@ -2,7 +2,7 @@
   agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0"
   version="29.2.6" pages="14">
   <diagram id="VXn7_M9BMxV6lNuz-75-" name="TB-TOP-FPGA">
-    <mxGraphModel dx="1964" dy="1246" grid="1" gridSize="10" guides="1" tooltips="1" connect="1"
+    <mxGraphModel dx="1146" dy="727" grid="1" gridSize="10" guides="1" tooltips="1" connect="1"
       arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100"
       background="#ffffff" math="0" shadow="0">
       <root>
@@ -115,14 +115,14 @@
         </mxCell>
         <mxCell id="wgcRzAJ0XkuH95rPZ6uX-7" edge="1" parent="uyGmxWjzZkRS6RiGU_AN-9"
           source="wgcRzAJ0XkuH95rPZ6uX-6"
-          style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;"
           target="pYy2gVCoc0W5W8BJ8JkG-1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wgcRzAJ0XkuH95rPZ6uX-6" parent="uyGmxWjzZkRS6RiGU_AN-9"
           style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#000000;gradientDirection=north;strokeWidth=2;imageHeight=24;arcSize=3;textShadow=0;labelBorderColor=none;labelBackgroundColor=none;fontSize=14;fontStyle=1;gradientColor=#FFFFFF;container=0;"
           value="p_check_spi timings" vertex="1">
-          <mxGeometry height="70" width="130" x="37" y="175" as="geometry" />
+          <mxGeometry height="70" width="130" x="47" y="175" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
