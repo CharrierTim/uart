@@ -37,7 +37,7 @@ The oversampling clock divider generates a tick (`rx_baud_tick`) at the oversamp
 16× oversampling and 115200 baud:
 
 $$
-f_{oversample} = 115200 \times 16 = 1.8432\text{ MHz}
+f_{oversample} = 115200 \times 16 = 1.8432\mathrm{ MHz}
 $$
 
 The clock divider is enabled during active reception and reset during idle to ensure proper synchronization with
@@ -118,7 +118,7 @@ Legend:
 The mid-bit sample point is calculated as:
 
 $$
-\text{mid bit} = \frac{\text{G_BAUD_RATE_BPS} - 1}{2}
+\mathrm{mid bit} = \frac{\mathrm{G}\_\mathrm{BAUD}\_\mathrm{RATE}\_\mathrm{BPS} - 1}{2}
 $$
 
 ### Bit Counter
@@ -164,7 +164,8 @@ glitches or noise.
 The module then waits for the following time before going back to idle and accept new RX requests:
 
 $$
-\text{RECOVERY_PERIOD} = \text{G_SAMPLING_RATE} \times (\text{G_NB_DATA_BITS} + 1)
+\mathrm{RECOVERY}\_\mathrm{PERIOD} = \mathrm{G}\_\mathrm{SAMPLING}\_\mathrm{RATE} \times
+(\mathrm{G}\_\mathrm{NB}\_\mathrm{DATA}\_\mathrm{BITS} + 1)
 $$
 
 This represents the time for almost one complete UART frame (data bits + stop bit) at the configured baud rate.
