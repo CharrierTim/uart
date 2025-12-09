@@ -25,6 +25,8 @@
 The UART transmitter consists of three main components that work together to serialize and transmit data at the
 configured baud rate.
 
+![UART Architecture](../../assets/uart.drawio){ page="UART-TX" }
+
 ### Clock Divider
 
 A clock operating at the baud rate is generated internally to control the bit timing. This clock is activated when the

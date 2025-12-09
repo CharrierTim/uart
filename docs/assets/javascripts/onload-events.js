@@ -1,14 +1,18 @@
-// Drawio
+// Subscribe to MkDocs navigation events
 document$.subscribe(({ body }) => {
-    GraphViewer.processElements()
-})
+    // Process Drawio
+    GraphViewer.processElements();
 
-// Wavedrom
-window.addEventListener("load", function () {
+    // Process WaveDrom
     WaveDrom.ProcessAll();
+
+    // Process MathJax
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([body]).catch((err) => console.error('MathJax error:', err));
+    }
 });
 
-// Mathjax
+// MathJax Configuration
 window.MathJax = {
     tex: {
         inlineMath: [["\\(", "\\)"]],
