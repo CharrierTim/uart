@@ -77,12 +77,12 @@ extra_javascript:
   # Drawio
   - https://viewer.diagrams.net/js/viewer-static.min.js
   # Wavedrom
-  - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.1.0/skins/default.js
-  - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.1.0/wavedrom.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js
+  - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js
   # Events
   - assets/javascripts/onload-events.js
   # Mathjax
-  - https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js
+  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-chtml.min.js
 
 extra_css:
   - assets/stylesheets/style.css
