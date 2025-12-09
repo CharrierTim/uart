@@ -1,50 +1,50 @@
 name: HDL-check
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "sources/**/*.vhd"
-      - "bench/**/*.vhd"
-      - "lint/**"
-      - ".github/workflows/hdl-check.yml"
-      - ".github/actions/setup-environment/**"
-  pull_request:
-    paths:
-      - "sources/**/*.vhd"
-      - "bench/**/*.vhd"
-      - "lint/**"
-      - ".github/workflows/hdl-check.yml"
-      - ".github/actions/setup-environment/**"
+    push:
+        branches:
+            - main
+        paths:
+            - "sources/**/*.vhd"
+            - "bench/**/*.vhd"
+            - "lint/**"
+            - ".github/workflows/hdl-check.yml"
+            - ".github/actions/setup-environment/**"
+    pull_request:
+        paths:
+            - "sources/**/*.vhd"
+            - "bench/**/*.vhd"
+            - "lint/**"
+            - ".github/workflows/hdl-check.yml"
+            - ".github/actions/setup-environment/**"
 
 jobs:
-  linting:
-    runs-on: ubuntu-latest
-    steps:
-      # General Setup
-      - name: Setup node
-        uses: actions/setup-node@v6
-      - name: Checkout repo
-        uses: actions/checkout@v6
+    linting:
+        runs-on: ubuntu-latest
+        steps:
+            # General Setup
+            - name: Setup node
+              uses: actions/setup-node@v6
+            - name: Checkout repo
+              uses: actions/checkout@v6
 
-      # Setup environment
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
-        with:
-          os: ${{ runner.os }}
+            # Setup environment
+            - name: Setup environment
+              uses: ./.github/actions/setup-environment
+              with:
+                  os: ${{ runner.os }}
 
-      # Run Linting
-      - name: Run Linting
-        shell: bash
-        run: |
-          cd ./lint/script
-          python3 lint.py
+            # Run Linting
+            - name: Run Linting
+              shell: bash
+              run: |
+                  cd ./lint/script
+                  python3 lint.py
 
-      # Upload Linting results
-      - name: Upload Linting results
-        if: always()
-        uses: actions/upload-artifact@v5
-        with:
-          name: linting-artifacts
-          path: |
-            lint/report/vsg_vhdl.xml
+            # Upload Linting results
+            - name: Upload Linting results
+              if: always()
+              uses: actions/upload-artifact@v5
+              with:
+                  name: linting-artifacts
+                  path: |
+                      lint/report/vsg_vhdl.xml
