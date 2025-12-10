@@ -23,10 +23,17 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Top-Level of the FPGA
 -- @author  Timothee Charrier
--- @date    01/12/2025
+-- @date    10/12/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      01/12/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Remove generic from UART module
 -- =====================================================================================================================
 
 library ieee;
@@ -82,7 +89,6 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     constant C_CLK_FREQ_HZ          : positive := 50_000_000;
     constant C_BAUD_RATE_BPS        : positive := 115_200;
     constant C_SAMPLING_RATE        : positive := 16;
-    constant C_UART_NB_DATA_BITS    : positive := 8;
 
     -- SPI
     constant C_SPI_FREQ_HZ          : positive  := 1_000_000;
@@ -183,8 +189,7 @@ begin
         generic map (
             G_CLK_FREQ_HZ   => C_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => C_BAUD_RATE_BPS,
-            G_SAMPLING_RATE => C_SAMPLING_RATE,
-            G_NB_DATA_BITS  => C_UART_NB_DATA_BITS
+            G_SAMPLING_RATE => C_SAMPLING_RATE
         )
         port map (
             CLK               => internal_clk,

@@ -33,7 +33,7 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      21/10/2025  Timothee Charrier   Initial release
--- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
+-- 1.1      10/12/2025  Timothee Charrier   Naming conventions update and remove generic
 -- =====================================================================================================================
 
 library ieee;
@@ -50,8 +50,7 @@ entity UART is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
         G_BAUD_RATE_BPS : positive := 115_200;    -- Baud rate
-        G_SAMPLING_RATE : positive := 16;         -- Sampling rate (number of clock cycles per bit)
-        G_NB_DATA_BITS  : positive := 8           -- Number of data bits
+        G_SAMPLING_RATE : positive := 16          -- Sampling rate (number of clock cycles per bit)
     );
     port (
         -- Clock and reset
@@ -218,8 +217,7 @@ begin
         generic map (
             G_CLK_FREQ_HZ   => G_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => G_BAUD_RATE_BPS,
-            G_SAMPLING_RATE => G_SAMPLING_RATE,
-            G_NB_DATA_BITS  => G_NB_DATA_BITS
+            G_SAMPLING_RATE => G_SAMPLING_RATE
         )
         port map (
             CLK               => CLK,

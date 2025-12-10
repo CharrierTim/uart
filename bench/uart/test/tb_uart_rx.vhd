@@ -23,10 +23,17 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_uart_rx.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   UART RX Testbench.
 -- @author  Timothee Charrier
--- @date    28/11/2025
+-- @date    10/12/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      28/11/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Naming conventions update and remove generic
 -- =====================================================================================================================
 
 library ieee;
@@ -99,8 +106,7 @@ begin
         generic map (
             G_CLK_FREQ_HZ   => C_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => C_BAUD_RATE_BPS,
-            G_SAMPLING_RATE => C_SAMPLING_RATE,
-            G_NB_DATA_BITS  => C_NB_DATA_BITS
+            G_SAMPLING_RATE => C_SAMPLING_RATE
         )
         port map (
             CLK               => tb_clk,
