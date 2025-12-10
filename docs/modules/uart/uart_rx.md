@@ -11,7 +11,6 @@
 | `G_CLK_FREQ_HZ`   | positive | 0d50_000_000  | Clock frequency in Hz of `CLK`                 |
 | `G_BAUD_RATE_BPS` | positive | 0d115_200     | Baud rate in bps                               |
 | `G_SAMPLING_RATE` | positive | 0d16          | Sampling rate (number of clock cycles per bit) |
-| `G_NB_DATA_BITS`  | positive | 0d8           | Number of data bits                            |
 
 </div>
 
@@ -133,7 +132,7 @@ $$
 
 ### Bit Counter
 
-The `data_counter` counter tracks how many data bits have been received.
+The `bit_counter` counter tracks how many data bits have been received.
 
 ### Data Shift Register
 
@@ -141,7 +140,7 @@ The `next_o_byte` register accumulates the incoming data bits.
 
 #### Shifting Operation
 
-Data is received **LSB first** (UART standard). Each new bit is shifted in from the left (MSB side):
+Data is received **MSB first** (UART standard). Each new bit is shifted in from the left:
 
 ```vhdl
 next_o_byte <= uart_rx_sampled_bit & next_o_byte(7 downto 1);
@@ -195,7 +194,7 @@ Where the following transitions are defined:
 | T2         | Automatic                                                                                                                              |
 | T3         | `recovery_elapsed = 1`                                                                                                                 |
 | T4         | `rx_baud_tick = 1` **AND** `oversampling_counter = G_SAMPLING_RATE - 1` **AND** `uart_rx_sampled_bit = 0` (valid start bit = 0)        |
-| T5         | `rx_baud_tick = 1` **AND** `oversampling_counter = G_SAMPLING_RATE - 1` **AND** `data_counter = G_NB_DATA_BITS - 1`                    |
+| T5         | `rx_baud_tick = 1` **AND** `oversampling_counter = G_SAMPLING_RATE - 1` **AND** `bit_counter = O_BYTE'length - 1`                      |
 | T6         | `rx_baud_tick = 1` **AND** `oversampling_counter = C_THREE_QUARTER_POINT - 1` **AND** `uart_rx_sampled_bit = 0` (invalid stop bit = 0) |
 | T7         | Automatic                                                                                                                              |
 | T8         | `rx_baud_tick = 1` **AND** `oversampling_counter = C_THREE_QUARTER_POINT - 1` **AND** `uart_rx_sampled_bit = 1` (valid stop bit = 1)   |
