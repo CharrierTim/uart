@@ -92,56 +92,56 @@ architecture UART_RX_ARCH of UART_RX is
     -- =================================================================================================================
 
     -- UART RX clock
-    constant C_RX_CLK_DIV_RATIO        : integer := G_CLK_FREQ_HZ / (G_BAUD_RATE_BPS * G_SAMPLING_RATE);
-    constant C_SAMPLE_COUNTER_WIDTH    : integer := integer(ceil(log2(real(C_RX_CLK_DIV_RATIO))));
+    constant C_RX_CLK_DIV_RATIO         : integer := G_CLK_FREQ_HZ / (G_BAUD_RATE_BPS * G_SAMPLING_RATE);
+    constant C_SAMPLE_COUNTER_WIDTH     : integer := integer(ceil(log2(real(C_RX_CLK_DIV_RATIO))));
 
     -- Sampling constants
-    constant C_OVERSAMPLE_COUNTERWIDTH : integer := integer(ceil(log2(real(G_SAMPLING_RATE))));
-    constant C_MID_SAMPLE_POINT        : integer := G_SAMPLING_RATE / 2;
-    constant C_THREE_QUARTER_POINT     : integer := (G_SAMPLING_RATE * 3) / 4;
+    constant C_OVERSAMPLE_COUNTER_WIDTH : integer := integer(ceil(log2(real(G_SAMPLING_RATE))));
+    constant C_MID_SAMPLE_POINT         : integer := G_SAMPLING_RATE / 2;
+    constant C_THREE_QUARTER_POINT      : integer := (G_SAMPLING_RATE * 3) / 4;
 
     -- Counter bit width
-    constant C_BIT_COUNTER_WIDTH       : integer := integer(ceil(log2(real(O_BYTE'length))));
+    constant C_BIT_COUNTER_WIDTH        : integer := integer(ceil(log2(real(O_BYTE'length))));
 
     -- Recovery constants
-    constant C_NB_RECOVERY_BITS        : integer := O_BYTE'length + 1; -- Data bits + stop bit
-    constant C_RECOVERY_PERIOD         : integer := G_SAMPLING_RATE * C_NB_RECOVERY_BITS;
-    constant C_RECOVERY_COUNTER_WIDTH  : integer := integer(ceil(log2(real(C_RECOVERY_PERIOD))));
+    constant C_NB_RECOVERY_BITS         : integer := O_BYTE'length + 1; -- Data bits + stop bit
+    constant C_RECOVERY_PERIOD          : integer := G_SAMPLING_RATE * C_NB_RECOVERY_BITS;
+    constant C_RECOVERY_COUNTER_WIDTH   : integer := integer(ceil(log2(real(C_RECOVERY_PERIOD))));
 
     -- =================================================================================================================
     -- SIGNAL
     -- =================================================================================================================
 
     -- Baud rate generators
-    signal rx_baud_counter             : unsigned(C_SAMPLE_COUNTER_WIDTH - 1 downto 0);
-    signal rx_baud_tick                : std_logic;
+    signal rx_baud_counter              : unsigned(C_SAMPLE_COUNTER_WIDTH - 1 downto 0);
+    signal rx_baud_tick                 : std_logic;
 
     -- Sample count
-    signal oversample_counter          : unsigned(C_OVERSAMPLE_COUNTERWIDTH - 1 downto 0);
+    signal oversample_counter           : unsigned(C_OVERSAMPLE_COUNTER_WIDTH - 1 downto 0);
 
     -- Bit count
-    signal bit_counter                 : unsigned(C_BIT_COUNTER_WIDTH  - 1 downto 0);
+    signal bit_counter                  : unsigned(C_BIT_COUNTER_WIDTH  - 1 downto 0);
 
     -- Recovery locked counter
-    signal recovery_counter            : unsigned(C_RECOVERY_COUNTER_WIDTH - 1 downto 0);
-    signal recovery_elapsed            : std_logic;
+    signal recovery_counter             : unsigned(C_RECOVERY_COUNTER_WIDTH - 1 downto 0);
+    signal recovery_elapsed             : std_logic;
 
     -- Clock Domain Crossing and Filtering (4-stage shift register: 2 for metastability + 2 for filtering)
-    signal i_uart_rx_sr                : std_logic_vector(4 - 1 downto 0);
-    signal i_uart_rx_filtered          : std_logic;
-    signal i_uart_rx_filtered_d1       : std_logic;
+    signal i_uart_rx_sr                 : std_logic_vector(4 - 1 downto 0);
+    signal i_uart_rx_filtered           : std_logic;
+    signal i_uart_rx_filtered_d1        : std_logic;
 
     -- Bit tick
-    signal uart_rx_sampled_bit         : std_logic;
+    signal uart_rx_sampled_bit          : std_logic;
 
     -- FSM
-    signal current_state               : t_state;
-    signal next_state                  : t_state;
-    signal next_start_bit_error        : std_logic;
-    signal next_stop_bit_error         : std_logic;
-    signal next_o_byte_valid           : std_logic;
-    signal next_o_byte_update          : std_logic;
-    signal next_o_byte                 : std_logic_vector(8 - 1 downto 0);
+    signal current_state                : t_state;
+    signal next_state                   : t_state;
+    signal next_start_bit_error         : std_logic;
+    signal next_stop_bit_error          : std_logic;
+    signal next_o_byte_valid            : std_logic;
+    signal next_o_byte_update           : std_logic;
+    signal next_o_byte                  : std_logic_vector(8 - 1 downto 0);
 
 begin
 
