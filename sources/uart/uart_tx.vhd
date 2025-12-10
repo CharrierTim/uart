@@ -94,15 +94,17 @@ architecture UART_TX_ARCH of UART_TX is
     -- SIGNAL
     -- =================================================================================================================
 
-    -- Baud rate generators
+    -- Baud rate generator
     signal tx_baud_counter        : unsigned(C_BAUD_COUNTER_WIDTH - 1 downto 0);
-    signal bit_counter            : unsigned(C_BIT_COUNTER_WIDTH - 1 downto 0);
 
     -- FSM signals
     signal current_state          : t_state;
     signal next_state             : t_state;
     signal next_o_uart_tx         : std_logic;
     signal next_o_done            : std_logic;
+
+    -- Bit count
+    signal bit_counter            : unsigned(C_BIT_COUNTER_WIDTH - 1 downto 0);
 
     -- Data register
     signal reg_tx_data            : std_logic_vector(C_NB_TX_BITS - 1 downto 0);
