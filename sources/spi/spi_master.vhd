@@ -112,6 +112,9 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     constant C_HALF_PERIOD_CYCLES  : positive := G_CLK_FREQ_HZ / G_SPI_FREQ_HZ / 2;
     constant C_COUNTER_WIDTH       : positive := positive(ceil(log2(real(C_HALF_PERIOD_CYCLES))));
 
+    -- Resynchronization
+    constant C_RESYNC_STAGES       : positive := 2;
+
     -- Bit counter
     constant C_BIT_COUNTER_WIDTH   : positive := positive(ceil(log2(real(G_NB_DATA_BITS))));
 
@@ -143,7 +146,7 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
 
     -- Internal registers
     signal reg_i_tx_data_valid_d1  : std_logic;
-    signal reg_resync_i_miso       : std_logic_vector(2 - 1 downto 0);
+    signal reg_resync_i_miso       : std_logic_vector(C_RESYNC_STAGES - 1 downto 0);
     signal reg_i_tx_data           : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
     signal reg_o_rx_data_sr        : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
 
