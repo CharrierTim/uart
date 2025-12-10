@@ -37,6 +37,8 @@
 
 ## Architecture
 
+![SPI Master Architecture](../../assets/uart.drawio){ page="SPI-MASTER" }
+
 ### Configurations
 
 The SPI master supports all four standard SPI modes, determined by the Clock Polarity (CPOL) and Clock Phase (CPHA) settings:
