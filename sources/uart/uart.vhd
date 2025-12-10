@@ -23,10 +23,17 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    uart.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Top-level UART module, implementing both TX and RX functionalities with a custom protocol
 -- @author  Timothee Charrier
--- @date    21/10/2025
+-- @date    10/12/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      21/10/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
 -- =====================================================================================================================
 
 library ieee;
@@ -171,12 +178,12 @@ begin
             G_BAUD_RATE_BPS => G_BAUD_RATE_BPS
         )
         port map (
-            CLK          => CLK,
-            RST_N        => RST_N,
-            I_BYTE       => tx_byte_to_send_encoded,
-            I_BYTE_VALID => tx_byte_to_send_valid,
-            O_UART_TX    => O_UART_TX,
-            O_DONE       => tx_byte_send
+            CLK             => CLK,
+            RST_N           => RST_N,
+            I_TX_DATA       => tx_byte_to_send_encoded,
+            I_TX_DATA_VALID => tx_byte_to_send_valid,
+            O_UART_TX       => O_UART_TX,
+            O_DONE          => tx_byte_send
         );
 
     -- =================================================================================================================

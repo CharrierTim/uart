@@ -23,10 +23,17 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_uart_tx.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   UART TX Testbench.
 -- @author  Timothee Charrier
--- @date    28/11/2025
+-- @date    10/12/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      28/11/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
 -- =====================================================================================================================
 
 library ieee;
@@ -79,8 +86,8 @@ architecture TB_UART_TX_ARCH of TB_UART_TX is
     -- DUT signals
     signal tb_clk                   : std_logic;
     signal tb_rst_n                 : std_logic;
-    signal tb_i_byte                : std_logic_vector(8 - 1 downto 0);
-    signal tb_i_byte_valid          : std_logic;
+    signal tb_i_tx_data             : std_logic_vector(8 - 1 downto 0);
+    signal tb_i_tx_data_valid       : std_logic;
     signal tb_o_uart_tx             : std_logic;
     signal tb_o_done                : std_logic;
 
@@ -99,12 +106,12 @@ begin
             G_BAUD_RATE_BPS => C_BAUD_RATE_BPS
         )
         port map (
-            CLK          => tb_clk,
-            RST_N        => tb_rst_n,
-            I_BYTE       => tb_i_byte,
-            I_BYTE_VALID => tb_i_byte_valid,
-            O_UART_TX    => tb_o_uart_tx,
-            O_DONE       => tb_o_done
+            CLK             => tb_clk,
+            RST_N           => tb_rst_n,
+            I_TX_DATA       => tb_i_tx_data,
+            I_TX_DATA_VALID => tb_i_tx_data_valid,
+            O_UART_TX       => tb_o_uart_tx,
+            O_DONE          => tb_o_done
         );
 
     -- =================================================================================================================
@@ -218,8 +225,8 @@ begin
 
             -- Reset the DUT by setting the input state to all zeros
             tb_rst_n                 <= '0';
-            tb_i_byte                <= (others => '0');
-            tb_i_byte_valid          <= '0';
+            tb_i_tx_data             <= (others => '0');
+            tb_i_tx_data_valid       <= '0';
             tb_check_uart_tx_timings <= '0';
 
             wait for c_clock_cycles * C_CLK_PERIOD;
@@ -255,17 +262,17 @@ begin
             info("Sending value 0x" & to_hstring(value) & " to UART TX");
 
             -- Ensure valid is low
-            tb_i_byte_valid <= '0';
+            tb_i_tx_data_valid <= '0';
             wait for 2 * C_CLK_PERIOD;
 
             -- Apply data
-            tb_i_byte       <= value;
+            tb_i_tx_data       <= value;
             wait for C_CLK_PERIOD;
 
             -- Pulse valid signal
-            tb_i_byte_valid <= '1';
+            tb_i_tx_data_valid <= '1';
             wait for 2 * C_CLK_PERIOD;
-            tb_i_byte_valid <= '0';
+            tb_i_tx_data_valid <= '0';
 
         end procedure proc_uart_write;
 
@@ -283,7 +290,7 @@ begin
         procedure proc_uart_check (
             constant value : std_logic_vector(8 - 1 downto 0)
         ) is
-            variable v_byte : std_logic_vector(tb_i_byte'range);
+            variable v_byte : std_logic_vector(tb_i_tx_data'range);
             variable v_last : boolean;
         begin
 
@@ -331,8 +338,8 @@ begin
                 info(" Testing incrementing data value from 0x00 to 0xFF for UART TX");
                 info("-----------------------------------------------------------------------------");
 
-                for value in 0 to 2 ** tb_i_byte'length - 1 loop
-                    proc_uart_check(std_logic_vector(to_unsigned(value, tb_i_byte'length)));
+                for value in 0 to 2 ** tb_i_tx_data'length - 1 loop
+                    proc_uart_check(std_logic_vector(to_unsigned(value, tb_i_tx_data'length)));
                 end loop;
 
                 info("");
@@ -340,7 +347,7 @@ begin
                 info(" Testing random data for UART TX");
                 info("-----------------------------------------------------------------------------");
 
-                for nb_loop in 0 to 2 ** tb_i_byte'length - 1 loop
+                for nb_loop in 0 to 2 ** tb_i_tx_data'length - 1 loop
                     tb_random_data <= v_random_data.RandSlv(tb_random_data'length);
                     proc_uart_check(tb_random_data);
                 end loop;
