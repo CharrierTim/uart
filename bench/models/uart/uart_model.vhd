@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    uart_model.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Model for the UART implementing the custom protocol
 --
 --          Protocol (ASCII-hex)
@@ -47,6 +47,13 @@
 -- @author  Timothee Charrier
 -- @date    21/10/2025
 -- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      21/10/2025  Timothee Charrier   Initial release
+-- 1.1      12/10/2025  Timothee Charrier   Naming conventions update
+-- =====================================================================================================================
 
 library ieee;
     use ieee.std_logic_1164.all;
@@ -65,18 +72,18 @@ entity UART_MODEL is
     );
     port (
         -- UART interface
-        I_UART_RX            : in    std_logic;
-        O_UART_TX            : out   std_logic;
+        I_UART_RX         : in    std_logic;
+        O_UART_TX         : out   std_logic;
         -- Read interface
-        I_READ_ADDRESS       : in    std_logic_vector( 8 - 1 downto 0);
-        I_READ_ADDRESS_VALID : in    std_logic;
+        I_READ_ADDR       : in    std_logic_vector( 8 - 1 downto 0);
+        I_READ_ADDR_VALID : in    std_logic;
         -- vsg_disable_next_line port_012 : In a model, default value is fine
-        O_READ_DATA          : out   std_logic_vector(16 - 1 downto 0) := (others => '0');
-        O_READ_DATA_VALID    : out   std_logic;
+        O_READ_DATA       : out   std_logic_vector(16 - 1 downto 0) := (others => '0');
+        O_READ_DATA_VALID : out   std_logic;
         -- Write interface
-        I_WRITE_ADDRESS      : in    std_logic_vector( 8 - 1 downto 0);
-        I_WRITE_DATA         : in    std_logic_vector(16 - 1 downto 0);
-        I_WRITE_VALID        : in    std_logic
+        I_WRITE_ADDRESS   : in    std_logic_vector( 8 - 1 downto 0);
+        I_WRITE_DATA      : in    std_logic_vector(16 - 1 downto 0);
+        I_WRITE_VALID     : in    std_logic
     );
 end entity UART_MODEL;
 
@@ -240,14 +247,14 @@ begin
         O_READ_DATA_VALID <= '0';
 
         -- Wait for rising edge of the valid signal
-        wait until rising_edge(I_READ_ADDRESS_VALID);
+        wait until rising_edge(I_READ_ADDR_VALID);
 
         -- Send 'R'
         push_stream(net, C_UART_STREAM_MASTER, C_CHAR_R);
 
         -- Send address (MSB nibble then LSB nibble)
-        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_READ_ADDRESS(7 downto 4)));
-        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_READ_ADDRESS(3 downto 0)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_READ_ADDR(7 downto 4)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_READ_ADDR(3 downto 0)));
 
         -- Send carriage return
         push_stream(net, C_UART_STREAM_MASTER, C_CHAR_CR);

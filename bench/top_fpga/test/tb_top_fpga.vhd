@@ -23,10 +23,17 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Top-Level Testbench
 -- @author  Timothee Charrier
 -- @date    01/12/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      01/12/2025  Timothee Charrier   Initial release
+-- 1.1      12/10/2025  Timothee Charrier   Update UART_MODEL interface names
 -- =====================================================================================================================
 
 library ieee;
@@ -64,36 +71,36 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     -- =================================================================================================================
 
     -- DUT signals
-    signal tb_pad_i_clk            : std_logic;
-    signal tb_pad_i_rst_h          : std_logic;
-    signal tb_pad_i_uart_rx        : std_logic;
-    signal tb_pad_o_uart_tx        : std_logic;
-    signal tb_pad_o_sclk           : std_logic;
-    signal tb_pad_o_mosi           : std_logic;
-    signal tb_pad_i_miso           : std_logic;
-    signal tb_pad_o_cs_n           : std_logic;
-    signal tb_pad_i_switch_0       : std_logic;
-    signal tb_pad_i_switch_1       : std_logic;
-    signal tb_pad_i_switch_2       : std_logic;
-    signal tb_pad_o_led_0          : std_logic;
+    signal tb_pad_i_clk          : std_logic;
+    signal tb_pad_i_rst_h        : std_logic;
+    signal tb_pad_i_uart_rx      : std_logic;
+    signal tb_pad_o_uart_tx      : std_logic;
+    signal tb_pad_o_sclk         : std_logic;
+    signal tb_pad_o_mosi         : std_logic;
+    signal tb_pad_i_miso         : std_logic;
+    signal tb_pad_o_cs_n         : std_logic;
+    signal tb_pad_i_switch_0     : std_logic;
+    signal tb_pad_i_switch_1     : std_logic;
+    signal tb_pad_i_switch_2     : std_logic;
+    signal tb_pad_o_led_0        : std_logic;
 
     -- UART model
-    signal tb_i_uart_rx_manual     : std_logic;
-    signal tb_i_uart_rx            : std_logic;
-    signal tb_i_uart_select        : std_logic;
-    signal tb_i_read_address       : std_logic_vector( 8 - 1 downto 0);
-    signal tb_i_read_address_valid : std_logic;
-    signal tb_o_read_data          : std_logic_vector(16 - 1 downto 0);
-    signal tb_o_read_data_valid    : std_logic;
-    signal tb_i_write_address      : std_logic_vector( 8 - 1 downto 0);
-    signal tb_i_write_data         : std_logic_vector(16 - 1 downto 0);
-    signal tb_i_write_valid        : std_logic;
+    signal tb_i_uart_rx_manual   : std_logic;
+    signal tb_i_uart_rx          : std_logic;
+    signal tb_i_uart_select      : std_logic;
+    signal tb_i_read_addr        : std_logic_vector( 8 - 1 downto 0);
+    signal tb_i_read_addr_valid  : std_logic;
+    signal tb_o_read_data        : std_logic_vector(16 - 1 downto 0);
+    signal tb_o_read_data_valid  : std_logic;
+    signal tb_i_write_address    : std_logic_vector( 8 - 1 downto 0);
+    signal tb_i_write_data       : std_logic_vector(16 - 1 downto 0);
+    signal tb_i_write_valid      : std_logic;
 
     -- UART timing verification
-    signal tb_check_uart_timings   : std_logic;
+    signal tb_check_uart_timings : std_logic;
 
     -- SPI timing verification
-    signal tb_check_spi_timings    : std_logic;
+    signal tb_check_spi_timings  : std_logic;
 
 begin
 
@@ -129,15 +136,15 @@ begin
             G_BAUD_RATE_BPS => C_UART_BAUD_RATE_BPS
         )
         port map (
-            I_UART_RX            => tb_pad_o_uart_tx,
-            O_UART_TX            => tb_pad_i_uart_rx,
-            I_READ_ADDRESS       => tb_i_read_address,
-            I_READ_ADDRESS_VALID => tb_i_read_address_valid,
-            O_READ_DATA          => tb_o_read_data,
-            O_READ_DATA_VALID    => tb_o_read_data_valid,
-            I_WRITE_ADDRESS      => tb_i_write_address,
-            I_WRITE_DATA         => tb_i_write_data,
-            I_WRITE_VALID        => tb_i_write_valid
+            I_UART_RX         => tb_pad_o_uart_tx,
+            O_UART_TX         => tb_pad_i_uart_rx,
+            I_READ_ADDR       => tb_i_read_addr,
+            I_READ_ADDR_VALID => tb_i_read_addr_valid,
+            O_READ_DATA       => tb_o_read_data,
+            O_READ_DATA_VALID => tb_o_read_data_valid,
+            I_WRITE_ADDRESS   => tb_i_write_address,
+            I_WRITE_DATA      => tb_i_write_data,
+            I_WRITE_VALID     => tb_i_write_valid
         );
 
     -- Select between manual RX input and model RX input
@@ -298,28 +305,28 @@ begin
         begin
 
             -- Reset the DUT by setting the input state to all zeros
-            tb_pad_i_rst_h          <= '1';
+            tb_pad_i_rst_h        <= '1';
 
-            tb_i_uart_select        <= '0';
-            tb_i_uart_rx_manual     <= '0';
-            tb_pad_i_switch_0       <= '0';
-            tb_pad_i_switch_1       <= '0';
-            tb_pad_i_switch_2       <= '0';
+            tb_i_uart_select      <= '0';
+            tb_i_uart_rx_manual   <= '0';
+            tb_pad_i_switch_0     <= '0';
+            tb_pad_i_switch_1     <= '0';
+            tb_pad_i_switch_2     <= '0';
 
-            tb_i_read_address       <= (others => '0');
-            tb_i_read_address_valid <= '0';
-            tb_i_write_address      <= (others => '0');
-            tb_i_write_data         <= (others => '0');
-            tb_i_write_valid        <= '0';
+            tb_i_read_addr        <= (others => '0');
+            tb_i_read_addr_valid  <= '0';
+            tb_i_write_address    <= (others => '0');
+            tb_i_write_data       <= (others => '0');
+            tb_i_write_valid      <= '0';
 
-            tb_check_uart_timings   <= '0';
+            tb_check_uart_timings <= '0';
 
-            tb_check_spi_timings    <= '0';
+            tb_check_spi_timings  <= '0';
 
             wait for c_clock_cycles * C_CLK_PERIOD;
 
             -- Reassert reset
-            tb_pad_i_rst_h          <= '0';
+            tb_pad_i_rst_h        <= '0';
 
             -- Wait for the DUT to step over
             wait for 5 ns;
@@ -444,14 +451,14 @@ begin
             wait for 500 ns;
 
             -- Set up the read operation
-            tb_i_read_address       <= reg.addr;
-            tb_i_read_address_valid <= '1';
+            tb_i_read_addr       <= reg.addr;
+            tb_i_read_addr_valid <= '1';
 
             -- Wait for the read operation to complete
             wait until rising_edge(tb_o_read_data_valid);
 
             -- De-assert the read valid signal after completion
-            tb_i_read_address_valid <= '0';
+            tb_i_read_addr_valid <= '0';
 
         end procedure proc_uart_read;
 
