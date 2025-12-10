@@ -36,6 +36,8 @@
 The UART receiver must synchronize to incoming data, sample at the correct time, handle noise, and detect framing errors.
 The receiver uses oversampling, digital filtering, and majority voting to ensure reliable data reception.
 
+![UART RX Architecture](../../assets/uart.drawio){ page="UART-RX" }
+
 ### Oversampling Clock
 
 The receiver generates an internal sampling clock that runs at a multiple of the baud rate (configured by `G_SAMPLING_RATE`,
