@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Wed Dec 10 16:05:23 2025
+| Date         : Wed Dec 10 16:24:44 2025
 | Host         : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -hierarchical -file /home/tim/projects/uart/synthesis/results/impl/uart_utilization_hierarchical_place.rpt
 | Design       : TOP_FPGA
@@ -22,12 +22,12 @@ Table of Contents
 +-------------------+------------+------------+------------+---------+------+-----+--------+--------+------------+
 |      Instance     |   Module   | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | DSP Blocks |
 +-------------------+------------+------------+------------+---------+------+-----+--------+--------+------------+
-| TOP_FPGA          |      (top) |        190 |        190 |       0 |    0 | 227 |      0 |      0 |          0 |
+| TOP_FPGA          |      (top) |        184 |        184 |       0 |    0 | 227 |      0 |      0 |          0 |
 |   (TOP_FPGA)      |      (top) |          0 |          0 |       0 |    0 |   0 |      0 |      0 |          0 |
 |   inst_regfile    |    REGFILE |          3 |          3 |       0 |    0 |  51 |      0 |      0 |          0 |
-|   inst_spi_master | SPI_MASTER |         20 |         20 |       0 |    0 |  51 |      0 |      0 |          0 |
-|   inst_uart       |       UART |        168 |        168 |       0 |    0 | 116 |      0 |      0 |          0 |
-|     (inst_uart)   |       UART |         77 |         77 |       0 |    0 |  36 |      0 |      0 |          0 |
+|   inst_spi_master | SPI_MASTER |         18 |         18 |       0 |    0 |  51 |      0 |      0 |          0 |
+|   inst_uart       |       UART |        163 |        163 |       0 |    0 | 116 |      0 |      0 |          0 |
+|     (inst_uart)   |       UART |         72 |         72 |       0 |    0 |  36 |      0 |      0 |          0 |
 |     inst_uart_rx  |    UART_RX |         56 |         56 |       0 |    0 |  54 |      0 |      0 |          0 |
 +-------------------+------------+------------+------------+---------+------+-----+--------+--------+------------+
 * Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
