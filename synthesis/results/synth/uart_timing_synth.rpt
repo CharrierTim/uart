@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Fri Dec  5 10:43:36 2025
+| Date         : Wed Dec 10 16:05:19 2025
 | Host         : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_timing_summary -file /home/tim/projects/uart/synthesis/results/synth/uart_timing_synth.rpt
 | Design       : TOP_FPGA
@@ -232,8 +232,8 @@ Max Delay Paths
 Slack (MET) :             16.063ns  (required time - arrival time)
   Source:                 inst_uart/inst_uart_tx/tx_baud_counter_reg[2]/C
                             (rising edge-triggered cell FDCE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
-  Destination:            inst_uart/inst_uart_tx/reg_tx_data_reg[0]/CE
-                            (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            inst_uart/inst_uart_tx/bit_counter_reg[0]/CE
+                            (rising edge-triggered cell FDCE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
@@ -271,7 +271,7 @@ Slack (MET) :             16.063ns  (required time - arrival time)
                          net (fo=10, unplaced)        0.492    -0.223    inst_uart/inst_uart_tx/reg_tx_data[8]_i_3_n_0
                          LUT1 (Prop_lut1_I0_O)        0.124    -0.099 r  inst_uart/inst_uart_tx/reg_tx_data[8]_i_1/O
                          net (fo=13, unplaced)        0.523     0.424    inst_uart/inst_uart_tx/reg_tx_data[8]_i_1_n_0
-                         FDPE                                         r  inst_uart/inst_uart_tx/reg_tx_data_reg[0]/CE
+                         FDCE                                         r  inst_uart/inst_uart_tx/bit_counter_reg[0]/CE
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out1_clk_wiz_0 rise edge)
@@ -285,10 +285,10 @@ Slack (MET) :             16.063ns  (required time - arrival time)
                          net (fo=1, unplaced)         0.760    16.726    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.091    16.817 r  inst_pll/inst/clkout1_buf/O
                          net (fo=227, unplaced)       0.439    17.256    inst_uart/inst_uart_tx/clk_out1
-                         FDPE                                         r  inst_uart/inst_uart_tx/reg_tx_data_reg[0]/C
+                         FDCE                                         r  inst_uart/inst_uart_tx/bit_counter_reg[0]/C
                          clock pessimism             -0.458    16.797
                          clock uncertainty           -0.108    16.690
-                         FDPE (Setup_fdpe_C_CE)      -0.202    16.488    inst_uart/inst_uart_tx/reg_tx_data_reg[0]
+                         FDCE (Setup_fdce_C_CE)      -0.202    16.488    inst_uart/inst_uart_tx/bit_counter_reg[0]
   -------------------------------------------------------------------
                          required time                         16.488
                          arrival time                          -0.424
