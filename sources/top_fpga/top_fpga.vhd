@@ -55,7 +55,7 @@ entity TOP_FPGA is
         PAD_O_SCLK     : out   std_logic;
         PAD_O_MOSI     : out   std_logic;
         PAD_I_MISO     : in    std_logic;
-        PAD_O_CS       : out   std_logic;
+        PAD_O_CS_N     : out   std_logic;
 
         -- Switches and LED
         PAD_I_SWITCH_0 : in    std_logic;
@@ -245,7 +245,7 @@ begin
             O_SCLK          => PAD_O_SCLK,
             O_MOSI          => PAD_O_MOSI,
             I_MISO          => PAD_I_MISO,
-            O_CS            => PAD_O_CS,
+            O_CS_N          => PAD_O_CS_N,
             I_TX_DATA       => spi_tx_data,
             I_TX_DATA_VALID => spi_tx_data_valid,
             O_RX_DATA       => spi_rx_data,

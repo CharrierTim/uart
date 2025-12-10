@@ -71,7 +71,7 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     signal tb_pad_o_sclk           : std_logic;
     signal tb_pad_o_mosi           : std_logic;
     signal tb_pad_i_miso           : std_logic;
-    signal tb_pad_o_cs             : std_logic;
+    signal tb_pad_o_cs_n           : std_logic;
     signal tb_pad_i_switch_0       : std_logic;
     signal tb_pad_i_switch_1       : std_logic;
     signal tb_pad_i_switch_2       : std_logic;
@@ -113,7 +113,7 @@ begin
             PAD_O_SCLK     => tb_pad_o_sclk,
             PAD_O_MOSI     => tb_pad_o_mosi,
             PAD_I_MISO     => tb_pad_i_miso,
-            PAD_O_CS       => tb_pad_o_cs,
+            PAD_O_CS_N     => tb_pad_o_cs_n,
             PAD_I_SWITCH_0 => tb_pad_i_switch_0,
             PAD_I_SWITCH_1 => tb_pad_i_switch_1,
             PAD_I_SWITCH_2 => tb_pad_i_switch_2,
@@ -154,7 +154,7 @@ begin
         )
         port map (
             sclk => tb_pad_o_sclk,
-            ss_n => tb_pad_o_cs,
+            ss_n => tb_pad_o_cs_n,
             mosi => tb_pad_o_mosi,
             miso => tb_pad_i_miso
         );
