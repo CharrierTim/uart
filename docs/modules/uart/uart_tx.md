@@ -33,7 +33,7 @@
 The UART transmitter consists of three main components that work together to serialize and transmit data at the
 configured baud rate.
 
-![UART Architecture](../../assets/uart.drawio){ page="UART-TX" }
+![UART TX Architecture](../../assets/uart.drawio){ page="UART-TX" }
 
 ### Clock Divider
 
