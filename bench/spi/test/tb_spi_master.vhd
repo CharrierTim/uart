@@ -28,6 +28,12 @@
 -- @author  Timothee Charrier
 -- @date    01/12/2025
 -- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      01/12/2025  Timothee Charrier   Initial release
+-- =====================================================================================================================
 
 library ieee;
     use ieee.std_logic_1164.all;
@@ -85,7 +91,7 @@ architecture TB_SPI_MASTER_ARCH of TB_SPI_MASTER is
     signal tb_o_sclk            : std_logic;
     signal tb_o_mosi            : std_logic;
     signal tb_i_miso            : std_logic;
-    signal tb_o_cs              : std_logic;
+    signal tb_o_cs_n            : std_logic;
     signal tb_i_tx_data         : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
     signal tb_i_tx_data_valid   : std_logic;
     signal tb_o_rx_data         : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
@@ -115,7 +121,7 @@ begin
             O_SCLK          => tb_o_sclk,
             O_MOSI          => tb_o_mosi,
             I_MISO          => tb_i_miso,
-            O_CS            => tb_o_cs,
+            O_CS_N          => tb_o_cs_n,
             I_TX_DATA       => tb_i_tx_data,
             I_TX_DATA_VALID => tb_i_tx_data_valid,
             O_RX_DATA       => tb_o_rx_data,
@@ -132,7 +138,7 @@ begin
         )
         port map (
             sclk => tb_o_sclk,
-            ss_n => tb_o_cs,
+            ss_n => tb_o_cs_n,
             mosi => tb_o_mosi,
             miso => tb_i_miso
         );

@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    spi_master.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   SPI master module supporting all four SPI modes (0-3).
 --
 --          SPI Mode Configuration (adapted from Texas Instruments KeyStone Architecture Serial Peripheral Interface
@@ -49,6 +49,13 @@
 --
 -- @author  Timothee Charrier
 -- @date    24/11/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      24/11/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
 -- =====================================================================================================================
 
 library ieee;
@@ -76,7 +83,7 @@ entity SPI_MASTER is
         O_SCLK          : out   std_logic; -- Serial Clock
         O_MOSI          : out   std_logic; -- Master Out Slave In
         I_MISO          : in    std_logic; -- Master In Slave Out
-        O_CS            : out   std_logic; -- Chip select
+        O_CS_N          : out   std_logic; -- Chip select (active low)
         -- Data interface
         I_TX_DATA       : in    std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
         I_TX_DATA_VALID : in    std_logic;
@@ -112,6 +119,9 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     constant C_HALF_PERIOD_CYCLES  : positive := G_CLK_FREQ_HZ / G_SPI_FREQ_HZ / 2;
     constant C_COUNTER_WIDTH       : positive := positive(ceil(log2(real(C_HALF_PERIOD_CYCLES))));
 
+    -- Resynchronization
+    constant C_RESYNC_STAGES       : positive := 2;
+
     -- Bit counter
     constant C_BIT_COUNTER_WIDTH   : positive := positive(ceil(log2(real(G_NB_DATA_BITS))));
 
@@ -135,7 +145,7 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     signal current_state           : t_state;
     signal next_state              : t_state;
     signal next_o_mosi             : std_logic;
-    signal next_o_cs               : std_logic;
+    signal next_o_cs_n             : std_logic;
     signal next_o_valid            : std_logic;
 
     -- Bit count
@@ -143,7 +153,7 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
 
     -- Internal registers
     signal reg_i_tx_data_valid_d1  : std_logic;
-    signal reg_resync_i_miso       : std_logic_vector(2 - 1 downto 0);
+    signal reg_resync_i_miso       : std_logic_vector(C_RESYNC_STAGES - 1 downto 0);
     signal reg_i_tx_data           : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
     signal reg_o_rx_data_sr        : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
 
@@ -428,7 +438,7 @@ begin
 
         -- Default assignment
         next_o_mosi  <= '0';
-        next_o_cs    <= '1';
+        next_o_cs_n  <= '1';
         next_o_valid <= '0';
 
         case current_state is
@@ -451,7 +461,7 @@ begin
 
             when STATE_WAIT_LEADING_EDGE =>
 
-                next_o_cs <= '0';
+                next_o_cs_n <= '0';
 
             -- =========================================================================================================
             -- STATE: SEND BITS
@@ -462,7 +472,7 @@ begin
                 -- Shift TX data
                 next_o_mosi <= reg_i_tx_data(to_integer(reg_i_tx_data'length - 1 - bit_counter));
 
-                next_o_cs   <= '0';
+                next_o_cs_n <= '0';
 
             -- =========================================================================================================
             -- STATE: DEAD TIME AFTER
@@ -470,7 +480,7 @@ begin
 
             when STATE_DEAD_TIME_AFTER =>
 
-                next_o_cs <= '0';
+                next_o_cs_n <= '0';
 
             -- =========================================================================================================
             -- STATE: DONE
@@ -494,7 +504,7 @@ begin
         if (RST_N = '0') then
 
             O_MOSI           <= '0';
-            O_CS             <= '1';
+            O_CS_N           <= '1';
             O_RX_DATA        <= (others => '0');
             O_RX_DATA_VALID  <= '0';
 
@@ -508,7 +518,7 @@ begin
             end if;
 
             O_MOSI          <= next_o_mosi;
-            O_CS            <= next_o_cs;
+            O_CS_N          <= next_o_cs_n;
             O_RX_DATA       <= reg_o_rx_data_sr;
             O_RX_DATA_VALID <= next_o_valid;
 

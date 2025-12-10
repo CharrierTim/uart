@@ -92,7 +92,7 @@ The FPGA defines the following inputs/outputs:
 | `PAD_O_SCLK`     | W12        | out       | -        | -    | LVCMOS33   |
 | `PAD_O_MOSI`     | W11        | out       | -        | -    | LVCMOS33   |
 | `PAD_I_MISO`     | W10        | in        | -        | -    | LVCMOS33   |
-| `PAD_O_CS`       | W8         | out       | PULL-UP  | -    | LVCMOS33   |
+| `PAD_O_CS_N`     | W8         | out       | PULL-UP  | -    | LVCMOS33   |
 | `PAD_I_SWITCH_0` | F22        | in        | -        | -    | LVCMOS18   |
 | `PAD_I_SWITCH_1` | G22        | in        | -        | -    | LVCMOS18   |
 | `PAD_I_SWITCH_2` | H22        | in        | -        | -    | LVCMOS18   |

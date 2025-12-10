@@ -23,10 +23,17 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    uart_tx.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Transmission module for UART communication
 -- @author  Timothee Charrier
--- @date    17/10/2025
+-- @date    10/12/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      17/10/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
 -- =====================================================================================================================
 
 library ieee;
@@ -45,14 +52,14 @@ entity UART_TX is
     );
     port (
         -- Clock and reset
-        CLK          : in    std_logic;
-        RST_N        : in    std_logic;
+        CLK             : in    std_logic;
+        RST_N           : in    std_logic;
         -- Input data interface
-        I_BYTE       : in    std_logic_vector(8 - 1 downto 0);
-        I_BYTE_VALID : in    std_logic;
+        I_TX_DATA       : in    std_logic_vector(8 - 1 downto 0);
+        I_TX_DATA_VALID : in    std_logic;
         -- Output interface
-        O_UART_TX    : out   std_logic;
-        O_DONE       : out   std_logic
+        O_UART_TX       : out   std_logic;
+        O_DONE          : out   std_logic
     );
 end entity UART_TX;
 
@@ -65,9 +72,9 @@ architecture UART_TX_ARCH of UART_TX is
     -- TYPES
     -- =================================================================================================================
 
-    type t_tx_state is (
+    type t_state is (
         STATE_IDLE,
-        STATE_SEND_BYTE,
+        STATE_SEND_TX_DATA,
         STATE_DONE
     );
 
@@ -76,29 +83,31 @@ architecture UART_TX_ARCH of UART_TX is
     -- =================================================================================================================
 
     -- UART TX clock
-    constant C_TX_CLK_DIV_RATIO  : integer := G_CLK_FREQ_HZ / G_BAUD_RATE_BPS;
-    constant C_BAUD_COUNTER_BITS : integer := integer(ceil(log2(real(C_TX_CLK_DIV_RATIO))));
+    constant C_TX_CLK_DIV_RATIO   : integer := G_CLK_FREQ_HZ / G_BAUD_RATE_BPS;
+    constant C_BAUD_COUNTER_WIDTH : integer := integer(ceil(log2(real(C_TX_CLK_DIV_RATIO))));
 
-    -- Data register
-    constant C_TX_NB_BITS        : integer := 10;
-    constant C_TX_COUNT_WIDTH    : integer := integer(ceil(log2(real(C_TX_NB_BITS))));
+    -- Data register (1 start bit, 8 dara bits and 1 stop bit)
+    constant C_NB_TX_BITS         : integer := 10;
+    constant C_BIT_COUNTER_WIDTH  : integer := integer(ceil(log2(real(C_NB_TX_BITS))));
 
     -- =================================================================================================================
     -- SIGNAL
     -- =================================================================================================================
 
-    -- Baud rate generators
-    signal tx_baud_counter       : unsigned(C_BAUD_COUNTER_BITS - 1 downto 0);
-    signal tx_current_bit_index  : unsigned(C_TX_COUNT_WIDTH - 1 downto 0);
+    -- Baud rate generator
+    signal tx_baud_counter        : unsigned(C_BAUD_COUNTER_WIDTH - 1 downto 0);
 
     -- FSM signals
-    signal current_state         : t_tx_state;
-    signal next_state            : t_tx_state;
-    signal next_o_uart_tx        : std_logic;
-    signal next_o_done           : std_logic;
+    signal current_state          : t_state;
+    signal next_state             : t_state;
+    signal next_o_uart_tx         : std_logic;
+    signal next_o_done            : std_logic;
+
+    -- Bit count
+    signal bit_counter            : unsigned(C_BIT_COUNTER_WIDTH - 1 downto 0);
 
     -- Data register
-    signal reg_tx_data           : std_logic_vector(C_TX_NB_BITS - 1 downto 0);
+    signal reg_tx_data            : std_logic_vector(C_NB_TX_BITS - 1 downto 0);
 
 begin
 
@@ -141,8 +150,8 @@ begin
 
             when STATE_IDLE =>
 
-                if (I_BYTE_VALID = '1') then
-                    next_state <= STATE_SEND_BYTE;
+                if (I_TX_DATA_VALID = '1') then
+                    next_state <= STATE_SEND_TX_DATA;
                 else
                     next_state <= STATE_IDLE;
                 end if;
@@ -153,12 +162,12 @@ begin
             -- In this state, send the start bit, the data and the stop bit
             -- =========================================================================================================
 
-            when STATE_SEND_BYTE =>
+            when STATE_SEND_TX_DATA =>
 
-                if (tx_current_bit_index >= C_TX_NB_BITS) then
+                if (bit_counter >= C_NB_TX_BITS) then
                     next_state <= STATE_DONE;
                 else
-                    next_state <= STATE_SEND_BYTE;
+                    next_state <= STATE_SEND_TX_DATA;
                 end if;
 
             -- =========================================================================================================
@@ -183,18 +192,18 @@ begin
     -- Transmission Order: Start bit first (0), then data LSB to MSB, then stop bit (1)
     -- =================================================================================================================
 
-    p_tx_clock_divider : process (CLK, RST_N) is
+    p_tx_clock_gen : process (CLK, RST_N) is
     begin
 
         if (RST_N = '0') then
 
-            tx_baud_counter      <= (others => '0');
-            reg_tx_data          <= (others => '1');
-            tx_current_bit_index <= (others => '0');
+            tx_baud_counter <= (others => '0');
+            reg_tx_data     <= (others => '1');
+            bit_counter     <= (others => '0');
 
         elsif rising_edge(CLK) then
 
-            if (current_state = STATE_SEND_BYTE) then
+            if (current_state = STATE_SEND_TX_DATA) then
 
                 -- =====================================================================================================
                 -- Active Transmission State
@@ -208,7 +217,7 @@ begin
                     reg_tx_data <= '1' & reg_tx_data(reg_tx_data'high downto reg_tx_data'low + 1);
 
                     -- Track current bit index
-                    tx_current_bit_index <= tx_current_bit_index + 1;
+                    bit_counter <= bit_counter + 1;
 
                 else
                     tx_baud_counter <= tx_baud_counter + 1;
@@ -219,23 +228,23 @@ begin
                 -- Prepare for next transmission
                 -- =====================================================================================================
 
-                tx_baud_counter      <= (others => '0');
-                tx_current_bit_index <= (others => '0');
+                tx_baud_counter <= (others => '0');
+                bit_counter     <= (others => '0');
 
                 -- Preload shift register
-                reg_tx_data <= '1' & I_BYTE & '0';
+                reg_tx_data <= '1' & I_TX_DATA & '0';
 
             end if;
 
         end if;
 
-    end process p_tx_clock_divider;
+    end process p_tx_clock_gen;
 
     -- =================================================================================================================
     -- Next output logic
     -- =================================================================================================================
 
-    p_next_output_comb : process (all) is
+    p_next_outputs_comb : process (all) is
     begin
 
         -- Default assignments
@@ -254,7 +263,7 @@ begin
             -- STATE: SEND BYTE
             -- =========================================================================================================
 
-            when STATE_SEND_BYTE =>
+            when STATE_SEND_TX_DATA =>
 
                 next_o_uart_tx <= reg_tx_data(reg_tx_data'low);
 
@@ -268,13 +277,13 @@ begin
 
         end case;
 
-    end process p_next_output_comb;
+    end process p_next_outputs_comb;
 
     -- =================================================================================================================
     -- Output registers
     -- =================================================================================================================
 
-    p_output_reg : process (CLK, RST_N) is
+    p_outputs_seq : process (CLK, RST_N) is
     begin
 
         if (RST_N = '0') then
@@ -289,6 +298,6 @@ begin
 
         end if;
 
-    end process p_output_reg;
+    end process p_outputs_seq;
 
 end architecture UART_TX_ARCH;

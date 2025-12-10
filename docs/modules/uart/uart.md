@@ -16,7 +16,6 @@
 | `G_CLK_FREQ_HZ`   | positive | 0d50_000_000  | Clock frequency in Hz of `CLK`                 |
 | `G_BAUD_RATE_BPS` | positive | 0d115_200     | Baud rate in bps                               |
 | `G_SAMPLING_RATE` | positive | 0d16          | Sampling rate (number of clock cycles per bit) |
-| `G_NB_DATA_BITS`  | positive | 0d8           | Number of data bits                            |
 
 </div>
 

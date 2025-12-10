@@ -23,10 +23,17 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    uart.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Top-level UART module, implementing both TX and RX functionalities with a custom protocol
 -- @author  Timothee Charrier
--- @date    21/10/2025
+-- @date    10/12/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      21/10/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Naming conventions update and remove generic
 -- =====================================================================================================================
 
 library ieee;
@@ -43,8 +50,7 @@ entity UART is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
         G_BAUD_RATE_BPS : positive := 115_200;    -- Baud rate
-        G_SAMPLING_RATE : positive := 16;         -- Sampling rate (number of clock cycles per bit)
-        G_NB_DATA_BITS  : positive := 8           -- Number of data bits
+        G_SAMPLING_RATE : positive := 16          -- Sampling rate (number of clock cycles per bit)
     );
     port (
         -- Clock and reset
@@ -171,12 +177,12 @@ begin
             G_BAUD_RATE_BPS => G_BAUD_RATE_BPS
         )
         port map (
-            CLK          => CLK,
-            RST_N        => RST_N,
-            I_BYTE       => tx_byte_to_send_encoded,
-            I_BYTE_VALID => tx_byte_to_send_valid,
-            O_UART_TX    => O_UART_TX,
-            O_DONE       => tx_byte_send
+            CLK             => CLK,
+            RST_N           => RST_N,
+            I_TX_DATA       => tx_byte_to_send_encoded,
+            I_TX_DATA_VALID => tx_byte_to_send_valid,
+            O_UART_TX       => O_UART_TX,
+            O_DONE          => tx_byte_send
         );
 
     -- =================================================================================================================
@@ -211,8 +217,7 @@ begin
         generic map (
             G_CLK_FREQ_HZ   => G_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => G_BAUD_RATE_BPS,
-            G_SAMPLING_RATE => G_SAMPLING_RATE,
-            G_NB_DATA_BITS  => G_NB_DATA_BITS
+            G_SAMPLING_RATE => G_SAMPLING_RATE
         )
         port map (
             CLK               => CLK,
@@ -442,7 +447,7 @@ begin
     -- Output logic
     -- =================================================================================================================
 
-    p_fsm_output_comb : process (all) is
+    p_next_outputs_comb : process (all) is
     begin
 
         -- Default assignment
@@ -535,13 +540,13 @@ begin
 
         end case;
 
-    end process p_fsm_output_comb;
+    end process p_next_outputs_comb;
 
     -- =================================================================================================================
     -- OUTPUT ASSIGNMENTS
     -- =================================================================================================================
 
-    p_output_reg : process (CLK, RST_N) is
+    p_outputs_seq : process (CLK, RST_N) is
     begin
 
         if (RST_N = '0') then
@@ -594,6 +599,6 @@ begin
 
         end if;
 
-    end process p_output_reg;
+    end process p_outputs_seq;
 
 end architecture UART_ARCH;

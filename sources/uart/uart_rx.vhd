@@ -23,10 +23,17 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    uart_rx.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Reception module for UART communication
 -- @author  Timothee Charrier
--- @date    17/10/2025
+-- @date    10/12/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      17/10/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Naming conventions update and remove generic
 -- =====================================================================================================================
 
 library ieee;
@@ -42,8 +49,7 @@ entity UART_RX is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
         G_BAUD_RATE_BPS : positive := 115_200;    -- Baud rate
-        G_SAMPLING_RATE : positive := 16;         -- Sampling rate (number of clock cycles per bit)
-        G_NB_DATA_BITS  : positive := 8           -- Number of data bits
+        G_SAMPLING_RATE : positive := 16          -- Sampling rate (number of clock cycles per bit)
     );
     port (
         -- Clock and reset
@@ -52,7 +58,7 @@ entity UART_RX is
         -- UART interface
         I_UART_RX         : in    std_logic;
         -- Output data interface
-        O_BYTE            : out   std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
+        O_BYTE            : out   std_logic_vector(8 - 1 downto 0);
         O_BYTE_VALID      : out   std_logic;
         -- Error flags
         O_START_BIT_ERROR : out   std_logic;
@@ -70,7 +76,7 @@ architecture UART_RX_ARCH of UART_RX is
     -- TYPES
     -- =================================================================================================================
 
-    type t_rx_state is (
+    type t_state is (
         STATE_IDLE,
         STATE_START_BIT,
         STATE_DATA_BITS,
@@ -86,56 +92,56 @@ architecture UART_RX_ARCH of UART_RX is
     -- =================================================================================================================
 
     -- UART RX clock
-    constant C_RX_CLK_DIV_RATIO     : integer := G_CLK_FREQ_HZ / (G_BAUD_RATE_BPS * G_SAMPLING_RATE);
-    constant C_SAMPLE_COUNTER_WIDTH : integer := integer(ceil(log2(real(C_RX_CLK_DIV_RATIO))));
+    constant C_RX_CLK_DIV_RATIO        : integer := G_CLK_FREQ_HZ / (G_BAUD_RATE_BPS * G_SAMPLING_RATE);
+    constant C_SAMPLE_COUNTER_WIDTH    : integer := integer(ceil(log2(real(C_RX_CLK_DIV_RATIO))));
 
     -- Sampling constants
-    constant C_OVERSAMPLE_WIDTH     : integer := integer(ceil(log2(real(G_SAMPLING_RATE))));
-    constant C_MID_SAMPLE_POINT     : integer := G_SAMPLING_RATE / 2;
-    constant C_THREE_QUARTER_POINT  : integer := (G_SAMPLING_RATE * 3) / 4;
+    constant C_OVERSAMPLE_COUNTERWIDTH : integer := integer(ceil(log2(real(G_SAMPLING_RATE))));
+    constant C_MID_SAMPLE_POINT        : integer := G_SAMPLING_RATE / 2;
+    constant C_THREE_QUARTER_POINT     : integer := (G_SAMPLING_RATE * 3) / 4;
 
     -- Counter bit width
-    constant C_DATA_COUNT_WIDTH     : integer := integer(ceil(log2(real(G_NB_DATA_BITS))));
+    constant C_BIT_COUNTER_WIDTH       : integer := integer(ceil(log2(real(O_BYTE'length))));
 
     -- Recovery constants
-    constant C_NB_RECOVERY_BITS     : integer := G_NB_DATA_BITS + 1; -- Data + stop bits
-    constant C_RECOVERY_PERIOD      : integer := G_SAMPLING_RATE * C_NB_RECOVERY_BITS;
-    constant C_RECOVERY_CNT_WIDTH   : integer := integer(ceil(log2(real(C_RECOVERY_PERIOD))));
+    constant C_NB_RECOVERY_BITS        : integer := O_BYTE'length + 1; -- Data bits + stop bit
+    constant C_RECOVERY_PERIOD         : integer := G_SAMPLING_RATE * C_NB_RECOVERY_BITS;
+    constant C_RECOVERY_COUNTER_WIDTH  : integer := integer(ceil(log2(real(C_RECOVERY_PERIOD))));
 
     -- =================================================================================================================
     -- SIGNAL
     -- =================================================================================================================
 
     -- Baud rate generators
-    signal rx_baud_counter          : unsigned(C_SAMPLE_COUNTER_WIDTH - 1 downto 0);
-    signal rx_baud_tick             : std_logic;
+    signal rx_baud_counter             : unsigned(C_SAMPLE_COUNTER_WIDTH - 1 downto 0);
+    signal rx_baud_tick                : std_logic;
 
     -- Sample count
-    signal oversample_counter       : unsigned(C_OVERSAMPLE_WIDTH - 1 downto 0);
+    signal oversample_counter          : unsigned(C_OVERSAMPLE_COUNTERWIDTH - 1 downto 0);
 
-    -- Data count
-    signal data_counter             : unsigned(C_DATA_COUNT_WIDTH - 1 downto 0);
+    -- Bit count
+    signal bit_counter                 : unsigned(C_BIT_COUNTER_WIDTH  - 1 downto 0);
 
     -- Recovery locked counter
-    signal recovery_counter         : unsigned(C_RECOVERY_CNT_WIDTH - 1 downto 0);
-    signal recovery_elapsed         : std_logic;
+    signal recovery_counter            : unsigned(C_RECOVERY_COUNTER_WIDTH - 1 downto 0);
+    signal recovery_elapsed            : std_logic;
 
     -- Clock Domain Crossing and Filtering (4-stage shift register: 2 for metastability + 2 for filtering)
-    signal i_uart_rx_sr             : std_logic_vector(4 - 1 downto 0);
-    signal i_uart_rx_filtered       : std_logic;
-    signal i_uart_rx_filtered_d1    : std_logic;
+    signal i_uart_rx_sr                : std_logic_vector(4 - 1 downto 0);
+    signal i_uart_rx_filtered          : std_logic;
+    signal i_uart_rx_filtered_d1       : std_logic;
 
     -- Bit tick
-    signal uart_rx_sampled_bit      : std_logic;
+    signal uart_rx_sampled_bit         : std_logic;
 
     -- FSM
-    signal current_state            : t_rx_state;
-    signal next_state               : t_rx_state;
-    signal next_start_bit_error     : std_logic;
-    signal next_stop_bit_error      : std_logic;
-    signal next_o_byte_valid        : std_logic;
-    signal next_o_byte_update       : std_logic;
-    signal next_o_byte              : std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
+    signal current_state               : t_state;
+    signal next_state                  : t_state;
+    signal next_start_bit_error        : std_logic;
+    signal next_stop_bit_error         : std_logic;
+    signal next_o_byte_valid           : std_logic;
+    signal next_o_byte_update          : std_logic;
+    signal next_o_byte                 : std_logic_vector(8 - 1 downto 0);
 
 begin
 
@@ -217,7 +223,7 @@ begin
 
             when STATE_DATA_BITS =>
 
-                if ((data_counter = G_NB_DATA_BITS - 1) and
+                if ((bit_counter = O_BYTE'length - 1) and
                     (oversample_counter = G_SAMPLING_RATE - 1 and rx_baud_tick = '1')) then
                     next_state <= STATE_STOP_BIT;
                 else
@@ -279,7 +285,7 @@ begin
             -- =========================================================================================================
             -- STATE: VALID
             -- =========================================================================================================
-            -- In this state, the module asserts the data valid signal for one clock cycle and then
+            -- In this state, the module asserts the byte valid signal for one clock cycle and then
             -- transitions back to the IDLE state.
             -- =========================================================================================================
 
@@ -373,7 +379,7 @@ begin
             rx_baud_tick       <= '0';
 
             oversample_counter <= (others => '0');
-            data_counter       <= (others => '0');
+            bit_counter        <= (others => '0');
 
             recovery_counter   <= (others => '0');
             recovery_elapsed   <= '0';
@@ -401,13 +407,13 @@ begin
                 rx_baud_counter    <= (others => '0');
                 rx_baud_tick       <= '0';
                 oversample_counter <= (others => '0');
-                data_counter       <= (others => '0');
+                bit_counter        <= (others => '0');
             end if;
 
             -- =========================================================================================================
-            -- Oversample and data counters
+            -- Oversample and bit counters
             -- =========================================================================================================
-            -- Every 16x baud tick, increment the data counter
+            -- Every 16x baud tick, increment the bit counter
             -- =========================================================================================================
 
             if (rx_baud_tick = '1') then
@@ -418,10 +424,10 @@ begin
                     oversample_counter <= (others => '0');
 
                     -- Count the current bit index
-                    if (data_counter >= G_NB_DATA_BITS - 1) then
-                        data_counter <= (others => '0');
+                    if (bit_counter >= O_BYTE'length - 1) then
+                        bit_counter <= (others => '0');
                     elsif (current_state = STATE_DATA_BITS) then
-                        data_counter <= data_counter + 1;
+                        bit_counter <= bit_counter + 1;
                     end if;
 
                 else
@@ -457,7 +463,7 @@ begin
     -- Output logic
     -- =================================================================================================================
 
-    p_fsm_output_comb : process (all) is
+    p_next_outputs_comb : process (all) is
     begin
 
         next_start_bit_error <= '0';
@@ -529,13 +535,13 @@ begin
 
         end case;
 
-    end process p_fsm_output_comb;
+    end process p_next_outputs_comb;
 
     -- =================================================================================================================
     -- Output process
     -- =================================================================================================================
 
-    p_output : process (CLK, RST_N) is
+    p_outputs_seq : process (CLK, RST_N) is
     begin
 
         if (RST_N = '0') then
@@ -564,6 +570,6 @@ begin
 
         end if;
 
-    end process p_output;
+    end process p_outputs_seq;
 
 end architecture UART_RX_ARCH;

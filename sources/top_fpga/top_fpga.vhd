@@ -23,10 +23,17 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Top-Level of the FPGA
 -- @author  Timothee Charrier
--- @date    01/12/2025
+-- @date    10/12/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      01/12/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Remove generic from UART module, update resync_slv module generic names
 -- =====================================================================================================================
 
 library ieee;
@@ -55,7 +62,7 @@ entity TOP_FPGA is
         PAD_O_SCLK     : out   std_logic;
         PAD_O_MOSI     : out   std_logic;
         PAD_I_MISO     : in    std_logic;
-        PAD_O_CS       : out   std_logic;
+        PAD_O_CS_N     : out   std_logic;
 
         -- Switches and LED
         PAD_I_SWITCH_0 : in    std_logic;
@@ -82,7 +89,6 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     constant C_CLK_FREQ_HZ          : positive := 50_000_000;
     constant C_BAUD_RATE_BPS        : positive := 115_200;
     constant C_SAMPLING_RATE        : positive := 16;
-    constant C_UART_NB_DATA_BITS    : positive := 8;
 
     -- SPI
     constant C_SPI_FREQ_HZ          : positive  := 1_000_000;
@@ -165,8 +171,8 @@ begin
 
     inst_resync_slv : entity lib_rtl.resync_slv
         generic map (
-            G_WIDTH         => C_RESYNC_DEFAULT_VALUE'length,
-            G_DEFAULT_VALUE => C_RESYNC_DEFAULT_VALUE
+            G_DATA_WIDTH         => C_RESYNC_DEFAULT_VALUE'length,
+            G_DATA_DEFAULT_VALUE => C_RESYNC_DEFAULT_VALUE
         )
         port map (
             CLK          => internal_clk,
@@ -183,8 +189,7 @@ begin
         generic map (
             G_CLK_FREQ_HZ   => C_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => C_BAUD_RATE_BPS,
-            G_SAMPLING_RATE => C_SAMPLING_RATE,
-            G_NB_DATA_BITS  => C_UART_NB_DATA_BITS
+            G_SAMPLING_RATE => C_SAMPLING_RATE
         )
         port map (
             CLK               => internal_clk,
@@ -245,7 +250,7 @@ begin
             O_SCLK          => PAD_O_SCLK,
             O_MOSI          => PAD_O_MOSI,
             I_MISO          => PAD_I_MISO,
-            O_CS            => PAD_O_CS,
+            O_CS_N          => PAD_O_CS_N,
             I_TX_DATA       => spi_tx_data,
             I_TX_DATA_VALID => spi_tx_data_valid,
             O_RX_DATA       => spi_rx_data,

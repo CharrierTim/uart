@@ -33,7 +33,7 @@ The following figure depicts the Top-Level:
 | `PAD_O_SCLK`     | std_logic |    out    | 0b0           | Output SPI serial clock               |
 | `PAD_O_MOSI`     | std_logic |    out    | 0b0           | Output SPI Master Output Slave Input  |
 | `PAD_I_MISO`     | std_logic |    in     | -             | Output SPI Master Input Slave Input   |
-| `PAD_O_CS`       | std_logic |    out    | 0b1           | Output SPI Chip Select                |
+| `PAD_O_CS_N`     | std_logic |    out    | 0b1           | Output SPI Chip Select                |
 | `PAD_I_SWITCH_0` | std_logic |    in     | -             | Input switch 0                        |
 | `PAD_I_SWITCH_1` | std_logic |    in     | -             | Input switch 1                        |
 | `PAD_I_SWITCH_2` | std_logic |    in     | -             | Input switch 2                        |
@@ -77,7 +77,6 @@ The FPGA instantiates the [uart](uart/uart.md) module with the following generic
 | `G_CLK_FREQ_HZ`   | positive | 0d50_000_000  | Clock frequency in Hz of `internal_clk`        |
 | `G_BAUD_RATE_BPS` | positive | 0d115_200     | Baud rate in bps                               |
 | `G_SAMPLING_RATE` | positive | 0d16          | Sampling rate (number of clock cycles per bit) |
-| `G_NB_DATA_BITS`  | positive | 0d8           | Number of data bits                            |
 
 </div>
 

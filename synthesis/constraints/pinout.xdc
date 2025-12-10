@@ -28,6 +28,12 @@
 ## @author  Timothee Charrier
 ## @date    29/10/2025
 ## =====================================================================================================================
+## REVISION HISTORY
+##
+## Version  Date        Author              Description
+## -------  ----------  ------------------  ----------------------------------------------------------------------------
+## 1.0      29/10/2025  Timothee Charrier   Initial release
+## =====================================================================================================================
 
 # Clock and reset
 set_property -dict {PACKAGE_PIN Y9   IOSTANDARD LVCMOS33}             [get_ports {PAD_I_CLK}];      # CLK
@@ -41,7 +47,7 @@ set_property -dict {PACKAGE_PIN AA11 IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports
 set_property -dict {PACKAGE_PIN W12  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_SCLK}];     # JB1 - P1
 set_property -dict {PACKAGE_PIN W11  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_MOSI}];     # JB1 - P2
 set_property -dict {PACKAGE_PIN W10  IOSTANDARD LVCMOS33}             [get_ports {PAD_I_MISO}];     # JB1 - P3
-set_property -dict {PACKAGE_PIN W8   IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_O_CS}];       # JB1 - P4
+set_property -dict {PACKAGE_PIN W8   IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_O_CS_N}];     # JB1 - P4
 
 # Switches
 set_property -dict {PACKAGE_PIN F22  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_0}]; # SW0
