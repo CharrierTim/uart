@@ -447,7 +447,7 @@ begin
     -- Output logic
     -- =================================================================================================================
 
-    p_fsm_output_comb : process (all) is
+    p_next_outputs_comb : process (all) is
     begin
 
         -- Default assignment
@@ -540,13 +540,13 @@ begin
 
         end case;
 
-    end process p_fsm_output_comb;
+    end process p_next_outputs_comb;
 
     -- =================================================================================================================
     -- OUTPUT ASSIGNMENTS
     -- =================================================================================================================
 
-    p_output_reg : process (CLK, RST_N) is
+    p_outputs_seq : process (CLK, RST_N) is
     begin
 
         if (RST_N = '0') then
@@ -599,6 +599,6 @@ begin
 
         end if;
 
-    end process p_output_reg;
+    end process p_outputs_seq;
 
 end architecture UART_ARCH;
