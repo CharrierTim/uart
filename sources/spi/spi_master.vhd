@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    spi_master.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   SPI master module supporting all four SPI modes (0-3).
 --
 --          SPI Mode Configuration (adapted from Texas Instruments KeyStone Architecture Serial Peripheral Interface
@@ -49,6 +49,11 @@
 --
 -- @author  Timothee Charrier
 -- @date    24/11/2025
+-- =====================================================================================================================
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ---------------------------------------------------------------------------
+-- 1.0      24/11/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
 -- =====================================================================================================================
 
 library ieee;
