@@ -23,10 +23,17 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    resync_slv.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Re-synchronize asynchronous inputs to a destination clock domain.
 -- @author  Timothee Charrier
--- @date    23/10/2025
+-- @date    10/12/2025
+-- =====================================================================================================================
+-- REVISION HISTORY
+--
+-- Version  Date        Author              Description
+-- -------  ----------  ------------------  ----------------------------------------------------------------------------
+-- 1.0      23/10/2025  Timothee Charrier   Initial release
+-- 1.1      10/12/2025  Timothee Charrier   Rename generics
 -- =====================================================================================================================
 
 library ieee;
@@ -38,14 +45,14 @@ library ieee;
 
 entity RESYNC_SLV is
     generic (
-        G_WIDTH         : positive := 8;
-        G_DEFAULT_VALUE : std_logic_vector(G_WIDTH - 1 downto 0)
+        G_DATA_WIDTH         : positive := 8;
+        G_DATA_DEFAULT_VALUE : std_logic_vector(G_DATA_WIDTH - 1 downto 0)
     );
     port (
         CLK          : in    std_logic;
         RST_N        : in    std_logic;
-        I_DATA_ASYNC : in    std_logic_vector(G_DEFAULT_VALUE'range);
-        O_DATA_SYNC  : out   std_logic_vector(G_DEFAULT_VALUE'range)
+        I_DATA_ASYNC : in    std_logic_vector(G_DATA_DEFAULT_VALUE'range);
+        O_DATA_SYNC  : out   std_logic_vector(G_DATA_DEFAULT_VALUE'range)
     );
 end entity RESYNC_SLV;
 
@@ -76,9 +83,9 @@ begin
 
             if (RST_N = '0') then
 
-                reg_i_data_async    <= G_DEFAULT_VALUE(data_idx);
-                reg_i_data_async_d1 <= G_DEFAULT_VALUE(data_idx);
-                reg_i_data_async_d2 <= G_DEFAULT_VALUE(data_idx);
+                reg_i_data_async    <= G_DATA_DEFAULT_VALUE(data_idx);
+                reg_i_data_async_d1 <= G_DATA_DEFAULT_VALUE(data_idx);
+                reg_i_data_async_d2 <= G_DATA_DEFAULT_VALUE(data_idx);
 
             elsif rising_edge(CLK) then
 

@@ -33,7 +33,7 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
--- 1.1      10/12/2025  Timothee Charrier   Remove generic from UART module
+-- 1.1      10/12/2025  Timothee Charrier   Remove generic from UART module, update resync_slv module generic names
 -- =====================================================================================================================
 
 library ieee;
@@ -171,8 +171,8 @@ begin
 
     inst_resync_slv : entity lib_rtl.resync_slv
         generic map (
-            G_WIDTH         => C_RESYNC_DEFAULT_VALUE'length,
-            G_DEFAULT_VALUE => C_RESYNC_DEFAULT_VALUE
+            G_DATA_WIDTH         => C_RESYNC_DEFAULT_VALUE'length,
+            G_DATA_DEFAULT_VALUE => C_RESYNC_DEFAULT_VALUE
         )
         port map (
             CLK          => internal_clk,
