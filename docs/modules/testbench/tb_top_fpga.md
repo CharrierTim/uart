@@ -12,11 +12,11 @@ The following figure depicts the Testbench:
 
 A record type used to define register configurations for the testbench.
 
-| Property      | Description                                                                                                                                                                             |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type Name** | `t_reg`                                                                                                                                                                                 |
-| **Purpose**   | Register fields with address and default value                                                                                                                                          |
-| **Fields**    | - `name` : `string` - Register name identifier<br>- `addr` : `std_logic_vector(7 downto 0)` - 8-bit register address<br>- `data` : `std_logic_vector(15 downto 0)` - 16-bit reset value |
+| Property      | Description                                                                                                                                                                              |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type Name** | `t_reg`                                                                                                                                                                                  |
+| **Purpose**   | Register fields with address and default value                                                                                                                                           |
+| **Fields**    | - `name` :  `string` - Register name identifier<br>- `addr` : `std_logic_vector(7 downto 0)` - 8-bit register address<br>- `data` : `std_logic_vector(15 downto 0)` - 16-bit reset value |
 
 ## Constants
 
@@ -24,25 +24,25 @@ A record type used to define register configurations for the testbench.
 
 The following constants are defined:
 
-| Name                       | Type         | Value            re                          | Description                             |
-| -------------------------- | ------------ | -------------------------------------------- | --------------------------------------- |
-| `C_FREQ_HZ`                | positive     | 0d100_000_000                                | Clock frequency                         |
-| `C_CLK_PERIOD`             | time         | 1 sec / `C_FREQ_HZ`                          | Clock period                            |
-| `C_GIT_ID`                 | vector[31:0] | 0x12345678                                   | Git identifier for DUT version tracking |
-| `C_UART_BAUD_RATE_BPS`     | positive     | 0d115_200                                    | UART baud rate in bits per second       |
-| `C_UART_BIT_TIME`          | time         | 1 sec / `C_UART_BAUD_RATE_BPS`               | Time duration for one UART bit          |
-| `C_UART_BIT_TIME_ACCURACY` | time         | 0.01 * `C_UART_BIT_TIME`                     | UART bit timing tolerance (1%)          |
-| `C_UART_WRITE_NB_BITS`     | positive     | 10 * 8                                       | Total bits for UART write command       |
-| `C_UART_WRITE_CMD_TIME`    | time         | `C_UART_BIT_TIME` * `C_UART_WRITE_NB_BITS`   | Total time for UART write command       |
-| `C_READ_NB_BITS`           | positive     | 10 * 9                                       | Total bits for UART read command        |
-| `C_UART_READ_CMD_TIME`     | time         | `C_UART_BIT_TIME` * `C_UART_READ_NB_BITS`    | Total time for UART read command        |
-| `C_SPI_FREQ_HZ`            | positive     | 0d1_000_000                                  | SPI SLCK frequency                      |
-| `C_SPI_BIT_TIME`           | time         | 1 sec / `C_SPI_FREQ_HZ`                      | SPI baud rate in bits per second        |
-| `C_SPI_BIT_TIME_ACCURACY`  | time         | 0.01 * `C_SPI_BIT_TIME`                      | SPI bit timing tolerance (1%)           |
-| `C_SPI_NB_DATA_BIS`        | positive     | 8                                            | Total bits in SPI transaction           |
-| `C_SPI_TRANSACTION_TIME`   | time         | (`C_SPI_NB_DATA_BIS` + 2) * `C_SPI_BIT_TIME` | SPI transaction time                    |
-| `C_SPI_CLK_POLARITY`       | std_logic    | 0b0                                          | SPI SLCK polarity                       |
-| `C_SPI_CLK_PHASE`          | std_logic    | 0b0                                          | SPI SLCK phase                          |
+| Name                       | Type          | Value                                        | Description                             |
+| -------------------------- | ------------- | -------------------------------------------- | --------------------------------------- |
+| `C_FREQ_HZ`                | positive      | 0d100_000_000                                | Clock frequency                         |
+| `C_CLK_PERIOD`             | time          | 1 sec / `C_FREQ_HZ`                          | Clock period                            |
+| `C_GIT_ID`                 | vector[31: 0] | 0x12345678                                   | Git identifier for DUT version tracking |
+| `C_UART_BAUD_RATE_BPS`     | positive      | 0d115_200                                    | UART baud rate in bits per second       |
+| `C_UART_BIT_TIME`          | time          | 1 sec / `C_UART_BAUD_RATE_BPS`               | Time duration for one UART bit          |
+| `C_UART_BIT_TIME_ACCURACY` | time          | 0. 01 * `C_UART_BIT_TIME`                    | UART bit timing tolerance (1%)          |
+| `C_UART_WRITE_NB_BITS`     | positive      | 10 * 8                                       | Total bits for UART write command       |
+| `C_UART_WRITE_CMD_TIME`    | time          | `C_UART_BIT_TIME` * `C_UART_WRITE_NB_BITS`   | Total time for UART write command       |
+| `C_READ_NB_BITS`           | positive      | 10 * 9                                       | Total bits for UART read command        |
+| `C_UART_READ_CMD_TIME`     | time          | `C_UART_BIT_TIME` * `C_UART_READ_NB_BITS`    | Total time for UART read command        |
+| `C_SPI_FREQ_HZ`            | positive      | 0d1_000_000                                  | SPI SLCK frequency                      |
+| `C_SPI_BIT_TIME`           | time          | 1 sec / `C_SPI_FREQ_HZ`                      | SPI baud rate in bits per second        |
+| `C_SPI_BIT_TIME_ACCURACY`  | time          | 0.01 * `C_SPI_BIT_TIME`                      | SPI bit timing tolerance (1%)           |
+| `C_SPI_NB_DATA_BIS`        | positive      | 8                                            | Total bits in SPI transaction           |
+| `C_SPI_TRANSACTION_TIME`   | time          | (`C_SPI_NB_DATA_BIS` + 2) * `C_SPI_BIT_TIME` | SPI transaction time                    |
+| `C_SPI_CLK_POLARITY`       | std_logic     | 0b0                                          | SPI SLCK polarity                       |
+| `C_SPI_CLK_PHASE`          | std_logic     | 0b0                                          | SPI SLCK phase                          |
 
 ### Registers
 
@@ -68,6 +68,8 @@ The following registers are defined as [`t_reg`](#t_reg):
 
 ## Procedures
 
+---
+
 ### Procedure `proc_check_time_in_range`
 
 #### Description
@@ -85,10 +87,8 @@ This procedure performs a range check to verify that `time_to_check` is within `
 
 #### Steps
 
-```raw
-# Perform range check
-Check that abs(time_to_check - expected_time) <= accuracy with procedure check
-```
+1. **Perform Range Check**
+    - Check that `abs(time_to_check - expected_time) <= accuracy` with procedure `check`
 
 ---
 
@@ -106,31 +106,29 @@ This procedure puts all the testbench signals into a known state.
 
 #### Steps
 
-```raw
-# Reset the DUT by setting the input state to all zeros
-Set tb_pad_i_rst_h to 1
-Set tb_i_uart_select to 0
-Set tb_i_uart_rx_manual to 0
-Set tb_pad_i_switch_0 to 0
-Set tb_pad_i_switch_1 to 0
-Set tb_pad_i_switch_2 to 0
-Set tb_i_read_address to 0x00
-Set tb_i_read_address_valid to 0
-Set tb_i_write_address to 0x00
-Set tb_i_write_data to 0x0000
-Set tb_i_write_valid to 0
-Set tb_check_uart_timings to 0
-Set tb_check_spi_timings to 0
+1. **Reset the DUT by Setting Input State to All Zeros**
+    - Set `tb_pad_i_rst_h` to `1`
+    - Set `tb_i_uart_select` to `0`
+    - Set `tb_i_uart_rx_manual` to `0`
+    - Set `tb_pad_i_switch_0` to `0`
+    - Set `tb_pad_i_switch_1` to `0`
+    - Set `tb_pad_i_switch_2` to `0`
+    - Set `tb_i_read_address` to `0x00`
+    - Set `tb_i_read_address_valid` to `0`
+    - Set `tb_i_write_address` to `0x00`
+    - Set `tb_i_write_data` to `0x0000`
+    - Set `tb_i_write_valid` to `0`
+    - Set `tb_check_uart_timings` to `0`
+    - Set `tb_check_spi_timings` to `0`
 
-# Wait for the specified number of clock cycles
-Wait for c_clock_cycles * C_CLK_PERIOD
+2. **Wait for the Specified Number of Clock Cycles**
+    - Wait for `c_clock_cycles * C_CLK_PERIOD`
 
-# De-assert reset
-Set tb_pad_i_rst_h to 0
+3. **De-assert Reset**
+    - Set `tb_pad_i_rst_h` to `0`
 
-# Wait for the DUT to settle
-Wait for 5 ns
-```
+4. **Wait for the DUT to Settle**
+    - Wait for 5 ns
 
 ---
 
@@ -149,25 +147,23 @@ This procedure sends a byte via UART using the manually driven line.
 
 #### Steps
 
-```raw
-# Ensure the manual UART is selected
-if tb_i_uart_select = 0:
-    Set tb_i_uart_select to 1
-    Wait for 200 ns
+1. **Ensure the Manual UART is Selected**
+    - If `tb_i_uart_select = 0`:
+        - Set `tb_i_uart_select` to `1`
+        - Wait for 200 ns
 
-# Send the start bit
-Set uart_rx to 0
-Wait for C_UART_BIT_TIME
+2. **Send the Start Bit**
+    - Set `uart_rx` to `0`
+    - Wait for `C_UART_BIT_TIME`
 
-# Send the data bits (LSB to MSB)
-for bit_idx in byte_to_send'low to byte_to_send'high:
-    Set uart_rx to byte_to_send(bit_idx)
-    Wait for C_UART_BIT_TIME
+3. **Send the Data Bits (LSB to MSB)**
+    - For `bit_idx` in `byte_to_send'low` to `byte_to_send'high`:
+        - Set `uart_rx` to `byte_to_send(bit_idx)`
+        - Wait for `C_UART_BIT_TIME`
 
-# Send the stop bit
-Set uart_rx to 1
-Wait for 1. 1 * C_UART_BIT_TIME
-```
+4. **Send the Stop Bit**
+    - Set `uart_rx` to `1`
+    - Wait for 1. 1 × `C_UART_BIT_TIME`
 
 ---
 
@@ -186,24 +182,22 @@ This procedure writes a value to a specified UART register.
 
 #### Steps
 
-```raw
-# Ensure the model UART is selected
-if tb_i_uart_select = 1:
-    Set tb_i_uart_select to 0
-    Wait for 200 ns
+1. **Ensure the Model UART is Selected**
+    - If `tb_i_uart_select = 1`:
+        - Set `tb_i_uart_select` to `0`
+        - Wait for 200 ns
 
-# Set up the write operation
-Set tb_i_write_address to reg. addr
-Set tb_i_write_data to value
-Set tb_i_write_valid to 1
+2. **Set Up the Write Operation**
+    - Set `tb_i_write_address` to `reg.addr`
+    - Set `tb_i_write_data` to `value`
+    - Set `tb_i_write_valid` to `1`
 
-# Wait some time and de-assert the valid flag
-Wait for 200 ns
-Set tb_i_write_valid to 0
+3. **Wait and De-assert the Valid Flag**
+    - Wait for 200 ns
+    - Set `tb_i_write_valid` to `0`
 
-# Wait for the write operation to complete
-Wait for 1.1 * C_UART_WRITE_CMD_TIME
-```
+4. **Wait for the Write Operation to Complete**
+    - Wait for 1.1 × `C_UART_WRITE_CMD_TIME`
 
 ---
 
@@ -221,25 +215,23 @@ This procedure reads a value from a specified UART register.
 
 #### Steps
 
-```raw
-# Ensure the model UART is selected
-if tb_i_uart_select = 1:
-    Set tb_i_uart_select to 0
-    Wait for 200 ns
+1. **Ensure the Model UART is Selected**
+    - If `tb_i_uart_select = 1`:
+        - Set `tb_i_uart_select` to `0`
+        - Wait for 200 ns
 
-# Wait some time before starting the read to avoid simulation stuck
-Wait for 500 ns
+2. **Wait Before Starting the Read**
+    - Wait for 500 ns (to avoid simulation stuck)
 
-# Set up the read operation
-Set tb_i_read_address to reg.addr
-Set tb_i_read_address_valid to 1
+3. **Set Up the Read Operation**
+    - Set `tb_i_read_address` to `reg.addr`
+    - Set `tb_i_read_address_valid` to `1`
 
-# Wait for the read operation to complete
-Wait for a rising edge on signal tb_o_read_data_valid
+4. **Wait for the Read Operation to Complete**
+    - Wait for a rising edge on signal `tb_o_read_data_valid`
 
-# De-assert the read valid signal after completion
-Set tb_i_read_address_valid to 0
-```
+5. **De-assert the Read Valid Signal**
+    - Set `tb_i_read_address_valid` to `0`
 
 ---
 
@@ -258,12 +250,11 @@ This procedure checks if the read value from a specified UART register matches t
 
 #### Steps
 
-```raw
-# Read the register value
-Read the register reg value with procedure proc_uart_read
+1. **Read the Register Value**
+    - Read the register `reg` value with procedure [`proc_uart_read`](#procedure-proc_uart_read)
 
-Check that the returned value tb_o_read_data equals expected_value with the procedure check_equal
-```
+2. **Check the Returned Value**
+    - Check that the returned value `tb_o_read_data` equals `expected_value` with the procedure `check_equal`
 
 ---
 
@@ -281,10 +272,8 @@ This procedure checks if the default value of a specified UART register matches 
 
 #### Steps
 
-```raw
-# Check the default value against the register's reset value
-Check that the value after reset is equal to the one specified in reg.data with the procedure proc_uart_check
-```
+1. **Check the Default Value Against the Register's Reset Value**
+    - Check that the value after reset is equal to the one specified in `reg.data` with the procedure [`proc_uart_check`](#procedure-proc_uart_check)
 
 ---
 
@@ -303,13 +292,11 @@ value remains unchanged.
 
 #### Steps
 
-```raw
-# Attempt to write an incorrect value to the register
-Write the data not(reg.data) to the register adress reg.addr with procedure proc_uart_write
+1. **Attempt to Write an Incorrect Value to the Register**
+    - Write the data `not(reg.data)` to the register address `reg.addr` with procedure [`proc_uart_write`](#procedure-proc_uart_write)
 
-# Check if the register value remains unchanged
-Read back the register and check if the register value remains unchanged with procedure proc_uart_check
-```
+2. **Check if the Register Value Remains Unchanged**
+    - Read back the register and check if the register value remains unchanged with procedure [`proc_uart_check`](#procedure-proc_uart_check)
 
 ---
 
@@ -329,13 +316,11 @@ value is correctly updated.
 
 #### Steps
 
-```raw
-# Write the inverted default value to the register
-Write the data not(reg.data) to the register adress reg.addr with procedure proc_uart_write
+1. **Write the Inverted Default Value to the Register**
+    - Write the data `not(reg.data)` to the register address `reg.addr` with procedure [`proc_uart_write`](#procedure-proc_uart_write)
 
-# Check if the register value is updated correctly
-Read back the register and check if the register value is matching expected_value with procedure proc_uart_check
-```
+2. **Check if the Register Value is Updated Correctly**
+    - Read back the register and check if the register value is matching `expected_value` with procedure [`proc_uart_check`](#procedure-proc_uart_check)
 
 ---
 
@@ -353,13 +338,11 @@ Writes a byte value to the SPI master module via UART register interface.
 
 #### Steps
 
-```raw
-# Reset C_REG_SPI_TX before for the rising edge detection
-Write 0x0000 to register C_REG_SPI_TX with procedure proc_uart_write
+1. **Reset C_REG_SPI_TX for Rising Edge Detection**
+    - Write `0x0000` to register `C_REG_SPI_TX` with procedure [`proc_uart_write`](#procedure-proc_uart_write)
 
-# Write the data and the valid flag set
-Write (7b0 & 1b1 & value) to the register C_REG_SPI_TX with procedure proc_uart_write
-```
+2. **Write the Data with Valid Flag Set**
+    - Write `(7b0 & 1b1 & value)` to the register `C_REG_SPI_TX` with procedure [`proc_uart_write`](#procedure-proc_uart_write)
 
 ---
 
@@ -377,16 +360,16 @@ Writes a value to SPI master and verifies correct transmission and reception.
 
 #### Steps
 
-```raw
-# Write data to SPI
-Start an SPI transaction with procedure proc_spi_write
+1. **Write Data to SPI**
+    - Start an SPI transaction with procedure [`proc_spi_write`](#procedure-proc_spi_write)
 
-# Retrieve data from SPI slave stream (MOSI path verification)
-Pop data from C_SLAVE_STREAM into v_spi_slave_data
+2. **Retrieve Data from SPI Slave Stream**
+    - Pop data from `C_SLAVE_STREAM` into `v_spi_slave_data` (MOSI path verification)
 
-# Verify MOSI path
-Check that v_spi_slave_data equals `value` with procedure check_equal
+3. **Verify MOSI Path**
+    - Check that `v_spi_slave_data` equals `value` with procedure `check_equal`
 
-# Read and verify MISO register data
-Check that sampled SPI data from slave is matching the one decoded in the REG_SPI_RX register with procedure proc_uart_check
-```
+4. **Read and Verify MISO Register Data**
+    - Check that sampled SPI data from slave is matching the one decoded in the `REG_SPI_RX` register with procedure [`proc_uart_check`](#procedure-proc_uart_check)
+
+---
