@@ -114,8 +114,8 @@ The UART FSM handling is defined as:
 
 Where the following transitions are defined:
 
-| Transition | Condition(s)                |
-| ---------- | --------------------------- |
-| T0         | `I_BYTE_VALID = 1`          |
-| T1         | `tx_current_bit_index >= 9` |
-| T2         | Automatic                   |
+| Transition | Condition(s)       |
+| ---------- | ------------------ |
+| T0         | `I_BYTE_VALID = 1` |
+| T1         | `bit_counter >= 9` |
+| T2         | Automatic          |
