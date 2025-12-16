@@ -23,10 +23,10 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 1.1
+-- @version 1.2
 -- @brief   Top-Level of the FPGA
 -- @author  Timothee Charrier
--- @date    10/12/2025
+-- @date    16/12/2025
 -- =====================================================================================================================
 -- REVISION HISTORY
 --
@@ -34,6 +34,7 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 1.1      10/12/2025  Timothee Charrier   Remove generic from UART module, update resync_slv module generic names
+-- 1.2      16/12/2025  Timothee Charrier   Use new PLL outputing a 50 MHz and 25 MHz clock
 -- =====================================================================================================================
 
 library ieee;
@@ -102,6 +103,7 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
 
     -- Internal reset and clock
     signal internal_clk             : std_logic;
+    signal vga_clk                  : std_logic;
     signal internal_rst_n           : std_logic;
     signal pll_locked               : std_logic;
 
@@ -134,6 +136,7 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     component clk_wiz_0 is
         port (
             CLK_OUT1          : out   std_logic;
+            CLK_OUT2          : out   std_logic;
             RESET             : in    std_logic;
             LOCKED            : out   std_logic;
             CLK_IN1           : in    std_logic
@@ -153,6 +156,7 @@ begin
     inst_pll : component clk_wiz_0
         port map (
             clk_out1 => internal_clk,
+            clk_out2 => vga_clk,
             reset    => PAD_I_RST_H,
             locked   => pll_locked,
             clk_in1  => PAD_I_CLK
