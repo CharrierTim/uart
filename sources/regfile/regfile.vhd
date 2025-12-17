@@ -76,7 +76,11 @@ entity REGFILE is
         -- Output
         O_LED_0             : out   std_logic;
         O_SPI_TX_DATA       : out   std_logic_vector(8 - 1 downto 0);
-        O_SPI_TX_DATA_VALID : out   std_logic
+        O_SPI_TX_DATA_VALID : out   std_logic;
+        O_VGA_MODE          : out   std_logic;
+        O_RED               : out   std_logic_vector(4 - 1 downto 0);
+        O_GREEN             : out   std_logic_vector(4 - 1 downto 0);
+        O_BLUE              : out   std_logic_vector(4 - 1 downto 0)
     );
 end entity REGFILE;
 
@@ -91,13 +95,14 @@ architecture REGFILE_ARCH of REGFILE is
     -- =================================================================================================================
 
     -- RW registers
-    signal reg_spi_tx  : std_logic_vector(C_REG_SPI_TX_RST'range);
-    signal reg_spi_rx  : std_logic_vector(C_REG_SPI_RX_RST'range);
-    signal reg_led     : std_logic;
-    signal reg_16_bits : std_logic_vector(16 - 1 downto 0);
+    signal reg_spi_tx   : std_logic_vector(C_REG_SPI_TX_RST'range);
+    signal reg_spi_rx   : std_logic_vector(C_REG_SPI_RX_RST'range);
+    signal reg_vga_ctrl : std_logic_vector(C_REG_VGA_CTRL_RST'range);
+    signal reg_led      : std_logic;
+    signal reg_16_bits  : std_logic_vector(16 - 1 downto 0);
 
     -- Read interface
-    signal reg_read    : std_logic_vector(16 - 1 downto 0);
+    signal reg_read     : std_logic_vector(16 - 1 downto 0);
 
 begin
 
@@ -114,10 +119,11 @@ begin
             O_READ_DATA_VALID <= '0';
 
             -- RW registers
-            reg_spi_tx  <= C_REG_SPI_TX_RST;
-            reg_spi_rx  <= C_REG_SPI_RX_RST;
-            reg_led     <= C_REG_LED_RST;
-            reg_16_bits <= C_REG_16_BITS_RST;
+            reg_spi_tx   <= C_REG_SPI_TX_RST;
+            reg_spi_rx   <= C_REG_SPI_RX_RST;
+            reg_vga_ctrl <= C_REG_VGA_CTRL_RST;
+            reg_led      <= C_REG_LED_RST;
+            reg_16_bits  <= C_REG_16_BITS_RST;
 
             -- Read interface
             reg_read <= G_GIT_ID_MSB;
@@ -178,6 +184,10 @@ begin
 
                         reg_read <= 8b"0" & reg_spi_rx;
 
+                    when C_REG_VGA_CTRL_ADDR =>
+
+                        reg_read <= 3b"0" & reg_vga_ctrl;
+
                     when C_REG_9A_ADDR =>
 
                         reg_read <= C_REG_9A_DATA;
@@ -222,6 +232,10 @@ begin
 
                         reg_spi_tx <= I_WRITE_DATA(reg_spi_tx'range);
 
+                    when C_REG_VGA_CTRL_ADDR =>
+
+                        reg_vga_ctrl <= I_WRITE_DATA(reg_vga_ctrl'range);
+
                     when C_REG_LED_ADDR =>
 
                         reg_led <= I_WRITE_DATA(0);
@@ -248,5 +262,9 @@ begin
     O_LED_0             <= reg_led;
     O_SPI_TX_DATA       <= reg_spi_tx(reg_spi_tx'high - 1 downto reg_spi_tx'low);
     O_SPI_TX_DATA_VALID <= reg_spi_tx(reg_spi_tx'high);
+    O_VGA_MODE          <= reg_vga_ctrl(12);
+    O_RED               <= reg_vga_ctrl( 3 downto 0);
+    O_GREEN             <= reg_vga_ctrl( 7 downto 4);
+    O_BLUE              <= reg_vga_ctrl(11 downto 8);
 
 end architecture REGFILE_ARCH;
