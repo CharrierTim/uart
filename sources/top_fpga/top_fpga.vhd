@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 1.2
+-- @version 1.3
 -- @brief   Top-Level of the FPGA
 -- @author  Timothee Charrier
 -- @date    16/12/2025
@@ -35,6 +35,7 @@
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 1.1      10/12/2025  Timothee Charrier   Remove generic from UART module, update resync_slv module generic names
 -- 1.2      16/12/2025  Timothee Charrier   Use new PLL outputing a 50 MHz and 25 MHz clock
+-- 1.3      17/12/2025  Timothee Charrier   Update regfile module to interface with new VGA module
 -- =====================================================================================================================
 
 library ieee;
@@ -52,24 +53,31 @@ entity TOP_FPGA is
     );
     port (
         -- Clock and reset
-        PAD_I_CLK      : in    std_logic;
-        PAD_I_RST_H    : in    std_logic;
+        PAD_I_CLK       : in    std_logic;
+        PAD_I_RST_H     : in    std_logic;
 
         -- UART
-        PAD_I_UART_RX  : in    std_logic;
-        PAD_O_UART_TX  : out   std_logic;
+        PAD_I_UART_RX   : in    std_logic;
+        PAD_O_UART_TX   : out   std_logic;
 
         -- SPI
-        PAD_O_SCLK     : out   std_logic;
-        PAD_O_MOSI     : out   std_logic;
-        PAD_I_MISO     : in    std_logic;
-        PAD_O_CS_N     : out   std_logic;
+        PAD_O_SCLK      : out   std_logic;
+        PAD_O_MOSI      : out   std_logic;
+        PAD_I_MISO      : in    std_logic;
+        PAD_O_CS_N      : out   std_logic;
+
+        -- VGA
+        PAD_O_VGA_HSYNC : out   std_logic;
+        PAD_O_VGA_VSYNC : out   std_logic;
+        PAD_O_VGA_RED   : out   std_logic_vector(4 - 1 downto 0);
+        PAD_O_VGA_GREEN : out   std_logic_vector(4 - 1 downto 0);
+        PAD_O_VGA_BLUE  : out   std_logic_vector(4 - 1 downto 0);
 
         -- Switches and LED
-        PAD_I_SWITCH_0 : in    std_logic;
-        PAD_I_SWITCH_1 : in    std_logic;
-        PAD_I_SWITCH_2 : in    std_logic;
-        PAD_O_LED_0    : out   std_logic
+        PAD_I_SWITCH_0  : in    std_logic;
+        PAD_I_SWITCH_1  : in    std_logic;
+        PAD_I_SWITCH_2  : in    std_logic;
+        PAD_O_LED_0     : out   std_logic
     );
 end entity TOP_FPGA;
 
@@ -96,6 +104,17 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     constant C_SPI_NB_DATA_BITS     : positive  := 8;
     constant C_CLK_POLARITY         : std_logic := '0';
     constant C_CLK_PHASE            : std_logic := '0';
+
+    -- VGA
+    constant C_H_PIXELS             : integer := 640;
+    constant C_H_FRONT_PORCH        : integer := 16;
+    constant C_H_SYNC_PULSE         : integer := 96;
+    constant C_H_BACK_PORCH         : integer := 48;
+
+    constant C_V_PIXELS             : integer := 480;
+    constant C_V_FRONT_PORCH        : integer := 10;
+    constant C_V_SYNC_PULSE         : integer := 2;
+    constant C_V_BACK_PORCH         : integer := 33;
 
     -- =================================================================================================================
     -- SIGNALS
@@ -127,6 +146,12 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal spi_tx_data_valid        : std_logic;
     signal spi_rx_data              : std_logic_vector( 8 - 1 downto 0);
     signal spi_rx_data_valid        : std_logic;
+
+    -- VGA control
+    signal reg_vga_mode             : std_logic;
+    signal reg_red                  : std_logic_vector(4 - 1 downto 0);
+    signal reg_green                : std_logic_vector(4 - 1 downto 0);
+    signal reg_blue                 : std_logic_vector(4 - 1 downto 0);
 
     -- =================================================================================================================
     -- COMPONENTS
@@ -233,11 +258,15 @@ begin
             I_WRITE_VALID       => write_addr_valid,
             O_LED_0             => PAD_O_LED_0,
             O_SPI_TX_DATA       => spi_tx_data,
-            O_SPI_TX_DATA_VALID => spi_tx_data_valid
+            O_SPI_TX_DATA_VALID => spi_tx_data_valid,
+            O_VGA_MODE          => reg_vga_mode,
+            O_RED               => reg_red,
+            O_GREEN             => reg_green,
+            O_BLUE              => reg_blue
         );
 
     -- =================================================================================================================
-    -- REGFILE MODULE
+    -- SPI MODULE
     -- =================================================================================================================
 
     inst_spi_master : entity lib_rtl.spi_master
@@ -259,6 +288,37 @@ begin
             I_TX_DATA_VALID => spi_tx_data_valid,
             O_RX_DATA       => spi_rx_data,
             O_RX_DATA_VALID => spi_rx_data_valid
+        );
+
+    -- =================================================================================================================
+    -- VGA MODULE
+    -- =================================================================================================================
+
+    inst_vga : entity lib_rtl.vga_controller
+        generic map (
+            -- Horizontal timings (current: 640x480@60Hz)
+            G_H_PIXELS      => C_H_PIXELS,
+            G_H_FRONT_PORCH => C_H_FRONT_PORCH,
+            G_H_SYNC_PULSE  => C_H_SYNC_PULSE,
+            G_H_BACK_PORCH  => C_H_BACK_PORCH,
+
+            -- Vertical timings (current: 640x480@60Hz)
+            G_V_PIXELS      => C_V_PIXELS,
+            G_V_FRONT_PORCH => C_V_FRONT_PORCH,
+            G_V_SYNC_PULSE  => C_V_SYNC_PULSE,
+            G_V_BACK_PORCH  => C_V_BACK_PORCH
+        )
+        port map (
+            CLK            => vga_clk,
+            RST_N          => internal_rst_n,
+            O_HSYNC        => PAD_O_VGA_HSYNC,
+            O_VSYNC        => PAD_O_VGA_VSYNC,
+            I_MANUAL_RED   => reg_red,
+            I_MANUAL_GREEN => reg_green,
+            I_MANUAL_BLUE  => reg_blue,
+            O_RED          => PAD_O_VGA_RED,
+            O_GREEN        => PAD_O_VGA_GREEN,
+            O_BLUE         => PAD_O_VGA_BLUE
         );
 
 end architecture TOP_FPGA_ARCH;
