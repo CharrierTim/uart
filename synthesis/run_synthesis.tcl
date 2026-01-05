@@ -23,7 +23,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run_synthesis.tcl
-## @version 1.0
+## @version 1.1
 ## @brief   Synthesis script for Vivado
 ## @author  Timothee Charrier
 ## @date    27/10/2025
@@ -33,6 +33,7 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      27/10/2025  Timothee Charrier   Initial release
+## 1.1      05/01/2026  Timothee Charrier   Add VGA controller file
 ## =====================================================================================================================
 
 
@@ -104,6 +105,7 @@ set VHDL_SOURCES [list \
     [list lib_rtl "$SOURCES_DIR/resync/resync_slv.vhd"   2008] \
     [list lib_rtl "$SOURCES_DIR/regfile/regfile_pkg.vhd" 2008] \
     [list lib_rtl "$SOURCES_DIR/regfile/regfile.vhd"     2008] \
+    [list lib_rtl "$SOURCES_DIR/vga/vga_controller.vhd"  2008] \
     [list lib_rtl "$SOURCES_DIR/uart/uart_rx.vhd"        2008] \
     [list lib_rtl "$SOURCES_DIR/uart/uart_tx.vhd"        2008] \
     [list lib_rtl "$SOURCES_DIR/uart/uart.vhd"           2008] \
