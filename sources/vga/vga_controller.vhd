@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    vga_controller.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   VGA controller
 -- @author  Timothee Charrier
 -- @date    17/12/2025
@@ -33,6 +33,7 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      16/12/2025  Timothee Charrier   Initial release
+-- 1.1      05/01/2026  Timothee Charrier   Minor style updates
 -- =====================================================================================================================
 
 library ieee;
@@ -98,18 +99,18 @@ architecture VGA_CONTROLLER_ARCH of VGA_CONTROLLER is
     -- Total horizontal pixels
     constant C_HORIZONTAL_TOTAL_PIXELS : integer :=
     (
-        G_H_PIXELS +
+        G_H_PIXELS      +
         G_H_FRONT_PORCH +
-        G_H_SYNC_PULSE +
+        G_H_SYNC_PULSE  +
         G_H_BACK_PORCH
     );
 
     -- Total vertical pixels
     constant C_VERTICAL_TOTAL_PIXELS   : integer :=
     (
-        G_V_PIXELS +
+        G_V_PIXELS      +
         G_V_FRONT_PORCH +
-        G_V_SYNC_PULSE +
+        G_V_SYNC_PULSE  +
         G_V_BACK_PORCH
     );
 
@@ -154,8 +155,6 @@ architecture VGA_CONTROLLER_ARCH of VGA_CONTROLLER is
     signal vertical_count              : unsigned(C_VERTICAL_COUNT_WIDTH - 1 downto 0);
 
     -- VGA signals
-    signal hsync_raw                   : std_logic;
-    signal vsync_raw                   : std_logic;
     signal active_region               : std_logic;
 
     -- Position signals
@@ -202,11 +201,6 @@ begin
     -- SYNC AND ACTIVE REGION GENERATION
     -- =================================================================================================================
 
-    hsync_raw     <= '1' when horizontal_count >= G_H_SYNC_PULSE else
-                     '0';
-    vsync_raw     <= '1' when vertical_count >= G_V_SYNC_PULSE else
-                     '0';
-
     active_region <= '1' when (
                                   (horizontal_count >= C_HORIZONTAL_ACTIVE_START) and
                                   (horizontal_count < C_HORIZONTAL_ACTIVE_STOP)   and
@@ -244,8 +238,8 @@ begin
         elsif rising_edge(CLK) then
 
             -- Apply horizontal and vertical sync
-            O_HSYNC <= hsync_raw;
-            O_VSYNC <= vsync_raw;
+            O_HSYNC <= '1' when horizontal_count >= G_H_SYNC_PULSE else '0';
+            O_VSYNC <= '1' when vertical_count >= G_V_SYNC_PULSE   else '0';
 
             -- Active region flag
             O_ACTIVE <= active_region;
