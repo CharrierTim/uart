@@ -84,6 +84,12 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     signal tb_pad_i_switch_2     : std_logic;
     signal tb_pad_o_led_0        : std_logic;
 
+    signal tb_pad_o_vga_hsync    : std_logic;
+    signal tb_pad_o_vga_vsync    : std_logic;
+    signal tb_pad_o_vga_red      : std_logic_vector(4 - 1 downto 0);
+    signal tb_pad_o_vga_green    : std_logic_vector(4 - 1 downto 0);
+    signal tb_pad_o_vga_blue     : std_logic_vector(4 - 1 downto 0);
+
     -- UART model
     signal tb_i_uart_rx_manual   : std_logic;
     signal tb_i_uart_rx          : std_logic;
@@ -113,18 +119,23 @@ begin
             G_GIT_ID => C_GIT_ID
         )
         port map (
-            PAD_I_CLK      => tb_pad_i_clk,
-            PAD_I_RST_h    => tb_pad_i_rst_h,
-            PAD_I_UART_RX  => tb_i_uart_rx,
-            PAD_O_UART_TX  => tb_pad_o_uart_tx,
-            PAD_O_SCLK     => tb_pad_o_sclk,
-            PAD_O_MOSI     => tb_pad_o_mosi,
-            PAD_I_MISO     => tb_pad_i_miso,
-            PAD_O_CS_N     => tb_pad_o_cs_n,
-            PAD_I_SWITCH_0 => tb_pad_i_switch_0,
-            PAD_I_SWITCH_1 => tb_pad_i_switch_1,
-            PAD_I_SWITCH_2 => tb_pad_i_switch_2,
-            PAD_O_LED_0    => tb_pad_o_led_0
+            PAD_I_CLK       => tb_pad_i_clk,
+            PAD_I_RST_h     => tb_pad_i_rst_h,
+            PAD_I_UART_RX   => tb_i_uart_rx,
+            PAD_O_UART_TX   => tb_pad_o_uart_tx,
+            PAD_O_SCLK      => tb_pad_o_sclk,
+            PAD_O_MOSI      => tb_pad_o_mosi,
+            PAD_I_MISO      => tb_pad_i_miso,
+            PAD_O_CS_N      => tb_pad_o_cs_n,
+            PAD_I_SWITCH_0  => tb_pad_i_switch_0,
+            PAD_I_SWITCH_1  => tb_pad_i_switch_1,
+            PAD_I_SWITCH_2  => tb_pad_i_switch_2,
+            PAD_O_LED_0     => tb_pad_o_led_0,
+            PAD_O_VGA_HSYNC => tb_pad_o_vga_hsync,
+            PAD_O_VGA_VSYNC => tb_pad_o_vga_vsync,
+            PAD_O_VGA_RED   => tb_pad_o_vga_red,
+            PAD_O_VGA_GREEN => tb_pad_o_vga_green,
+            PAD_O_VGA_BLUE  => tb_pad_o_vga_blue
         );
 
     -- =================================================================================================================
@@ -1036,6 +1047,38 @@ begin
                 proc_spi_write(x"AB");
 
                 wait for 2 * C_SPI_TRANSACTION_TIME;
+
+            elsif (run("test_vga")) then
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing VGA register");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                proc_uart_check_default_value(C_REG_VGA_CTRL);
+                proc_uart_check_read_write(C_REG_VGA_CTRL, x"1FFF");
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking VGA RGB outputs are matching configuration");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                proc_uart_write(C_REG_VGA_CTRL, x"0ABC");
+                wait for 10 us;
+                proc_uart_write(C_REG_VGA_CTRL, x"0F00");
+                wait for 10 us;
+                proc_uart_write(C_REG_VGA_CTRL, x"00F0");
+                wait for 10 us;
+                proc_uart_write(C_REG_VGA_CTRL, x"000F");
+                wait for 10 us;
 
             end if;
 
