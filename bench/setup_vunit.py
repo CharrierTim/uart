@@ -64,11 +64,11 @@ class Simulator(ABC):
         Parameters
         ----------
         result_dir : Path | None
-            Directory for simulation results. Defaults to ./vunit_out
+            Directory for simulation results. Defaults to ./bench/results
         enable_coverage : bool
             Enable coverage collection and reporting. Defaults to False.
         """
-        self.result_dir: Path = result_dir or Path.cwd() / "vunit_out"
+        self.result_dir: Path = result_dir or Path.cwd() / "bench" / "results"
         self.enable_coverage: bool = enable_coverage
         self.vu: VUnit | None = None
 
@@ -154,10 +154,49 @@ class Simulator(ABC):
         results : Results
             The simulation results from VUnit.
         """
+        self._merge_output_files()
+
         if self.enable_coverage:
             self._generate_coverage(results)
         else:
             LOGGER.info("Coverage generation skipped (not enabled)")
+
+    def _merge_output_files(self) -> None:
+        """Merge all output.txt files from subdirectories into a single file."""
+        vunit_dir = Path(self.vu._output_path)
+        output_file = self.result_dir / "output.txt"
+
+        # Check if test_output directory exists
+        if not vunit_dir.exists():
+            LOGGER.warning("Test output directory not found: %s", vunit_dir)
+            return
+
+        # Find all output.txt files
+        output_files = list(vunit_dir.rglob("output.txt"))
+
+        if not output_files:
+            LOGGER.warning("No output.txt files found in %s", vunit_dir)
+            return
+
+        with open(output_file, "w", encoding="utf-8") as outfile:
+            LOGGER.info("Merging %d output.txt files...", len(output_files))
+
+            for txt_file in sorted(output_files):
+                # Write a header with the test name
+                outfile.write(f"\n{'=' * 80}\n")
+                outfile.write(f"Test: {txt_file.parent.name}\n")
+                outfile.write(f"Path: {txt_file.relative_to(vunit_dir)}\n")
+                outfile.write(f"{'=' * 80}\n\n")
+
+                # Write the contents of the file
+                try:
+                    with open(txt_file, encoding="utf-8") as infile:
+                        outfile.write(infile.read())
+                except Exception as e:
+                    LOGGER.error("Failed to read %s: %s", txt_file, e)
+                    outfile.write(f"[ERROR: Could not read file - {e}]\n")
+
+        LOGGER.info("Successfully merged output files to: %s", output_file)
 
     @abstractmethod
     def _generate_coverage(self, results: Results) -> None:
@@ -221,7 +260,7 @@ class NVC(Simulator):
 
         # Copy to results directory
         self.result_dir.mkdir(parents=True, exist_ok=True)
-        output_file = self.result_dir / "coverage.ncdb"
+        output_file = self.result_dir / "coverage_data.ncdb"
         shutil.copy2(coverage_db, output_file)
         LOGGER.info("Coverage database copied to %s", output_file)
 
