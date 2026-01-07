@@ -149,9 +149,9 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
 
     -- VGA control
     signal reg_vga_mode             : std_logic;
-    signal reg_red                  : std_logic_vector(4 - 1 downto 0);
-    signal reg_green                : std_logic_vector(4 - 1 downto 0);
-    signal reg_blue                 : std_logic_vector(4 - 1 downto 0);
+    signal reg_red                  : std_logic_vector( 4 - 1 downto 0);
+    signal reg_green                : std_logic_vector( 4 - 1 downto 0);
+    signal reg_blue                 : std_logic_vector( 4 - 1 downto 0);
 
     -- =================================================================================================================
     -- COMPONENTS
