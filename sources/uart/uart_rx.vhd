@@ -33,7 +33,7 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      17/10/2025  Timothee Charrier   Initial release
--- 1.1      10/12/2025  Timothee Charrier   Naming conventions update and remove generic
+-- 1.1      07/01/2026  Timothee Charrier   Naming conventions update and remove generic and code comments update
 -- =====================================================================================================================
 
 library ieee;
@@ -257,7 +257,8 @@ begin
             -- =========================================================================================================
             -- STATE: START BIT ERROR
             -- =========================================================================================================
-            -- In start bit error state, the module flags a start bit error and transitions back to the IDLE state.
+            -- In start bit error state, the module flags a start bit error and transitions back to the
+            -- STATE_ERROR_RECOVERY state.
             -- =========================================================================================================
 
             when STATE_START_BIT_ERROR =>
@@ -273,6 +274,13 @@ begin
             when STATE_STOP_BIT_ERROR =>
 
                 next_state <= STATE_IDLE;
+
+            -- =========================================================================================================
+            -- STATE: STATE ERROR RECOVERY
+            -- =========================================================================================================
+            -- In state error recovery state, the module awaits and do nothing for (8 + 1) bits time before returning
+            -- to IDLE state.
+            -- =========================================================================================================
 
             when STATE_ERROR_RECOVERY =>
 
