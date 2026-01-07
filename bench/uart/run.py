@@ -1,4 +1,4 @@
-"""VUnit test runner for the Top-level module."""
+"""VUnit test runner for the uart RX and TX modules."""
 ## =====================================================================================================================
 ##  MIT License
 ##
@@ -35,37 +35,41 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      17/10/2025  Timothee Charrier   Initial release
+## 2.0      07/01/2026  Timothee Charrier   Update entire interface
 ## =====================================================================================================================
 
 import sys
+from argparse import Namespace
 from pathlib import Path
 
-from vunit import VUnit
+from vunit import VUnit, VUnitCLI
 from vunit.ui.library import Library
 
-# Add the directory containing the utils. py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
 
 from setup_vunit import Simulator, select_simulator
 
 ## =====================================================================================================================
-# Set up the simulator environment
-## =====================================================================================================================
-
-simulator: Simulator = select_simulator()
-
-## =====================================================================================================================
-# Define library paths
+# Define paths
 ## =====================================================================================================================
 
 SRC_ROOT: Path = Path(__file__).parent.parent.parent / "sources"
 BENCH_ROOT: Path = Path(__file__).parent / "test"
+COVERAGE_SPEC_PATH: Path = Path(__file__).parent / "coverage.spec"
+
+## =====================================================================================================================
+# Parse command line arguments with custom --coverage flag
+## =====================================================================================================================
+
+cli = VUnitCLI()
+cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
+args: Namespace = cli.parse_args()
 
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
 
-VU: VUnit = VUnit.from_argv()
+VU: VUnit = VUnit.from_args(args=args)
 VU.add_vhdl_builtins()
 VU.add_verification_components()
 VU.add_random()
@@ -79,27 +83,28 @@ LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
 
 ## =====================================================================================================================
-# Configure and run the simulation
+# Configure simulation
 ## =====================================================================================================================
 
-if VU.get_simulator_name() == "nvc":
-    coverage_specs: list[str] = [
-        "# NVC Coverage Specification File",
-        "# Collect coverage only on RTL sources, exclude testbench and models",
-        "",
-        "# Enable coverage on main RTL library",
-        "+hierarchy LIB_BENCH.TB_UART_TX.DUT.*",
-        "+hierarchy LIB_BENCH.TB_UART_RX.DUT.*",
-        "",
-        "# Exclude testbench model",
-        "-hierarchy LIB_BENCH.TB_UART_TX.INST_UART_SLAVE.*",
-        "-hierarchy LIB_BENCH.TB_UART_RX.INST_UART_MASTER.*",
-        "",
-    ]
-    simulator.setup_coverage(VU=VU, specifications=coverage_specs)
-elif VU.get_simulator_name() == "ghdl":
-    simulator.setup_coverage(VU=VU, libraries=(LIB_SRC, LIB_BENCH))
+if args.coverage:
+    LIB_SRC.set_compile_option(name="enable_coverage", value=True)
+    LIB_BENCH.set_compile_option(name="enable_coverage", value=True)
+    LIB_BENCH.set_sim_option(name="enable_coverage", value=True)
+    LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"])
 
-simulator.configure(VU=VU)
+## =====================================================================================================================
+# Set up simulator
+## =====================================================================================================================
 
-VU.main(post_run=simulator.post_run)
+simulator: Simulator = select_simulator(enable_coverage=args.coverage)
+simulator.attach(VU).configure()
+
+## =====================================================================================================================
+# Run
+## =====================================================================================================================
+
+# Only set post_run callback if coverage is enabled
+if args.coverage:
+    VU.main(post_run=simulator.post_run)
+else:
+    VU.main()
