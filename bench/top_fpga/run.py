@@ -82,6 +82,12 @@ VU: VUnit = VUnit.from_args(args=args)
 VU.add_vhdl_builtins()
 VU.add_verification_components()
 
+# Open-logic libraries
+OLO: Library = VU.add_library(library_name="olo")
+OLO.add_source_files(pattern=CORES_ROOT / "open-logic" / "src" / "**" / "*.vhd")
+OLO.add_source_files(pattern=CORES_ROOT / "open-logic" / "3rdParty/" / "en_cl_fix" / "hdl" / "*.vhd")
+OLO.add_compile_option(name="nvc.a_flags", value=["--relaxed"])
+
 # Add the source files to the library
 LIB_SRC: Library = VU.add_library(library_name="lib_rtl")
 LIB_SRC.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
