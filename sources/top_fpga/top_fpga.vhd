@@ -41,6 +41,8 @@
 library ieee;
     use ieee.std_logic_1164.all;
 
+library olo;
+
 library lib_rtl;
 
 -- =====================================================================================================================
@@ -92,7 +94,9 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- =================================================================================================================
 
     -- Resynchronization
-    constant C_RESYNC_DEFAULT_VALUE : std_logic_vector(3 - 1 downto 0) := "000";
+    constant C_RESYNC_WIDTH         : positive  := 3;
+    constant C_RESYNC_DEFAULT_VALUE : std_logic := '0';
+    constant C_RESYNC_NB_STAGES     : positive  := 3;
 
     -- UART
     constant C_CLK_FREQ_HZ          : positive := 50_000_000;
@@ -124,6 +128,7 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal internal_clk             : std_logic;
     signal vga_clk                  : std_logic;
     signal internal_rst_n           : std_logic;
+    signal internal_rst_h           : std_logic;
     signal pll_locked               : std_logic;
 
     -- Resynchronization
@@ -173,6 +178,7 @@ begin
 
     -- Toggle reset from BTN and when PLL is lock
     internal_rst_n <= (not PAD_I_RST_H) and pll_locked;
+    internal_rst_h <= PAD_I_RST_H       and pll_locked;
 
     -- =================================================================================================================
     -- PLL
@@ -188,7 +194,7 @@ begin
         );
 
     -- =================================================================================================================
-    -- RESYNCHRONIZATION
+    -- RESYNCHRONIZATION FOR EXTERNAL SIGNALS
     -- =================================================================================================================
 
     async_inputs_slv <=
@@ -198,16 +204,17 @@ begin
         0 => PAD_I_SWITCH_0
     );
 
-    inst_resync_slv : entity lib_rtl.resync_slv
+    inst_olo_intf_sync : entity olo.olo_intf_sync
         generic map (
-            G_DATA_WIDTH         => C_RESYNC_DEFAULT_VALUE'length,
-            G_DATA_DEFAULT_VALUE => C_RESYNC_DEFAULT_VALUE
+            WIDTH_G      => C_RESYNC_WIDTH,
+            RSTLEVEL_G   => C_RESYNC_DEFAULT_VALUE,
+            SYNCSTAGES_G => C_RESYNC_NB_STAGES
         )
         port map (
-            CLK          => internal_clk,
-            RST_N        => internal_rst_n,
-            I_DATA_ASYNC => async_inputs_slv,
-            O_DATA_SYNC  => sync_inputs_slv
+            Clk       => internal_clk,
+            Rst       => internal_rst_h,
+            DataAsync => async_inputs_slv,
+            DataSync  => sync_inputs_slv
         );
 
     -- =================================================================================================================
