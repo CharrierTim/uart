@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 1.3
+-- @version 1.4
 -- @brief   Top-Level of the FPGA
 -- @author  Timothee Charrier
 -- @date    16/12/2025
