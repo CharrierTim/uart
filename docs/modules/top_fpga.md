@@ -108,3 +108,22 @@ The FPGA instantiates the [spi_master](spi/spi_master.md) module with the follow
 | `G_CLK_PHASE`    | std_logic | 0b0           | Generated SPI clock phase                      |
 
 </div>
+
+### VGA
+
+The FPGA instantiates the [vga_controller](vga/vga_controller.md) module with the following generics:
+
+<div class="generics-table" markdown="1">
+
+| Generic Name      | Type    | Default Value | Description                                |
+| ----------------- | ------- | ------------- | ------------------------------------------ |
+| `G_H_PIXELS`      | integer | 0d640         | Horizontal resolution in pixels            |
+| `G_H_FRONT_PORCH` | integer | 0d16          | Horizontal front porch in pixels           |
+| `G_H_SYNC_PULSE`  | integer | 0d96          | Horizontal synchronization pulse in pixels |
+| `G_H_BACK_PORCH`  | integer | 0d48          | Horizontal back porch in pixels            |
+| `G_V_PIXELS`      | integer | 0d480         | Vertical resolution in pixels              |
+| `G_V_FRONT_PORCH` | integer | 0d10          | Vertical front porch in pixels             |
+| `G_V_SYNC_PULSE`  | integer | 0d2           | Vertical synchronization pulse in pixels   |
+| `G_V_BACK_PORCH`  | integer | 0d33          | Vertical back porch in pixels              |
+
+</div>

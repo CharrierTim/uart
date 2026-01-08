@@ -99,6 +99,8 @@ nav:
                 - UART TX: modules/uart/uart_tx.md
           - SPI:
                 - SPI Master: modules/spi/spi_master.md
+          - VGA:
+                - VGA Controller: modules/vga/vga_controller.md
     - Testbench:
           - Top FPGA TB: modules/testbench/tb_top_fpga.md
           - Testcases: modules/testbench/testcases.md
