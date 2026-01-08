@@ -34,7 +34,7 @@ Documentation of the UART Project.
 | Tool       | Version                                                  |
 | ---------- | -------------------------------------------------------- |
 | **NVC**    | `nvc 1.18.2 (1.18.2. r0.g8893318a5) (Using LLVM 18.1.3)` |
-| **Vunit**  | `commit 4e30fa124ea84609af0f957dbc55b82adaed1d76`        |
+| **Vunit**  | `commit 1d9f0bdbf917dd486ae7f0902d54598a0b206719`        |
 | **VSG**    | `VHDL Style Guide (VSG) version: 3.35.0`                 |
 | **Vivado** | `2025.1`                                                 |
 
