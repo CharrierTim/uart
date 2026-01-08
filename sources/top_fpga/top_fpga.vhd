@@ -109,16 +109,16 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     constant C_CLK_POLARITY         : std_logic := '0';
     constant C_CLK_PHASE            : std_logic := '0';
 
-    -- VGA
-    constant C_H_PIXELS             : integer := 640;
-    constant C_H_FRONT_PORCH        : integer := 16;
-    constant C_H_SYNC_PULSE         : integer := 96;
-    constant C_H_BACK_PORCH         : integer := 48;
+    -- VGA (current: 1024x768@60Hz)
+    constant C_H_PIXELS             : integer := 1024;
+    constant C_H_FRONT_PORCH        : integer := 24;
+    constant C_H_SYNC_PULSE         : integer := 136;
+    constant C_H_BACK_PORCH         : integer := 160;
 
-    constant C_V_PIXELS             : integer := 480;
-    constant C_V_FRONT_PORCH        : integer := 10;
-    constant C_V_SYNC_PULSE         : integer := 2;
-    constant C_V_BACK_PORCH         : integer := 33;
+    constant C_V_PIXELS             : integer := 768;
+    constant C_V_FRONT_PORCH        : integer := 3;
+    constant C_V_SYNC_PULSE         : integer := 6;
+    constant C_V_BACK_PORCH         : integer := 29;
 
     -- =================================================================================================================
     -- SIGNALS
@@ -132,8 +132,8 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal pll_locked               : std_logic;
 
     -- Resynchronization
-    signal async_inputs_slv         : std_logic_vector(C_RESYNC_DEFAULT_VALUE'range);
-    signal sync_inputs_slv          : std_logic_vector(C_RESYNC_DEFAULT_VALUE'range);
+    signal async_inputs_slv         : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
+    signal sync_inputs_slv          : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
 
     -- Read interface
     signal read_addr                : std_logic_vector( 8 - 1 downto 0);
@@ -303,21 +303,20 @@ begin
 
     inst_vga : entity lib_rtl.vga_controller
         generic map (
-            -- Horizontal timings (current: 640x480@60Hz)
             G_H_PIXELS      => C_H_PIXELS,
             G_H_FRONT_PORCH => C_H_FRONT_PORCH,
             G_H_SYNC_PULSE  => C_H_SYNC_PULSE,
             G_H_BACK_PORCH  => C_H_BACK_PORCH,
-
-            -- Vertical timings (current: 640x480@60Hz)
             G_V_PIXELS      => C_V_PIXELS,
             G_V_FRONT_PORCH => C_V_FRONT_PORCH,
             G_V_SYNC_PULSE  => C_V_SYNC_PULSE,
             G_V_BACK_PORCH  => C_V_BACK_PORCH
         )
         port map (
-            CLK            => vga_clk,
+            CLK_SYS        => internal_clk,
+            CLK_VGA        => vga_clk,
             RST_N          => internal_rst_n,
+            rst_h          => internal_rst_h,
             O_HSYNC        => PAD_O_VGA_HSYNC,
             O_VSYNC        => PAD_O_VGA_VSYNC,
             I_MANUAL_RED   => reg_red,
