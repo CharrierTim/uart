@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    vga_controller.vhd
--- @version 1.1
+-- @version 1.2
 -- @brief   VGA controller
 -- @author  Timothee Charrier
 -- @date    17/12/2025
@@ -34,6 +34,7 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      16/12/2025  Timothee Charrier   Initial release
 -- 1.1      05/01/2026  Timothee Charrier   Minor style updates
+-- 1.2      17/12/2025  Timothee Charrier   The module now handle clock domain crossing of manual color inputs.
 -- =====================================================================================================================
 
 library ieee;
