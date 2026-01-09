@@ -27,21 +27,19 @@ Only works for the [TE 4-1734682-2](https://www.te.com/en/product-4-1734682-2.ht
 
 <div class="ports-table" markdown="1">
 
-| Port Name        | Type         | Direction | Default Value | Description                                                  |
-| ---------------- | ------------ | :-------: | ------------- | ------------------------------------------------------------ |
-| `CLK`            | std_logic    |    in     | -             | Input clock                                                  |
-| `RST_N`          | std_logic    |    in     | -             | Input asynchronous reset, active low                         |
-| `O_HSYNC`        | std_logic    |    out    | 0b0           | Horizontal sync signal output                                |
-| `O_VSYNC`        | std_logic    |    out    | 0b0           | Vertical sync signal output                                  |
-| `I_MANUAL_RED`   | vector[3:0]  |    in     | -             | Red color channel input (4-bit)                              |
-| `I_MANUAL_GREEN` | vector[3:0]  |    in     | -             | Green color channel input (4-bit)                            |
-| `I_MANUAL_BLUE`  | vector[3:0]  |    in     | -             | Blue color channel input (4-bit)                             |
-| `O_RED`          | vector[3:0]  |    out    | 0x00          | Red color channel output (blanked during inactive regions)   |
-| `O_GREEN`        | vector[3:0]  |    out    | 0x00          | Green color channel output (blanked during inactive regions) |
-| `O_BLUE`         | vector[3:0]  |    out    | 0x00          | Blue color channel output (blanked during inactive regions)  |
-| `O_H_POSITION`   | vector[15:0] |    out    | 0x00          | Current horizontal pixel position within active region       |
-| `O_V_POSITION`   | vector[15:0] |    out    | 0x00          | Current vertical pixel position within active region         |
-| `O_ACTIVE`       | std_logic    |    out    | 0b0           | Active display region flag (high during visible area)        |
+| Port Name         | Type         | Direction | Default Value | Description                                                                                            |
+| ----------------- | ------------ | :-------: | ------------- | ------------------------------------------------------------------------------------------------------ |
+| `CLK`             | std_logic    |    in     | -             | Input clock                                                                                            |
+| `RST_N`           | std_logic    |    in     | -             | Input asynchronous reset, active low                                                                   |
+| `O_HSYNC`         | std_logic    |    out    | 0b0           | Horizontal sync signal output                                                                          |
+| `O_VSYNC`         | std_logic    |    out    | 0b0           | Vertical sync signal output                                                                            |
+| `I_MANUAL_COLORS` | vector[11:0] |    in     | -             | Red color channel input (4-bit) & Green color channel input (4-bit) & Blue color channel input (4-bit) |
+| `O_RED`           | vector[3:0]  |    out    | 0x00          | Red color channel output (blanked during inactive regions)                                             |
+| `O_GREEN`         | vector[3:0]  |    out    | 0x00          | Green color channel output (blanked during inactive regions)                                           |
+| `O_BLUE`          | vector[3:0]  |    out    | 0x00          | Blue color channel output (blanked during inactive regions)                                            |
+| `O_H_POSITION`    | vector[15:0] |    out    | 0x00          | Current horizontal pixel position within active region                                                 |
+| `O_V_POSITION`    | vector[15:0] |    out    | 0x00          | Current vertical pixel position within active region                                                   |
+| `O_ACTIVE`        | std_logic    |    out    | 0b0           | Active display region flag (high during visible area)                                                  |
 
 </div>
 
