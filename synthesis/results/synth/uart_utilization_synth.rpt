@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Wed Dec 10 16:24:39 2025
+| Date         : Fri Jan  9 12:04:58 2026
 | Host         : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -file /home/tim/projects/uart/synthesis/results/synth/uart_utilization_synth.rpt
 | Design       : TOP_FPGA
@@ -31,13 +31,13 @@ Table of Contents
 +-------------------------+------+-------+------------+-----------+-------+
 |        Site Type        | Used | Fixed | Prohibited | Available | Util% |
 +-------------------------+------+-------+------------+-----------+-------+
-| Slice LUTs*             |  186 |     0 |          0 |     53200 |  0.35 |
-|   LUT as Logic          |  186 |     0 |          0 |     53200 |  0.35 |
+| Slice LUTs*             |  262 |     0 |          0 |     53200 |  0.49 |
+|   LUT as Logic          |  262 |     0 |          0 |     53200 |  0.49 |
 |   LUT as Memory         |    0 |     0 |          0 |     17400 |  0.00 |
-| Slice Registers         |  227 |     0 |          0 |    106400 |  0.21 |
-|   Register as Flip Flop |  227 |     0 |          0 |    106400 |  0.21 |
+| Slice Registers         |  339 |     3 |          0 |    106400 |  0.32 |
+|   Register as Flip Flop |  339 |     3 |          0 |    106400 |  0.32 |
 |   Register as Latch     |    0 |     0 |          0 |    106400 |  0.00 |
-| F7 Muxes                |    0 |     0 |          0 |     26600 |  0.00 |
+| F7 Muxes                |    3 |     0 |          0 |     26600 |  0.01 |
 | F8 Muxes                |    0 |     0 |          0 |     13300 |  0.00 |
 +-------------------------+------+-------+------------+-----------+-------+
 * Warning! The Final LUT count, after physical optimizations and full implementation, is typically lower. Run opt_design after synthesis, if not already completed, for a more realistic count.
@@ -57,10 +57,10 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 | 0     |            _ |         Set |            - |
 | 0     |            _ |       Reset |            - |
 | 0     |          Yes |           - |            - |
-| 32    |          Yes |           - |          Set |
-| 195   |          Yes |           - |        Reset |
+| 41    |          Yes |           - |          Set |
+| 236   |          Yes |           - |        Reset |
 | 0     |          Yes |         Set |            - |
-| 0     |          Yes |       Reset |            - |
+| 62    |          Yes |       Reset |            - |
 +-------+--------------+-------------+--------------+
 
 
@@ -93,9 +93,9 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 +-----------------------------+------+-------+------------+-----------+-------+
 |          Site Type          | Used | Fixed | Prohibited | Available | Util% |
 +-----------------------------+------+-------+------------+-----------+-------+
-| Bonded IOB                  |   12 |    12 |          0 |       200 |  6.00 |
-|   IOB Master Pads           |    6 |       |            |           |       |
-|   IOB Slave Pads            |    6 |       |            |           |       |
+| Bonded IOB                  |   26 |    26 |          0 |       200 | 13.00 |
+|   IOB Master Pads           |   13 |       |            |           |       |
+|   IOB Slave Pads            |   13 |       |            |           |       |
 | Bonded IPADs                |    0 |     0 |          0 |         2 |  0.00 |
 | Bonded IOPADs               |    0 |     0 |          0 |       130 |  0.00 |
 | PHY_CONTROL                 |    0 |     0 |          0 |         4 |  0.00 |
@@ -118,7 +118,7 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 +------------+------+-------+------------+-----------+-------+
 |  Site Type | Used | Fixed | Prohibited | Available | Util% |
 +------------+------+-------+------------+-----------+-------+
-| BUFGCTRL   |    2 |     0 |          0 |        32 |  6.25 |
+| BUFGCTRL   |    3 |     0 |          0 |        32 |  9.38 |
 | BUFIO      |    0 |     0 |          0 |        16 |  0.00 |
 | MMCME2_ADV |    0 |     0 |          0 |         4 |  0.00 |
 | PLLE2_ADV  |    1 |     0 |          0 |         4 | 25.00 |
@@ -151,18 +151,20 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 +-----------+------+---------------------+
 |  Ref Name | Used | Functional Category |
 +-----------+------+---------------------+
-| FDCE      |  195 |        Flop & Latch |
-| LUT6      |   92 |                 LUT |
-| LUT4      |   53 |                 LUT |
-| LUT5      |   43 |                 LUT |
-| FDPE      |   32 |        Flop & Latch |
-| LUT2      |   27 |                 LUT |
-| LUT3      |   22 |                 LUT |
+| FDCE      |  236 |        Flop & Latch |
+| LUT6      |  149 |                 LUT |
+| FDRE      |   62 |        Flop & Latch |
+| LUT4      |   49 |                 LUT |
+| LUT5      |   48 |                 LUT |
+| FDPE      |   41 |        Flop & Latch |
+| LUT2      |   39 |                 LUT |
+| LUT3      |   31 |                 LUT |
+| OBUF      |   19 |                  IO |
 | IBUF      |    7 |                  IO |
-| OBUF      |    5 |                  IO |
-| BUFG      |    2 |               Clock |
+| MUXF7     |    3 |               MuxFx |
+| BUFG      |    3 |               Clock |
+| LUT1      |    2 |                 LUT |
 | PLLE2_ADV |    1 |               Clock |
-| LUT1      |    1 |                 LUT |
 +-----------+------+---------------------+
 
 
