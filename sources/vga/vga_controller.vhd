@@ -67,7 +67,6 @@ entity VGA_CONTROLLER is
     port (
         CLK_SYS         : in    std_logic;
         CLK_VGA         : in    std_logic;
-        RST_N           : in    std_logic;
         RST_H           : in    std_logic;
 
         -- Sync outputs
@@ -184,7 +183,7 @@ begin
             In_RstOut  => open,
             In_Data    => I_MANUAL_COLORS,
             Out_Clk    => CLK_VGA,
-            Out_RstIn  => RST_N,
+            Out_RstIn  => RST_H,
             Out_RstOut => open,
             Out_Data   => manual_colors_resync
         );
@@ -193,10 +192,10 @@ begin
     -- HORIZONTAL AND VERTICAL COUNTERS
     -- =================================================================================================================
 
-    p_counters : process (CLK_VGA, RST_N) is
+    p_counters : process (CLK_VGA, RST_H) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_H = '1') then
 
             horizontal_count <= (others => '0');
             vertical_count   <= (others => '0');
@@ -245,10 +244,10 @@ begin
     -- OUTPUTS
     -- =================================================================================================================
 
-    p_outputs : process (CLK_VGA, RST_N) is
+    p_outputs : process (CLK_VGA, RST_H) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_H = '1') then
 
             O_HSYNC      <= '0';
             O_VSYNC      <= '0';
