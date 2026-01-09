@@ -1,11 +1,8 @@
 # UART
 
-## Sub-modules
-
-- [UART RX](uart_rx.md)
-- [UART TX](uart_tx.md)
-
 ## Description
+
+---
 
 ## Generics
 
@@ -18,6 +15,8 @@
 | `G_SAMPLING_RATE` | positive | 0d16          | Sampling rate (number of clock cycles per bit) |
 
 </div>
+
+---
 
 ## Inputs and Outputs
 
@@ -39,9 +38,42 @@
 
 </div>
 
+---
+
 ## Architecture
 
 ![UART Architecture](../../assets/uart.drawio){ page="UART" }
+
+---
+
+## Sub-modules
+
+The UART controller module instantiates the [UART RX](uart_rx.md) module with the following generics:
+
+<div class="generics-table" markdown="1">
+
+| Generic Name      | Type     | Default Value     | Description                                    |
+| ----------------- | -------- | ----------------- | ---------------------------------------------- |
+| `G_CLK_FREQ_HZ`   | positive | `G_CLK_FREQ_HZ`   | Clock frequency in Hz of `CLK`                 |
+| `G_BAUD_RATE_BPS` | positive | `G_BAUD_RATE_BPS` | Baud rate in bps                               |
+| `G_SAMPLING_RATE` | positive | `G_SAMPLING_RATE` | Sampling rate (number of clock cycles per bit) |
+
+</div>
+
+The UART controller module instantiates the [UART TX](uart_tx.md) module with the following generics:
+
+<div class="generics-table" markdown="1">
+
+| Generic Name      | Type     | Default Value     | Description                    |
+| ----------------- | -------- | ----------------- | ------------------------------ |
+| `G_CLK_FREQ_HZ`   | positive | `G_CLK_FREQ_HZ`   | Clock frequency in Hz of `CLK` |
+| `G_BAUD_RATE_BPS` | positive | `G_BAUD_RATE_BPS` | Baud rate in bps               |
+
+</div>
+
+---
+
+## About
 
 ### Protocol
 

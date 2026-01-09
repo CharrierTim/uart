@@ -6,6 +6,8 @@ The VGA Controller is a hardware module that generates timing signals for VGA vi
 
 Only works for the [TE 4-1734682-2](https://www.te.com/en/product-4-1734682-2.html?RQPN=4-1734682-2) used on the Zedboard.
 
+---
+
 ## Generics
 
 <div class="generics-table" markdown="1">
@@ -23,14 +25,17 @@ Only works for the [TE 4-1734682-2](https://www.te.com/en/product-4-1734682-2.ht
 
 </div>
 
+---
+
 ## Inputs and Outputs
 
 <div class="ports-table" markdown="1">
 
 | Port Name         | Type         | Direction | Default Value | Description                                                                                            |
 | ----------------- | ------------ | :-------: | ------------- | ------------------------------------------------------------------------------------------------------ |
-| `CLK`             | std_logic    |    in     | -             | Input clock                                                                                            |
-| `RST_N`           | std_logic    |    in     | -             | Input asynchronous reset, active low                                                                   |
+| `CLK_SYS`         | std_logic    |    in     | -             | Input system clock                                                                                     |
+| `CLK_VGA`         | std_logic    |    in     | -             | Input vga clock                                                                                        |
+| `RST_H`           | std_logic    |    in     | -             | Input asynchronous reset, active high                                                                  |
 | `O_HSYNC`         | std_logic    |    out    | 0b0           | Horizontal sync signal output                                                                          |
 | `O_VSYNC`         | std_logic    |    out    | 0b0           | Vertical sync signal output                                                                            |
 | `I_MANUAL_COLORS` | vector[11:0] |    in     | -             | Red color channel input (4-bit) & Green color channel input (4-bit) & Blue color channel input (4-bit) |
@@ -43,8 +48,29 @@ Only works for the [TE 4-1734682-2](https://www.te.com/en/product-4-1734682-2.ht
 
 </div>
 
+The input vector `I_MANUAL_COLORS` is coming from the `CLK_SYS` clock domain and must be resynchronized
+to the `CLK_VGA` clock domain.
+
+---
+
 ## Architecture
 
 ![VGA Controller Architecture](../../assets/uart.drawio){ page="VGA-CONTROLLER" }
+
+---
+
+## Sub-modules
+
+The VGA controller module instantiates the [olo_base_cc_status](https://github.com/open-logic/open-logic/blob/main/doc/base/olo_base_cc_status.md)
+module with the following generics:
+
+<div class="generics-table" markdown="1">
+
+| Generic Name   | Type     | Default Value | Description                             |
+| -------------- | -------- | ------------- | --------------------------------------- |
+| `Width_g`      | positive | 0d12          | Width of the data-signal to clock-cross |
+| `SyncStages_g` | positive | 0d2           | Number of synchronization stages.       |
+
+</div>
 
 ---
