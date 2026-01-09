@@ -2,6 +2,8 @@
 
 ## Description
 
+---
+
 ## Generics
 
 <div class="generics-table" markdown="1">
@@ -13,6 +15,8 @@
 | `G_SAMPLING_RATE` | positive | 0d16          | Sampling rate (number of clock cycles per bit) |
 
 </div>
+
+---
 
 ## Inputs and Outputs
 
@@ -29,6 +33,8 @@
 | `O_STOP_BIT_ERROR`  | std_logic   |    out    | 0b0           | Output stop bit error flag           |
 
 </div>
+
+---
 
 ## Architecture
 
@@ -178,6 +184,8 @@ $$
 $$
 
 This represents the time for almost one complete UART frame (data bits + stop bit) at the configured baud rate.
+
+---
 
 ### FSM
 

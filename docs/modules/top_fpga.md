@@ -4,11 +4,15 @@
 
 Top-Level of the FPGA.
 
+---
+
 ## Overview
 
 The following figure depicts the Top-Level:
 
 ![UART Top FPGA](../assets/uart.drawio){ page="TOP-FPGA" }
+
+---
 
 ## Generics
 
@@ -19,6 +23,8 @@ The following figure depicts the Top-Level:
 | `G_GIT_ID`   | vector[31:0] | 0x0000        | Git ID containing the sources for the bitstream generation. Automatically set by the `run_synthesis. tcl` script. |
 
 </div>
+
+---
 
 ## Inputs and Outputs
 
@@ -40,6 +46,8 @@ The following figure depicts the Top-Level:
 | `PAD_O_LED_0`    | std_logic |    out    | 0b1           | Output LED 0                          |
 
 </div>
+
+---
 
 ## Architecture
 

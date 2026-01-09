@@ -2,6 +2,8 @@
 
 ## Description
 
+---
+
 ## Generics
 
 <div class="generics-table" markdown="1">
@@ -15,6 +17,8 @@
 | `G_CLK_PHASE`    | std_logic | 0b0           | Generated SPI clock phase                      |
 
 </div>
+
+---
 
 ## Inputs and Outputs
 
@@ -34,6 +38,8 @@
 | `O_TX_DATA_VALID` | std_logic                  |    out    | 0b0              | Data Data received from the slave flag valid                                        |
 
 </div>
+
+---
 
 ## Architecture
 
@@ -94,6 +100,8 @@ In this mode:
 !!! note
     "Output" refers to when data is driven onto the MOSI/MISO lines. "Sampled" refers to when data is captured/registered
     from the input line.
+
+---
 
 ### FSM
 

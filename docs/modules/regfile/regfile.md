@@ -4,6 +4,8 @@
 
 Internal FPGA registers with read/write registers accessible via the UART line.
 
+---
+
 ## Generics
 
 <div class="generics-table" markdown="1">
@@ -14,6 +16,8 @@ Internal FPGA registers with read/write registers accessible via the UART line.
 | `G_GIT_ID_LSB` | vector[15:0] | 0x0000        | 16 LSB of the git ID containing the sources for the bitstream generation |
 
 </div>
+
+---
 
 ## Inputs and Outputs
 
@@ -39,6 +43,8 @@ Internal FPGA registers with read/write registers accessible via the UART line.
 | `O_VGA_COLORS`        | vector[11:0] |    out    | 0x000          | Output colors channels to be displayed on the VGA. Bits[11:8] for red, bits[7:4] for green channel, bits[3:0] for blue channel |
 
 </div>
+
+---
 
 ## Architecture
 
@@ -77,11 +83,15 @@ Not all registers are writable. If the specified address corresponds to:
 - A **writable register**: The data is written on the next clock cycle
 - An **undefined address**: The write operation is ignored
 
+---
+
 ## Overview
 
 A simplified view of the regfile module:
 
 ![image](../../assets/uart.drawio){ page="REGFILE" }
+
+---
 
 ## Summary
 
@@ -109,6 +119,8 @@ Where:
 | ------ | --------------------------------------------------------------------------- |
 | **R**  | Read-only: Register value can be read but not modified via write operations |
 | **RW** | Read-Write: Register value can be both read and written                     |
+
+---
 
 ## Detailed register descriptions
 

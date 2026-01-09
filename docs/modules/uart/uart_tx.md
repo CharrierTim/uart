@@ -2,6 +2,8 @@
 
 ## Description
 
+---
+
 ## Generics
 
 <div class="generics-table" markdown="1">
@@ -12,6 +14,8 @@
 | `G_BAUD_RATE_BPS` | positive | 0d115_200     | Baud rate in bps               |
 
 </div>
+
+---
 
 ## Inputs and Outputs
 
@@ -27,6 +31,8 @@
 | `O_DONE`       | std_logic   |    out    | 0b0           | Byte send flag                       |
 
 </div>
+
+---
 
 ## Architecture
 
@@ -105,6 +111,8 @@ Value:   0     0    1    0    1    1    0    1    0    1
          └─────────────────────────────────────────────┘
                    Transmitted on O_UART_TX
 ```
+
+---
 
 ### FSM
 
