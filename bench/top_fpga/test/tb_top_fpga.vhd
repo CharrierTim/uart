@@ -1060,7 +1060,7 @@ begin
                 wait for 100 us;
 
                 proc_uart_check_default_value(C_REG_VGA_CTRL);
-                proc_uart_check_read_write(C_REG_VGA_CTRL, x"1FFF");
+                proc_uart_check_read_write(C_REG_VGA_CTRL, x"0FFF");
 
                 info("");
                 info("-----------------------------------------------------------------------------");

@@ -36,7 +36,7 @@
 -- 1.1      10/12/2025  Timothee Charrier   Remove generic from UART module, update resync_slv module generic names
 -- 1.2      16/12/2025  Timothee Charrier   Use new PLL outputing a 50 MHz and 25 MHz clock
 -- 1.3      17/12/2025  Timothee Charrier   Update regfile module to interface with new VGA module
--- 1.4      08/01/2026  Timothee Charrier   The FPGA now uses open-logic modules for clock domain crossing. Also
+-- 1.4      09/01/2026  Timothee Charrier   The FPGA now uses open-logic modules for clock domain crossing. Also
 --                                          update the VGA timings to 1024*768@60Hz.
 -- =====================================================================================================================
 
@@ -155,10 +155,7 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal spi_rx_data_valid        : std_logic;
 
     -- VGA control
-    signal reg_vga_mode             : std_logic;
-    signal reg_red                  : std_logic_vector( 4 - 1 downto 0);
-    signal reg_green                : std_logic_vector( 4 - 1 downto 0);
-    signal reg_blue                 : std_logic_vector( 4 - 1 downto 0);
+    signal reg_vga_colors           : std_logic_vector(12 - 1 downto 0);
 
     -- =================================================================================================================
     -- COMPONENTS
@@ -268,10 +265,7 @@ begin
             O_LED_0             => PAD_O_LED_0,
             O_SPI_TX_DATA       => spi_tx_data,
             O_SPI_TX_DATA_VALID => spi_tx_data_valid,
-            O_VGA_MODE          => reg_vga_mode,
-            O_RED               => reg_red,
-            O_GREEN             => reg_green,
-            O_BLUE              => reg_blue
+            O_VGA_COLORS        => reg_vga_colors
         );
 
     -- =================================================================================================================
@@ -315,18 +309,16 @@ begin
             G_V_BACK_PORCH  => C_V_BACK_PORCH
         )
         port map (
-            CLK_SYS        => internal_clk,
-            CLK_VGA        => vga_clk,
-            RST_N          => internal_rst_n,
-            rst_h          => internal_rst_h,
-            O_HSYNC        => PAD_O_VGA_HSYNC,
-            O_VSYNC        => PAD_O_VGA_VSYNC,
-            I_MANUAL_RED   => reg_red,
-            I_MANUAL_GREEN => reg_green,
-            I_MANUAL_BLUE  => reg_blue,
-            O_RED          => PAD_O_VGA_RED,
-            O_GREEN        => PAD_O_VGA_GREEN,
-            O_BLUE         => PAD_O_VGA_BLUE
+            CLK_SYS         => internal_clk,
+            CLK_VGA         => vga_clk,
+            RST_N           => internal_rst_n,
+            rst_h           => internal_rst_h,
+            O_HSYNC         => PAD_O_VGA_HSYNC,
+            O_VSYNC         => PAD_O_VGA_VSYNC,
+            I_MANUAL_COLORS => reg_vga_colors,
+            O_RED           => PAD_O_VGA_RED,
+            O_GREEN         => PAD_O_VGA_GREEN,
+            O_BLUE          => PAD_O_VGA_BLUE
         );
 
 end architecture TOP_FPGA_ARCH;

@@ -77,10 +77,7 @@ entity REGFILE is
         O_LED_0             : out   std_logic;
         O_SPI_TX_DATA       : out   std_logic_vector(8 - 1 downto 0);
         O_SPI_TX_DATA_VALID : out   std_logic;
-        O_VGA_MODE          : out   std_logic;
-        O_RED               : out   std_logic_vector(4 - 1 downto 0);
-        O_GREEN             : out   std_logic_vector(4 - 1 downto 0);
-        O_BLUE              : out   std_logic_vector(4 - 1 downto 0)
+        O_VGA_COLORS        : out   std_logic_vector(12 - 1 downto 0)
     );
 end entity REGFILE;
 
@@ -186,7 +183,7 @@ begin
 
                     when C_REG_VGA_CTRL_ADDR =>
 
-                        reg_read <= 3b"0" & reg_vga_ctrl;
+                        reg_read <= 4b"0" & reg_vga_ctrl;
 
                     when C_REG_9A_ADDR =>
 
@@ -262,9 +259,6 @@ begin
     O_LED_0             <= reg_led;
     O_SPI_TX_DATA       <= reg_spi_tx(reg_spi_tx'high - 1 downto reg_spi_tx'low);
     O_SPI_TX_DATA_VALID <= reg_spi_tx(reg_spi_tx'high);
-    O_VGA_MODE          <= reg_vga_ctrl(12);
-    O_RED               <= reg_vga_ctrl( 3 downto 0);
-    O_GREEN             <= reg_vga_ctrl( 7 downto 4);
-    O_BLUE              <= reg_vga_ctrl(11 downto 8);
+    O_VGA_COLORS        <= reg_vga_ctrl(11 downto 0);
 
 end architecture REGFILE_ARCH;
