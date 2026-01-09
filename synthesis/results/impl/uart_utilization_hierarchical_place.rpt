@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Fri Jan  9 12:05:03 2026
+| Date         : Fri Jan  9 14:44:17 2026
 | Host         : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -hierarchical -file /home/tim/projects/uart/synthesis/results/impl/uart_utilization_hierarchical_place.rpt
 | Design       : TOP_FPGA
@@ -22,14 +22,14 @@ Table of Contents
 +-----------------------------+--------------------+------------+------------+---------+------+-----+--------+--------+------------+
 |           Instance          |       Module       | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | DSP Blocks |
 +-----------------------------+--------------------+------------+------------+---------+------+-----+--------+--------+------------+
-| TOP_FPGA                    |              (top) |        257 |        257 |       0 |    0 | 339 |      0 |      0 |          0 |
+| TOP_FPGA                    |              (top) |        252 |        252 |       0 |    0 | 339 |      0 |      0 |          0 |
 |   (TOP_FPGA)                |              (top) |          0 |          0 |       0 |    0 |   0 |      0 |      0 |          0 |
 |   inst_regfile              |            REGFILE |          3 |          3 |       0 |    0 |  63 |      0 |      0 |          0 |
-|   inst_spi_master           |         SPI_MASTER |         19 |         19 |       0 |    0 |  51 |      0 |      0 |          0 |
-|   inst_uart                 |               UART |        183 |        183 |       0 |    0 | 116 |      0 |      0 |          0 |
-|     (inst_uart)             |               UART |         94 |         94 |       0 |    0 |  36 |      0 |      0 |          0 |
-|     inst_uart_rx            |            UART_RX |         55 |         55 |       0 |    0 |  54 |      0 |      0 |          0 |
-|   inst_vga                  |     VGA_CONTROLLER |         53 |         53 |       0 |    0 | 100 |      0 |      0 |          0 |
-|     inst_olo_base_cc_status | olo_base_cc_status |         25 |         25 |       0 |    0 |  65 |      0 |      0 |          0 |
+|   inst_spi_master           |         SPI_MASTER |         20 |         20 |       0 |    0 |  51 |      0 |      0 |          0 |
+|   inst_uart                 |               UART |        177 |        177 |       0 |    0 | 116 |      0 |      0 |          0 |
+|     (inst_uart)             |               UART |         86 |         86 |       0 |    0 |  36 |      0 |      0 |          0 |
+|     inst_uart_rx            |            UART_RX |         56 |         56 |       0 |    0 |  54 |      0 |      0 |          0 |
+|   inst_vga                  |     VGA_CONTROLLER |         52 |         52 |       0 |    0 | 100 |      0 |      0 |          0 |
+|     inst_olo_base_cc_status | olo_base_cc_status |         24 |         24 |       0 |    0 |  65 |      0 |      0 |          0 |
 +-----------------------------+--------------------+------------+------------+---------+------+-----+--------+--------+------------+
 * Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
