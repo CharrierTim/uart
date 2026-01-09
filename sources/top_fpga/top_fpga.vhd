@@ -177,7 +177,7 @@ begin
 
     -- Toggle reset from BTN and when PLL is lock
     internal_rst_n <= (not PAD_I_RST_H) and pll_locked;
-    internal_rst_h <= PAD_I_RST_H       and pll_locked;
+    internal_rst_h <= (not internal_rst_n);
 
     -- =================================================================================================================
     -- PLL
@@ -311,7 +311,6 @@ begin
         port map (
             CLK_SYS         => internal_clk,
             CLK_VGA         => vga_clk,
-            RST_N           => internal_rst_n,
             rst_h           => internal_rst_h,
             O_HSYNC         => PAD_O_VGA_HSYNC,
             O_VSYNC         => PAD_O_VGA_VSYNC,
