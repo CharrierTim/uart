@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_uart_rx.vhd
--- @version 1.1
+-- @version 2.0
 -- @brief   UART RX Testbench.
 -- @author  Timothee Charrier
 -- @date    10/12/2025
@@ -34,6 +34,7 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      28/11/2025  Timothee Charrier   Initial release
 -- 1.1      10/12/2025  Timothee Charrier   Naming conventions update and remove generic
+-- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
@@ -84,7 +85,7 @@ architecture TB_UART_RX_ARCH of TB_UART_RX is
 
     -- DUT signals
     signal tb_clk                 : std_logic;
-    signal tb_rst_n               : std_logic;
+    signal tb_rst_h               : std_logic;
     signal tb_i_uart_rx           : std_logic;
     signal tb_o_byte              : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
     signal tb_o_byte_valid        : std_logic;
@@ -110,7 +111,7 @@ begin
         )
         port map (
             CLK               => tb_clk,
-            RST_N             => tb_rst_n,
+            RST_P             => tb_rst_h,
             I_UART_RX         => tb_i_uart_rx,
             O_BYTE            => tb_o_byte,
             O_BYTE_VALID      => tb_o_byte_valid,
@@ -179,7 +180,7 @@ begin
         begin
 
             -- Reset the DUT by setting the input state to all zeros
-            tb_rst_n            <= '0';
+            tb_rst_h            <= '1';
             tb_i_uart_rx_manual <= '1';
             tb_i_uart_select    <= '0';
             tb_random_data      <= (others => '0');
@@ -187,7 +188,7 @@ begin
             wait for c_clock_cycles * C_CLK_PERIOD;
 
             -- Reassert reset
-            tb_rst_n            <= '1';
+            tb_rst_h            <= '0';
 
             -- Wait for the DUT to step over
             wait for 5 ns;

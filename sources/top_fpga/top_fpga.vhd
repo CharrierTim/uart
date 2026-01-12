@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 1.4
+-- @version 2.0
 -- @brief   Top-Level of the FPGA
 -- @author  Timothee Charrier
 -- @date    16/12/2025
@@ -38,6 +38,8 @@
 -- 1.3      17/12/2025  Timothee Charrier   Update regfile module to interface with new VGA module
 -- 1.4      09/01/2026  Timothee Charrier   The FPGA now uses open-logic modules for clock domain crossing. Also
 --                                          update the VGA timings to 1024*768@60Hz.
+-- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high and now uses synchronous
+--                                          async reset.
 -- =====================================================================================================================
 
 library ieee;
@@ -58,7 +60,7 @@ entity TOP_FPGA is
     port (
         -- Clock and reset
         PAD_I_CLK       : in    std_logic;
-        PAD_I_RST_H     : in    std_logic;
+        PAD_I_RST_P     : in    std_logic;
 
         -- UART
         PAD_I_UART_RX   : in    std_logic;
@@ -95,13 +97,16 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- CONSTANTS
     -- =================================================================================================================
 
+    -- General
+    constant C_CLK_FREQ_HZ          : positive  := 50_000_000;
+    constant C_RST_POLARITY         : std_logic := '1';
+
     -- Resynchronization
     constant C_RESYNC_WIDTH         : positive  := 3;
     constant C_RESYNC_DEFAULT_VALUE : std_logic := '0';
     constant C_RESYNC_NB_STAGES     : positive  := 3;
 
     -- UART
-    constant C_CLK_FREQ_HZ          : positive := 50_000_000;
     constant C_BAUD_RATE_BPS        : positive := 115_200;
     constant C_SAMPLING_RATE        : positive := 16;
 
@@ -129,9 +134,10 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- Internal reset and clock
     signal internal_clk             : std_logic;
     signal vga_clk                  : std_logic;
-    signal internal_rst_n           : std_logic;
-    signal internal_rst_h           : std_logic;
     signal pll_locked               : std_logic;
+    signal intermediate_rst_p       : std_logic;
+    signal internal_sys_rst_p       : std_logic;
+    signal internal_vga_rst_p       : std_logic;
 
     -- Resynchronization
     signal async_inputs_slv         : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
@@ -175,21 +181,48 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
 
 begin
 
-    -- Toggle reset from BTN and when PLL is lock
-    internal_rst_n <= (not PAD_I_RST_H) and pll_locked;
-    internal_rst_h <= (not internal_rst_n);
-
     -- =================================================================================================================
-    -- PLL
+    -- PLL and positive reset logic
     -- =================================================================================================================
 
     inst_pll : component clk_wiz_0
         port map (
             clk_out1 => internal_clk,
             clk_out2 => vga_clk,
-            reset    => PAD_I_RST_H,
+            reset    => PAD_I_RST_P,
             locked   => pll_locked,
             clk_in1  => PAD_I_CLK
+        );
+
+    -- Toggle reset from BTN or when PLL is unlocked
+    intermediate_rst_p <= PAD_I_RST_P or (not pll_locked);
+
+    -- System clock domain positive reset generation
+    inst_olo_base_sys_reset_gen : entity olo.olo_base_reset_gen
+        generic map (
+            RSTPULSECYCLES_G   => 3,                 -- Minimum duration of the reset pulse in clock cycles
+            RSTINPOLARITY_G    => C_RST_POLARITY,    -- Polarity of 'RstIn'
+            ASYNCRESETOUTPUT_G => false,             -- Asserted synchronously
+            SYNCSTAGES_G       => C_RESYNC_NB_STAGES -- Number of synchronization stages
+        )
+        port map (
+            Clk    => internal_clk,
+            RstOut => internal_sys_rst_p,
+            RstIn  => intermediate_rst_p
+        );
+
+    -- VGA clock domain positive reset generation
+    inst_olo_base_vga_reset_gen : entity olo.olo_base_reset_gen
+        generic map (
+            RSTPULSECYCLES_G   => 3,                 -- Minimum duration of the reset pulse in clock cycles
+            RSTINPOLARITY_G    => C_RST_POLARITY,    -- Polarity of 'RstIn'
+            ASYNCRESETOUTPUT_G => false,             -- Asserted synchronously
+            SYNCSTAGES_G       => C_RESYNC_NB_STAGES -- Number of synchronization stages
+        )
+        port map (
+            Clk    => vga_clk,
+            RstOut => internal_vga_rst_p,
+            RstIn  => intermediate_rst_p
         );
 
     -- =================================================================================================================
@@ -211,7 +244,7 @@ begin
         )
         port map (
             Clk       => internal_clk,
-            Rst       => internal_rst_h,
+            Rst       => internal_sys_rst_p,
             DataAsync => async_inputs_slv,
             DataSync  => sync_inputs_slv
         );
@@ -228,7 +261,7 @@ begin
         )
         port map (
             CLK               => internal_clk,
-            RST_N             => internal_rst_n,
+            RST_P             => internal_sys_rst_p,
             I_UART_RX         => PAD_I_UART_RX,
             O_UART_TX         => PAD_O_UART_TX,
             O_READ_ADDR       => read_addr,
@@ -251,7 +284,7 @@ begin
         )
         port map (
             CLK                 => internal_clk,
-            RST_N               => internal_rst_n,
+            RST_P               => internal_sys_rst_p,
             I_SWITCHES          => sync_inputs_slv,
             I_SPI_RX_DATA       => spi_rx_data,
             I_SPI_RX_DATA_VALID => spi_rx_data_valid,
@@ -282,7 +315,7 @@ begin
         )
         port map (
             CLK             => internal_clk,
-            RST_N           => internal_rst_n,
+            RST_P           => internal_sys_rst_p,
             O_SCLK          => PAD_O_SCLK,
             O_MOSI          => PAD_O_MOSI,
             I_MISO          => PAD_I_MISO,
@@ -310,8 +343,9 @@ begin
         )
         port map (
             CLK_SYS         => internal_clk,
+            RST_SYS_P       => internal_sys_rst_p,
             CLK_VGA         => vga_clk,
-            rst_h           => internal_rst_h,
+            RST_VGA_P       => internal_vga_rst_p,
             O_HSYNC         => PAD_O_VGA_HSYNC,
             O_VSYNC         => PAD_O_VGA_VSYNC,
             I_MANUAL_COLORS => reg_vga_colors,

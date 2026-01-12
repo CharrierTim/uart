@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 1.1
+-- @version 2.0
 -- @brief   Top-Level Testbench
 -- @author  Timothee Charrier
 -- @date    01/12/2025
@@ -34,6 +34,7 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 1.1      12/10/2025  Timothee Charrier   Update UART_MODEL interface names
+-- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
@@ -72,7 +73,7 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
 
     -- DUT signals
     signal tb_pad_i_clk          : std_logic;
-    signal tb_pad_i_rst_h        : std_logic;
+    signal tb_pad_i_rst_p        : std_logic;
     signal tb_pad_i_uart_rx      : std_logic;
     signal tb_pad_o_uart_tx      : std_logic;
     signal tb_pad_o_sclk         : std_logic;
@@ -120,7 +121,7 @@ begin
         )
         port map (
             PAD_I_CLK       => tb_pad_i_clk,
-            PAD_I_RST_h     => tb_pad_i_rst_h,
+            PAD_I_RST_P     => tb_pad_i_rst_p,
             PAD_I_UART_RX   => tb_i_uart_rx,
             PAD_O_UART_TX   => tb_pad_o_uart_tx,
             PAD_O_SCLK      => tb_pad_o_sclk,
@@ -316,7 +317,7 @@ begin
         begin
 
             -- Reset the DUT by setting the input state to all zeros
-            tb_pad_i_rst_h        <= '1';
+            tb_pad_i_rst_p        <= '1';
 
             tb_i_uart_select      <= '0';
             tb_i_uart_rx_manual   <= '0';
@@ -337,7 +338,7 @@ begin
             wait for c_clock_cycles * C_CLK_PERIOD;
 
             -- Reassert reset
-            tb_pad_i_rst_h        <= '0';
+            tb_pad_i_rst_p        <= '0';
 
             -- Wait for the DUT to step over
             wait for 5 ns;

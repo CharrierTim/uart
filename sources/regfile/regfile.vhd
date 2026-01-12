@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    registers.vhd
--- @version 1.0
+-- @version 2.0
 -- @brief   Registers for the FPGA
 -- @author  Timothee Charrier
 -- @date    01/12/2025
@@ -33,6 +33,7 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
+-- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
@@ -53,7 +54,7 @@ entity REGFILE is
     port (
         -- Clock and reset
         CLK                 : in    std_logic;
-        RST_N               : in    std_logic;
+        RST_P               : in    std_logic;
 
         -- Inputs switches
         I_SWITCHES          : in    std_logic_vector(3 - 1 downto 0);
@@ -107,10 +108,10 @@ begin
     -- READ/WRITE PROCESS
     -- =================================================================================================================
 
-    p_reg : process (CLK, RST_N) is
+    p_reg : process (CLK, RST_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_P = '1') then
 
             -- Read data valid flag
             O_READ_DATA_VALID <= '0';
