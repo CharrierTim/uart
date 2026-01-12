@@ -34,7 +34,8 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 1.1      12/10/2025  Timothee Charrier   Update UART_MODEL interface names
--- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+-- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high. Add VGA horizontal and
+--                                          vertical timings test.
 -- =====================================================================================================================
 
 library ieee;
@@ -72,42 +73,46 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     -- =================================================================================================================
 
     -- DUT signals
-    signal tb_pad_i_clk          : std_logic;
-    signal tb_pad_i_rst_p        : std_logic;
-    signal tb_pad_i_uart_rx      : std_logic;
-    signal tb_pad_o_uart_tx      : std_logic;
-    signal tb_pad_o_sclk         : std_logic;
-    signal tb_pad_o_mosi         : std_logic;
-    signal tb_pad_i_miso         : std_logic;
-    signal tb_pad_o_cs_n         : std_logic;
-    signal tb_pad_i_switch_0     : std_logic;
-    signal tb_pad_i_switch_1     : std_logic;
-    signal tb_pad_i_switch_2     : std_logic;
-    signal tb_pad_o_led_0        : std_logic;
+    signal tb_pad_i_clk           : std_logic;
+    signal tb_pad_i_rst_p         : std_logic;
+    signal tb_pad_i_uart_rx       : std_logic;
+    signal tb_pad_o_uart_tx       : std_logic;
+    signal tb_pad_o_sclk          : std_logic;
+    signal tb_pad_o_mosi          : std_logic;
+    signal tb_pad_i_miso          : std_logic;
+    signal tb_pad_o_cs_n          : std_logic;
+    signal tb_pad_i_switch_0      : std_logic;
+    signal tb_pad_i_switch_1      : std_logic;
+    signal tb_pad_i_switch_2      : std_logic;
+    signal tb_pad_o_led_0         : std_logic;
 
-    signal tb_pad_o_vga_hsync    : std_logic;
-    signal tb_pad_o_vga_vsync    : std_logic;
-    signal tb_pad_o_vga_red      : std_logic_vector(4 - 1 downto 0);
-    signal tb_pad_o_vga_green    : std_logic_vector(4 - 1 downto 0);
-    signal tb_pad_o_vga_blue     : std_logic_vector(4 - 1 downto 0);
+    signal tb_pad_o_vga_hsync     : std_logic;
+    signal tb_pad_o_vga_vsync     : std_logic;
+    signal tb_pad_o_vga_red       : std_logic_vector(4 - 1 downto 0);
+    signal tb_pad_o_vga_green     : std_logic_vector(4 - 1 downto 0);
+    signal tb_pad_o_vga_blue      : std_logic_vector(4 - 1 downto 0);
 
     -- UART model
-    signal tb_i_uart_rx_manual   : std_logic;
-    signal tb_i_uart_rx          : std_logic;
-    signal tb_i_uart_select      : std_logic;
-    signal tb_i_read_addr        : std_logic_vector( 8 - 1 downto 0);
-    signal tb_i_read_addr_valid  : std_logic;
-    signal tb_o_read_data        : std_logic_vector(16 - 1 downto 0);
-    signal tb_o_read_data_valid  : std_logic;
-    signal tb_i_write_address    : std_logic_vector( 8 - 1 downto 0);
-    signal tb_i_write_data       : std_logic_vector(16 - 1 downto 0);
-    signal tb_i_write_valid      : std_logic;
+    signal tb_i_uart_rx_manual    : std_logic;
+    signal tb_i_uart_rx           : std_logic;
+    signal tb_i_uart_select       : std_logic;
+    signal tb_i_read_addr         : std_logic_vector( 8 - 1 downto 0);
+    signal tb_i_read_addr_valid   : std_logic;
+    signal tb_o_read_data         : std_logic_vector(16 - 1 downto 0);
+    signal tb_o_read_data_valid   : std_logic;
+    signal tb_i_write_address     : std_logic_vector( 8 - 1 downto 0);
+    signal tb_i_write_data        : std_logic_vector(16 - 1 downto 0);
+    signal tb_i_write_valid       : std_logic;
 
     -- UART timing verification
-    signal tb_check_uart_timings : std_logic;
+    signal tb_check_uart_timings  : std_logic;
 
     -- SPI timing verification
-    signal tb_check_spi_timings  : std_logic;
+    signal tb_check_spi_timings   : std_logic;
+
+    -- VGA timings verification
+    signal tb_check_hsync_timings : std_logic;
+    signal tb_check_vsync_timings : std_logic;
 
 begin
 
@@ -290,6 +295,60 @@ begin
     end process p_check_spi_timings;
 
     -- =================================================================================================================
+    -- VGA TIMINGS VERIFICATION
+    -- =================================================================================================================
+
+    p_check_hsync_timings : process is
+
+        variable v_start_time     : time;
+        variable v_start_bit_time : time;
+
+    begin
+        wait until rising_edge(tb_check_hsync_timings);
+
+        info("");
+        info("Checking VGA horizontal synchronization timings.");
+
+        wait until falling_edge(tb_pad_o_vga_hsync);
+        v_start_time     := now;
+        v_start_bit_time := now;
+
+        wait until rising_edge(tb_pad_o_vga_hsync);
+        proc_check_time_in_range(now - v_start_bit_time, C_H_SYNC_PULSE_TIME, C_H_SYNC_PULSE_TIME_ACCURACY);
+        v_start_bit_time := now;
+
+        wait until falling_edge(tb_pad_o_vga_hsync);
+        proc_check_time_in_range(now - v_start_bit_time, C_H_HSYNC_HIGH_TIME, C_H_HSYNC_HIGH_TIME_ACCURACY);
+        proc_check_time_in_range(now - v_start_time, C_H_WHOLE_LINE_TIME, C_H_WHOLE_LINE_TIME_ACCURACY);
+
+    end process p_check_hsync_timings;
+
+    p_check_vsync_timings : process is
+
+        variable v_start_time     : time;
+        variable v_start_bit_time : time;
+
+    begin
+        wait until rising_edge(tb_check_vsync_timings);
+
+        info("");
+        info("Checking VGA vertical synchronization timings.");
+
+        wait until falling_edge(tb_pad_o_vga_vsync);
+        v_start_time     := now;
+        v_start_bit_time := now;
+
+        wait until rising_edge(tb_pad_o_vga_vsync);
+        proc_check_time_in_range(now - v_start_bit_time, C_V_SYNC_PULSE_TIME, C_V_SYNC_PULSE_TIME_ACCURACY);
+        v_start_bit_time := now;
+
+        wait until falling_edge(tb_pad_o_vga_vsync);
+        proc_check_time_in_range(now - v_start_bit_time, C_V_HSYNC_HIGH_TIME, C_V_HSYNC_HIGH_TIME_ACCURACY);
+        proc_check_time_in_range(now - v_start_time, C_V_WHOLE_LINE_TIME, C_V_WHOLE_LINE_TIME_ACCURACY);
+
+    end process p_check_vsync_timings;
+
+    -- =================================================================================================================
     -- TESTBENCH PROCESS
     -- =================================================================================================================
 
@@ -317,28 +376,31 @@ begin
         begin
 
             -- Reset the DUT by setting the input state to all zeros
-            tb_pad_i_rst_p        <= '1';
+            tb_pad_i_rst_p         <= '1';
 
-            tb_i_uart_select      <= '0';
-            tb_i_uart_rx_manual   <= '0';
-            tb_pad_i_switch_0     <= '0';
-            tb_pad_i_switch_1     <= '0';
-            tb_pad_i_switch_2     <= '0';
+            tb_i_uart_select       <= '0';
+            tb_i_uart_rx_manual    <= '0';
+            tb_pad_i_switch_0      <= '0';
+            tb_pad_i_switch_1      <= '0';
+            tb_pad_i_switch_2      <= '0';
 
-            tb_i_read_addr        <= (others => '0');
-            tb_i_read_addr_valid  <= '0';
-            tb_i_write_address    <= (others => '0');
-            tb_i_write_data       <= (others => '0');
-            tb_i_write_valid      <= '0';
+            tb_i_read_addr         <= (others => '0');
+            tb_i_read_addr_valid   <= '0';
+            tb_i_write_address     <= (others => '0');
+            tb_i_write_data        <= (others => '0');
+            tb_i_write_valid       <= '0';
 
-            tb_check_uart_timings <= '0';
+            tb_check_uart_timings  <= '0';
 
-            tb_check_spi_timings  <= '0';
+            tb_check_spi_timings   <= '0';
+
+            tb_check_hsync_timings <= '0';
+            tb_check_vsync_timings <= '0';
 
             wait for c_clock_cycles * C_CLK_PERIOD;
 
             -- Reassert reset
-            tb_pad_i_rst_p        <= '0';
+            tb_pad_i_rst_p         <= '0';
 
             -- Wait for the DUT to step over
             wait for 5 ns;
@@ -1061,11 +1123,11 @@ begin
                 wait for 100 us;
 
                 proc_uart_check_default_value(C_REG_VGA_CTRL);
-                proc_uart_check_read_write(C_REG_VGA_CTRL, x"0FFF");
+                proc_uart_check_read_write(C_REG_VGA_CTRL, x"0F0F");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Checking VGA RGB outputs are matching configuration");
+                info(" Write some datas to the VGA register");
                 info("-----------------------------------------------------------------------------");
 
                 -- Reset DUT
@@ -1074,12 +1136,40 @@ begin
 
                 proc_uart_write(C_REG_VGA_CTRL, x"0ABC");
                 wait for 10 us;
+                proc_uart_check(C_REG_VGA_CTRL, x"0ABC");
+
                 proc_uart_write(C_REG_VGA_CTRL, x"0F00");
                 wait for 10 us;
+                proc_uart_check(C_REG_VGA_CTRL, x"0F00");
+
                 proc_uart_write(C_REG_VGA_CTRL, x"00F0");
                 wait for 10 us;
+                proc_uart_check(C_REG_VGA_CTRL, x"00F0");
+
                 proc_uart_write(C_REG_VGA_CTRL, x"000F");
                 wait for 10 us;
+                proc_uart_check(C_REG_VGA_CTRL, x"000F");
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking VGA RGB outputs are matching configuration");
+                info("-----------------------------------------------------------------------------");
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking VGA horizontal synchronization timings");
+                info("-----------------------------------------------------------------------------");
+
+                tb_check_hsync_timings <= '1';
+                wait for 2.1 * C_H_WHOLE_LINE_TIME;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking VGA vertical synchronization timings");
+                info("-----------------------------------------------------------------------------");
+
+                tb_check_vsync_timings <= '1';
+                wait for 2.1 * C_V_WHOLE_LINE_TIME;
 
             end if;
 

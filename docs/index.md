@@ -73,7 +73,7 @@ The FPGA uses a PLL (`clk_wiz_0`) to generate internal clocks from the input clo
         <tr>
             <td><code>clk_out2</code></td>
             <td>Clock</td>
-            <td>25 MHz</td>
+            <td>65 MHz</td>
             <td>VGA clock (<code>vga_clk</code>)</td>
         </tr>
         <tr>
