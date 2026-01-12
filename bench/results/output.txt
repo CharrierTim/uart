@@ -4,8 +4,8 @@ Test: lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c464
 Path: test_output/lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c4642ec9bbb899e0574a5b7/output.txt
 ================================================================================
 
-Seed for lib_bench.tb_top_fpga.test_led_and_switches_toggling: 15d0214237c6b4c0
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c4642ec9bbb899e0574a5b7/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_led_and_switches_toggling,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c4642ec9bbb899e0574a5b7/,seed : 15d0214237c6b4c0,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga.test_led_and_switches_toggling: 8004bae0555f8c4f
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c4642ec9bbb899e0574a5b7/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_led_and_switches_toggling,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c4642ec9bbb899e0574a5b7/,seed : 8004bae0555f8c4f,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -  Checking register REG_LED characteristics (read-write)
@@ -90,15 +90,15 @@ Seed for lib_bench.tb_top_fpga.test_led_and_switches_toggling: 15d0214237c6b4c0
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
    Procedure TEST_RUNNER_CLEANUP [RUNNER_SYNC_T, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd:133
-   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:296
+   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:355
 
 ================================================================================
 Test: lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45
 Path: test_output/lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45/output.txt
 ================================================================================
 
-Seed for lib_bench.tb_top_fpga.test_spi: 2592320391a85642
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_spi,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45/,seed : 2592320391a85642,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga.test_spi: 2569cf86c7a89d6f
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_spi,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45/,seed : 2569cf86c7a89d6f,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -  Testing SPI TX and RX registers
@@ -189,15 +189,15 @@ Seed for lib_bench.tb_top_fpga.test_spi: 2592320391a85642
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
    Procedure TEST_RUNNER_CLEANUP [RUNNER_SYNC_T, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd:133
-   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:296
+   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:355
 
 ================================================================================
 Test: lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e
 Path: test_output/lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e/output.txt
 ================================================================================
 
-Seed for lib_bench.tb_top_fpga.test_top_fpga_registers: fe9aede9d1391258
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_top_fpga_registers,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e/,seed : fe9aede9d1391258,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga.test_top_fpga_registers: 9f328ae65631e2ab
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_top_fpga_registers,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e/,seed : 9f328ae65631e2ab,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - DUT has been reset.
                0 ms - default              -    INFO -
@@ -323,15 +323,15 @@ Seed for lib_bench.tb_top_fpga.test_top_fpga_registers: fe9aede9d1391258
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
    Procedure TEST_RUNNER_CLEANUP [RUNNER_SYNC_T, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd:133
-   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:296
+   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:355
 
 ================================================================================
 Test: lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f
 Path: test_output/lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f/output.txt
 ================================================================================
 
-Seed for lib_bench.tb_top_fpga.test_uart_robustness: ca40ea3001e59d6f
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_uart_robustness,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f/,seed : ca40ea3001e59d6f,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga.test_uart_robustness: 20c5d80ffc928b10
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_uart_robustness,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f/,seed : 20c5d80ffc928b10,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - DUT has been reset.
                0 ms - default              -    INFO -
@@ -411,15 +411,15 @@ Seed for lib_bench.tb_top_fpga.test_uart_robustness: ca40ea3001e59d6f
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
    Procedure TEST_RUNNER_CLEANUP [RUNNER_SYNC_T, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd:133
-   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:296
+   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:355
 
 ================================================================================
 Test: lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0
 Path: test_output/lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0/output.txt
 ================================================================================
 
-Seed for lib_bench.tb_top_fpga.test_vga: e3cdfbd15266c325
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_vga,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0/,seed : e3cdfbd15266c325,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga.test_vga: 372671ce3bc8ad90
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_vga,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0/,seed : 372671ce3bc8ad90,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -  Testing VGA register
@@ -437,17 +437,47 @@ Seed for lib_bench.tb_top_fpga.test_vga: e3cdfbd15266c325
                2 ms - check                -    PASS - Check register REG_VGA_CTRL: expected 0x0FFF, got 0x0FFF - Got 0000_1111_1111_1111 (4095).
                2 ms - default              -    INFO -
                2 ms - default              -    INFO - -----------------------------------------------------------------------------
-               2 ms - default              -    INFO -  Checking VGA RGB outputs are matching configuration
+               2 ms - default              -    INFO -  Write some datas to the VGA register
                2 ms - default              -    INFO - -----------------------------------------------------------------------------
                2 ms - default              -    INFO -
                2 ms - default              -    INFO - DUT has been reset.
                2 ms - default              -    INFO - Writing value 0x0ABC to register REG_VGA_CTRL at address 0x08
-               3 ms - default              -    INFO - Writing value 0x0F00 to register REG_VGA_CTRL at address 0x08
-               4 ms - default              -    INFO - Writing value 0x00F0 to register REG_VGA_CTRL at address 0x08
-               4 ms - default              -    INFO - Writing value 0x000F to register REG_VGA_CTRL at address 0x08
-** Note: 5611235555360fs+10: STOP called with status 0
+               3 ms - default              -    INFO - Reading value from register REG_VGA_CTRL at address 0x08
+               4 ms - check                -    PASS - Check register REG_VGA_CTRL: expected 0x0ABC, got 0x0ABC - Got 0000_1010_1011_1100 (2748).
+               4 ms - default              -    INFO - Writing value 0x0F00 to register REG_VGA_CTRL at address 0x08
+               4 ms - default              -    INFO - Reading value from register REG_VGA_CTRL at address 0x08
+               5 ms - check                -    PASS - Check register REG_VGA_CTRL: expected 0x0F00, got 0x0F00 - Got 0000_1111_0000_0000 (3840).
+               5 ms - default              -    INFO - Writing value 0x00F0 to register REG_VGA_CTRL at address 0x08
+               6 ms - default              -    INFO - Reading value from register REG_VGA_CTRL at address 0x08
+               7 ms - check                -    PASS - Check register REG_VGA_CTRL: expected 0x00F0, got 0x00F0 - Got 0000_0000_1111_0000 (240).
+               7 ms - default              -    INFO - Writing value 0x000F to register REG_VGA_CTRL at address 0x08
+               7 ms - default              -    INFO - Reading value from register REG_VGA_CTRL at address 0x08
+               8 ms - check                -    PASS - Check register REG_VGA_CTRL: expected 0x000F, got 0x000F - Got 0000_0000_0000_1111 (15).
+               8 ms - default              -    INFO -
+               8 ms - default              -    INFO - -----------------------------------------------------------------------------
+               8 ms - default              -    INFO -  Checking VGA RGB outputs are matching configuration
+               8 ms - default              -    INFO - -----------------------------------------------------------------------------
+               8 ms - default              -    INFO -
+               8 ms - default              -    INFO - -----------------------------------------------------------------------------
+               8 ms - default              -    INFO -  Checking VGA horizontal synchronization timings
+               8 ms - default              -    INFO - -----------------------------------------------------------------------------
+               8 ms - default              -    INFO -
+               8 ms - default              -    INFO - Checking VGA horizontal synchronization timings.
+               8 ms - check                -    PASS - Time:      2.09 us  |  Range:      2.09 us +/-   20.92 ns
+               8 ms - check                -    PASS - Time:     18.58 us  |  Range:     18.58 us +/-  185.85 ns
+               8 ms - check                -    PASS - Time:     20.68 us  |  Range:     20.68 us +/-  206.77 ns
+               8 ms - default              -    INFO -
+               8 ms - default              -    INFO - -----------------------------------------------------------------------------
+               8 ms - default              -    INFO -  Checking VGA vertical synchronization timings
+               8 ms - default              -    INFO - -----------------------------------------------------------------------------
+               8 ms - default              -    INFO -
+               8 ms - default              -    INFO - Checking VGA vertical synchronization timings.
+              19 ms - check                -    PASS - Time:    124.06 us  |  Range:    124.06 us +/-    1.24 us
+              35 ms - check                -    PASS - Time:     16.54 ms  |  Range:     16.54 ms +/-  165.42 us
+              35 ms - check                -    PASS - Time:     16.67 ms  |  Range:     16.67 ms +/-  166.66 us
+** Note: 43752055455100fs+10: STOP called with status 0
    Procedure STOP [INTEGER] at ../lib/std.08/env-body.vhd:27
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
    Procedure TEST_RUNNER_CLEANUP [RUNNER_SYNC_T, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd:133
-   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:296
+   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:355
