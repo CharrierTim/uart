@@ -26,7 +26,7 @@ Internal FPGA registers with read/write registers accessible via the UART line.
 | Port Name             | Type         | Direction | Default Value  | Description                                                                                                                    |
 | --------------------- | ------------ | :-------: | -------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | `CLK`                 | std_logic    |    in     | -              | Input clock                                                                                                                    |
-| `RST_N`               | std_logic    |    in     | -              | Input asynchronous reset, active low                                                                                           |
+| `RST_P`               | std_logic    |    in     | -              | Input asynchronous reset, active low                                                                                           |
 | `I_SWITCHES`          | vector[2:0]  |    in     | -              | Input vector containing the resynchronized switches value                                                                      |
 | `I_SPI_RX_DATA`       | vector[7:0]  |    in     | -              | Input vector containing the SPI data sent by the slave                                                                         |
 | `I_SPI_RX_DATA_VALID` | std_logic    |    in     | -              | Input vector containing the SPI data sent flag valid                                                                           |

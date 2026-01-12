@@ -25,7 +25,7 @@
 | Port Name                | Type         | Direction | Default Value | Description                          |
 | ------------------------ | ------------ | :-------: | ------------- | ------------------------------------ |
 | `CLK`                    | std_logic    |    in     | -             | Input clock                          |
-| `RST_N`                  | std_logic    |    in     | -             | Input asynchronous reset, active low |
+| `RST_P`                  | std_logic    |    in     | -             | Input asynchronous reset, active low |
 | `I_UART_RX`              | std_logic    |    in     | -             | Asynchronous input UART RX line      |
 | `O_UART_TX`              | std_logic    |    out    | 0b1           | Output UART TX line                  |
 | `O_READ_ADDR`            | vector[7:0]  |    out    | 0x00          | Output read address                  |

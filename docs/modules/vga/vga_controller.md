@@ -35,7 +35,7 @@ Only works for the [TE 4-1734682-2](https://www.te.com/en/product-4-1734682-2.ht
 | ----------------- | ------------ | :-------: | ------------- | ------------------------------------------------------------------------------------------------------ |
 | `CLK_SYS`         | std_logic    |    in     | -             | Input system clock                                                                                     |
 | `CLK_VGA`         | std_logic    |    in     | -             | Input vga clock                                                                                        |
-| `RST_H`           | std_logic    |    in     | -             | Input asynchronous reset, active high                                                                  |
+| `RST_P`           | std_logic    |    in     | -             | Input asynchronous reset, active high                                                                  |
 | `O_HSYNC`         | std_logic    |    out    | 0b0           | Horizontal sync signal output                                                                          |
 | `O_VSYNC`         | std_logic    |    out    | 0b0           | Vertical sync signal output                                                                            |
 | `I_MANUAL_COLORS` | vector[11:0] |    in     | -             | Red color channel input (4-bit) & Green color channel input (4-bit) & Blue color channel input (4-bit) |

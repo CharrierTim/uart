@@ -27,7 +27,7 @@
 | Port Name         | Type                       | Direction | Default Value    | Description                                                                         |
 | ----------------- | -------------------------- | :-------: | ---------------- | ----------------------------------------------------------------------------------- |
 | `CLK`             | std_logic                  |    in     | -                | Input clock                                                                         |
-| `RST_N`           | std_logic                  |    in     | -                | Input asynchronous reset, active low                                                |
+| `RST_P`           | std_logic                  |    in     | -                | Input asynchronous reset, active low                                                |
 | `O_SCLK`          | std_logic                  |    out    | `G_CLK_POLARITY` | Output SPI serial clock                                                             |
 | `O_MOSI`          | std_logic                  |    out    | 0b0              | Output Master Out Slave In                                                          |
 | `I_MISO`          | std_logic                  |    in     | -                | Input Master In Slave Out                                                           |

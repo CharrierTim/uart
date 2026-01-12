@@ -33,7 +33,7 @@ The following figure depicts the Top-Level:
 | Port Name        | Type      | Direction | Default Value | Description                           |
 | ---------------- | --------- | :-------: | ------------- | ------------------------------------- |
 | `PAD_I_CLK`      | std_logic |    in     | -             | Input clock                           |
-| `PAD_RST_H`      | std_logic |    in     | -             | Input asynchronous reset, active high |
+| `PAD_I_RST_H`    | std_logic |    in     | -             | Input asynchronous reset, active high |
 | `PAD_I_UART_RX`  | std_logic |    in     | -             | Input UART RX line                    |
 | `PAD_O_UART_TX`  | std_logic |    out    | 0b1           | Output UART TX line                   |
 | `PAD_O_SCLK`     | std_logic |    out    | 0b0           | Output SPI serial clock               |
