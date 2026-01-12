@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    spi_master.vhd
--- @version 1.1
+-- @version 2.0
 -- @brief   SPI master module supporting all four SPI modes (0-3).
 --
 --          SPI Mode Configuration (adapted from Texas Instruments KeyStone Architecture Serial Peripheral Interface
@@ -56,6 +56,7 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      24/11/2025  Timothee Charrier   Initial release
 -- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
+-- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
@@ -78,7 +79,7 @@ entity SPI_MASTER is
     port (
         -- Clock and reset
         CLK             : in    std_logic;
-        RST_N           : in    std_logic;
+        RST_P           : in    std_logic;
         -- SPI interface
         O_SCLK          : out   std_logic; -- Serial Clock
         O_MOSI          : out   std_logic; -- Master Out Slave In
@@ -167,10 +168,10 @@ begin
     -- The enable pulses are used to synchronize sampling and shifting operations across the FSM.
     -- =================================================================================================================
 
-    p_core_clock_gen : process (CLK, RST_N) is
+    p_core_clock_gen : process (CLK, RST_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_P = '1') then
 
             spi_half_period_counter <= (others => '0');
             half_period_tick        <= '0';
@@ -235,10 +236,10 @@ begin
     -- SPI output clock when active
     -- =================================================================================================================
 
-    p_sclk : process (CLK, RST_N) is
+    p_sclk : process (CLK, RST_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_P = '1') then
 
             reg_o_sclk <= G_CLK_POLARITY;
             O_SCLK     <= G_CLK_POLARITY;
@@ -261,10 +262,10 @@ begin
     -- Bit counter, increments on leading edge
     -- =================================================================================================================
 
-    p_bit_count : process (CLK, RST_N) is
+    p_bit_count : process (CLK, RST_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_P = '1') then
 
             bit_counter <= (others => '0');
 
@@ -288,10 +289,10 @@ begin
     -- Register the input data when valid and I_MISO resynchronization to input clock domain
     -- =================================================================================================================
 
-    p_internal_reg : process (CLK, RST_N) is
+    p_internal_reg : process (CLK, RST_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_P = '1') then
 
             reg_i_tx_data_valid_d1 <= '0';
             reg_i_tx_data          <= (others => '0');
@@ -316,10 +317,10 @@ begin
     -- FSM sequential process for state transitions
     -- =================================================================================================================
 
-    p_fsm_seq : process (CLK, RST_N) is
+    p_fsm_seq : process (CLK, RST_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_P = '1') then
 
             current_state <= STATE_IDLE;
 
@@ -498,10 +499,10 @@ begin
     -- Registered outputs
     -- =================================================================================================================
 
-    p_outputs_seq : process (CLK, RST_N) is
+    p_outputs_seq : process (CLK, RST_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_P = '1') then
 
             O_MOSI           <= '0';
             O_CS_N           <= '1';

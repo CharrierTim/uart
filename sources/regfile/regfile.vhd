@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    registers.vhd
--- @version 1.0
+-- @version 2.0
 -- @brief   Registers for the FPGA
 -- @author  Timothee Charrier
 -- @date    01/12/2025
@@ -33,6 +33,7 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
+-- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
@@ -53,7 +54,7 @@ entity REGFILE is
     port (
         -- Clock and reset
         CLK                 : in    std_logic;
-        RST_N               : in    std_logic;
+        RST_P               : in    std_logic;
 
         -- Inputs switches
         I_SWITCHES          : in    std_logic_vector(3 - 1 downto 0);
@@ -77,10 +78,7 @@ entity REGFILE is
         O_LED_0             : out   std_logic;
         O_SPI_TX_DATA       : out   std_logic_vector(8 - 1 downto 0);
         O_SPI_TX_DATA_VALID : out   std_logic;
-        O_VGA_MODE          : out   std_logic;
-        O_RED               : out   std_logic_vector(4 - 1 downto 0);
-        O_GREEN             : out   std_logic_vector(4 - 1 downto 0);
-        O_BLUE              : out   std_logic_vector(4 - 1 downto 0)
+        O_VGA_COLORS        : out   std_logic_vector(12 - 1 downto 0)
     );
 end entity REGFILE;
 
@@ -110,10 +108,10 @@ begin
     -- READ/WRITE PROCESS
     -- =================================================================================================================
 
-    p_reg : process (CLK, RST_N) is
+    p_reg : process (CLK, RST_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_P = '1') then
 
             -- Read data valid flag
             O_READ_DATA_VALID <= '0';
@@ -186,7 +184,7 @@ begin
 
                     when C_REG_VGA_CTRL_ADDR =>
 
-                        reg_read <= 3b"0" & reg_vga_ctrl;
+                        reg_read <= 4b"0" & reg_vga_ctrl;
 
                     when C_REG_9A_ADDR =>
 
@@ -262,9 +260,6 @@ begin
     O_LED_0             <= reg_led;
     O_SPI_TX_DATA       <= reg_spi_tx(reg_spi_tx'high - 1 downto reg_spi_tx'low);
     O_SPI_TX_DATA_VALID <= reg_spi_tx(reg_spi_tx'high);
-    O_VGA_MODE          <= reg_vga_ctrl(12);
-    O_RED               <= reg_vga_ctrl( 3 downto 0);
-    O_GREEN             <= reg_vga_ctrl( 7 downto 4);
-    O_BLUE              <= reg_vga_ctrl(11 downto 8);
+    O_VGA_COLORS        <= reg_vga_ctrl(11 downto 0);
 
 end architecture REGFILE_ARCH;

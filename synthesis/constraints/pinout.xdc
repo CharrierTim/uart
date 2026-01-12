@@ -23,7 +23,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    pinout.xdc
-## @version 1.1
+## @version 1.2
 ## @brief   Pinout constraints for the FPGA
 ## @author  Timothee Charrier
 ## @date    29/10/2025
@@ -34,11 +34,12 @@
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      29/10/2025  Timothee Charrier   Initial release
 ## 1.1      05/01/2026  Timothee Charrier   Add VGA constraints
+## 1.2      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 ## =====================================================================================================================
 
 # Clock and reset
 set_property -dict {PACKAGE_PIN Y9   IOSTANDARD LVCMOS33}             [get_ports {PAD_I_CLK}];      # CLK
-set_property -dict {PACKAGE_PIN R16  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_RST_H}];    # BTND
+set_property -dict {PACKAGE_PIN R16  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_RST_P}];    # BTND
 
 # UART
 set_property -dict {PACKAGE_PIN Y11  IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_I_UART_RX}];  # JA1 - P1

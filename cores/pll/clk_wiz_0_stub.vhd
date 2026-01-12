@@ -2,7 +2,7 @@
 -- Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
--- Date        : Tue Dec 16 14:48:38 2025
+-- Date        : Thu Jan  8 11:59:14 2026
 -- Host        : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 -- Command     : write_vhdl -force -mode synth_stub
 --               /home/tim/projects/uart/synthesis/uart/uart.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_stub.vhdl

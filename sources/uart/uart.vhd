@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    uart.vhd
--- @version 1.1
+-- @version 2.0
 -- @brief   Top-level UART module, implementing both TX and RX functionalities with a custom protocol
 -- @author  Timothee Charrier
 -- @date    10/12/2025
@@ -34,6 +34,7 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      21/10/2025  Timothee Charrier   Initial release
 -- 1.1      10/12/2025  Timothee Charrier   Naming conventions update and remove generic
+-- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
@@ -55,7 +56,7 @@ entity UART is
     port (
         -- Clock and reset
         CLK               : in    std_logic;
-        RST_N             : in    std_logic;
+        RST_P             : in    std_logic;
         -- UART interface
         I_UART_RX         : in    std_logic;
         O_UART_TX         : out   std_logic;
@@ -178,7 +179,7 @@ begin
         )
         port map (
             CLK             => CLK,
-            RST_N           => RST_N,
+            RST_P           => RST_P,
             I_TX_DATA       => tx_byte_to_send_encoded,
             I_TX_DATA_VALID => tx_byte_to_send_valid,
             O_UART_TX       => O_UART_TX,
@@ -221,7 +222,7 @@ begin
         )
         port map (
             CLK               => CLK,
-            RST_N             => RST_N,
+            RST_P             => RST_P,
             I_UART_RX         => I_UART_RX,
             O_BYTE            => rx_byte,
             O_BYTE_VALID      => rx_byte_valid,
@@ -256,10 +257,10 @@ begin
     -- FSM sequential process for state transitions and byte count
     -- =================================================================================================================
 
-    p_fsm_seq : process (CLK, RST_N) is
+    p_fsm_seq : process (CLK, RST_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_P = '1') then
 
             current_state         <= STATE_IDLE;
 
@@ -546,10 +547,10 @@ begin
     -- OUTPUT ASSIGNMENTS
     -- =================================================================================================================
 
-    p_outputs_seq : process (CLK, RST_N) is
+    p_outputs_seq : process (CLK, RST_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_P = '1') then
 
             O_READ_ADDR       <= (others => '0');
             O_READ_ADDR_VALID <= '0';

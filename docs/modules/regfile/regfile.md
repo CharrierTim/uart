@@ -4,6 +4,8 @@
 
 Internal FPGA registers with read/write registers accessible via the UART line.
 
+---
+
 ## Generics
 
 <div class="generics-table" markdown="1">
@@ -15,29 +17,34 @@ Internal FPGA registers with read/write registers accessible via the UART line.
 
 </div>
 
+---
+
 ## Inputs and Outputs
 
 <div class="ports-table" markdown="1">
 
-| Port Name             | Type         | Direction | Default Value  | Description                                               |
-| --------------------- | ------------ | :-------: | -------------- | --------------------------------------------------------- |
-| `CLK`                 | std_logic    |    in     | -              | Input clock                                               |
-| `RST_N`               | std_logic    |    in     | -              | Input asynchronous reset, active low                      |
-| `I_SWITCHES`          | vector[2:0]  |    in     | -              | Input vector containing the resynchronized switches value |
-| `I_SPI_RX_DATA`       | vector[7:0]  |    in     | -              | Input vector containing the SPI data sent by the slave    |
-| `I_SPI_RX_DATA_VALID` | std_logic    |    in     | -              | Input vector containing the SPI data sent flag valid      |
-| `I_READ_ADDR`         | vector[7:0]  |    in     | -              | Read address from the UART                                |
-| `I_READ_ADDR_VALID`   | std_logic    |    in     | -              | Read address valid flag                                   |
-| `O_READ_DATA`         | vector[15:0] |    out    | `G_GIT_ID_MSB` | Read data at the address `I_READ_ADDR`                    |
-| `O_READ_DATA_VALID`   | std_logic    |    out    | 0x00           | Read data valid flag                                      |
-| `I_WRITE_ADDR`        | vector[7:0]  |    in     | -              | Write address from the UART                               |
-| `I_WRITE_DATA`        | vector[15:0] |    in     | -              | Write data to be written at `I_WRITE_DATA`                |
-| `I_WRITE_VALID`       | std_logic    |    in     | -              | Write address and data valid flag                         |
-| `O_SPI_TX_DATA`       | vector[7:0]  |    out    | 0x00           | Input vector containing the SPI data to be send           |
-| `O_SPI_TX_DATA_VALID` | std_logic    |    out    | 0b0            | Input vector containing the SPI data flag valid           |
-| `O_LED_0`             | std_logic    |    out    | 0b1            | LED 0 value                                               |
+| Port Name             | Type         | Direction | Default Value  | Description                                                                                                                    |
+| --------------------- | ------------ | :-------: | -------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `CLK`                 | std_logic    |    in     | -              | Input clock                                                                                                                    |
+| `RST_P`               | std_logic    |    in     | -              | Input asynchronous reset, active low                                                                                           |
+| `I_SWITCHES`          | vector[2:0]  |    in     | -              | Input vector containing the resynchronized switches value                                                                      |
+| `I_SPI_RX_DATA`       | vector[7:0]  |    in     | -              | Input vector containing the SPI data sent by the slave                                                                         |
+| `I_SPI_RX_DATA_VALID` | std_logic    |    in     | -              | Input vector containing the SPI data sent flag valid                                                                           |
+| `I_READ_ADDR`         | vector[7:0]  |    in     | -              | Read address from the UART                                                                                                     |
+| `I_READ_ADDR_VALID`   | std_logic    |    in     | -              | Read address valid flag                                                                                                        |
+| `O_READ_DATA`         | vector[15:0] |    out    | `G_GIT_ID_MSB` | Read data at the address `I_READ_ADDR`                                                                                         |
+| `O_READ_DATA_VALID`   | std_logic    |    out    | 0x00           | Read data valid flag                                                                                                           |
+| `I_WRITE_ADDR`        | vector[7:0]  |    in     | -              | Write address from the UART                                                                                                    |
+| `I_WRITE_DATA`        | vector[15:0] |    in     | -              | Write data to be written at `I_WRITE_DATA`                                                                                     |
+| `I_WRITE_VALID`       | std_logic    |    in     | -              | Write address and data valid flag                                                                                              |
+| `O_SPI_TX_DATA`       | vector[7:0]  |    out    | 0x00           | Input vector containing the SPI data to be send                                                                                |
+| `O_SPI_TX_DATA_VALID` | std_logic    |    out    | 0b0            | Input vector containing the SPI data flag valid                                                                                |
+| `O_LED_0`             | std_logic    |    out    | 0b1            | LED 0 value                                                                                                                    |
+| `O_VGA_COLORS`        | vector[11:0] |    out    | 0x000          | Output colors channels to be displayed on the VGA. Bits[11:8] for red, bits[7:4] for green channel, bits[3:0] for blue channel |
 
 </div>
+
+---
 
 ## Architecture
 
@@ -76,11 +83,15 @@ Not all registers are writable. If the specified address corresponds to:
 - A **writable register**: The data is written on the next clock cycle
 - An **undefined address**: The write operation is ignored
 
+---
+
 ## Overview
 
 A simplified view of the regfile module:
 
 ![image](../../assets/uart.drawio){ page="REGFILE" }
+
+---
 
 ## Summary
 
@@ -94,6 +105,7 @@ A simplified view of the regfile module:
 | [REG_78](#reg_78)                 | 0x05    | R    | Internal register 4                                                      |
 | [REG_SPI_TX](#reg_spi_tx)         | 0x06    | RW   | Register controlling the SPI data to send                                |
 | [REG_SPI_RX](#reg_spi_rx)         | 0x07    | R    | Register containing the SPI slave data                                   |
+| [REG_VGA_CTRL](#reg_vga_ctrl)     | 0x08    | RW   | Register controlling the output color of the VGA module                  |
 | [REG_9A](#reg_9a)                 | 0xAB    | R    | Internal register 5                                                      |
 | [REG_CD](#reg_cd)                 | 0xAC    | R    | Internal register 6                                                      |
 | [REG_EF](#reg_ef)                 | 0xDC    | R    | Internal register 7                                                      |
@@ -107,6 +119,8 @@ Where:
 | ------ | --------------------------------------------------------------------------- |
 | **R**  | Read-only: Register value can be read but not modified via write operations |
 | **RW** | Read-Write: Register value can be both read and written                     |
+
+---
 
 ## Detailed register descriptions
 
@@ -383,6 +397,73 @@ SPI RX data register
 | ---- | ----- | ------- | ---------------------------- |
 | 15:8 | 0x0   | -       | Reserved                     |
 | 7:0  | 0x0   | RX_DATA | Received data from SPI slave |
+
+</div>
+
+### REG_VGA_CTRL
+
+VGA colors data register
+
+- Address: `0x08`
+- Reset default: `0x0000`
+
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "BLUE",
+            "bits": 4,
+            "attr": [
+                "rw"
+            ],
+            "rotate": 0,
+            "type": 3
+        },
+        {
+            "name": "GREEN",
+            "bits": 4,
+            "attr": [
+                "rw"
+            ],
+            "rotate": 0,
+            "type": 3
+        },
+        {
+            "name": "RED",
+            "bits": 4,
+            "attr": [
+                "rw"
+            ],
+            "rotate": 0,
+            "type": 3
+        },
+        {
+            "name": "Reserved",
+            "bits": 4,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 2
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+
+<div class="register-bits-table" markdown="1">
+
+| Bits  | Reset | Name  | Description   |
+| ----- | ----- | ----- | ------------- |
+| 15:12 | 0x0   | -     | Reserved      |
+| 11:8  | 0x0   | RED   | Red channel   |
+| 7:4   | 0x0   | GREEN | Green channel |
+| 3:0   | 0x0   | BLUE  | Blue channel  |
 
 </div>
 

@@ -2,6 +2,8 @@
 
 ## Description
 
+---
+
 ## Generics
 
 <div class="generics-table" markdown="1">
@@ -16,6 +18,8 @@
 
 </div>
 
+---
+
 ## Inputs and Outputs
 
 <div class="ports-table" markdown="1">
@@ -23,7 +27,7 @@
 | Port Name         | Type                       | Direction | Default Value    | Description                                                                         |
 | ----------------- | -------------------------- | :-------: | ---------------- | ----------------------------------------------------------------------------------- |
 | `CLK`             | std_logic                  |    in     | -                | Input clock                                                                         |
-| `RST_N`           | std_logic                  |    in     | -                | Input asynchronous reset, active low                                                |
+| `RST_P`           | std_logic                  |    in     | -                | Input asynchronous reset, active low                                                |
 | `O_SCLK`          | std_logic                  |    out    | `G_CLK_POLARITY` | Output SPI serial clock                                                             |
 | `O_MOSI`          | std_logic                  |    out    | 0b0              | Output Master Out Slave In                                                          |
 | `I_MISO`          | std_logic                  |    in     | -                | Input Master In Slave Out                                                           |
@@ -34,6 +38,8 @@
 | `O_TX_DATA_VALID` | std_logic                  |    out    | 0b0              | Data Data received from the slave flag valid                                        |
 
 </div>
+
+---
 
 ## Architecture
 
@@ -94,6 +100,8 @@ In this mode:
 !!! note
     "Output" refers to when data is driven onto the MOSI/MISO lines. "Sampled" refers to when data is captured/registered
     from the input line.
+
+---
 
 ### FSM
 

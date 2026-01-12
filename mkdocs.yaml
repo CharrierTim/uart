@@ -91,7 +91,6 @@ nav:
     - Home: index.md
     - Modules:
           - Top FPGA: modules/top_fpga.md
-          - Resynchronisation: modules/resync_slv/resync_slv.md
           - Internal Registers: modules/regfile/regfile.md
           - UART:
                 - UART Top: modules/uart/uart.md
@@ -99,6 +98,8 @@ nav:
                 - UART TX: modules/uart/uart_tx.md
           - SPI:
                 - SPI Master: modules/spi/spi_master.md
+          - VGA:
+                - VGA Controller: modules/vga/vga_controller.md
     - Testbench:
           - Top FPGA TB: modules/testbench/tb_top_fpga.md
           - Testcases: modules/testbench/testcases.md

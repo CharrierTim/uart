@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_spi_master.vhd
--- @version 1.0
+-- @version 2.0
 -- @brief   SPI master testbench
 -- @author  Timothee Charrier
 -- @date    01/12/2025
@@ -33,6 +33,7 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
+-- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
@@ -87,7 +88,7 @@ architecture TB_SPI_MASTER_ARCH of TB_SPI_MASTER is
 
     -- DUT signals
     signal tb_clk               : std_logic;
-    signal tb_rst_n             : std_logic;
+    signal tb_rst_h             : std_logic;
     signal tb_o_sclk            : std_logic;
     signal tb_o_mosi            : std_logic;
     signal tb_i_miso            : std_logic;
@@ -117,7 +118,7 @@ begin
         )
         port map (
             CLK             => tb_clk,
-            RST_N           => tb_rst_n,
+            RST_P           => tb_rst_h,
             O_SCLK          => tb_o_sclk,
             O_MOSI          => tb_o_mosi,
             I_MISO          => tb_i_miso,
@@ -232,7 +233,7 @@ begin
         begin
 
             -- Reset the DUT by setting the input state to all zeros
-            tb_rst_n             <= '0';
+            tb_rst_h             <= '1';
             tb_i_tx_data         <= (others => '0');
             tb_i_tx_data_valid   <= '0';
             tb_random_data       <= (others => '0');
@@ -241,7 +242,7 @@ begin
             wait for c_clock_cycles * C_CLK_PERIOD;
 
             -- Reassert reset
-            tb_rst_n             <= '1';
+            tb_rst_h             <= '0';
 
             -- Wait for the DUT to step over
             wait for 5 ns;

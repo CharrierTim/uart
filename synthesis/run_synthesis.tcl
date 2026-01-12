@@ -23,7 +23,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run_synthesis.tcl
-## @version 1.1
+## @version 1.2
 ## @brief   Synthesis script for Vivado
 ## @author  Timothee Charrier
 ## @date    27/10/2025
@@ -34,6 +34,8 @@
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      27/10/2025  Timothee Charrier   Initial release
 ## 1.1      05/01/2026  Timothee Charrier   Add VGA controller file
+## 1.2      09/01/2026  Timothee Charrier   Remove deprecated 'resync_slv' module and add open-logic library.
+##                                          Add report_bus_skew command and report
 ## =====================================================================================================================
 
 
@@ -98,11 +100,16 @@ if {[file exists $IP_XCI_FILE]} {
 }
 
 ## =====================================================================================================================
+# Add open-logic sources
+## =====================================================================================================================
+
+source $CORES_DIR/open-logic/tools/vivado/import_sources.tcl
+
+## =====================================================================================================================
 # Read VHDL files
 ## =====================================================================================================================
 
 set VHDL_SOURCES [list \
-    [list lib_rtl "$SOURCES_DIR/resync/resync_slv.vhd"   2008] \
     [list lib_rtl "$SOURCES_DIR/regfile/regfile_pkg.vhd" 2008] \
     [list lib_rtl "$SOURCES_DIR/regfile/regfile.vhd"     2008] \
     [list lib_rtl "$SOURCES_DIR/vga/vga_controller.vhd"  2008] \
@@ -167,6 +174,7 @@ file mkdir "${RESULTS_DIR}/synth"
 
 # Generate synthesis reports
 report_timing_summary               -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_timing_synth.rpt"
+report_bus_skew                     -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_bus_skew_synth.rpt"
 report_utilization    -hierarchical -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_hierarchical_synth.rpt"
 report_utilization                  -file "${RESULTS_DIR}/synth/${PROJECT_NAME}_utilization_synth.rpt"
 
@@ -196,6 +204,7 @@ phys_opt_design -directive "default"
 
 # Generate routing reports
 report_timing_summary -no_header -no_detailed_paths
+report_bus_skew                                     -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_bus_skew.rpt"
 report_route_status                                 -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_route_status.rpt"
 report_drc                                          -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_drc.rpt"
 report_timing_summary -datasheet -max_paths 10      -file "${RESULTS_DIR}/impl/${PROJECT_NAME}_timing.rpt"

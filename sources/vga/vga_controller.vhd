@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    vga_controller.vhd
--- @version 1.1
+-- @version 2.0
 -- @brief   VGA controller
 -- @author  Timothee Charrier
 -- @date    17/12/2025
@@ -34,12 +34,16 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      16/12/2025  Timothee Charrier   Initial release
 -- 1.1      05/01/2026  Timothee Charrier   Minor style updates
+-- 1.2      09/01/2026  Timothee Charrier   The module now handle clock domain crossing of manual color inputs.
+-- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
     use ieee. std_logic_1164.all;
     use ieee.numeric_std.all;
     use ieee.math_real.all;
+
+library olo;
 
 library lib_rtl;
 
@@ -50,39 +54,39 @@ library lib_rtl;
 entity VGA_CONTROLLER is
     generic (
         -- Horizontal timings (default: 640x480@60Hz)
-        G_H_PIXELS      : integer := 640;
-        G_H_FRONT_PORCH : integer := 16;
-        G_H_SYNC_PULSE  : integer := 96;
-        G_H_BACK_PORCH  : integer := 48;
+        G_H_PIXELS      : positive := 640;
+        G_H_FRONT_PORCH : positive := 16;
+        G_H_SYNC_PULSE  : positive := 96;
+        G_H_BACK_PORCH  : positive := 48;
 
         -- Vertical timings (default: 640x480@60Hz)
-        G_V_PIXELS      : integer := 480;
-        G_V_FRONT_PORCH : integer := 10;
-        G_V_SYNC_PULSE  : integer := 2;
-        G_V_BACK_PORCH  : integer := 33
+        G_V_PIXELS      : positive := 480;
+        G_V_FRONT_PORCH : positive := 10;
+        G_V_SYNC_PULSE  : positive := 2;
+        G_V_BACK_PORCH  : positive := 33
     );
     port (
-        CLK            : in    std_logic;
-        RST_N          : in    std_logic;
+        CLK_SYS         : in    std_logic;
+        RST_SYS_P       : in    std_logic;
+        CLK_VGA         : in    std_logic;
+        RST_VGA_P       : in    std_logic;
 
         -- Sync outputs
-        O_HSYNC        : out   std_logic;
-        O_VSYNC        : out   std_logic;
+        O_HSYNC         : out   std_logic;
+        O_VSYNC         : out   std_logic;
 
         -- Color inputs
-        I_MANUAL_RED   : in    std_logic_vector( 4 - 1 downto 0);
-        I_MANUAL_GREEN : in    std_logic_vector( 4 - 1 downto 0);
-        I_MANUAL_BLUE  : in    std_logic_vector( 4 - 1 downto 0);
+        I_MANUAL_COLORS : in    std_logic_vector(12 - 1 downto 0);
 
         -- Color outputs
-        O_RED          : out   std_logic_vector( 4 - 1 downto 0);
-        O_GREEN        : out   std_logic_vector( 4 - 1 downto 0);
-        O_BLUE         : out   std_logic_vector( 4 - 1 downto 0);
+        O_RED           : out   std_logic_vector( 4 - 1 downto 0);
+        O_GREEN         : out   std_logic_vector( 4 - 1 downto 0);
+        O_BLUE          : out   std_logic_vector( 4 - 1 downto 0);
 
         -- Position and active region outputs
-        O_H_POSITION   : out   std_logic_vector(16 - 1 downto 0);
-        O_V_POSITION   : out   std_logic_vector(16 - 1 downto 0);
-        O_ACTIVE       : out   std_logic
+        O_H_POSITION    : out   std_logic_vector(16 - 1 downto 0);
+        O_V_POSITION    : out   std_logic_vector(16 - 1 downto 0);
+        O_ACTIVE        : out   std_logic
     );
 end entity VGA_CONTROLLER;
 
@@ -97,7 +101,7 @@ architecture VGA_CONTROLLER_ARCH of VGA_CONTROLLER is
     -- =================================================================================================================
 
     -- Total horizontal pixels
-    constant C_HORIZONTAL_TOTAL_PIXELS : integer :=
+    constant C_HORIZONTAL_TOTAL_PIXELS : positive :=
     (
         G_H_PIXELS      +
         G_H_FRONT_PORCH +
@@ -106,7 +110,7 @@ architecture VGA_CONTROLLER_ARCH of VGA_CONTROLLER is
     );
 
     -- Total vertical pixels
-    constant C_VERTICAL_TOTAL_PIXELS   : integer :=
+    constant C_VERTICAL_TOTAL_PIXELS   : positive :=
     (
         G_V_PIXELS      +
         G_V_FRONT_PORCH +
@@ -118,37 +122,40 @@ architecture VGA_CONTROLLER_ARCH of VGA_CONTROLLER is
     -- VGA horizontal and vertical active start and stop
     --
 
-    constant C_HORIZONTAL_ACTIVE_START : integer :=
+    constant C_HORIZONTAL_ACTIVE_START : positive :=
     (
         G_H_SYNC_PULSE +
         G_H_BACK_PORCH
     );
 
-    constant C_HORIZONTAL_ACTIVE_STOP  : integer :=
+    constant C_HORIZONTAL_ACTIVE_STOP  : positive :=
     (
         C_HORIZONTAL_ACTIVE_START +
         G_H_PIXELS
     );
 
-    constant C_VERTICAL_ACTIVE_START   : integer :=
+    constant C_VERTICAL_ACTIVE_START   : positive :=
     (
         G_V_SYNC_PULSE +
         G_V_BACK_PORCH
     );
 
-    constant C_VERTICAL_ACTIVE_STOP    : integer :=
+    constant C_VERTICAL_ACTIVE_STOP    : positive :=
     (
         C_VERTICAL_ACTIVE_START +
         G_V_PIXELS
     );
 
     -- Counter width
-    constant C_HORIZONTAL_COUNT_WIDTH  : integer := integer(ceil(log2(real(C_HORIZONTAL_TOTAL_PIXELS))));
-    constant C_VERTICAL_COUNT_WIDTH    : integer := integer(ceil(log2(real(C_VERTICAL_TOTAL_PIXELS))));
+    constant C_HORIZONTAL_COUNT_WIDTH  : positive := positive(ceil(log2(real(C_HORIZONTAL_TOTAL_PIXELS))));
+    constant C_VERTICAL_COUNT_WIDTH    : positive := positive(ceil(log2(real(C_VERTICAL_TOTAL_PIXELS))));
 
     -- =================================================================================================================
     -- SIGNALS
     -- =================================================================================================================
+
+    -- Clock domain crossing for input colors
+    signal manual_colors_resync        : std_logic_vector(I_MANUAL_COLORS'range);
 
     -- Counters
     signal horizontal_count            : unsigned(C_HORIZONTAL_COUNT_WIDTH - 1 downto 0);
@@ -164,18 +171,38 @@ architecture VGA_CONTROLLER_ARCH of VGA_CONTROLLER is
 begin
 
     -- =================================================================================================================
+    -- CLOCK DOMAIN CROSSING FOR INPUT COLORS
+    -- =================================================================================================================
+
+    inst_olo_base_cc_status : entity olo.olo_base_cc_status
+        generic map (
+            WIDTH_G      => manual_colors_resync'length,
+            SYNCSTAGES_G => 2
+        )
+        port map (
+            In_Clk     => CLK_SYS,
+            In_RstIn   => RST_SYS_P,
+            In_RstOut  => open,
+            In_Data    => I_MANUAL_COLORS,
+            Out_Clk    => CLK_VGA,
+            Out_RstIn  => RST_VGA_P,
+            Out_RstOut => open,
+            Out_Data   => manual_colors_resync
+        );
+
+    -- =================================================================================================================
     -- HORIZONTAL AND VERTICAL COUNTERS
     -- =================================================================================================================
 
-    p_counters : process (CLK, RST_N) is
+    p_counters : process (CLK_VGA, RST_VGA_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_VGA_P = '1') then
 
             horizontal_count <= (others => '0');
             vertical_count   <= (others => '0');
 
-        elsif rising_edge(CLK) then
+        elsif rising_edge(CLK_VGA) then
 
             -- Horizontal counter
             if (horizontal_count >= C_HORIZONTAL_TOTAL_PIXELS - 1) then
@@ -219,10 +246,10 @@ begin
     -- OUTPUTS
     -- =================================================================================================================
 
-    p_outputs : process (CLK, RST_N) is
+    p_outputs : process (CLK_VGA, RST_VGA_P) is
     begin
 
-        if (RST_N = '0') then
+        if (RST_VGA_P = '1') then
 
             O_HSYNC      <= '0';
             O_VSYNC      <= '0';
@@ -235,7 +262,7 @@ begin
             O_H_POSITION <= (others => '0');
             O_V_POSITION <= (others => '0');
 
-        elsif rising_edge(CLK) then
+        elsif rising_edge(CLK_VGA) then
 
             -- Apply horizontal and vertical sync
             O_HSYNC <= '1' when horizontal_count >= G_H_SYNC_PULSE else '0';
@@ -245,9 +272,9 @@ begin
             O_ACTIVE <= active_region;
 
             -- Color outputs with blanking
-            O_RED   <= I_MANUAL_RED   when active_region = '1' else (others => '0');
-            O_GREEN <= I_MANUAL_GREEN when active_region = '1' else (others => '0');
-            O_BLUE  <= I_MANUAL_BLUE  when active_region = '1' else (others => '0');
+            O_RED   <= manual_colors_resync(11 downto 8) when active_region = '1' else (others => '0');
+            O_GREEN <= manual_colors_resync( 7 downto 4) when active_region = '1' else (others => '0');
+            O_BLUE  <= manual_colors_resync( 3 downto 0) when active_region = '1' else (others => '0');
 
             -- Position outputs
             O_H_POSITION <= std_logic_vector(resize(h_position, 16));

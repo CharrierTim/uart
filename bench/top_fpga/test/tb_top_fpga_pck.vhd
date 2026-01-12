@@ -84,22 +84,22 @@ package TB_TOP_FPGA_PKG is
     constant C_UART_READ_CMD_TIME     : time     := C_UART_BIT_TIME * C_UART_READ_NB_BITS;
 
     -- vsg_off
-    constant C_REG_GIT_ID_MSB : t_reg := (addr => 8x"00", data => 16x"1234", name => "C_REG_GIT_ID_MSB");
-    constant C_REG_GIT_ID_LSB : t_reg := (addr => 8x"01", data => 16x"5678", name => "C_REG_GIT_ID_LSB");
-    constant C_REG_12         : t_reg := (addr => 8x"02", data => 16x"1212", name => "C_REG_12");
-    constant C_REG_34         : t_reg := (addr => 8x"03", data => 16x"3434", name => "C_REG_34");
-    constant C_REG_56         : t_reg := (addr => 8x"04", data => 16x"5656", name => "C_REG_56");
-    constant C_REG_78         : t_reg := (addr => 8x"05", data => 16x"7878", name => "C_REG_78");
-    constant C_REG_SPI_TX     : t_reg := (addr => 8x"06", data => 16x"0000", name => "C_REG_SPI_TX");
-    constant C_REG_SPI_RX     : t_reg := (addr => 8x"07", data => 16x"0000", name => "C_REG_SPI_RX");
-    constant C_REG_VGA_CTRL   : t_reg := (addr => 8x"08", data => 16x"0000", name => "C_REG_VGA_CTRL");
-    constant C_REG_9A         : t_reg := (addr => 8x"AB", data => 16x"9A9A", name => "C_REG_9A");
-    constant C_REG_CD         : t_reg := (addr => 8x"AC", data => 16x"CDCD", name => "C_REG_CD");
-    constant C_REG_EF         : t_reg := (addr => 8x"DC", data => 16x"EFEF", name => "C_REG_EF");
-    constant C_REG_SWITCHES   : t_reg := (addr => 8x"B1", data => 16x"0000", name => "C_REG_SWITCHES");
-    constant C_REG_LED        : t_reg := (addr => 8x"EF", data => 16x"0001", name => "C_REG_LED");
-    constant C_REG_16_BITS    : t_reg := (addr => 8x"FF", data => 16x"0000", name => "C_REG_16_BITS");
-    constant C_REG_DEAD       : t_reg := (addr => 8x"CC", data => 16x"DEAD", name => "C_REG_DEAD");
+    constant C_REG_GIT_ID_MSB : t_reg := (addr => 8x"00", data => 16x"1234", name => "REG_GIT_ID_MSB");
+    constant C_REG_GIT_ID_LSB : t_reg := (addr => 8x"01", data => 16x"5678", name => "REG_GIT_ID_LSB");
+    constant C_REG_12         : t_reg := (addr => 8x"02", data => 16x"1212", name => "REG_12");
+    constant C_REG_34         : t_reg := (addr => 8x"03", data => 16x"3434", name => "REG_34");
+    constant C_REG_56         : t_reg := (addr => 8x"04", data => 16x"5656", name => "REG_56");
+    constant C_REG_78         : t_reg := (addr => 8x"05", data => 16x"7878", name => "REG_78");
+    constant C_REG_SPI_TX     : t_reg := (addr => 8x"06", data => 16x"0000", name => "REG_SPI_TX");
+    constant C_REG_SPI_RX     : t_reg := (addr => 8x"07", data => 16x"0000", name => "REG_SPI_RX");
+    constant C_REG_VGA_CTRL   : t_reg := (addr => 8x"08", data => 16x"0000", name => "REG_VGA_CTRL");
+    constant C_REG_9A         : t_reg := (addr => 8x"AB", data => 16x"9A9A", name => "REG_9A");
+    constant C_REG_CD         : t_reg := (addr => 8x"AC", data => 16x"CDCD", name => "REG_CD");
+    constant C_REG_EF         : t_reg := (addr => 8x"DC", data => 16x"EFEF", name => "REG_EF");
+    constant C_REG_SWITCHES   : t_reg := (addr => 8x"B1", data => 16x"0000", name => "REG_SWITCHES");
+    constant C_REG_LED        : t_reg := (addr => 8x"EF", data => 16x"0001", name => "REG_LED");
+    constant C_REG_16_BITS    : t_reg := (addr => 8x"FF", data => 16x"0000", name => "REG_16_BITS");
+    constant C_REG_DEAD       : t_reg := (addr => 8x"CC", data => 16x"DEAD", name => "REG_DEAD");
     -- vsg_on
 
     -- SPI

@@ -1,11 +1,8 @@
 # UART
 
-## Sub-modules
-
-- [UART RX](uart_rx.md)
-- [UART TX](uart_tx.md)
-
 ## Description
+
+---
 
 ## Generics
 
@@ -19,6 +16,8 @@
 
 </div>
 
+---
+
 ## Inputs and Outputs
 
 <div class="ports-table" markdown="1">
@@ -26,7 +25,7 @@
 | Port Name                | Type         | Direction | Default Value | Description                          |
 | ------------------------ | ------------ | :-------: | ------------- | ------------------------------------ |
 | `CLK`                    | std_logic    |    in     | -             | Input clock                          |
-| `RST_N`                  | std_logic    |    in     | -             | Input asynchronous reset, active low |
+| `RST_P`                  | std_logic    |    in     | -             | Input asynchronous reset, active low |
 | `I_UART_RX`              | std_logic    |    in     | -             | Asynchronous input UART RX line      |
 | `O_UART_TX`              | std_logic    |    out    | 0b1           | Output UART TX line                  |
 | `O_READ_ADDR`            | vector[7:0]  |    out    | 0x00          | Output read address                  |
@@ -39,9 +38,42 @@
 
 </div>
 
+---
+
 ## Architecture
 
 ![UART Architecture](../../assets/uart.drawio){ page="UART" }
+
+---
+
+## Sub-modules
+
+The UART controller module instantiates the [UART RX](uart_rx.md) module with the following generics:
+
+<div class="generics-table" markdown="1">
+
+| Generic Name      | Type     | Default Value     | Description                                    |
+| ----------------- | -------- | ----------------- | ---------------------------------------------- |
+| `G_CLK_FREQ_HZ`   | positive | `G_CLK_FREQ_HZ`   | Clock frequency in Hz of `CLK`                 |
+| `G_BAUD_RATE_BPS` | positive | `G_BAUD_RATE_BPS` | Baud rate in bps                               |
+| `G_SAMPLING_RATE` | positive | `G_SAMPLING_RATE` | Sampling rate (number of clock cycles per bit) |
+
+</div>
+
+The UART controller module instantiates the [UART TX](uart_tx.md) module with the following generics:
+
+<div class="generics-table" markdown="1">
+
+| Generic Name      | Type     | Default Value     | Description                    |
+| ----------------- | -------- | ----------------- | ------------------------------ |
+| `G_CLK_FREQ_HZ`   | positive | `G_CLK_FREQ_HZ`   | Clock frequency in Hz of `CLK` |
+| `G_BAUD_RATE_BPS` | positive | `G_BAUD_RATE_BPS` | Baud rate in bps               |
+
+</div>
+
+---
+
+## About
 
 ### Protocol
 

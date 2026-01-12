@@ -77,7 +77,7 @@ package REGFILE_PKG is
     -- Read-Write registers value at reset
     constant C_REG_SPI_TX_RST      : std_logic_vector( 9 - 1 downto 0) := 9x"0";
     constant C_REG_SPI_RX_RST      : std_logic_vector( 8 - 1 downto 0) := x"00";
-    constant C_REG_VGA_CTRL_RST    : std_logic_vector(13 - 1 downto 0) := 13x"000";
+    constant C_REG_VGA_CTRL_RST    : std_logic_vector(12 - 1 downto 0) := 12x"000";
     constant C_REG_LED_RST         : std_logic                         := '1';
     constant C_REG_16_BITS_RST     : std_logic_vector(16 - 1 downto 0) := x"0000";
 

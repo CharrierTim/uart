@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Wed Dec 10 16:24:39 2025
+| Date         : Mon Jan 12 11:52:12 2026
 | Host         : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -hierarchical -file /home/tim/projects/uart/synthesis/results/synth/uart_utilization_hierarchical_synth.rpt
 | Design       : TOP_FPGA
@@ -19,14 +19,16 @@ Table of Contents
 1. Utilization by Hierarchy
 ---------------------------
 
-+-------------------+------------+------------+------------+---------+------+-----+--------+--------+------------+
-|      Instance     |   Module   | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | DSP Blocks |
-+-------------------+------------+------------+------------+---------+------+-----+--------+--------+------------+
-| TOP_FPGA          |      (top) |        186 |        186 |       0 |    0 | 227 |      0 |      0 |          0 |
-|   (TOP_FPGA)      |      (top) |          0 |          0 |       0 |    0 |   0 |      0 |      0 |          0 |
-|   inst_regfile    |    REGFILE |          3 |          3 |       0 |    0 |  51 |      0 |      0 |          0 |
-|   inst_spi_master | SPI_MASTER |         18 |         18 |       0 |    0 |  51 |      0 |      0 |          0 |
-|   inst_uart       |       UART |        165 |        165 |       0 |    0 | 116 |      0 |      0 |          0 |
-|     (inst_uart)   |       UART |         72 |         72 |       0 |    0 |  36 |      0 |      0 |          0 |
-|     inst_uart_rx  |    UART_RX |         57 |         57 |       0 |    0 |  54 |      0 |      0 |          0 |
-+-------------------+------------+------------+------------+---------+------+-----+--------+--------+------------+
++-----------------------------+--------------------+------------+------------+---------+------+-----+--------+--------+------------+
+|           Instance          |       Module       | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | DSP Blocks |
++-----------------------------+--------------------+------------+------------+---------+------+-----+--------+--------+------------+
+| TOP_FPGA                    |              (top) |        258 |        258 |       0 |    0 | 351 |      0 |      0 |          0 |
+|   (TOP_FPGA)                |              (top) |          1 |          1 |       0 |    0 |   0 |      0 |      0 |          0 |
+|   inst_regfile              |            REGFILE |          3 |          3 |       0 |    0 |  63 |      0 |      0 |          0 |
+|   inst_spi_master           |         SPI_MASTER |         20 |         20 |       0 |    0 |  51 |      0 |      0 |          0 |
+|   inst_uart                 |               UART |        181 |        181 |       0 |    0 | 116 |      0 |      0 |          0 |
+|     (inst_uart)             |               UART |         89 |         89 |       0 |    0 |  36 |      0 |      0 |          0 |
+|     inst_uart_rx            |            UART_RX |         56 |         56 |       0 |    0 |  54 |      0 |      0 |          0 |
+|   inst_vga                  |     VGA_CONTROLLER |         53 |         53 |       0 |    0 | 100 |      0 |      0 |          0 |
+|     inst_olo_base_cc_status | olo_base_cc_status |         24 |         24 |       0 |    0 |  65 |      0 |      0 |          0 |
++-----------------------------+--------------------+------------+------------+---------+------+-----+--------+--------+------------+

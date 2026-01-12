@@ -35,7 +35,7 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      17/10/2025  Timothee Charrier   Initial release
-## 2.0      07/01/2026  Timothee Charrier   Update entire interface
+## 2.0      12/01/2026  Timothee Charrier   Update entire interface
 ## =====================================================================================================================
 
 import sys
@@ -74,6 +74,8 @@ cli = VUnitCLI()
 cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
 args: Namespace = cli.parse_args()
 
+simulator: Simulator = select_simulator(enable_coverage=args.coverage)
+
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
@@ -81,6 +83,12 @@ args: Namespace = cli.parse_args()
 VU: VUnit = VUnit.from_args(args=args)
 VU.add_vhdl_builtins()
 VU.add_verification_components()
+
+# Open-logic libraries
+OLO: Library = VU.add_library(library_name="olo")
+OLO.add_source_files(pattern=CORES_ROOT / "open-logic" / "src" / "**" / "*.vhd")
+OLO.add_source_files(pattern=CORES_ROOT / "open-logic" / "3rdParty/" / "en_cl_fix" / "hdl" / "*.vhd")
+OLO.add_compile_option(name="nvc.a_flags", value=["--relaxed"])
 
 # Add the source files to the library
 LIB_SRC: Library = VU.add_library(library_name="lib_rtl")
@@ -106,7 +114,6 @@ if args.coverage:
 # Set up simulator
 ## =====================================================================================================================
 
-simulator: Simulator = select_simulator(enable_coverage=args.coverage)
 simulator.attach(VU).configure()
 
 simulator.add_library(library_name="unisim")
