@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version              : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date                      : Fri Jan  9 14:44:18 2026
+| Date                      : Mon Jan 12 11:52:16 2026
 | Host                      : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command                   : report_io -file /home/tim/projects/uart/synthesis/results/impl/uart_io.rpt
 | Design                    : TOP_FPGA
@@ -402,7 +402,7 @@ Table of Contents
 | R13        |                    |            | GND                     | GND         |             |         |            |      |                     |                      |     0.0 |            |           |          |      |                  |              |                   |              |
 | R14        |                    |            | VCCINT                  | VCCINT      |             |         |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | R15        |                    | High Range | IO_25_34                | User IO     |             |      34 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
-| R16        | PAD_I_RST_H        | High Range | IO_L24N_T3_34           | INPUT       | LVCMOS18    |      34 |            |      |                     |                 NONE |         | FIXED      |           |          |      | NONE             |              |                   |              |
+| R16        | PAD_I_RST_P        | High Range | IO_L24N_T3_34           | INPUT       | LVCMOS18    |      34 |            |      |                     |                 NONE |         | FIXED      |           |          |      | NONE             |              |                   |              |
 | R17        |                    |            | GND                     | GND         |             |         |            |      |                     |                      |     0.0 |            |           |          |      |                  |              |                   |              |
 | R18        |                    | High Range | IO_L23P_T3_34           | User IO     |             |      34 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | R19        |                    | High Range | IO_L22P_T3_34           | User IO     |             |      34 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
