@@ -35,7 +35,7 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      17/10/2025  Timothee Charrier   Initial release
-## 2.0      07/01/2026  Timothee Charrier   Update entire interface
+## 2.0      12/01/2026  Timothee Charrier   Update entire interface
 ## =====================================================================================================================
 
 import sys
@@ -73,6 +73,8 @@ COVERAGE_SPEC_PATH: Path = Path(__file__).parent / "coverage.spec"
 cli = VUnitCLI()
 cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
 args: Namespace = cli.parse_args()
+
+simulator: Simulator = select_simulator(enable_coverage=args.coverage)
 
 ## =====================================================================================================================
 # Set up VUnit environment
@@ -112,7 +114,6 @@ if args.coverage:
 # Set up simulator
 ## =====================================================================================================================
 
-simulator: Simulator = select_simulator(enable_coverage=args.coverage)
 simulator.attach(VU).configure()
 
 simulator.add_library(library_name="unisim")
