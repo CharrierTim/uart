@@ -127,13 +127,13 @@ The FPGA instantiates the [vga_controller](vga/vga_controller.md) module with th
 
 | Generic Name      | Type    | Default Value | Description                                |
 | ----------------- | ------- | ------------- | ------------------------------------------ |
-| `G_H_PIXELS`      | integer | 0d640         | Horizontal resolution in pixels            |
-| `G_H_FRONT_PORCH` | integer | 0d16          | Horizontal front porch in pixels           |
-| `G_H_SYNC_PULSE`  | integer | 0d96          | Horizontal synchronization pulse in pixels |
-| `G_H_BACK_PORCH`  | integer | 0d48          | Horizontal back porch in pixels            |
-| `G_V_PIXELS`      | integer | 0d480         | Vertical resolution in pixels              |
-| `G_V_FRONT_PORCH` | integer | 0d10          | Vertical front porch in pixels             |
-| `G_V_SYNC_PULSE`  | integer | 0d2           | Vertical synchronization pulse in pixels   |
-| `G_V_BACK_PORCH`  | integer | 0d33          | Vertical back porch in pixels              |
+| `G_H_PIXELS`      | integer | 0d1024        | Horizontal resolution in pixels            |
+| `G_H_FRONT_PORCH` | integer | 0d24          | Horizontal front porch in pixels           |
+| `G_H_SYNC_PULSE`  | integer | 0d136         | Horizontal synchronization pulse in pixels |
+| `G_H_BACK_PORCH`  | integer | 0d160         | Horizontal back porch in pixels            |
+| `G_V_PIXELS`      | integer | 0d768         | Vertical resolution in pixels              |
+| `G_V_FRONT_PORCH` | integer | 0d3           | Vertical front porch in pixels             |
+| `G_V_SYNC_PULSE`  | integer | 0d6           | Vertical synchronization pulse in pixels   |
+| `G_V_BACK_PORCH`  | integer | 0d29          | Vertical back porch in pixels              |
 
 </div>
