@@ -405,7 +405,7 @@ SPI RX data register
 VGA colors data register
 
 - Address: `0x08`
-- Reset default: `0x0000`
+- Reset default: `0x00F0`
 
 <script type="WaveDrom">
 {
@@ -462,7 +462,7 @@ VGA colors data register
 | ----- | ----- | ----- | ------------- |
 | 15:12 | 0x0   | -     | Reserved      |
 | 11:8  | 0x0   | RED   | Red channel   |
-| 7:4   | 0x0   | GREEN | Green channel |
+| 7:4   | 0xF   | GREEN | Green channel |
 | 3:0   | 0x0   | BLUE  | Blue channel  |
 
 </div>

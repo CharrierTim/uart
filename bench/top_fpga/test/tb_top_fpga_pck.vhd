@@ -93,7 +93,7 @@ package TB_TOP_FPGA_PKG is
     constant C_REG_78         : t_reg := (addr => 8x"05", data => 16x"7878", name => "REG_78");
     constant C_REG_SPI_TX     : t_reg := (addr => 8x"06", data => 16x"0000", name => "REG_SPI_TX");
     constant C_REG_SPI_RX     : t_reg := (addr => 8x"07", data => 16x"0000", name => "REG_SPI_RX");
-    constant C_REG_VGA_CTRL   : t_reg := (addr => 8x"08", data => 16x"0000", name => "REG_VGA_CTRL");
+    constant C_REG_VGA_CTRL   : t_reg := (addr => 8x"08", data => 16x"00F0", name => "REG_VGA_CTRL");
     constant C_REG_9A         : t_reg := (addr => 8x"AB", data => 16x"9A9A", name => "REG_9A");
     constant C_REG_CD         : t_reg := (addr => 8x"AC", data => 16x"CDCD", name => "REG_CD");
     constant C_REG_EF         : t_reg := (addr => 8x"DC", data => 16x"EFEF", name => "REG_EF");
