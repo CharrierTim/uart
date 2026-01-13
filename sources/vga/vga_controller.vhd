@@ -35,7 +35,7 @@
 -- 1.0      16/12/2025  Timothee Charrier   Initial release
 -- 1.1      05/01/2026  Timothee Charrier   Minor style updates
 -- 1.2      09/01/2026  Timothee Charrier   The module now handle clock domain crossing of manual color inputs.
--- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+-- 2.0      13/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
@@ -66,24 +66,19 @@ entity VGA_CONTROLLER is
         G_V_BACK_PORCH  : positive := 33
     );
     port (
+        -- System clock domain
         CLK_SYS         : in    std_logic;
         RST_SYS_P       : in    std_logic;
-        CLK_VGA         : in    std_logic;
-        RST_VGA_P       : in    std_logic;
-
-        -- Sync outputs
-        O_HSYNC         : out   std_logic;
-        O_VSYNC         : out   std_logic;
-
-        -- Color inputs
         I_MANUAL_COLORS : in    std_logic_vector(12 - 1 downto 0);
 
-        -- Color outputs
+        -- VGA clock domain
+        CLK_VGA         : in    std_logic;
+        RST_VGA_P       : in    std_logic;
+        O_HSYNC         : out   std_logic;
+        O_VSYNC         : out   std_logic;
         O_RED           : out   std_logic_vector( 4 - 1 downto 0);
         O_GREEN         : out   std_logic_vector( 4 - 1 downto 0);
         O_BLUE          : out   std_logic_vector( 4 - 1 downto 0);
-
-        -- Position and active region outputs
         O_H_POSITION    : out   std_logic_vector(16 - 1 downto 0);
         O_V_POSITION    : out   std_logic_vector(16 - 1 downto 0);
         O_ACTIVE        : out   std_logic

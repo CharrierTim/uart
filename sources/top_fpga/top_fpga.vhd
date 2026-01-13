@@ -38,7 +38,7 @@
 -- 1.3      17/12/2025  Timothee Charrier   Update regfile module to interface with new VGA module
 -- 1.4      09/01/2026  Timothee Charrier   The FPGA now uses open-logic modules for clock domain crossing. Also
 --                                          update the VGA timings to 1024*768@60Hz.
--- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high and now uses synchronous
+-- 2.0      13/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high and now uses synchronous
 --                                          async reset.
 -- =====================================================================================================================
 
@@ -214,10 +214,10 @@ begin
     -- VGA clock domain positive reset generation
     inst_olo_base_vga_reset_gen : entity olo.olo_base_reset_gen
         generic map (
-            RSTPULSECYCLES_G   => 3,                 -- Minimum duration of the reset pulse in clock cycles
-            RSTINPOLARITY_G    => C_RST_POLARITY,    -- Polarity of 'RstIn'
-            ASYNCRESETOUTPUT_G => false,             -- Asserted synchronously
-            SYNCSTAGES_G       => C_RESYNC_NB_STAGES -- Number of synchronization stages
+            RSTPULSECYCLES_G   => 3,
+            RSTINPOLARITY_G    => C_RST_POLARITY,
+            ASYNCRESETOUTPUT_G => false,
+            SYNCSTAGES_G       => C_RESYNC_NB_STAGES
         )
         port map (
             Clk    => vga_clk,
@@ -342,13 +342,15 @@ begin
             G_V_BACK_PORCH  => C_V_BACK_PORCH
         )
         port map (
+            -- System clock domain
             CLK_SYS         => internal_clk,
             RST_SYS_P       => internal_sys_rst_p,
+            I_MANUAL_COLORS => reg_vga_colors,
+            -- VGA clock domain
             CLK_VGA         => vga_clk,
             RST_VGA_P       => internal_vga_rst_p,
             O_HSYNC         => PAD_O_VGA_HSYNC,
             O_VSYNC         => PAD_O_VGA_VSYNC,
-            I_MANUAL_COLORS => reg_vga_colors,
             O_RED           => PAD_O_VGA_RED,
             O_GREEN         => PAD_O_VGA_GREEN,
             O_BLUE          => PAD_O_VGA_BLUE
