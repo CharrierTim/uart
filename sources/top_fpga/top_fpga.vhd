@@ -214,10 +214,10 @@ begin
     -- VGA clock domain positive reset generation
     inst_olo_base_vga_reset_gen : entity olo.olo_base_reset_gen
         generic map (
-            RSTPULSECYCLES_G   => 3,                 -- Minimum duration of the reset pulse in clock cycles
-            RSTINPOLARITY_G    => C_RST_POLARITY,    -- Polarity of 'RstIn'
-            ASYNCRESETOUTPUT_G => false,             -- Asserted synchronously
-            SYNCSTAGES_G       => C_RESYNC_NB_STAGES -- Number of synchronization stages
+            RSTPULSECYCLES_G   => 3,
+            RSTINPOLARITY_G    => C_RST_POLARITY,
+            ASYNCRESETOUTPUT_G => false,
+            SYNCSTAGES_G       => C_RESYNC_NB_STAGES
         )
         port map (
             Clk    => vga_clk,
