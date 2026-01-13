@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Mon Jan 12 17:14:37 2026
+| Date         : Tue Jan 13 11:33:37 2026
 | Host         : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -file /home/tim/projects/uart/synthesis/results/impl/uart_utilization_place.rpt
 | Design       : TOP_FPGA
@@ -38,7 +38,7 @@ Table of Contents
 | Slice Registers         |  351 |     3 |          0 |    106400 |  0.33 |
 |   Register as Flip Flop |  351 |     3 |          0 |    106400 |  0.33 |
 |   Register as Latch     |    0 |     0 |          0 |    106400 |  0.00 |
-| F7 Muxes                |    8 |     0 |          0 |     26600 |  0.03 |
+| F7 Muxes                |    5 |     0 |          0 |     26600 |  0.02 |
 | F8 Muxes                |    0 |     0 |          0 |     13300 |  0.00 |
 +-------------------------+------+-------+------------+-----------+-------+
 * Warning! LUT value is adjusted to account for LUT combining.
@@ -56,8 +56,8 @@ Table of Contents
 | 0     |            _ |         Set |            - |
 | 0     |            _ |       Reset |            - |
 | 0     |          Yes |           - |            - |
-| 50    |          Yes |           - |          Set |
-| 233   |          Yes |           - |        Reset |
+| 51    |          Yes |           - |          Set |
+| 232   |          Yes |           - |        Reset |
 | 0     |          Yes |         Set |            - |
 | 68    |          Yes |       Reset |            - |
 +-------+--------------+-------------+--------------+
@@ -69,13 +69,13 @@ Table of Contents
 +--------------------------------------------+------+-------+------------+-----------+-------+
 |                  Site Type                 | Used | Fixed | Prohibited | Available | Util% |
 +--------------------------------------------+------+-------+------------+-----------+-------+
-| Slice                                      |  121 |     0 |          0 |     13300 |  0.91 |
-|   SLICEL                                   |   78 |     0 |            |           |       |
-|   SLICEM                                   |   43 |     0 |            |           |       |
+| Slice                                      |  118 |     0 |          0 |     13300 |  0.89 |
+|   SLICEL                                   |   82 |     0 |            |           |       |
+|   SLICEM                                   |   36 |     0 |            |           |       |
 | LUT as Logic                               |  252 |     0 |          0 |     53200 |  0.47 |
 |   using O5 output only                     |    0 |       |            |           |       |
-|   using O6 output only                     |  199 |       |            |           |       |
-|   using O5 and O6                          |   53 |       |            |           |       |
+|   using O6 output only                     |  200 |       |            |           |       |
+|   using O5 and O6                          |   52 |       |            |           |       |
 | LUT as Memory                              |    0 |     0 |          0 |     17400 |  0.00 |
 |   LUT as Distributed RAM                   |    0 |     0 |            |           |       |
 |     using O5 output only                   |    0 |       |            |           |       |
@@ -86,10 +86,10 @@ Table of Contents
 |     using O6 output only                   |    0 |       |            |           |       |
 |     using O5 and O6                        |    0 |       |            |           |       |
 | Slice Registers                            |  351 |     0 |          0 |    106400 |  0.33 |
-|   Register driven from within the Slice    |  155 |       |            |           |       |
-|   Register driven from outside the Slice   |  196 |       |            |           |       |
-|     LUT in front of the register is unused |  140 |       |            |           |       |
-|     LUT in front of the register is used   |   56 |       |            |           |       |
+|   Register driven from within the Slice    |  158 |       |            |           |       |
+|   Register driven from outside the Slice   |  193 |       |            |           |       |
+|     LUT in front of the register is unused |  138 |       |            |           |       |
+|     LUT in front of the register is used   |   55 |       |            |           |       |
 | Unique Control Sets                        |   35 |       |          0 |     13300 |  0.26 |
 +--------------------------------------------+------+-------+------------+-----------+-------+
 * * Note: Available Control Sets calculated as Slice * 1, Review the Control Sets Report for more information regarding control sets.
@@ -182,17 +182,17 @@ Table of Contents
 +-----------+------+---------------------+
 |  Ref Name | Used | Functional Category |
 +-----------+------+---------------------+
-| FDCE      |  233 |        Flop & Latch |
-| LUT6      |  139 |                 LUT |
+| FDCE      |  232 |        Flop & Latch |
+| LUT6      |  143 |                 LUT |
 | FDRE      |   68 |        Flop & Latch |
-| LUT5      |   53 |                 LUT |
-| FDPE      |   50 |        Flop & Latch |
+| FDPE      |   51 |        Flop & Latch |
 | LUT4      |   49 |                 LUT |
-| LUT2      |   37 |                 LUT |
-| LUT3      |   27 |                 LUT |
+| LUT5      |   48 |                 LUT |
+| LUT2      |   36 |                 LUT |
+| LUT3      |   28 |                 LUT |
 | OBUF      |   19 |                  IO |
-| MUXF7     |    8 |               MuxFx |
 | IBUF      |    7 |                  IO |
+| MUXF7     |    5 |               MuxFx |
 | BUFG      |    3 |               Clock |
 | PLLE2_ADV |    1 |               Clock |
 +-----------+------+---------------------+

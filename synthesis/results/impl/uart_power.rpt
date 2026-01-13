@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date             : Mon Jan 12 17:14:52 2026
+| Date             : Tue Jan 13 11:33:53 2026
 | Host             : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
 | Command          : report_power -file /home/tim/projects/uart/synthesis/results/impl/uart_power.rpt
 | Design           : TOP_FPGA
@@ -52,13 +52,13 @@ Table of Contents
 +----------------+-----------+----------+-----------+-----------------+
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
-| Clocks         |     0.003 |        6 |       --- |             --- |
-| Slice Logic    |    <0.001 |      697 |       --- |             --- |
+| Clocks         |     0.002 |        6 |       --- |             --- |
+| Slice Logic    |    <0.001 |      693 |       --- |             --- |
 |   LUT as Logic |    <0.001 |      252 |     53200 |            0.47 |
 |   Register     |    <0.001 |      351 |    106400 |            0.33 |
 |   Others       |     0.000 |       33 |       --- |             --- |
-|   F7/F8 Muxes  |     0.000 |        8 |     53200 |            0.02 |
-| Signals        |    <0.001 |      510 |       --- |             --- |
+|   F7/F8 Muxes  |     0.000 |        5 |     53200 |           <0.01 |
+| Signals        |    <0.001 |      513 |       --- |             --- |
 | PLL            |     0.123 |        1 |         4 |           25.00 |
 | I/O            |    <0.001 |       26 |       200 |           13.00 |
 | Static Power   |     0.108 |          |           |                 |
@@ -154,5 +154,4 @@ Table of Contents
 | TOP_FPGA   |     0.126 |
 |   inst_pll |     0.124 |
 |     inst   |     0.124 |
-|   inst_vga |     0.001 |
 +------------+-----------+
