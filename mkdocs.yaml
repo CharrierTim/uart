@@ -89,6 +89,7 @@ extra_css:
 
 nav:
     - Home: index.md
+    - Usage: usage.md
     - Modules:
           - Top FPGA: modules/top_fpga.md
           - Internal Registers: modules/regfile/regfile.md
