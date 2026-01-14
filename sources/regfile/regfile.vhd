@@ -32,7 +32,7 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
--- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+-- 2.0      14/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
@@ -56,10 +56,10 @@ entity REGFILE is
         RST_P               : in    std_logic;
 
         -- Inputs switches
-        I_SWITCHES          : in    std_logic_vector(3 - 1 downto 0);
+        I_SWITCHES          : in    std_logic_vector( 3 - 1 downto 0);
 
         -- Input SPI
-        I_SPI_RX_DATA       : in    std_logic_vector(8 - 1 downto 0);
+        I_SPI_RX_DATA       : in    std_logic_vector( 8 - 1 downto 0);
         I_SPI_RX_DATA_VALID : in    std_logic;
 
         -- Read data interface
@@ -75,7 +75,7 @@ entity REGFILE is
 
         -- Output
         O_LED_0             : out   std_logic;
-        O_SPI_TX_DATA       : out   std_logic_vector(8 - 1 downto 0);
+        O_SPI_TX_DATA       : out   std_logic_vector( 8 - 1 downto 0);
         O_SPI_TX_DATA_VALID : out   std_logic;
         O_VGA_COLORS        : out   std_logic_vector(12 - 1 downto 0)
     );

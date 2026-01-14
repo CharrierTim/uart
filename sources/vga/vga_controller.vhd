@@ -34,7 +34,7 @@
 -- 1.0      16/12/2025  Timothee Charrier   Initial release
 -- 1.1      05/01/2026  Timothee Charrier   Minor style updates
 -- 1.2      09/01/2026  Timothee Charrier   The module now handle clock domain crossing of manual color inputs.
--- 2.0      13/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+-- 2.0      14/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- =====================================================================================================================
 
 library ieee;
@@ -153,14 +153,14 @@ architecture VGA_CONTROLLER_ARCH of VGA_CONTROLLER is
 
     -- Counters
     signal horizontal_count            : unsigned(C_HORIZONTAL_COUNT_WIDTH - 1 downto 0);
-    signal vertical_count              : unsigned(C_VERTICAL_COUNT_WIDTH - 1 downto 0);
+    signal vertical_count              : unsigned(C_VERTICAL_COUNT_WIDTH   - 1 downto 0);
 
     -- VGA signals
     signal active_region               : std_logic;
 
     -- Position signals
     signal h_position                  : unsigned(C_HORIZONTAL_COUNT_WIDTH - 1 downto 0);
-    signal v_position                  : unsigned(C_VERTICAL_COUNT_WIDTH - 1 downto 0);
+    signal v_position                  : unsigned(C_VERTICAL_COUNT_WIDTH   - 1 downto 0);
 
 begin
 
