@@ -4,14 +4,32 @@ Test: lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c464
 Path: test_output/lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c4642ec9bbb899e0574a5b7/output.txt
 ================================================================================
 
-Seed for lib_bench.tb_top_fpga.test_led_and_switches_toggling: 9ad0211d9f679e2f
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c4642ec9bbb899e0574a5b7/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_led_and_switches_toggling,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c4642ec9bbb899e0574a5b7/,seed : 9ad0211d9f679e2f,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga.test_led_and_switches_toggling: 9ae0c091f20f831b
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c4642ec9bbb899e0574a5b7/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_led_and_switches_toggling,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_led_and_switches_toggling_a2b53afc48af32063c4642ec9bbb899e0574a5b7/,seed : 9ae0c091f20f831b,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+** Note: 0ms+0: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=-9223372036854775808 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=-2147483648
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 0ms+4: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=-9223372036854775808 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=-2147483648
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 0ms+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -  Checking register REG_LED characteristics (read-write)
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - DUT has been reset.
+** Note: 505ns+5: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 535ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 545ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 555ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 565ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 685ns+5: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - Checking register REG_LED value after reset
                0 ms - default              -    INFO - Reading value from register REG_LED at address 0xEF
@@ -38,8 +56,26 @@ Seed for lib_bench.tb_top_fpga.test_led_and_switches_toggling: 9ad0211d9f679e2f
               10 ms - default              -    INFO - -----------------------------------------------------------------------------
               10 ms - default              -    INFO -  Checking register REG_SWITCHES characteristics (read-only)
               10 ms - default              -    INFO - -----------------------------------------------------------------------------
+** Note: 10206641666520fs+4: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=20000000 fs | p_c0i=20000 | p_c0_h=10000000 fs | p_c0_r=10000000 fs | p_c0_r1=9999000 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 10206641666520fs+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 10206641666520fs+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 10207145ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
               10 ms - default              -    INFO -
               10 ms - default              -    INFO - DUT has been reset.
+** Note: 10207175ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 10207185ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 10207195ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 10207205ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 10207325ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
               10 ms - default              -    INFO -
               10 ms - default              -    INFO - Checking register REG_SWITCHES value after reset
               10 ms - default              -    INFO - Reading value from register REG_SWITCHES at address 0xB1
@@ -90,21 +126,39 @@ Seed for lib_bench.tb_top_fpga.test_led_and_switches_toggling: 9ad0211d9f679e2f
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
    Procedure TEST_RUNNER_CLEANUP [RUNNER_SYNC_T, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd:133
-   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:355
+   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:354
 
 ================================================================================
 Test: lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45
 Path: test_output/lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45/output.txt
 ================================================================================
 
-Seed for lib_bench.tb_top_fpga.test_spi: 09256a7da4e9effa
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_spi,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45/,seed : 09256a7da4e9effa,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga.test_spi: 082bfb0c31010388
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_spi,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_spi_a0e392299c2fc654cf961b8b102afee5aeb57a45/,seed : 082bfb0c31010388,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+** Note: 0ms+0: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=-9223372036854775808 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=-2147483648
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 0ms+4: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=-9223372036854775808 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=-2147483648
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 0ms+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -  Testing SPI TX and RX registers
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - DUT has been reset.
+** Note: 505ns+5: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 535ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 545ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 555ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 565ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 685ns+5: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - Checking register REG_SPI_TX value after reset
                0 ms - default              -    INFO - Reading value from register REG_SPI_TX at address 0x06
@@ -128,8 +182,26 @@ Seed for lib_bench.tb_top_fpga.test_spi: 09256a7da4e9effa
                4 ms - default              -    INFO - -----------------------------------------------------------------------------
                4 ms - default              -    INFO -  Testing SPI output
                4 ms - default              -    INFO - -----------------------------------------------------------------------------
+** Note: 4728235ns+8: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=20000000 fs | p_c0i=20000 | p_c0_h=10000000 fs | p_c0_r=10000000 fs | p_c0_r1=9999000 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 4728235ns+9: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 4728235ns+10: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 4728735ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                4 ms - default              -    INFO -
                4 ms - default              -    INFO - DUT has been reset.
+** Note: 4728765ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 4728775ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 4728785ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 4728795ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 4728915ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                4 ms - default              -    INFO -
                4 ms - default              -    INFO - Checking SPI transaction is correct.
                4 ms - default              -    INFO - Sending value 0x55 to SPI master
@@ -189,17 +261,35 @@ Seed for lib_bench.tb_top_fpga.test_spi: 09256a7da4e9effa
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
    Procedure TEST_RUNNER_CLEANUP [RUNNER_SYNC_T, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd:133
-   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:355
+   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:354
 
 ================================================================================
 Test: lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e
 Path: test_output/lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e/output.txt
 ================================================================================
 
-Seed for lib_bench.tb_top_fpga.test_top_fpga_registers: 64b40d432af4d379
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_top_fpga_registers,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e/,seed : 64b40d432af4d379,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga.test_top_fpga_registers: e86198d69460758d
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_top_fpga_registers,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_top_fpga_registers_df5443ecc7ccc4c7ae34465f4aa821c9c736339e/,seed : e86198d69460758d,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+** Note: 0ms+0: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=-9223372036854775808 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=-2147483648
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 0ms+4: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=-9223372036854775808 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=-2147483648
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 0ms+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - DUT has been reset.
+** Note: 505ns+5: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 535ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 545ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 555ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 565ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 685ns+5: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -  Checking default register values
@@ -323,17 +413,35 @@ Seed for lib_bench.tb_top_fpga.test_top_fpga_registers: 64b40d432af4d379
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
    Procedure TEST_RUNNER_CLEANUP [RUNNER_SYNC_T, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd:133
-   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:355
+   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:354
 
 ================================================================================
 Test: lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f
 Path: test_output/lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f/output.txt
 ================================================================================
 
-Seed for lib_bench.tb_top_fpga.test_uart_robustness: a0a91204e06d2366
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_uart_robustness,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f/,seed : a0a91204e06d2366,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga.test_uart_robustness: 7d0ec2833579e2ab
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_uart_robustness,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_uart_robustness_d25c21164c43ed00686e22b16d3fb854b6da645f/,seed : 7d0ec2833579e2ab,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+** Note: 0ms+0: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=-9223372036854775808 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=-2147483648
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 0ms+4: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=-9223372036854775808 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=-2147483648
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 0ms+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - DUT has been reset.
+** Note: 505ns+5: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 535ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 545ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 555ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 565ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 685ns+5: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -  Sending read command with invalid start bit in char 'R'
@@ -344,16 +452,52 @@ Seed for lib_bench.tb_top_fpga.test_uart_robustness: a0a91204e06d2366
                1 ms - default              -    INFO - -----------------------------------------------------------------------------
                1 ms - default              -    INFO -  Sending read command with invalid stop bit in char 'R'
                1 ms - default              -    INFO - -----------------------------------------------------------------------------
+** Note: 1310574444369fs+4: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=20000000 fs | p_c0i=20000 | p_c0_h=10000000 fs | p_c0_r=10000000 fs | p_c0_r1=9999000 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 1310574444369fs+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 1310574444369fs+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 1311075ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                1 ms - default              -    INFO -
                1 ms - default              -    INFO - DUT has been reset.
+** Note: 1311105ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 1311115ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 1311125ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 1311135ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 1311255ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                1 ms - default              -    INFO - Sending command R00\n -> Invalid stop bit in 'R'
                2 ms - check                -    PASS - Ensuring UART not responding when sending read command with invalid start bit in char 'R' - Got true.
                2 ms - default              -    INFO -
                2 ms - default              -    INFO - -----------------------------------------------------------------------------
                2 ms - default              -    INFO -  Checking UART timings with value 0x5555
                2 ms - default              -    INFO - -----------------------------------------------------------------------------
+** Note: 2628961388737fs+4: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=20000000 fs | p_c0i=20000 | p_c0_h=10000000 fs | p_c0_r=10000000 fs | p_c0_r1=9999000 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2628961388737fs+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2628961388737fs+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2629465ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                2 ms - default              -    INFO -
                2 ms - default              -    INFO - DUT has been reset.
+** Note: 2629495ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2629505ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2629515ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2629525ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2629645ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                2 ms - default              -    INFO - Writing value 0x5555 to register REG_16_BITS at address 0xFF
                2 ms - default              -    INFO - Checking UART timings on TX with value 0x5555
                3 ms - default              -    INFO - Reading value from register REG_16_BITS at address 0xFF
@@ -389,8 +533,26 @@ Seed for lib_bench.tb_top_fpga.test_uart_robustness: a0a91204e06d2366
                5 ms - default              -    INFO - -----------------------------------------------------------------------------
                5 ms - default              -    INFO -  Sending read commands with invalid CR
                5 ms - default              -    INFO - -----------------------------------------------------------------------------
+** Note: 5049704999950fs+4: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=20000000 fs | p_c0i=20000 | p_c0_h=10000000 fs | p_c0_r=10000000 fs | p_c0_r1=9999000 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 5049704999950fs+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 5049704999950fs+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 5050205ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                5 ms - default              -    INFO -
                5 ms - default              -    INFO - DUT has been reset.
+** Note: 5050235ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 5050245ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 5050255ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 5050265ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 5050385ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                5 ms - default              -    INFO -
                5 ms - default              -    INFO - Sending read command R01\n -> Missing \r
                6 ms - check                -    PASS - Ensuring UART not responding when sending read command with invalid \r - Got true.
@@ -398,8 +560,26 @@ Seed for lib_bench.tb_top_fpga.test_uart_robustness: a0a91204e06d2366
                6 ms - default              -    INFO - -----------------------------------------------------------------------------
                6 ms - default              -    INFO -  Sending write commands with invalid CR
                6 ms - default              -    INFO - -----------------------------------------------------------------------------
+** Note: 6282354444324fs+4: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=20000000 fs | p_c0i=20000 | p_c0_h=10000000 fs | p_c0_r=10000000 fs | p_c0_r1=9999000 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 6282354444324fs+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 6282354444324fs+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 6282855ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                6 ms - default              -    INFO -
                6 ms - default              -    INFO - DUT has been reset.
+** Note: 6282885ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 6282895ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 6282905ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 6282915ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 6283035ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                6 ms - default              -    INFO - Reading value from register REG_16_BITS at address 0xFF
                7 ms - check                -    PASS - Check register REG_16_BITS: expected 0x0000, got 0x0000 - Got 0000_0000_0000_0000 (0).
                7 ms - default              -    INFO -
@@ -411,21 +591,39 @@ Seed for lib_bench.tb_top_fpga.test_uart_robustness: a0a91204e06d2366
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
    Procedure TEST_RUNNER_CLEANUP [RUNNER_SYNC_T, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd:133
-   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:355
+   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:354
 
 ================================================================================
 Test: lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0
 Path: test_output/lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0/output.txt
 ================================================================================
 
-Seed for lib_bench.tb_top_fpga.test_vga: 6b9083080ccaecd7
-/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_vga,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0/,seed : 6b9083080ccaecd7,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+Seed for lib_bench.tb_top_fpga.test_vga: e76004ac0f4ee21d
+/usr/local/bin/nvc --work=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --std=2008 --map=vunit_lib:/home/tim/projects/uart/vunit_out/nvc/libraries/vunit_lib --map=osvvm:/home/tim/projects/uart/vunit_out/nvc/libraries/osvvm --map=olo:/home/tim/projects/uart/vunit_out/nvc/libraries/olo --map=lib_rtl:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_rtl --map=lib_bench:/home/tim/projects/uart/vunit_out/nvc/libraries/lib_bench --map=unisim:/home/tim/.nvc/lib/unisim.08 --map=unifast:/home/tim/.nvc/lib/unifast.08 -H 64m --ieee-warnings=off-at-0 -e --cover-spec=/home/tim/projects/uart/bench/top_fpga/coverage.spec --cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable --cover-file=/home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0/coverage.ncdb tb_top_fpga-tb_top_fpga_arch '-grunner_cfg=active python runner : true,enabled_test_cases : test_vga,output path : /home/tim/projects/uart/vunit_out/test_output/lib_bench.tb_top_fpga.test_vga_cc1b827dadf16243899e8eef436b14b25f8257e0/,seed : e76004ac0f4ee21d,tb path : /home/tim/projects/uart/bench/top_fpga/test/,use_color : true' --no-save --jit -r --exit-severity=error
+** Note: 0ms+0: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=-9223372036854775808 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=-2147483648
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 0ms+4: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=-9223372036854775808 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=-2147483648
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 0ms+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -  Testing VGA register
                0 ms - default              -    INFO - -----------------------------------------------------------------------------
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - DUT has been reset.
+** Note: 505ns+5: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 535ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 545ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 555ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 565ns+6: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 685ns+5: period_fb_tmp=-9223372036854775808 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=-2147483648 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=-9223372036854775808 fs | p_c0_dri1=-2147483648 | p_c0_dri2=-2147483648 | clkvco_delayi=-2147483648 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                0 ms - default              -    INFO -
                0 ms - default              -    INFO - Checking register REG_VGA_CTRL value after reset
                0 ms - default              -    INFO - Reading value from register REG_VGA_CTRL at address 0x08
@@ -439,8 +637,26 @@ Seed for lib_bench.tb_top_fpga.test_vga: 6b9083080ccaecd7
                2 ms - default              -    INFO - -----------------------------------------------------------------------------
                2 ms - default              -    INFO -  Write some datas to the VGA register
                2 ms - default              -    INFO - -----------------------------------------------------------------------------
+** Note: 2414375ns+7: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=20000000 fs | p_c0i=20000 | p_c0_h=10000000 fs | p_c0_r=10000000 fs | p_c0_r1=9999000 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2414375ns+8: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2414375ns+9: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2414875ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                2 ms - default              -    INFO -
                2 ms - default              -    INFO - DUT has been reset.
+** Note: 2414905ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2414915ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2414925ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2414935ns+6: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
+** Note: 2415055ns+5: period_fb_tmp=10000000 fs | CLKOUT0_DIVIDE=26 | CLKFBOUT_MULT=13 | CLKOUT0_DUTY_CYCLE=0.5 | CLKOUT0_PHASE=0 | p_c0=0 fs | p_c0i=20000 | p_c0_h=0 fs | p_c0_r=0 fs | p_c0_r1=0 fs | p_c0_dri=0 fs | p_c0_dri1=0 | p_c0_dri2=0 | clkvco_delayi=0 | p_c0_dr=0
+   Process :tb_top_fpga:dut:inst_pll:inst:plle2_adv_inst:_p20 at PLLE2_ADV.vhd:889
                2 ms - default              -    INFO - Writing value 0x0ABC to register REG_VGA_CTRL at address 0x08
                3 ms - default              -    INFO - Reading value from register REG_VGA_CTRL at address 0x08
                4 ms - check                -    PASS - Check register REG_VGA_CTRL: expected 0x0ABC, got 0x0ABC - Got 0000_1010_1011_1100 (2748).
@@ -480,4 +696,4 @@ Seed for lib_bench.tb_top_fpga.test_vga: 6b9083080ccaecd7
    Procedure STOP [INTEGER] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/stop_body_2008p.vhd:13
    Procedure STOP [NATURAL] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/core/src/core_pkg.vhd:131
    Procedure TEST_RUNNER_CLEANUP [RUNNER_SYNC_T, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN] at /home/tim/projects/uart/.venv/lib/python3.12/site-packages/vunit/vhdl/run/src/run.vhd:133
-   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:355
+   Process :tb_top_fpga:p_test_runner at /home/tim/projects/uart/bench/top_fpga/test/tb_top_fpga.vhd:354
