@@ -1,6 +1,6 @@
 # UART PROJECT
 
-Documentation of the UART Project.
+Documentation of the UART Project for the Zedboard device.
 
 ## List of Abbreviations
 
