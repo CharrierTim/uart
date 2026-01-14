@@ -36,6 +36,7 @@ Synthesis and implementation are done with Vivado.
 | SPI          | Serial Peripheral Interface                         |
 | TX           | Transmit                                            |
 | UART         | Universal Asynchronous Receiver-Transmitter         |
+| VGA          | Video Graphics Array                                |
 | VHDL         | VHSIC Hardware Description Language                 |
 | VHSIC        | Very High Speed Integrated Circuit                  |
 
