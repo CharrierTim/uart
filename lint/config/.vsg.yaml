@@ -27,7 +27,6 @@
 ##  @brief   Configuration file for VHDL Style Guide (VSG). Some part are adapted from:
 ##              - https://github.com/open-logic/open-logic/blob/main/lint/config/vsg_config.yml | By Patrick Studer
 ##  @author  Timothee Charrier
-##  @date    11/28/2025
 ## =====================================================================================================================
 ## REVISION HISTORY
 ##

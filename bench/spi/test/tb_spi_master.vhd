@@ -26,7 +26,6 @@
 -- @version 2.0
 -- @brief   SPI master testbench
 -- @author  Timothee Charrier
--- @date    01/12/2025
 -- =====================================================================================================================
 -- REVISION HISTORY
 --

@@ -26,7 +26,6 @@
 -- @version 2.0
 -- @brief   Transmission module for UART communication
 -- @author  Timothee Charrier
--- @date    10/12/2025
 -- =====================================================================================================================
 -- REVISION HISTORY
 --

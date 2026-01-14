@@ -26,7 +26,6 @@
 -- @version 1.0
 -- @brief   Package for the SPI master testbench
 -- @author  Timothee Charrier
--- @date    27/11/2025
 -- =====================================================================================================================
 -- REVISION HISTORY
 --

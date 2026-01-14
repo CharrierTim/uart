@@ -28,7 +28,6 @@
 ## @brief   Script linting all HDL files specified.
 #           https://github.com/open-logic/open-logic/blob/main/lint/script/script.py
 ## @author  Timothee Charrier
-## @date    18/11/2025
 ## =====================================================================================================================
 ## REVISION HISTORY
 ##

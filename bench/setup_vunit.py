@@ -27,7 +27,6 @@
 ## @version 2.0
 ## @brief   This module provides simulator classes for VUnit.
 ## @author  Timothee Charrier
-## @date    01/11/2025
 ## =====================================================================================================================
 ## REVISION HISTORY
 ##

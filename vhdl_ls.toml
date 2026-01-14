@@ -27,7 +27,6 @@
 ##  @brief   This file is used to configure the VHDL Language Server (vhdl_ls). It specifies the libraries and files to
 ##           be included in the VHDL project.
 ##  @author  Timothee Charrier
-##  @date    17/10/2025
 ## =====================================================================================================================
 
 preferred_case = "lower"
