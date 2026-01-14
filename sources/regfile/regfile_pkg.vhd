@@ -26,7 +26,6 @@
 -- @version 1.0
 -- @brief   Package containing the registers addresses and value at reset
 -- @author  Timothee Charrier
--- @date    01/12/2025
 -- =====================================================================================================================
 -- REVISION HISTORY
 --

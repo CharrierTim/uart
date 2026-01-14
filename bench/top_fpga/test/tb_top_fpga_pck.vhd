@@ -26,7 +26,6 @@
 -- @version 2.0
 -- @brief   Package for the Top-Level testbench
 -- @author  Timothee Charrier
--- @date    01/12/2025
 -- =====================================================================================================================
 -- REVISION HISTORY
 --

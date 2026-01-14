@@ -26,7 +26,6 @@
 ## @version 1.2
 ## @brief   Pinout constraints for the FPGA
 ## @author  Timothee Charrier
-## @date    29/10/2025
 ## =====================================================================================================================
 ## REVISION HISTORY
 ##

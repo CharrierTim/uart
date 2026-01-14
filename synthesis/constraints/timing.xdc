@@ -26,7 +26,6 @@
 ## @version 1.0
 ## @brief   Timing constraints for the FPGA
 ## @author  Timothee Charrier
-## @date    27/10/2025
 ## =====================================================================================================================
 ## REVISION HISTORY
 ##

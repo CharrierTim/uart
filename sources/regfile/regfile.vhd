@@ -26,7 +26,6 @@
 -- @version 2.0
 -- @brief   Registers for the FPGA
 -- @author  Timothee Charrier
--- @date    01/12/2025
 -- =====================================================================================================================
 -- REVISION HISTORY
 --

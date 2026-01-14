@@ -26,7 +26,6 @@
 ## @version 1.2
 ## @brief   Synthesis script for Vivado
 ## @author  Timothee Charrier
-## @date    27/10/2025
 ## =====================================================================================================================
 ## REVISION HISTORY
 ##
