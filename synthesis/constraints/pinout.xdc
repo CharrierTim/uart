@@ -37,18 +37,18 @@
 ## =====================================================================================================================
 
 # Clock and reset
-set_property -dict {PACKAGE_PIN Y9   IOSTANDARD LVCMOS33}             [get_ports {PAD_I_CLK}];      # CLK
-set_property -dict {PACKAGE_PIN R16  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_RST_P}];    # BTND
+set_property -dict {PACKAGE_PIN Y9   IOSTANDARD LVCMOS33}             [get_ports {PAD_I_CLK}];          # CLK
+set_property -dict {PACKAGE_PIN R16  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_RST_P}];        # BTND
 
 # UART
-set_property -dict {PACKAGE_PIN Y11  IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_I_UART_RX}];  # JA1 - P1
-set_property -dict {PACKAGE_PIN AA11 IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_O_UART_TX}];  # JA2 - P2
+set_property -dict {PACKAGE_PIN Y11  IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_I_UART_RX}];      # JA1 - P1
+set_property -dict {PACKAGE_PIN AA11 IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_O_UART_TX}];      # JA2 - P2
 
 # SPI
-set_property -dict {PACKAGE_PIN W12  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_SCLK}];     # JB1 - P1
-set_property -dict {PACKAGE_PIN W11  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_MOSI}];     # JB1 - P2
-set_property -dict {PACKAGE_PIN W10  IOSTANDARD LVCMOS33}             [get_ports {PAD_I_MISO}];     # JB1 - P3
-set_property -dict {PACKAGE_PIN W8   IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_O_CS_N}];     # JB1 - P4
+set_property -dict {PACKAGE_PIN W12  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_SCLK}];         # JB1 - P1
+set_property -dict {PACKAGE_PIN W11  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_MOSI}];         # JB1 - P2
+set_property -dict {PACKAGE_PIN W10  IOSTANDARD LVCMOS33}             [get_ports {PAD_I_MISO}];         # JB1 - P3
+set_property -dict {PACKAGE_PIN W8   IOSTANDARD LVCMOS33 PULLUP TRUE} [get_ports {PAD_O_CS_N}];         # JB1 - P4
 
 # VGA
 set_property -dict {PACKAGE_PIN Y21  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_VGA_BLUE[0]}];  # "VGA-B0"
@@ -67,9 +67,9 @@ set_property -dict {PACKAGE_PIN AA19 IOSTANDARD LVCMOS33}             [get_ports
 set_property -dict {PACKAGE_PIN Y19  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_VGA_VSYNC}];    # "VGA-VS“
 
 # Switches
-set_property -dict {PACKAGE_PIN F22  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_0}]; # SW0
-set_property -dict {PACKAGE_PIN G22  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_1}]; # SW1
-set_property -dict {PACKAGE_PIN H22  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_2}]; # SW2
+set_property -dict {PACKAGE_PIN F22  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_0}];     # SW0
+set_property -dict {PACKAGE_PIN G22  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_1}];     # SW1
+set_property -dict {PACKAGE_PIN H22  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_2}];     # SW2
 
 # LED
-set_property -dict {PACKAGE_PIN T22  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_LED_0}];    # LD0
+set_property -dict {PACKAGE_PIN T22  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_LED_0}];        # LD0
