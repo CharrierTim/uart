@@ -35,6 +35,11 @@ pip install .
 
 ## Running Tests
 
+!!! important
+    Make sure to compile Unisim/Unifast libraries (e.g., `nvc --install vivado`).
+    If Unisim/Unifast libraries are not found when running the tests, you can update the script `bench/top_fpga/run.py`
+    and update the line `simulator.add_library(library_name="unisim", library_path="your_path_to_unisim")`.
+
 ### Basic Test Execution
 
 To run the top-level FPGA testbench:
@@ -66,3 +71,11 @@ python3 bench/top_fpga/run.py --coverage
 
 The coverage report will be generated in the `vunit_out/coverage_report` folder.
 Open `vunit_out/coverage_report/index.html` in your browser to view the results.
+
+## Generating the bitstream
+
+Run the following command in the `synthesis` folder:
+
+```bash
+vivado -mode batch -nojournal -script run_synthesis.tcl
+```
