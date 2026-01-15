@@ -71,3 +71,11 @@ python3 bench/top_fpga/run.py --coverage
 
 The coverage report will be generated in the `vunit_out/coverage_report` folder.
 Open `vunit_out/coverage_report/index.html` in your browser to view the results.
+
+## Generating the bitstream
+
+Run the following command in the `synthesis` folder:
+
+```bash
+vivado -mode batch -nojournal -script run_synthesis.tcl
+```
