@@ -187,7 +187,7 @@ the previous command was not yet complete.
 
 ```none
 # Sending the following ASCII characters: W001R00\r
-#                                              ↑
+#                                             ↑
 #                              Sudden change to read command,
 #                              even though write command was incomplete
 Sent       : W001R00\r
