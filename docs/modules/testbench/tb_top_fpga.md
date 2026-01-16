@@ -94,6 +94,197 @@ The following registers are defined as [`t_reg`](#t_reg):
 | `C_REG_16_BITS`    | 0xFF    | 0x0000      |
 | `C_REG_DEAD`       | 0xCC    | 0xDEAD      |
 
+## Processes
+
+---
+
+### Process `p_check_uart_timings`
+
+#### Description
+
+Verifies UART TX timings with a specific TX data 0x5555.
+
+<!-- TODO -->
+<script type="WaveDrom">
+{
+}
+</script>
+
+#### Parameters
+
+The process defines two variables:
+
+| Parameter          | Type   | Default | Description                                      |
+| ------------------ | ------ | ------- | ------------------------------------------------ |
+| `v_start_time`     | `time` | -       | The start time of the measurement                |
+| `v_start_bit_time` | `time` | -       | The start time of the measurement of a bit state |
+
+#### Steps
+
+1. **Wait for the start of UART timings check**
+    - Wait for a rising edge on signal `tb_check_uart_timings`
+    - Log info message: "Checking UART timings on TX with value 0x5555"
+
+2. **For each byte (1 to 4)**
+    - **Wait for start bit**
+        - Wait for falling edge on `tb_pad_o_uart_tx`
+        - Set `v_start_bit_time` to current time
+        - If first byte, set `v_start_time` to current time
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `2. 0 * C_UART_BIT_TIME` ± `2.0 * C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `2.0 * C_UART_BIT_TIME` ± `2.0 * C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+
+3. **Verify total elapsed time**
+    - Check that `(now - v_start_time)` is in time range 9 * 4 `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+
+---
+
+### Process `p_check_spi_timings`
+
+#### Description
+
+This process verifies the SPI timings on a specific data value.
+
+<!-- TODO -->
+<script type="WaveDrom">
+{
+}
+</script>
+
+#### Parameters
+
+The process defines two variables:
+
+| Parameter          | Type   | Default | Description                                      |
+| ------------------ | ------ | ------- | ------------------------------------------------ |
+| `v_start_time`     | `time` | -       | The start time of the measurement                |
+| `v_start_bit_time` | `time` | -       | The start time of the measurement of a bit state |
+
+#### Steps
+
+1. **Wait for the start of SPI timings check**
+    - Wait for a rising edge on signal `tb_check_spi_timings`
+
+2. **For each bit (1 to 8)**
+    - Wait for a rising edge on signal `tb_pad_o_sclk`
+    - If first bit (`bits = 1`):
+        - Set `v_start_time` to current time
+        - Set `v_start_bit_time` to current time
+    - Else:
+        - Check that `(now - v_start_bit_time)` is in time range `C_SPI_BIT_TIME` ± `C_SPI_BIT_TIME_ACCURACY`
+        with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+        - Set `v_start_bit_time` to current time
+
+3. **Verify total elapsed time**
+    - Check that `(now - v_start_time)` is in time range `7 * C_SPI_BIT_TIME` ± `7 * C_SPI_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+
+---
+
+### Process `p_check_hsync_timings`
+
+#### Description
+
+This process verifies the VGA horizontal synchronization (HSYNC) timing.
+
+<!-- TODO -->
+<script type="WaveDrom">
+{
+}
+</script>
+
+#### Parameters
+
+The process defines two variables:
+
+| Parameter          | Type   | Default | Description                                      |
+| ------------------ | ------ | ------- | ------------------------------------------------ |
+| `v_start_time`     | `time` | -       | The start time of the measurement                |
+| `v_start_bit_time` | `time` | -       | The start time of the measurement of a bit state |
+
+#### Steps
+
+1. **Wait for the start of HSYNC timings check**
+    - Wait for a rising edge on signal `tb_check_hsync_timings`
+
+2. **Measure HSYNC pulse width (sync pulse duration)**
+    - Wait for falling edge on `tb_pad_o_vga_hsync` (start of sync pulse)
+    - Capture both `v_start_time` and `v_start_bit_time` as baseline
+    - Wait for rising edge on `tb_pad_o_vga_hsync` (end of sync pulse)
+    - Validate sync pulse duration against `C_H_SYNC_PULSE_TIME` ± `C_H_SYNC_PULSE_TIME_ACCURACY`
+    - Update `v_start_bit_time` to current time
+
+3. **Measure HSYNC high period and total line time**
+    - Wait for next falling edge on `tb_pad_o_vga_hsync` (completion of one horizontal line)
+    - **Validate high period**:  Check time since last edge against `C_H_HSYNC_HIGH_TIME` ± `C_H_HSYNC_HIGH_TIME_ACCURACY`
+    - **Validate complete line time**: Check time since initial `v_start_time` against `C_H_WHOLE_LINE_TIME` ± `C_H_WHOLE_LINE_TIME_ACCURACY`
+
+---
+
+### Process `p_check_vsync_timings`
+
+#### Description
+
+This process verifies the VGA vertical synchronization (VSYNC) timing.
+
+<!-- TODO -->
+<script type="WaveDrom">
+{
+}
+</script>
+
+#### Parameters
+
+The process defines two variables:
+
+| Parameter          | Type   | Default | Description                                      |
+| ------------------ | ------ | ------- | ------------------------------------------------ |
+| `v_start_time`     | `time` | -       | The start time of the measurement                |
+| `v_start_bit_time` | `time` | -       | The start time of the measurement of a bit state |
+
+#### Steps
+
+1. **Wait for the start of HSYNC timings check**
+    - Wait for a rising edge on signal `tb_check_vsync_timings`
+
+2. **Measure HSYNC pulse width (sync pulse duration)**
+    - Wait for falling edge on `tb_pad_o_vga_vsync` (start of sync pulse)
+    - Capture both `v_start_time` and `v_start_bit_time` as baseline
+    - Wait for rising edge on `tb_pad_o_vga_vsync` (end of sync pulse)
+    - Validate sync pulse duration against `C_V_SYNC_PULSE_TIME` ± `C_V_SYNC_PULSE_TIME_ACCURACY`
+    - Update `v_start_bit_time` to current time
+
+3. **Measure HSYNC high period and total line time**
+    - Wait for next falling edge on `tb_pad_o_vga_vsync`
+    - **Validate high period**:  Check time since last edge against `C_V_HSYNC_HIGH_TIME` ± `C_V_HSYNC_HIGH_TIME_ACCURACY`
+    - **Validate complete frame time**: Check time since initial `v_start_time` against `C_V_WHOLE_LINE_TIME` ± `C_V_WHOLE_LINE_TIME_ACCURACY`
+
 ## Procedures
 
 ---
