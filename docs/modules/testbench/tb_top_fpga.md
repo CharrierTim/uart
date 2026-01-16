@@ -24,25 +24,51 @@ A record type used to define register configurations for the testbench.
 
 The following constants are defined:
 
-| Name                       | Type          | Value                                        | Description                             |
-| -------------------------- | ------------- | -------------------------------------------- | --------------------------------------- |
-| `C_FREQ_HZ`                | positive      | 0d100_000_000                                | Clock frequency                         |
-| `C_CLK_PERIOD`             | time          | 1 sec / `C_FREQ_HZ`                          | Clock period                            |
-| `C_GIT_ID`                 | vector[31: 0] | 0x12345678                                   | Git identifier for DUT version tracking |
-| `C_UART_BAUD_RATE_BPS`     | positive      | 0d115_200                                    | UART baud rate in bits per second       |
-| `C_UART_BIT_TIME`          | time          | 1 sec / `C_UART_BAUD_RATE_BPS`               | Time duration for one UART bit          |
-| `C_UART_BIT_TIME_ACCURACY` | time          | 0. 01 * `C_UART_BIT_TIME`                    | UART bit timing tolerance (1%)          |
-| `C_UART_WRITE_NB_BITS`     | positive      | 10 * 8                                       | Total bits for UART write command       |
-| `C_UART_WRITE_CMD_TIME`    | time          | `C_UART_BIT_TIME` * `C_UART_WRITE_NB_BITS`   | Total time for UART write command       |
-| `C_READ_NB_BITS`           | positive      | 10 * 9                                       | Total bits for UART read command        |
-| `C_UART_READ_CMD_TIME`     | time          | `C_UART_BIT_TIME` * `C_UART_READ_NB_BITS`    | Total time for UART read command        |
-| `C_SPI_FREQ_HZ`            | positive      | 0d1_000_000                                  | SPI SLCK frequency                      |
-| `C_SPI_BIT_TIME`           | time          | 1 sec / `C_SPI_FREQ_HZ`                      | SPI baud rate in bits per second        |
-| `C_SPI_BIT_TIME_ACCURACY`  | time          | 0.01 * `C_SPI_BIT_TIME`                      | SPI bit timing tolerance (1%)           |
-| `C_SPI_NB_DATA_BIS`        | positive      | 8                                            | Total bits in SPI transaction           |
-| `C_SPI_TRANSACTION_TIME`   | time          | (`C_SPI_NB_DATA_BIS` + 2) * `C_SPI_BIT_TIME` | SPI transaction time                    |
-| `C_SPI_CLK_POLARITY`       | std_logic     | 0b0                                          | SPI SLCK polarity                       |
-| `C_SPI_CLK_PHASE`          | std_logic     | 0b0                                          | SPI SLCK phase                          |
+| Name                           | Type          | Value                                                           | Description                              |
+| ------------------------------ | ------------- | --------------------------------------------------------------- | ---------------------------------------- |
+| `C_FREQ_HZ`                    | positive      | 0d100_000_000                                                   | Clock frequency                          |
+| `C_CLK_PERIOD`                 | time          | 1 sec / `C_FREQ_HZ`                                             | Clock period                             |
+| `C_GIT_ID`                     | vector[31: 0] | 0x12345678                                                      | Git identifier for DUT version tracking  |
+| `C_UART_BAUD_RATE_BPS`         | positive      | 0d115_200                                                       | UART baud rate in bits per second        |
+| `C_UART_BIT_TIME`              | time          | 1 sec / `C_UART_BAUD_RATE_BPS`                                  | Time duration for one UART bit           |
+| `C_UART_BIT_TIME_ACCURACY`     | time          | 0. 01 * `C_UART_BIT_TIME`                                       | UART bit timing tolerance (1%)           |
+| `C_UART_WRITE_NB_BITS`         | positive      | 10 * 8                                                          | Total bits for UART write command        |
+| `C_UART_WRITE_CMD_TIME`        | time          | `C_UART_BIT_TIME` * `C_UART_WRITE_NB_BITS`                      | Total time for UART write command        |
+| `C_READ_NB_BITS`               | positive      | 10 * 9                                                          | Total bits for UART read command         |
+| `C_UART_READ_CMD_TIME`         | time          | `C_UART_BIT_TIME` * `C_UART_READ_NB_BITS`                       | Total time for UART read command         |
+| `C_SPI_FREQ_HZ`                | positive      | 0d1_000_000                                                     | SPI SLCK frequency                       |
+| `C_SPI_BIT_TIME`               | time          | 1 sec / `C_SPI_FREQ_HZ`                                         | SPI baud rate in bits per second         |
+| `C_SPI_BIT_TIME_ACCURACY`      | time          | 0.01 * `C_SPI_BIT_TIME`                                         | SPI bit timing tolerance (1%)            |
+| `C_SPI_NB_DATA_BIS`            | positive      | 8                                                               | Total bits in SPI transaction            |
+| `C_SPI_TRANSACTION_TIME`       | time          | (`C_SPI_NB_DATA_BIS` + 2) * `C_SPI_BIT_TIME`                    | SPI transaction time                     |
+| `C_H_VGA_PIXEL_FREQUENCY`      | integer       | 0d65_000_000                                                    | VGA pixel clock frequency                |
+| `C_H_VGA_PIXEL_BIT_TIME`       | time          | 1 sec / `C_H_VGA_PIXEL_FREQUENCY`                               | VGA pixel clock period                   |
+| `C_H_PIXELS`                   | integer       | 0d1024                                                          | VGA active display width (pixels)        |
+| `C_H_FRONT_PORCH`              | integer       | 0d24                                                            | VGA horizontal front porch (pixels)      |
+| `C_H_SYNC_PULSE`               | integer       | 0d136                                                           | VGA horizontal sync pulse width (pixels) |
+| `C_H_BACK_PORCH`               | integer       | 0d160                                                           | VGA horizontal back porch (pixels)       |
+| `C_H_HSYNC_HIGH`               | integer       | `C_H_PIXELS` + `C_H_FRONT_PORCH` + `C_H_BACK_PORCH`             | VGA horizontal sync high period (pixels) |
+| `C_H_WHOLE_LINE`               | integer       | `C_H_SYNC_PULSE` + `C_H_HSYNC_HIGH`                             | VGA total horizontal line (pixels)       |
+| `C_H_SYNC_PULSE_TIME`          | time          | `C_H_SYNC_PULSE` * `C_H_VGA_PIXEL_BIT_TIME`                     | VGA horizontal sync pulse duration       |
+| `C_H_SYNC_PULSE_TIME_ACCURACY` | time          | 0.01 \* `C_H_SYNC_PULSE` * `C_H_VGA_PIXEL_BIT_TIME`             | VGA horizontal sync pulse tolerance      |
+| `C_H_HSYNC_HIGH_TIME`          | time          | `C_H_HSYNC_HIGH` * `C_H_VGA_PIXEL_BIT_TIME`                     | VGA horizontal sync high duration        |
+| `C_H_HSYNC_HIGH_TIME_ACCURACY` | time          | 0.01 \* `C_H_HSYNC_HIGH` * `C_H_VGA_PIXEL_BIT_TIME`             | VGA horizontal sync high tolerance       |
+| `C_H_WHOLE_LINE_TIME`          | time          | `C_H_SYNC_PULSE_TIME` + `C_H_HSYNC_HIGH_TIME`                   | VGA total horizontal line duration       |
+| `C_H_WHOLE_LINE_TIME_ACCURACY` | time          | `C_H_SYNC_PULSE_TIME_ACCURACY` + `C_H_HSYNC_HIGH_TIME_ACCURACY` | VGA total horizontal line tolerance      |
+| `C_V_VGA_PIXEL_FREQUENCY`      | integer       | `C_H_VGA_PIXEL_FREQUENCY` / `C_H_WHOLE_LINE`                    | VGA line frequency (Hz)                  |
+| `C_V_VGA_PIXEL_BIT_TIME`       | time          | 1 sec / `C_V_VGA_PIXEL_FREQUENCY`                               | VGA line period                          |
+| `C_V_PIXELS`                   | integer       | 0d768                                                           | VGA active display height (lines)        |
+| `C_V_FRONT_PORCH`              | integer       | 0d3                                                             | VGA vertical front porch (lines)         |
+| `C_V_SYNC_PULSE`               | integer       | 0d6                                                             | VGA vertical sync pulse width (lines)    |
+| `C_V_BACK_PORCH`               | integer       | 0d29                                                            | VGA vertical back porch (lines)          |
+| `C_V_HSYNC_HIGH`               | integer       | `C_V_PIXELS` + `C_V_FRONT_PORCH` + `C_V_BACK_PORCH`             | VGA vertical sync high period (lines)    |
+| `C_V_WHOLE_LINE`               | integer       | `C_V_SYNC_PULSE` + `C_V_HSYNC_HIGH`                             | VGA total vertical frame (lines)         |
+| `C_V_SYNC_PULSE_TIME`          | time          | `C_V_SYNC_PULSE` * `C_V_VGA_PIXEL_BIT_TIME`                     | VGA vertical sync pulse duration         |
+| `C_V_SYNC_PULSE_TIME_ACCURACY` | time          | 0.01 \* `C_V_SYNC_PULSE` * `C_V_VGA_PIXEL_BIT_TIME`             | VGA vertical sync pulse tolerance        |
+| `C_V_HSYNC_HIGH_TIME`          | time          | `C_V_HSYNC_HIGH` * `C_V_VGA_PIXEL_BIT_TIME`                     | VGA vertical sync high duration          |
+| `C_V_HSYNC_HIGH_TIME_ACCURACY` | time          | 0.01 \* `C_V_HSYNC_HIGH` * `C_V_VGA_PIXEL_BIT_TIME`             | VGA vertical sync high tolerance         |
+| `C_V_WHOLE_LINE_TIME`          | time          | `C_V_SYNC_PULSE_TIME` + `C_V_HSYNC_HIGH_TIME`                   | VGA total vertical frame duration        |
+| `C_V_WHOLE_LINE_TIME_ACCURACY` | time          | `C_V_SYNC_PULSE_TIME_ACCURACY` + `C_V_HSYNC_HIGH_TIME_ACCURACY` | VGA total vertical frame tolerance       |
 
 ### Registers
 
@@ -58,6 +84,8 @@ The following registers are defined as [`t_reg`](#t_reg):
 | `C_REG_78`         | 0x05    | 0x7878      |
 | `C_REG_SPI_TX`     | 0x06    | 0x0000      |
 | `C_REG_SPI_RX`     | 0x07    | 0x0000      |
+| `C_REG_SPI_RX`     | 0x07    | 0x0000      |
+| `C_REG_VGA_CTRL`   | 0x08    | 0x00F0      |
 | `C_REG_9A`         | 0xAB    | 0x9A9A      |
 | `C_REG_CD`         | 0xAC    | 0xCDCD      |
 | `C_REG_EF`         | 0xDC    | 0xEFEF      |
