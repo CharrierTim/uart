@@ -24,25 +24,51 @@ A record type used to define register configurations for the testbench.
 
 The following constants are defined:
 
-| Name                       | Type          | Value                                        | Description                             |
-| -------------------------- | ------------- | -------------------------------------------- | --------------------------------------- |
-| `C_FREQ_HZ`                | positive      | 0d100_000_000                                | Clock frequency                         |
-| `C_CLK_PERIOD`             | time          | 1 sec / `C_FREQ_HZ`                          | Clock period                            |
-| `C_GIT_ID`                 | vector[31: 0] | 0x12345678                                   | Git identifier for DUT version tracking |
-| `C_UART_BAUD_RATE_BPS`     | positive      | 0d115_200                                    | UART baud rate in bits per second       |
-| `C_UART_BIT_TIME`          | time          | 1 sec / `C_UART_BAUD_RATE_BPS`               | Time duration for one UART bit          |
-| `C_UART_BIT_TIME_ACCURACY` | time          | 0. 01 * `C_UART_BIT_TIME`                    | UART bit timing tolerance (1%)          |
-| `C_UART_WRITE_NB_BITS`     | positive      | 10 * 8                                       | Total bits for UART write command       |
-| `C_UART_WRITE_CMD_TIME`    | time          | `C_UART_BIT_TIME` * `C_UART_WRITE_NB_BITS`   | Total time for UART write command       |
-| `C_READ_NB_BITS`           | positive      | 10 * 9                                       | Total bits for UART read command        |
-| `C_UART_READ_CMD_TIME`     | time          | `C_UART_BIT_TIME` * `C_UART_READ_NB_BITS`    | Total time for UART read command        |
-| `C_SPI_FREQ_HZ`            | positive      | 0d1_000_000                                  | SPI SLCK frequency                      |
-| `C_SPI_BIT_TIME`           | time          | 1 sec / `C_SPI_FREQ_HZ`                      | SPI baud rate in bits per second        |
-| `C_SPI_BIT_TIME_ACCURACY`  | time          | 0.01 * `C_SPI_BIT_TIME`                      | SPI bit timing tolerance (1%)           |
-| `C_SPI_NB_DATA_BIS`        | positive      | 8                                            | Total bits in SPI transaction           |
-| `C_SPI_TRANSACTION_TIME`   | time          | (`C_SPI_NB_DATA_BIS` + 2) * `C_SPI_BIT_TIME` | SPI transaction time                    |
-| `C_SPI_CLK_POLARITY`       | std_logic     | 0b0                                          | SPI SLCK polarity                       |
-| `C_SPI_CLK_PHASE`          | std_logic     | 0b0                                          | SPI SLCK phase                          |
+| Name                           | Type          | Value                                                           | Description                              |
+| ------------------------------ | ------------- | --------------------------------------------------------------- | ---------------------------------------- |
+| `C_FREQ_HZ`                    | positive      | 0d100_000_000                                                   | Clock frequency                          |
+| `C_CLK_PERIOD`                 | time          | 1 sec / `C_FREQ_HZ`                                             | Clock period                             |
+| `C_GIT_ID`                     | vector[31: 0] | 0x12345678                                                      | Git identifier for DUT version tracking  |
+| `C_UART_BAUD_RATE_BPS`         | positive      | 0d115_200                                                       | UART baud rate in bits per second        |
+| `C_UART_BIT_TIME`              | time          | 1 sec / `C_UART_BAUD_RATE_BPS`                                  | Time duration for one UART bit           |
+| `C_UART_BIT_TIME_ACCURACY`     | time          | 0. 01 * `C_UART_BIT_TIME`                                       | UART bit timing tolerance (1%)           |
+| `C_UART_WRITE_NB_BITS`         | positive      | 10 * 8                                                          | Total bits for UART write command        |
+| `C_UART_WRITE_CMD_TIME`        | time          | `C_UART_BIT_TIME` * `C_UART_WRITE_NB_BITS`                      | Total time for UART write command        |
+| `C_READ_NB_BITS`               | positive      | 10 * 9                                                          | Total bits for UART read command         |
+| `C_UART_READ_CMD_TIME`         | time          | `C_UART_BIT_TIME` * `C_UART_READ_NB_BITS`                       | Total time for UART read command         |
+| `C_SPI_FREQ_HZ`                | positive      | 0d1_000_000                                                     | SPI SLCK frequency                       |
+| `C_SPI_BIT_TIME`               | time          | 1 sec / `C_SPI_FREQ_HZ`                                         | SPI baud rate in bits per second         |
+| `C_SPI_BIT_TIME_ACCURACY`      | time          | 0.01 * `C_SPI_BIT_TIME`                                         | SPI bit timing tolerance (1%)            |
+| `C_SPI_NB_DATA_BIS`            | positive      | 8                                                               | Total bits in SPI transaction            |
+| `C_SPI_TRANSACTION_TIME`       | time          | (`C_SPI_NB_DATA_BIS` + 2) * `C_SPI_BIT_TIME`                    | SPI transaction time                     |
+| `C_H_VGA_PIXEL_FREQUENCY`      | integer       | 0d65_000_000                                                    | VGA pixel clock frequency                |
+| `C_H_VGA_PIXEL_BIT_TIME`       | time          | 1 sec / `C_H_VGA_PIXEL_FREQUENCY`                               | VGA pixel clock period                   |
+| `C_H_PIXELS`                   | integer       | 0d1024                                                          | VGA active display width (pixels)        |
+| `C_H_FRONT_PORCH`              | integer       | 0d24                                                            | VGA horizontal front porch (pixels)      |
+| `C_H_SYNC_PULSE`               | integer       | 0d136                                                           | VGA horizontal sync pulse width (pixels) |
+| `C_H_BACK_PORCH`               | integer       | 0d160                                                           | VGA horizontal back porch (pixels)       |
+| `C_H_HSYNC_HIGH`               | integer       | `C_H_PIXELS` + `C_H_FRONT_PORCH` + `C_H_BACK_PORCH`             | VGA horizontal sync high period (pixels) |
+| `C_H_WHOLE_LINE`               | integer       | `C_H_SYNC_PULSE` + `C_H_HSYNC_HIGH`                             | VGA total horizontal line (pixels)       |
+| `C_H_SYNC_PULSE_TIME`          | time          | `C_H_SYNC_PULSE` * `C_H_VGA_PIXEL_BIT_TIME`                     | VGA horizontal sync pulse duration       |
+| `C_H_SYNC_PULSE_TIME_ACCURACY` | time          | 0.01 \* `C_H_SYNC_PULSE` * `C_H_VGA_PIXEL_BIT_TIME`             | VGA horizontal sync pulse tolerance      |
+| `C_H_HSYNC_HIGH_TIME`          | time          | `C_H_HSYNC_HIGH` * `C_H_VGA_PIXEL_BIT_TIME`                     | VGA horizontal sync high duration        |
+| `C_H_HSYNC_HIGH_TIME_ACCURACY` | time          | 0.01 \* `C_H_HSYNC_HIGH` * `C_H_VGA_PIXEL_BIT_TIME`             | VGA horizontal sync high tolerance       |
+| `C_H_WHOLE_LINE_TIME`          | time          | `C_H_SYNC_PULSE_TIME` + `C_H_HSYNC_HIGH_TIME`                   | VGA total horizontal line duration       |
+| `C_H_WHOLE_LINE_TIME_ACCURACY` | time          | `C_H_SYNC_PULSE_TIME_ACCURACY` + `C_H_HSYNC_HIGH_TIME_ACCURACY` | VGA total horizontal line tolerance      |
+| `C_V_VGA_PIXEL_FREQUENCY`      | integer       | `C_H_VGA_PIXEL_FREQUENCY` / `C_H_WHOLE_LINE`                    | VGA line frequency (Hz)                  |
+| `C_V_VGA_PIXEL_BIT_TIME`       | time          | 1 sec / `C_V_VGA_PIXEL_FREQUENCY`                               | VGA line period                          |
+| `C_V_PIXELS`                   | integer       | 0d768                                                           | VGA active display height (lines)        |
+| `C_V_FRONT_PORCH`              | integer       | 0d3                                                             | VGA vertical front porch (lines)         |
+| `C_V_SYNC_PULSE`               | integer       | 0d6                                                             | VGA vertical sync pulse width (lines)    |
+| `C_V_BACK_PORCH`               | integer       | 0d29                                                            | VGA vertical back porch (lines)          |
+| `C_V_HSYNC_HIGH`               | integer       | `C_V_PIXELS` + `C_V_FRONT_PORCH` + `C_V_BACK_PORCH`             | VGA vertical sync high period (lines)    |
+| `C_V_WHOLE_LINE`               | integer       | `C_V_SYNC_PULSE` + `C_V_HSYNC_HIGH`                             | VGA total vertical frame (lines)         |
+| `C_V_SYNC_PULSE_TIME`          | time          | `C_V_SYNC_PULSE` * `C_V_VGA_PIXEL_BIT_TIME`                     | VGA vertical sync pulse duration         |
+| `C_V_SYNC_PULSE_TIME_ACCURACY` | time          | 0.01 \* `C_V_SYNC_PULSE` * `C_V_VGA_PIXEL_BIT_TIME`             | VGA vertical sync pulse tolerance        |
+| `C_V_HSYNC_HIGH_TIME`          | time          | `C_V_HSYNC_HIGH` * `C_V_VGA_PIXEL_BIT_TIME`                     | VGA vertical sync high duration          |
+| `C_V_HSYNC_HIGH_TIME_ACCURACY` | time          | 0.01 \* `C_V_HSYNC_HIGH` * `C_V_VGA_PIXEL_BIT_TIME`             | VGA vertical sync high tolerance         |
+| `C_V_WHOLE_LINE_TIME`          | time          | `C_V_SYNC_PULSE_TIME` + `C_V_HSYNC_HIGH_TIME`                   | VGA total vertical frame duration        |
+| `C_V_WHOLE_LINE_TIME_ACCURACY` | time          | `C_V_SYNC_PULSE_TIME_ACCURACY` + `C_V_HSYNC_HIGH_TIME_ACCURACY` | VGA total vertical frame tolerance       |
 
 ### Registers
 
@@ -58,6 +84,8 @@ The following registers are defined as [`t_reg`](#t_reg):
 | `C_REG_78`         | 0x05    | 0x7878      |
 | `C_REG_SPI_TX`     | 0x06    | 0x0000      |
 | `C_REG_SPI_RX`     | 0x07    | 0x0000      |
+| `C_REG_SPI_RX`     | 0x07    | 0x0000      |
+| `C_REG_VGA_CTRL`   | 0x08    | 0x00F0      |
 | `C_REG_9A`         | 0xAB    | 0x9A9A      |
 | `C_REG_CD`         | 0xAC    | 0xCDCD      |
 | `C_REG_EF`         | 0xDC    | 0xEFEF      |
@@ -65,6 +93,197 @@ The following registers are defined as [`t_reg`](#t_reg):
 | `C_REG_LED`        | 0xEF    | 0x0001      |
 | `C_REG_16_BITS`    | 0xFF    | 0x0000      |
 | `C_REG_DEAD`       | 0xCC    | 0xDEAD      |
+
+## Processes
+
+---
+
+### Process `p_check_uart_timings`
+
+#### Description
+
+Verifies UART TX timings with a specific TX data 0x5555.
+
+<!-- TODO -->
+<script type="WaveDrom">
+{
+}
+</script>
+
+#### Parameters
+
+The process defines two variables:
+
+| Parameter          | Type   | Default | Description                                      |
+| ------------------ | ------ | ------- | ------------------------------------------------ |
+| `v_start_time`     | `time` | -       | The start time of the measurement                |
+| `v_start_bit_time` | `time` | -       | The start time of the measurement of a bit state |
+
+#### Steps
+
+1. **Wait for the start of UART timings check**
+    - Wait for a rising edge on signal `tb_check_uart_timings`
+    - Log info message: "Checking UART timings on TX with value 0x5555"
+
+2. **For each byte (1 to 4)**
+    - **Wait for start bit**
+        - Wait for falling edge on `tb_pad_o_uart_tx`
+        - Set `v_start_bit_time` to current time
+        - If first byte, set `v_start_time` to current time
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `2. 0 * C_UART_BIT_TIME` ± `2.0 * C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Check that `(now - v_start_bit_time)` is in time range `2.0 * C_UART_BIT_TIME` ± `2.0 * C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+    - Set `v_start_bit_time` to current time
+
+3. **Verify total elapsed time**
+    - Check that `(now - v_start_time)` is in time range 9 * 4 `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+
+---
+
+### Process `p_check_spi_timings`
+
+#### Description
+
+This process verifies the SPI timings on a specific data value.
+
+<!-- TODO -->
+<script type="WaveDrom">
+{
+}
+</script>
+
+#### Parameters
+
+The process defines two variables:
+
+| Parameter          | Type   | Default | Description                                      |
+| ------------------ | ------ | ------- | ------------------------------------------------ |
+| `v_start_time`     | `time` | -       | The start time of the measurement                |
+| `v_start_bit_time` | `time` | -       | The start time of the measurement of a bit state |
+
+#### Steps
+
+1. **Wait for the start of SPI timings check**
+    - Wait for a rising edge on signal `tb_check_spi_timings`
+
+2. **For each bit (1 to 8)**
+    - Wait for a rising edge on signal `tb_pad_o_sclk`
+    - If first bit (`bits = 1`):
+        - Set `v_start_time` to current time
+        - Set `v_start_bit_time` to current time
+    - Else:
+        - Check that `(now - v_start_bit_time)` is in time range `C_SPI_BIT_TIME` ± `C_SPI_BIT_TIME_ACCURACY`
+        with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+        - Set `v_start_bit_time` to current time
+
+3. **Verify total elapsed time**
+    - Check that `(now - v_start_time)` is in time range `7 * C_SPI_BIT_TIME` ± `7 * C_SPI_BIT_TIME_ACCURACY`
+    with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
+
+---
+
+### Process `p_check_hsync_timings`
+
+#### Description
+
+This process verifies the VGA horizontal synchronization (HSYNC) timing.
+
+<!-- TODO -->
+<script type="WaveDrom">
+{
+}
+</script>
+
+#### Parameters
+
+The process defines two variables:
+
+| Parameter          | Type   | Default | Description                                      |
+| ------------------ | ------ | ------- | ------------------------------------------------ |
+| `v_start_time`     | `time` | -       | The start time of the measurement                |
+| `v_start_bit_time` | `time` | -       | The start time of the measurement of a bit state |
+
+#### Steps
+
+1. **Wait for the start of HSYNC timings check**
+    - Wait for a rising edge on signal `tb_check_hsync_timings`
+
+2. **Measure HSYNC pulse width (sync pulse duration)**
+    - Wait for falling edge on `tb_pad_o_vga_hsync` (start of sync pulse)
+    - Capture both `v_start_time` and `v_start_bit_time` as baseline
+    - Wait for rising edge on `tb_pad_o_vga_hsync` (end of sync pulse)
+    - Validate sync pulse duration against `C_H_SYNC_PULSE_TIME` ± `C_H_SYNC_PULSE_TIME_ACCURACY`
+    - Update `v_start_bit_time` to current time
+
+3. **Measure HSYNC high period and total line time**
+    - Wait for next falling edge on `tb_pad_o_vga_hsync` (completion of one horizontal line)
+    - **Validate high period**:  Check time since last edge against `C_H_HSYNC_HIGH_TIME` ± `C_H_HSYNC_HIGH_TIME_ACCURACY`
+    - **Validate complete line time**: Check time since initial `v_start_time` against `C_H_WHOLE_LINE_TIME` ± `C_H_WHOLE_LINE_TIME_ACCURACY`
+
+---
+
+### Process `p_check_vsync_timings`
+
+#### Description
+
+This process verifies the VGA vertical synchronization (VSYNC) timing.
+
+<!-- TODO -->
+<script type="WaveDrom">
+{
+}
+</script>
+
+#### Parameters
+
+The process defines two variables:
+
+| Parameter          | Type   | Default | Description                                      |
+| ------------------ | ------ | ------- | ------------------------------------------------ |
+| `v_start_time`     | `time` | -       | The start time of the measurement                |
+| `v_start_bit_time` | `time` | -       | The start time of the measurement of a bit state |
+
+#### Steps
+
+1. **Wait for the start of HSYNC timings check**
+    - Wait for a rising edge on signal `tb_check_vsync_timings`
+
+2. **Measure HSYNC pulse width (sync pulse duration)**
+    - Wait for falling edge on `tb_pad_o_vga_vsync` (start of sync pulse)
+    - Capture both `v_start_time` and `v_start_bit_time` as baseline
+    - Wait for rising edge on `tb_pad_o_vga_vsync` (end of sync pulse)
+    - Validate sync pulse duration against `C_V_SYNC_PULSE_TIME` ± `C_V_SYNC_PULSE_TIME_ACCURACY`
+    - Update `v_start_bit_time` to current time
+
+3. **Measure HSYNC high period and total line time**
+    - Wait for next falling edge on `tb_pad_o_vga_vsync`
+    - **Validate high period**:  Check time since last edge against `C_V_HSYNC_HIGH_TIME` ± `C_V_HSYNC_HIGH_TIME_ACCURACY`
+    - **Validate complete frame time**: Check time since initial `v_start_time` against `C_V_WHOLE_LINE_TIME` ± `C_V_WHOLE_LINE_TIME_ACCURACY`
 
 ## Procedures
 
