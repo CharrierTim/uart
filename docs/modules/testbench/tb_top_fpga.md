@@ -102,13 +102,57 @@ The following registers are defined as [`t_reg`](#t_reg):
 
 #### Description
 
-Verifies UART TX timings with a specific TX data 0x5555.
+Verifies UART TX timings by transmitting test data `0x5555` and measuring bit durations.
 
-<!-- TODO -->
+**Data Conversion:**
+
+- Test data `0x5555` contains four `'5'` characters
+- Each `'5'` is converted to ASCII → `0x35` (binary: `00110101`)
+
+**UART Frame Structure:**
+
+Each character is transmitted as a 10-bit frame:
+
+```raw
+[Start] [Bit0 Bit1 Bit2 Bit3 Bit4 Bit5 Bit6 Bit7] [Stop]
+  0       1    0    1    0    1    1    0    0      1
+          └─────────── LSB to MSB ───────────┘
+```
+
+The diagram below shows the waveform and which falling/rising edges are awaited:
+
 <script type="WaveDrom">
 {
+    "signal": [
+        {
+            "name": "",
+            "node": "....R...S...T."
+        },
+        {
+            "name": "UART_TX",
+            "wave": "1..010101.0.1|",
+            "node": "...abcdef.g.h."
+        },
+        {
+            "name": "",
+            "node": "...ABCDEF.G.H."
+        }
+    ],
+    "edge": [
+        "R<->S 0x5",
+        "S<->T 0x3",
+        "A+B Start",
+        "B+C 1 bit",
+        "C+D 1 bit",
+        "D+E 1 bit",
+        "E+F 1 bit",
+        "F+G 2 bits",
+        "G+H 2 bits"
+    ]
 }
 </script>
+
+In total, it is repeated four times.
 
 #### Parameters
 
@@ -127,34 +171,34 @@ The process defines two variables:
 
 2. **For each byte (1 to 4)**
     - **Wait for start bit**
-        - Wait for falling edge on `tb_pad_o_uart_tx`
+        - Wait for falling edge on `tb_pad_o_uart_tx` (a)
         - Set `v_start_bit_time` to current time
         - If first byte, set `v_start_time` to current time
-    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx` (b)
     - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx` (c)
     - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx` (d)
     - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx` (e)
     - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx` (f)
     - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx` (g)
     - Check that `(now - v_start_bit_time)` is in time range `2. 0 * C_UART_BIT_TIME` ± `2.0 * C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx` (h)
     - Check that `(now - v_start_bit_time)` is in time range `2.0 * C_UART_BIT_TIME` ± `2.0 * C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
