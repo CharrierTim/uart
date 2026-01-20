@@ -102,13 +102,57 @@ The following registers are defined as [`t_reg`](#t_reg):
 
 #### Description
 
-Verifies UART TX timings with a specific TX data 0x5555.
+Verifies UART TX timings by transmitting test data `0x5555` and measuring bit durations.
 
-<!-- TODO -->
+**Data Conversion:**
+
+- Test data `0x5555` contains four `'5'` characters
+- Each `'5'` is converted to ASCII → `0x35` (binary: `00110101`)
+
+**UART Frame Structure:**
+
+Each character is transmitted as a 10-bit frame:
+
+```raw
+[Start] [Bit0 Bit1 Bit2 Bit3 Bit4 Bit5 Bit6 Bit7] [Stop]
+  0       1    0    1    0    1    1    0    0      1
+          └─────────── LSB to MSB ───────────┘
+```
+
+The diagram below shows the waveform and which falling/rising edges are awaited:
+
 <script type="WaveDrom">
 {
+    "signal": [
+        {
+            "name": "",
+            "node": "....R...S...T."
+        },
+        {
+            "name": "UART_TX",
+            "wave": "1..010101.0.1|",
+            "node": "...abcdef.g.h."
+        },
+        {
+            "name": "",
+            "node": "...ABCDEF.G.H."
+        }
+    ],
+    "edge": [
+        "R<->S 0x5",
+        "S<->T 0x3",
+        "A+B Start",
+        "B+C 1 bit",
+        "C+D 1 bit",
+        "D+E 1 bit",
+        "E+F 1 bit",
+        "F+G 2 bits",
+        "G+H 2 bits"
+    ]
 }
 </script>
+
+In total, it is repeated four times.
 
 #### Parameters
 
@@ -127,34 +171,34 @@ The process defines two variables:
 
 2. **For each byte (1 to 4)**
     - **Wait for start bit**
-        - Wait for falling edge on `tb_pad_o_uart_tx`
+        - Wait for falling edge on `tb_pad_o_uart_tx` (a)
         - Set `v_start_bit_time` to current time
         - If first byte, set `v_start_time` to current time
-    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx` (b)
     - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx` (c)
     - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx` (d)
     - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx` (e)
     - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx` (f)
     - Check that `(now - v_start_bit_time)` is in time range `C_UART_BIT_TIME` ± `C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a falling edge on signal `tb_pad_o_uart_tx`
+    - Wait for a falling edge on signal `tb_pad_o_uart_tx` (g)
     - Check that `(now - v_start_bit_time)` is in time range `2. 0 * C_UART_BIT_TIME` ± `2.0 * C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
-    - Wait for a rising edge on signal `tb_pad_o_uart_tx`
+    - Wait for a rising edge on signal `tb_pad_o_uart_tx` (h)
     - Check that `(now - v_start_bit_time)` is in time range `2.0 * C_UART_BIT_TIME` ± `2.0 * C_UART_BIT_TIME_ACCURACY`
     with procedure [`proc_check_time_in_range`](#procedure-proc_check_time_in_range)
     - Set `v_start_bit_time` to current time
@@ -169,11 +213,39 @@ The process defines two variables:
 
 #### Description
 
-This process verifies the SPI timings on a specific data value.
+Verifies SPI clock timings.
 
-<!-- TODO -->
+Currently only verifies SPI clock timings.
+
+The diagram below shows the waveform and which rising edges are awaited:
+
 <script type="WaveDrom">
 {
+    "signal": [
+        {
+            "name": "",
+            "node": "..R.............S.."
+        },
+        {
+            "name": "O_SCLK",
+            "wave": "0.1010101010101010|",
+            "node": "..a.b.c.d.e.f.g.h.."
+        },
+        {
+            "name": "",
+            "node": "..A.B.C.D.E.F.G.H.."
+        }
+    ],
+    "edge": [
+        "R<->S 7 periods",
+        "A+B 1 cycle",
+        "B+C 1 cycle",
+        "C+D 1 cycle",
+        "D+E 1 cycle",
+        "E+F 1 cycle",
+        "F+G 1 cycle",
+        "G+H 1 cycle"
+    ]
 }
 </script>
 
@@ -192,7 +264,7 @@ The process defines two variables:
     - Wait for a rising edge on signal `tb_check_spi_timings`
 
 2. **For each bit (1 to 8)**
-    - Wait for a rising edge on signal `tb_pad_o_sclk`
+    - Wait for a rising edge on signal `tb_pad_o_sclk` (a to h)
     - If first bit (`bits = 1`):
         - Set `v_start_time` to current time
         - Set `v_start_bit_time` to current time
@@ -213,11 +285,7 @@ The process defines two variables:
 
 This process verifies the VGA horizontal synchronization (HSYNC) timing.
 
-<!-- TODO -->
-<script type="WaveDrom">
-{
-}
-</script>
+![VGA Horizontal Timings](../../assets/uart.drawio){ page="VGA-HORIZONTAL-DIAGRAM" }
 
 #### Parameters
 
@@ -253,11 +321,7 @@ The process defines two variables:
 
 This process verifies the VGA vertical synchronization (VSYNC) timing.
 
-<!-- TODO -->
-<script type="WaveDrom">
-{
-}
-</script>
+![VGA Vertical Timings](../../assets/uart.drawio){ page="VGA-VERTICAL-DIAGRAM" }
 
 #### Parameters
 
