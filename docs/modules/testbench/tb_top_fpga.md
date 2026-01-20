@@ -285,11 +285,7 @@ The process defines two variables:
 
 This process verifies the VGA horizontal synchronization (HSYNC) timing.
 
-<!-- TODO -->
-<script type="WaveDrom">
-{
-}
-</script>
+![VGA Horizontal Timings](../../assets/uart.drawio){ page="VGA-HORIZONTAL-DIAGRAM" }
 
 #### Parameters
 
@@ -325,11 +321,7 @@ The process defines two variables:
 
 This process verifies the VGA vertical synchronization (VSYNC) timing.
 
-<!-- TODO -->
-<script type="WaveDrom">
-{
-}
-</script>
+![VGA Vertical Timings](../../assets/uart.drawio){ page="VGA-VERTICAL-DIAGRAM" }
 
 #### Parameters
 
