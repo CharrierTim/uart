@@ -213,11 +213,39 @@ The process defines two variables:
 
 #### Description
 
-This process verifies the SPI timings on a specific data value.
+Verifies SPI clock timings.
 
-<!-- TODO -->
+Currently only verifies SPI clock timings.
+
+The diagram below shows the waveform and which rising edges are awaited:
+
 <script type="WaveDrom">
 {
+    "signal": [
+        {
+            "name": "",
+            "node": "..R.............S.."
+        },
+        {
+            "name": "O_SCLK",
+            "wave": "0.1010101010101010|",
+            "node": "..a.b.c.d.e.f.g.h.."
+        },
+        {
+            "name": "",
+            "node": "..A.B.C.D.E.F.G.H.."
+        }
+    ],
+    "edge": [
+        "R<->S 7 periods",
+        "A+B 1 cycle",
+        "B+C 1 cycle",
+        "C+D 1 cycle",
+        "D+E 1 cycle",
+        "E+F 1 cycle",
+        "F+G 1 cycle",
+        "G+H 1 cycle"
+    ]
 }
 </script>
 
@@ -236,7 +264,7 @@ The process defines two variables:
     - Wait for a rising edge on signal `tb_check_spi_timings`
 
 2. **For each bit (1 to 8)**
-    - Wait for a rising edge on signal `tb_pad_o_sclk`
+    - Wait for a rising edge on signal `tb_pad_o_sclk` (a to h)
     - If first bit (`bits = 1`):
         - Set `v_start_time` to current time
         - Set `v_start_bit_time` to current time
