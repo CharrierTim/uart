@@ -207,19 +207,19 @@ The UART FSM handling the above protocol is defined as:
 
 Where the following transitions are defined:
 
-| Transition | Condition(s)                                                                   |
-| ---------- | ------------------------------------------------------------------------------ |
-| T0         | `tx_byte_count >= 5`                                                           |
-| T1         | Automatic                                                                      |
-| T2         | `rx_byte_valid = 1` **AND** `(rx_byte = R character or rx_byte = W character)` |
-| T3         | `rx_byte = W character`                                                        |
-| T4         | `rx_byte = R character`                                                        |
-| T5         | `rx_byte /= CR (\r) character` **AND** `rx_byte_count >= 3`                    |
-| T6         | `rx_byte = CR (\r) character` **AND** `rx_byte_count >= 3`                     |
-| T7         | Automatic                                                                      |
-| T8         | `I_READ_DATA_VALID = 1`                                                        |
-| T9         | `rx_byte /= CR (\r) character` **AND** `rx_byte_count >= 7`                    |
-| T10        | `rx_byte = CR (\r) character` **AND** `rx_byte_count >= 7`                     |
+| Transition | Condition(s)                                                |
+| ---------- | ----------------------------------------------------------- |
+| T0         | `rst_soft_p = 1`                                            |
+| T1         | `rx_byte = W character`                                     |
+| T2         | `rx_byte /= CR (\r) character` **AND** `rx_byte_count >= 3` |
+| T3         | `rx_byte = CR (\r) character` **AND** `rx_byte_count >= 3`  |
+| T4         | Automatic                                                   |
+| T5         | `rx_byte = R character`                                     |
+| T6         | `rx_byte /= CR (\r) character` **AND** `rx_byte_count >= 7` |
+| T7         | `rx_byte = CR (\r) character` **AND** `rx_byte_count >= 7`  |
+| T8         | Automatic                                                   |
+| T9         | `I_READ_DATA_VALID = 1`                                     |
+| T10        | `tx_byte_count >= 5`                                        |
 
 ---
 

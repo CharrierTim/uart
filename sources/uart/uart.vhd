@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    uart.vhd
--- @version 2.0
+-- @version 2.1
 -- @brief   Top-level UART module, implementing both TX and RX functionalities with a custom protocol
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -34,6 +34,8 @@
 -- 1.0      21/10/2025  Timothee Charrier   Initial release
 -- 1.1      10/12/2025  Timothee Charrier   Naming conventions update and remove generic
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+-- 2.1      22/01/2026  Timothee Charrier   Improve FSM readability by adding a soft reset instead of using a condition
+--                                          in clocked p_fsm_seq process.
 -- =====================================================================================================================
 
 library ieee;
@@ -91,9 +93,6 @@ architecture UART_ARCH of UART is
         -- Waiting for 'R' or 'W' command
         STATE_IDLE,
 
-        -- Processing start character
-        STATE_CHAR_START,
-
         -- Write mode states
         STATE_WRITE_MODE,     -- Receiving address and data bytes
         STATE_WRITE_MODE_END, -- Validating write command
@@ -145,6 +144,9 @@ architecture UART_ARCH of UART is
     -- =================================================================================================================
     -- SIGNALS
     -- =================================================================================================================
+
+    -- Soft reset (when receiving 'R' or 'W' char)
+    signal rst_soft_p                : std_logic;
 
     -- FSM signals
     signal current_state             : t_state;
@@ -256,36 +258,35 @@ begin
     -- FSM sequential process for state transitions and byte count
     -- =================================================================================================================
 
+    -- Generate a soft reset when receiving any valid 'R' or 'W' character
+    rst_soft_p <= '1' when (rx_byte_valid = '1' and rx_byte = C_CHAR_R) else -- 'R'
+                  '1' when (rx_byte_valid = '1' and rx_byte = C_CHAR_W) else -- 'W'
+                  '0';
+
     p_fsm_seq : process (CLK, RST_P) is
     begin
 
         if (RST_P = '1') then
 
             current_state         <= STATE_IDLE;
-
             rx_byte_count         <= (others => '0');
             tx_byte_count         <= (others => '0');
-
             tx_byte_to_send_valid <= '0';
 
         elsif rising_edge(CLK) then
 
-            -- Transition to the next state. Always go to STATE_CHAR_START when receiving a 'R' or 'W' character
-            if (rx_byte_valid = '1' and (rx_byte = C_CHAR_R or rx_byte = C_CHAR_W)) then
-                current_state <= STATE_CHAR_START;
-            else
-                current_state <= next_state;
-            end if;
+            -- Transition to the next state.
+            current_state <= next_state;
 
             -- RX byte count
-            if (current_state = STATE_IDLE or current_state = STATE_CHAR_START) then
+            if (current_state = STATE_IDLE) then
                 rx_byte_count <= (others => '0');
             elsif (rx_byte_valid = '1') then
                 rx_byte_count <= rx_byte_count + 1;
             end if;
 
             -- TX byte count
-            if (current_state = STATE_IDLE or current_state = STATE_CHAR_START) then
+            if (current_state = STATE_IDLE) then
                 tx_byte_count         <= (others => '0');
                 tx_byte_to_send_valid <= '0';
             elsif (
@@ -296,6 +297,14 @@ begin
                 tx_byte_count         <= tx_byte_count + 1;
                 tx_byte_to_send_valid <= '1';
             else
+                tx_byte_to_send_valid <= '0';
+            end if;
+
+            -- Synchronous soft reset
+            if (rst_soft_p = '1') then
+                current_state         <= STATE_IDLE;
+                rx_byte_count         <= (others => '0');
+                tx_byte_count         <= (others => '0');
                 tx_byte_to_send_valid <= '0';
             end if;
 
@@ -322,17 +331,6 @@ begin
             -- =========================================================================================================
 
             when STATE_IDLE =>
-
-            -- Specific case, handled in the sequential process
-            -- Any received 'R' or 'W' character will directly lead to STATE_CHAR_START
-
-            -- =========================================================================================================
-            -- STATE: CHAR_START
-            -- =========================================================================================================
-            -- After receiving a 'R' or 'W' character, go to the next state depending on the command type
-            -- =========================================================================================================
-
-            when STATE_CHAR_START =>
 
                 if (rx_byte = C_CHAR_R) then
                     next_state <= STATE_READ_MODE;
@@ -462,12 +460,6 @@ begin
             -- =========================================================================================================
 
             when STATE_IDLE =>
-
-            -- =========================================================================================================
-            -- STATE: CHAR_START
-            -- =========================================================================================================
-
-            when STATE_CHAR_START =>
 
             -- =========================================================================================================
             -- STATE: READ_MODE
