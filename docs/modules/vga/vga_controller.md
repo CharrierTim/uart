@@ -34,11 +34,12 @@ Only works for the [TE 4-1734682-2](https://www.te.com/en/product-4-1734682-2.ht
 | Port Name         | Type         | Direction | Default Value | Description                                                                                            |
 | ----------------- | ------------ | :-------: | ------------- | ------------------------------------------------------------------------------------------------------ |
 | `CLK_SYS`         | std_logic    |    in     | -             | Input system clock                                                                                     |
+| `RST_SYS_P`       | std_logic    |    in     | -             | Input system clock domain asynchronous reset, active high                                              |
+| `I_MANUAL_COLORS` | vector[11:0] |    in     | -             | Red color channel input (4-bit) & Green color channel input (4-bit) & Blue color channel input (4-bit) |
 | `CLK_VGA`         | std_logic    |    in     | -             | Input vga clock                                                                                        |
-| `RST_P`           | std_logic    |    in     | -             | Input asynchronous reset, active high                                                                  |
+| `RST_VGA_P`       | std_logic    |    in     | -             | Input VGA clock domain asynchronous reset, active high                                                 |
 | `O_HSYNC`         | std_logic    |    out    | 0b0           | Horizontal sync signal output                                                                          |
 | `O_VSYNC`         | std_logic    |    out    | 0b0           | Vertical sync signal output                                                                            |
-| `I_MANUAL_COLORS` | vector[11:0] |    in     | -             | Red color channel input (4-bit) & Green color channel input (4-bit) & Blue color channel input (4-bit) |
 | `O_RED`           | vector[3:0]  |    out    | 0x00          | Red color channel output (blanked during inactive regions)                                             |
 | `O_GREEN`         | vector[3:0]  |    out    | 0x00          | Green color channel output (blanked during inactive regions)                                           |
 | `O_BLUE`          | vector[3:0]  |    out    | 0x00          | Blue color channel output (blanked during inactive regions)                                            |
