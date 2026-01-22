@@ -1,0 +1,1915 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Documentation for the UART Project" name="description"/>
+<meta content="Timothée Charrier" name="author"/>
+<link href="https://charriertim.github.io/uart/modules/regfile/regfile/" rel="canonical"/>
+<link href="../../top_fpga/" rel="prev"/>
+<link href="../../uart/uart/" rel="next"/>
+<link href="../../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.7.1" name="generator"/>
+<title>Internal Registers - UART Project</title>
+<link href="../../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Inter";--md-code-font:"Fira Code"}</style>
+<link href="../../../assets/stylesheets/style.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#registers">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="UART Project" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="UART Project">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            UART Project
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Internal Registers
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="indigo" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+<div class="md-search__suggest" data-md-component="search-suggest"></div>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/CharrierTim/uart" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+</div>
+<div class="md-source__repository">
+    CharrierTim/uart
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../..">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../usage/">
+        
+  
+  
+    
+  
+  Usage
+
+      </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../../top_fpga/">
+          
+  
+  
+  Modules
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../testbench/tb_top_fpga/">
+          
+  
+  
+  Testbench
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="UART Project" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="UART Project">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    UART Project
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/CharrierTim/uart" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+</div>
+<div class="md-source__repository">
+    CharrierTim/uart
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../..">
+<span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../usage/">
+<span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Modules
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Modules
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../top_fpga/">
+<span class="md-ellipsis">
+    
+  
+    Top FPGA
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    
+  
+    Internal Registers
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    
+  
+    Internal Registers
+  
+
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#description">
+<span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#generics">
+<span class="md-ellipsis">
+      
+        Generics
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#inputs-and-outputs">
+<span class="md-ellipsis">
+      
+        Inputs and Outputs
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#architecture">
+<span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+</a>
+<nav aria-label="Architecture" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#read-operations">
+<span class="md-ellipsis">
+      
+        Read Operations
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#write-operations">
+<span class="md-ellipsis">
+      
+        Write Operations
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#summary">
+<span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#detailed-register-descriptions">
+<span class="md-ellipsis">
+      
+        Detailed register descriptions
+      
+    </span>
+</a>
+<nav aria-label="Detailed register descriptions" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_git_id_msb">
+<span class="md-ellipsis">
+      
+        REG_GIT_ID_MSB
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_git_id_lsb">
+<span class="md-ellipsis">
+      
+        REG_GIT_ID_LSB
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_12">
+<span class="md-ellipsis">
+      
+        REG_12
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_34">
+<span class="md-ellipsis">
+      
+        REG_34
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_56">
+<span class="md-ellipsis">
+      
+        REG_56
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_spi_tx">
+<span class="md-ellipsis">
+      
+        REG_SPI_TX
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_spi_rx">
+<span class="md-ellipsis">
+      
+        REG_SPI_RX
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_vga_ctrl">
+<span class="md-ellipsis">
+      
+        REG_VGA_CTRL
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_78">
+<span class="md-ellipsis">
+      
+        REG_78
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_9a">
+<span class="md-ellipsis">
+      
+        REG_9A
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_cd">
+<span class="md-ellipsis">
+      
+        REG_CD
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_ef">
+<span class="md-ellipsis">
+      
+        REG_EF
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_switches">
+<span class="md-ellipsis">
+      
+        REG_SWITCHES
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_led">
+<span class="md-ellipsis">
+      
+        REG_LED
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reg_16_bits">
+<span class="md-ellipsis">
+      
+        REG_16_BITS
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    UART
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_3">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    UART
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../uart/uart/">
+<span class="md-ellipsis">
+    
+  
+    UART Top
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../uart/uart_rx/">
+<span class="md-ellipsis">
+    
+  
+    UART RX
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../uart/uart_tx/">
+<span class="md-ellipsis">
+    
+  
+    UART TX
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    SPI
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_4">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    SPI
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../spi/spi_master/">
+<span class="md-ellipsis">
+    
+  
+    SPI Master
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    VGA
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_5_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_5">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    VGA
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../vga/vga_controller/">
+<span class="md-ellipsis">
+    
+  
+    VGA Controller
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Testbench
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Testbench
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../testbench/tb_top_fpga/">
+<span class="md-ellipsis">
+    
+  
+    Top FPGA TB
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../testbench/testcases/">
+<span class="md-ellipsis">
+    
+  
+    Testcases
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<nav aria-label="Navigation" class="md-path">
+<ol class="md-path__list">
+<li class="md-path__item">
+<a class="md-path__link" href="../../..">
+<span class="md-ellipsis">
+    Home
+  </span>
+</a>
+</li>
+<li class="md-path__item">
+<a class="md-path__link" href="../../top_fpga/">
+<span class="md-ellipsis">
+    Modules
+  </span>
+</a>
+</li>
+</ol>
+</nav>
+<article class="md-content__inner md-typeset">
+<h1 id="registers">Registers<a class="headerlink" href="#registers" title="Permanent link">¶</a></h1>
+<h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">¶</a></h2>
+<p>Internal FPGA registers with read/write registers accessible via the UART line.</p>
+<hr/>
+<h2 id="generics">Generics<a class="headerlink" href="#generics" title="Permanent link">¶</a></h2>
+<div class="generics-table">
+<table>
+<thead>
+<tr>
+<th>Generic Name</th>
+<th>Type</th>
+<th>Default Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>G_GIT_ID_MSB</code></td>
+<td>vector[15:0]</td>
+<td>0x0000</td>
+<td>16 MSB of the git ID containing the sources for the bitstream generation</td>
+</tr>
+<tr>
+<td><code>G_GIT_ID_LSB</code></td>
+<td>vector[15:0]</td>
+<td>0x0000</td>
+<td>16 LSB of the git ID containing the sources for the bitstream generation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr/>
+<h2 id="inputs-and-outputs">Inputs and Outputs<a class="headerlink" href="#inputs-and-outputs" title="Permanent link">¶</a></h2>
+<div class="ports-table">
+<table>
+<thead>
+<tr>
+<th>Port Name</th>
+<th>Type</th>
+<th style="text-align: center;">Direction</th>
+<th>Default Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CLK</code></td>
+<td>std_logic</td>
+<td style="text-align: center;">in</td>
+<td>-</td>
+<td>Input clock</td>
+</tr>
+<tr>
+<td><code>RST_P</code></td>
+<td>std_logic</td>
+<td style="text-align: center;">in</td>
+<td>-</td>
+<td>Input asynchronous reset, active low</td>
+</tr>
+<tr>
+<td><code>I_SWITCHES</code></td>
+<td>vector[2:0]</td>
+<td style="text-align: center;">in</td>
+<td>-</td>
+<td>Input vector containing the resynchronized switches value</td>
+</tr>
+<tr>
+<td><code>I_SPI_RX_DATA</code></td>
+<td>vector[7:0]</td>
+<td style="text-align: center;">in</td>
+<td>-</td>
+<td>Input vector containing the SPI data sent by the slave</td>
+</tr>
+<tr>
+<td><code>I_SPI_RX_DATA_VALID</code></td>
+<td>std_logic</td>
+<td style="text-align: center;">in</td>
+<td>-</td>
+<td>Input vector containing the SPI data sent flag valid</td>
+</tr>
+<tr>
+<td><code>I_READ_ADDR</code></td>
+<td>vector[7:0]</td>
+<td style="text-align: center;">in</td>
+<td>-</td>
+<td>Read address from the UART</td>
+</tr>
+<tr>
+<td><code>I_READ_ADDR_VALID</code></td>
+<td>std_logic</td>
+<td style="text-align: center;">in</td>
+<td>-</td>
+<td>Read address valid flag</td>
+</tr>
+<tr>
+<td><code>O_READ_DATA</code></td>
+<td>vector[15:0]</td>
+<td style="text-align: center;">out</td>
+<td><code>G_GIT_ID_MSB</code></td>
+<td>Read data at the address <code>I_READ_ADDR</code></td>
+</tr>
+<tr>
+<td><code>O_READ_DATA_VALID</code></td>
+<td>std_logic</td>
+<td style="text-align: center;">out</td>
+<td>0x00</td>
+<td>Read data valid flag</td>
+</tr>
+<tr>
+<td><code>I_WRITE_ADDR</code></td>
+<td>vector[7:0]</td>
+<td style="text-align: center;">in</td>
+<td>-</td>
+<td>Write address from the UART</td>
+</tr>
+<tr>
+<td><code>I_WRITE_DATA</code></td>
+<td>vector[15:0]</td>
+<td style="text-align: center;">in</td>
+<td>-</td>
+<td>Write data to be written at <code>I_WRITE_DATA</code></td>
+</tr>
+<tr>
+<td><code>I_WRITE_VALID</code></td>
+<td>std_logic</td>
+<td style="text-align: center;">in</td>
+<td>-</td>
+<td>Write address and data valid flag</td>
+</tr>
+<tr>
+<td><code>O_SPI_TX_DATA</code></td>
+<td>vector[7:0]</td>
+<td style="text-align: center;">out</td>
+<td>0x00</td>
+<td>Input vector containing the SPI data to be send</td>
+</tr>
+<tr>
+<td><code>O_SPI_TX_DATA_VALID</code></td>
+<td>std_logic</td>
+<td style="text-align: center;">out</td>
+<td>0b0</td>
+<td>Input vector containing the SPI data flag valid</td>
+</tr>
+<tr>
+<td><code>O_LED_0</code></td>
+<td>std_logic</td>
+<td style="text-align: center;">out</td>
+<td>0b1</td>
+<td>LED 0 value</td>
+</tr>
+<tr>
+<td><code>O_VGA_COLORS</code></td>
+<td>vector[11:0]</td>
+<td style="text-align: center;">out</td>
+<td>0x000</td>
+<td>Output colors channels to be displayed on the VGA. Bits[11:8] for red, bits[7:4] for green channel, bits[3:0] for blue channel</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr/>
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">¶</a></h2>
+<h3 id="read-operations">Read Operations<a class="headerlink" href="#read-operations" title="Permanent link">¶</a></h3>
+<p>The regfile module performs a read operation when <code>I_READ_ADDR_VALID</code> is
+asserted (set to '1'). The module responds by:</p>
+<ol>
+<li>Reading the data stored at the address specified by <code>I_READ_ADDR</code></li>
+<li>Asserting <code>O_READ_DATA_VALID</code> on the next clock cycle</li>
+<li>Outputting the retrieved value on <code>O_READ_DATA</code></li>
+</ol>
+<p><strong>Invalid Address Handling:</strong></p>
+<p>If the specified address does not correspond to a defined register, the
+module returns the sentinel value <code>0xDEAD</code> to indicate an invalid read
+operation.</p>
+<div class="highlight"><pre><span></span><code>Valid address:   I_READ_ADDR_VALID = '1' → O_READ_DATA = register[I_READ_ADDR]
+Invalid address: I_READ_ADDR_VALID = '1' → O_READ_DATA = 0xDEAD
+</code></pre></div>
+<h3 id="write-operations">Write Operations<a class="headerlink" href="#write-operations" title="Permanent link">¶</a></h3>
+<p>The regfile module performs a write operation when <code>I_WRITE_VALID</code> is
+asserted (set to '1'). The module writes the data from <code>I_WRITE_DATA</code>
+to the address specified by <code>I_WRITE_ADDR</code>.</p>
+<p><strong>Write Protection:</strong></p>
+<p>Not all registers are writable. If the specified address corresponds to:</p>
+<ul>
+<li>A <strong>read-only register</strong>: The write operation is silently ignored, and
+  the register value remains unchanged</li>
+<li>A <strong>writable register</strong>: The data is written on the next clock cycle</li>
+<li>An <strong>undefined address</strong>: The write operation is ignored</li>
+</ul>
+<hr/>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<p>A simplified view of the regfile module:</p>
+<p><div class="mxgraph" data-mxgraph='{"toolbar-position": "bottom", "toolbar-nohide": "0", "tooltips": "1", "border": 5, "resize": "1", "edit": "_blank", "lightbox": "1", "toolbar": "pages tags zoom layers lightbox", "xml": "&lt;mxfile host=\"app.diagrams.net\" agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0\" version=\"29.3.3\" pages=\"19\"&gt;&lt;diagram name=\"REGFILE\" id=\"-kM2w6xnJGVL3PfJAMS3\"&gt;\n        &lt;mxGraphModel dx=\"2683\" dy=\"1375\" grid=\"1\" gridSize=\"10\" guides=\"1\" tooltips=\"1\" connect=\"1\" arrows=\"1\" fold=\"1\" page=\"1\" pageScale=\"1\" pageWidth=\"850\" pageHeight=\"1100\" math=\"0\" shadow=\"0\"&gt;\n            &lt;root&gt;\n                &lt;mxCell id=\"0\"/&gt;\n                &lt;mxCell id=\"1\" parent=\"0\"/&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-1\" value=\"\" style=\"group;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" connectable=\"0\" vertex=\"1\" parent=\"1\"&gt;\n                    &lt;mxGeometry x=\"-425\" y=\"120\" width=\"1145\" height=\"720\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-2\" value=\"\" style=\"rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#000000;gradientDirection=north;strokeWidth=2;imageHeight=24;arcSize=3;textShadow=0;labelBorderColor=none;labelBackgroundColor=none;gradientColor=#FFFFFF;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"185\" width=\"760\" height=\"720\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-3\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6c8ebf;strokeWidth=4;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=14;fontColor=default;labelBackgroundColor=default;endArrow=classic;fillColor=#dae8fc;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" target=\"UBkk9TLd829fEGm204lc-40\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"353\" y=\"320\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"405\" y=\"320\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-4\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;strokeColor=#6c8ebf;strokeWidth=4;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=14;fontColor=default;labelBackgroundColor=default;endArrow=classic;fillColor=#dae8fc;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"245\" y=\"99\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"745\" y=\"99\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-5\" value=\"O_READ_DATA\" style=\"text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=14;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"985\" y=\"220\" width=\"160\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-6\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;strokeWidth=2;startArrow=none;startFill=0;endArrow=classic;endFill=1;fontSize=14;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;Array as=\"points\"&gt;\n                            &lt;mxPoint x=\"985\" y=\"506\"/&gt;\n                        &lt;/Array&gt;\n                        &lt;mxPoint x=\"865\" y=\"506\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"985\" y=\"506\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-7\" value=\"O_READ_DATA_VALID\" style=\"text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=14;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"985\" y=\"485\" width=\"160\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-8\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;strokeWidth=2;startArrow=none;startFill=0;endArrow=classic;endFill=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"905\" y=\"240\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"985\" y=\"240\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-9\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Inter;startArrow=classic;startFill=1;endArrow=none;endFill=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" target=\"UBkk9TLd829fEGm204lc-10\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"240\" y=\"99\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"160\" y=\"99\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-10\" value=\"I_READ_ADDR\" style=\"text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=14;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry y=\"79\" width=\"160\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-11\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Inter;startArrow=classic;startFill=1;endArrow=none;endFill=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" target=\"UBkk9TLd829fEGm204lc-12\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"240\" y=\"540\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"160\" y=\"540\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-12\" value=\"I_READ_ADDR_VALID\" style=\"text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=14;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry y=\"520\" width=\"160\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-13\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Inter;startArrow=classic;startFill=1;endArrow=none;endFill=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" target=\"UBkk9TLd829fEGm204lc-14\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"240\" y=\"320\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"160\" y=\"320\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-14\" value=\"I_WRITE_ADDR\" style=\"text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=14;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry y=\"300\" width=\"160\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-15\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Inter;startArrow=classic;startFill=1;endArrow=none;endFill=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" target=\"UBkk9TLd829fEGm204lc-16\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"240\" y=\"240\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"160\" y=\"240\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-16\" value=\"I_WRITE_DATA\" style=\"text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=14;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry y=\"220\" width=\"160\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-17\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Inter;startArrow=classic;startFill=1;endArrow=none;endFill=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" target=\"UBkk9TLd829fEGm204lc-18\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"240\" y=\"450\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"160\" y=\"450\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-18\" value=\"I_WRITE_VALID\" style=\"text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=14;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry y=\"430\" width=\"160\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-19\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Inter;startArrow=classic;startFill=1;endArrow=none;endFill=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" target=\"UBkk9TLd829fEGm204lc-20\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"240\" y=\"620\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"160\" y=\"620\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-20\" value=\"CLK\" style=\"text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=14;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry y=\"600\" width=\"160\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-21\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Inter;startArrow=classic;startFill=1;endArrow=none;endFill=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" target=\"UBkk9TLd829fEGm204lc-22\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"240\" y=\"640\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"160\" y=\"640\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-22\" value=\"RST_P\" style=\"text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;fontSize=14;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry y=\"620\" width=\"160\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-23\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;strokeWidth=4;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=14;fontColor=default;labelBackgroundColor=default;endArrow=classic;fillColor=#dae8fc;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" source=\"UBkk9TLd829fEGm204lc-41\" target=\"UBkk9TLd829fEGm204lc-26\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-24\" value=\"reg_read\" style=\"edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" connectable=\"0\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-23\"&gt;\n                    &lt;mxGeometry x=\"-0.2333\" y=\"-1\" relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"-1\" y=\"-19\" as=\"offset\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-25\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;strokeWidth=2;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" source=\"UBkk9TLd829fEGm204lc-26\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;Array as=\"points\"&gt;\n                            &lt;mxPoint x=\"765\" y=\"540\"/&gt;\n                        &lt;/Array&gt;\n                        &lt;mxPoint x=\"245\" y=\"540\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-26\" value=\"\" style=\"verticalLabelPosition=middle;verticalAlign=middle;html=1;shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;size=0.05;arcSize=3;flipV=1;labelPosition=center;align=center;rotation=-90;fillColor=#fff2cc;strokeColor=#000000;strokeWidth=2;gradientColor=#FFFFFF;gradientDirection=east;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"605\" y=\"220\" width=\"320\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-27\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;strokeWidth=4;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=14;fontColor=default;labelBackgroundColor=default;endArrow=classic;fillColor=#dae8fc;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"787.5\" y=\"239.76\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"902.5\" y=\"239.76\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-28\" value=\"\" style=\"rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"825\" y=\"488\" width=\"40\" height=\"70\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-29\" value=\"D&amp;amp;nbsp; &amp;amp;nbsp; &amp;amp;nbsp;Q\" style=\"text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"825\" y=\"495\" width=\"40\" height=\"20\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-30\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endArrow=none;endFill=0;strokeWidth=2;fontFamily=Inter;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" source=\"UBkk9TLd829fEGm204lc-29\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"765\" y=\"505\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-31\" value=\"\" style=\"triangle;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;fontFamily=Inter;container=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"825\" y=\"536\" width=\"8\" height=\"8\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-32\" value=\"\" style=\"group;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" connectable=\"0\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"303\" y=\"292.5\" width=\"59\" height=\"59\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-33\" value=\"\" style=\"whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-32\"&gt;\n                    &lt;mxGeometry x=\"9\" y=\"9\" width=\"50\" height=\"50\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-34\" value=\"\" style=\"whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-32\"&gt;\n                    &lt;mxGeometry x=\"6\" y=\"6\" width=\"50\" height=\"50\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-35\" value=\"\" style=\"whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-32\"&gt;\n                    &lt;mxGeometry x=\"3\" y=\"3\" width=\"50\" height=\"50\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-36\" value=\"\" style=\"whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-32\"&gt;\n                    &lt;mxGeometry width=\"50\" height=\"50\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-37\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6c8ebf;strokeWidth=4;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=14;fontColor=default;labelBackgroundColor=default;endArrow=classic;fillColor=#dae8fc;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"244\" y=\"320\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"302\" y=\"319.83\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-38\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6c8ebf;strokeWidth=4;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=14;fontColor=default;labelBackgroundColor=default;endArrow=classic;fillColor=#dae8fc;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"448\" y=\"319.76\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"505\" y=\"319.76\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-39\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;endArrow=none;endFill=0;strokeWidth=2;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\" source=\"UBkk9TLd829fEGm204lc-40\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;Array as=\"points\"&gt;\n                            &lt;mxPoint x=\"430\" y=\"450\"/&gt;\n                        &lt;/Array&gt;\n                        &lt;mxPoint x=\"245\" y=\"450\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-40\" value=\"\" style=\"verticalLabelPosition=middle;verticalAlign=middle;html=1;shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;size=0.07;arcSize=3;flipV=1;labelPosition=center;align=center;rotation=-90;fillColor=#fff2cc;strokeColor=#000000;strokeWidth=2;gradientColor=#FFFFFF;gradientDirection=east;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"335\" y=\"300\" width=\"190\" height=\"40\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-41\" value=\"&amp;lt;div&amp;gt;Registers&amp;lt;/div&amp;gt;&amp;lt;div&amp;gt;&amp;amp;nbsp;Bank&amp;lt;/div&amp;gt;\" style=\"rounded=0;whiteSpace=wrap;html=1;fontFamily=Inter;fillColor=#d5e8d4;strokeColor=#000000;fontSize=14;shadow=0;comic=0;strokeWidth=2;container=0;points=[[0,0,0,0,0],[0,0.25,0,0,0],[0,0.5,0,0,0],[0,0.75,0,0,0],[0,1,0,0,0],[0.25,0,0,0,0],[0.25,1,0,0,0],[0.5,0,0,0,0],[0.5,1,0,0,0],[0.75,0,0,0,0],[0.75,1,0,0,0],[1,0,0,0,0],[1,0.25,0,0,0],[1,0.5,0,0,0],[1,0.75,0,0,0],[1,1,0,0,0]];gradientDirection=north;gradientColor=#FFFFFF;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"505\" y=\"160\" width=\"160\" height=\"320\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-42\" style=\"edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6c8ebf;strokeWidth=4;align=center;verticalAlign=middle;fontFamily=Inter;fontSize=14;fontColor=default;labelBackgroundColor=default;endArrow=classic;fillColor=#dae8fc;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" edge=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry relative=\"1\" as=\"geometry\"&gt;\n                        &lt;mxPoint x=\"245\" y=\"240\" as=\"sourcePoint\"/&gt;\n                        &lt;mxPoint x=\"329\" y=\"292\" as=\"targetPoint\"/&gt;\n                    &lt;/mxGeometry&gt;\n                &lt;/mxCell&gt;\n                &lt;mxCell id=\"UBkk9TLd829fEGm204lc-43\" value=\"&amp;amp;nbsp; &amp;amp;nbsp; REGFILE\" style=\"rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;align=left;horizontal=1;fontSize=16;fontStyle=1;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter;\" vertex=\"1\" parent=\"UBkk9TLd829fEGm204lc-1\"&gt;\n                    &lt;mxGeometry x=\"185\" y=\"660\" width=\"760\" height=\"60\" as=\"geometry\"/&gt;\n                &lt;/mxCell&gt;\n            &lt;/root&gt;\n        &lt;/mxGraphModel&gt;\n    &lt;/diagram&gt;\n    &lt;/mxfile&gt;"}' style="max-width:100%;border:1px solid transparent;"></div></p>
+<hr/>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Address</th>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#reg_git_id_msb">REG_GIT_ID_MSB</a></td>
+<td>0x00</td>
+<td>R</td>
+<td>16 MSB of the git ID containing the sources for the bitstream generation</td>
+</tr>
+<tr>
+<td><a href="#reg_git_id_lsb">REG_GIT_ID_LSB</a></td>
+<td>0x01</td>
+<td>R</td>
+<td>16 LSB of the git ID containing the sources for the bitstream generation</td>
+</tr>
+<tr>
+<td><a href="#reg_12">REG_12</a></td>
+<td>0x02</td>
+<td>R</td>
+<td>Internal register 1</td>
+</tr>
+<tr>
+<td><a href="#reg_34">REG_34</a></td>
+<td>0x03</td>
+<td>R</td>
+<td>Internal register 2</td>
+</tr>
+<tr>
+<td><a href="#reg_56">REG_56</a></td>
+<td>0x04</td>
+<td>R</td>
+<td>Internal register 3</td>
+</tr>
+<tr>
+<td><a href="#reg_78">REG_78</a></td>
+<td>0x05</td>
+<td>R</td>
+<td>Internal register 4</td>
+</tr>
+<tr>
+<td><a href="#reg_spi_tx">REG_SPI_TX</a></td>
+<td>0x06</td>
+<td>RW</td>
+<td>Register controlling the SPI data to send</td>
+</tr>
+<tr>
+<td><a href="#reg_spi_rx">REG_SPI_RX</a></td>
+<td>0x07</td>
+<td>R</td>
+<td>Register containing the SPI slave data</td>
+</tr>
+<tr>
+<td><a href="#reg_vga_ctrl">REG_VGA_CTRL</a></td>
+<td>0x08</td>
+<td>RW</td>
+<td>Register controlling the output color of the VGA module</td>
+</tr>
+<tr>
+<td><a href="#reg_9a">REG_9A</a></td>
+<td>0xAB</td>
+<td>R</td>
+<td>Internal register 5</td>
+</tr>
+<tr>
+<td><a href="#reg_cd">REG_CD</a></td>
+<td>0xAC</td>
+<td>R</td>
+<td>Internal register 6</td>
+</tr>
+<tr>
+<td><a href="#reg_ef">REG_EF</a></td>
+<td>0xDC</td>
+<td>R</td>
+<td>Internal register 7</td>
+</tr>
+<tr>
+<td><a href="#reg_switches">REG_SWITCHES</a></td>
+<td>0xB1</td>
+<td>R</td>
+<td>Status from the input switches</td>
+</tr>
+<tr>
+<td><a href="#reg_led">REG_LED</a></td>
+<td>0xEF</td>
+<td>RW</td>
+<td>Register with LSB bit writable controlling an LED</td>
+</tr>
+<tr>
+<td><a href="#reg_16_bits">REG_16_BITS</a></td>
+<td>0xFF</td>
+<td>RW</td>
+<td>Register with all bits writable</td>
+</tr>
+</tbody>
+</table>
+<p>Where:</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>R</strong></td>
+<td>Read-only: Register value can be read but not modified via write operations</td>
+</tr>
+<tr>
+<td><strong>RW</strong></td>
+<td>Read-Write: Register value can be both read and written</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2 id="detailed-register-descriptions">Detailed register descriptions<a class="headerlink" href="#detailed-register-descriptions" title="Permanent link">¶</a></h2>
+<h3 id="reg_git_id_msb">REG_GIT_ID_MSB<a class="headerlink" href="#reg_git_id_msb" title="Permanent link">¶</a></h3>
+<p>16 MSB of the git ID containing the sources for the bitstream generation</p>
+<ul>
+<li>Address: <code>0x00</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "GIT_ID_MSB",
+            "bits": 16,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80
+    }
+}
+</script>
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:0</td>
+<td>0x0</td>
+<td>GIT_ID_MSB</td>
+<td>Most significant 16 bits of the Git commit ID</td>
+</tr>
+</tbody>
+</table>
+<h3 id="reg_git_id_lsb">REG_GIT_ID_LSB<a class="headerlink" href="#reg_git_id_lsb" title="Permanent link">¶</a></h3>
+<p>16 LSB of the git ID containing the sources for the bitstream generation</p>
+<ul>
+<li>Address: <code>0x01</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "GIT_ID_LSB",
+            "bits": 16,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80
+    }
+}
+</script>
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:0</td>
+<td>0x0</td>
+<td>GIT_ID_LSB</td>
+<td>Least significant 16 bits of the Git commit ID</td>
+</tr>
+</tbody>
+</table>
+<h3 id="reg_12">REG_12<a class="headerlink" href="#reg_12" title="Permanent link">¶</a></h3>
+<p>Internal register 1</p>
+<ul>
+<li>Address: <code>0x02</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "0x1212",
+            "bits": 16,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:0</td>
+<td>0x1212</td>
+<td></td>
+<td>Constant</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_34">REG_34<a class="headerlink" href="#reg_34" title="Permanent link">¶</a></h3>
+<p>Internal register 2</p>
+<ul>
+<li>Address: <code>0x03</code></li>
+<li>Reset default: <code>0x3434</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "0x3434",
+            "bits": 16,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:0</td>
+<td>0x3434</td>
+<td>-</td>
+<td>Constant</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_56">REG_56<a class="headerlink" href="#reg_56" title="Permanent link">¶</a></h3>
+<p>Internal register 3</p>
+<ul>
+<li>Address: <code>0x04</code></li>
+<li>Reset default: <code>0x5656</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "0x5656",
+            "bits": 16,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:0</td>
+<td>0x5656</td>
+<td>-</td>
+<td>Constant</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_spi_tx">REG_SPI_TX<a class="headerlink" href="#reg_spi_tx" title="Permanent link">¶</a></h3>
+<p>SPI TX data register</p>
+<ul>
+<li>Address: <code>0x06</code></li>
+<li>Reset default: <code>0x0000</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "TX_DATA",
+            "bits": 8,
+            "attr": [
+                "rw"
+            ],
+            "rotate": 0,
+            "type": 3
+        },
+        {
+            "name": "TX_DATA_VALID",
+            "bits": 1,
+            "attr": [
+                "rw"
+            ],
+            "rotate": -90,
+            "type": 3
+        },
+        {
+            "name": "Reserved",
+            "bits": 7,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 2
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:9</td>
+<td>0x0</td>
+<td>-</td>
+<td>Reserved</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0x0</td>
+<td>TX_DATA_VALID</td>
+<td>0 -&gt; 1 start the SPI transaction</td>
+</tr>
+<tr>
+<td>7:0</td>
+<td>0x0</td>
+<td>TX_DATA</td>
+<td>TX data to be sent</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_spi_rx">REG_SPI_RX<a class="headerlink" href="#reg_spi_rx" title="Permanent link">¶</a></h3>
+<p>SPI RX data register</p>
+<ul>
+<li>Address: <code>0x07</code></li>
+<li>Reset default: <code>0x0000</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "RX_DATA",
+            "bits": 8,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        },
+        {
+            "name": "Reserved",
+            "bits": 8,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 2
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:8</td>
+<td>0x0</td>
+<td>-</td>
+<td>Reserved</td>
+</tr>
+<tr>
+<td>7:0</td>
+<td>0x0</td>
+<td>RX_DATA</td>
+<td>Received data from SPI slave</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_vga_ctrl">REG_VGA_CTRL<a class="headerlink" href="#reg_vga_ctrl" title="Permanent link">¶</a></h3>
+<p>VGA colors data register</p>
+<ul>
+<li>Address: <code>0x08</code></li>
+<li>Reset default: <code>0x00F0</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "BLUE",
+            "bits": 4,
+            "attr": [
+                "rw"
+            ],
+            "rotate": 0,
+            "type": 3
+        },
+        {
+            "name": "GREEN",
+            "bits": 4,
+            "attr": [
+                "rw"
+            ],
+            "rotate": 0,
+            "type": 3
+        },
+        {
+            "name": "RED",
+            "bits": 4,
+            "attr": [
+                "rw"
+            ],
+            "rotate": 0,
+            "type": 3
+        },
+        {
+            "name": "Reserved",
+            "bits": 4,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 2
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:12</td>
+<td>0x0</td>
+<td>-</td>
+<td>Reserved</td>
+</tr>
+<tr>
+<td>11:8</td>
+<td>0x0</td>
+<td>RED</td>
+<td>Red channel</td>
+</tr>
+<tr>
+<td>7:4</td>
+<td>0xF</td>
+<td>GREEN</td>
+<td>Green channel</td>
+</tr>
+<tr>
+<td>3:0</td>
+<td>0x0</td>
+<td>BLUE</td>
+<td>Blue channel</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_78">REG_78<a class="headerlink" href="#reg_78" title="Permanent link">¶</a></h3>
+<p>Internal register 4</p>
+<ul>
+<li>Address: <code>0x05</code></li>
+<li>Reset default: <code>0x7878</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "0x7878",
+            "bits": 16,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:0</td>
+<td>0x7878</td>
+<td>-</td>
+<td>Constant</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_9a">REG_9A<a class="headerlink" href="#reg_9a" title="Permanent link">¶</a></h3>
+<p>Internal register 5</p>
+<ul>
+<li>Address: <code>0xAB</code></li>
+<li>Reset default: <code>0x9A9A</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "0x9A9A",
+            "bits": 16,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:0</td>
+<td>0x9A9A</td>
+<td>-</td>
+<td>Constant</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_cd">REG_CD<a class="headerlink" href="#reg_cd" title="Permanent link">¶</a></h3>
+<p>Internal register 6</p>
+<ul>
+<li>Address: <code>0xAC</code></li>
+<li>Reset default: <code>0xCDCD</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "0xCDCD",
+            "bits": 16,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:0</td>
+<td>0xCDCD</td>
+<td>-</td>
+<td>Constant</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_ef">REG_EF<a class="headerlink" href="#reg_ef" title="Permanent link">¶</a></h3>
+<p>Internal register 7</p>
+<ul>
+<li>Address: <code>0xDC</code></li>
+<li>Reset default: <code>0xEFEF</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "0xEFEF",
+            "bits": 16,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:0</td>
+<td>0xEFEF</td>
+<td>-</td>
+<td>Constant</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_switches">REG_SWITCHES<a class="headerlink" href="#reg_switches" title="Permanent link">¶</a></h3>
+<p>Register returning the status of the input switches</p>
+<ul>
+<li>Address: <code>0xB1</code></li>
+<li>Reset default: <code>0x0000</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "SWITCH_0",
+            "bits": 1,
+            "attr": [
+                "ro"
+            ],
+            "rotate": -90,
+            "type": 3
+        },
+        {
+            "name": "SWITCH_1",
+            "bits": 1,
+            "attr": [
+                "ro"
+            ],
+            "rotate": -90,
+            "type": 3
+        },
+        {
+            "name": "SWITCH_2",
+            "bits": 1,
+            "attr": [
+                "ro"
+            ],
+            "rotate": -90,
+            "type": 3
+        },
+        {
+            "name": "Reserved",
+            "bits": 13,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 2
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:3</td>
+<td>0x0</td>
+<td>-</td>
+<td>Reserved</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0x0</td>
+<td>SWITCH_2</td>
+<td>Signal from PAD_I_SWITCH_2</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0x0</td>
+<td>SWITCH_1</td>
+<td>Signal from PAD_I_SWITCH_1</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0x0</td>
+<td>SWITCH_0</td>
+<td>Signal from PAD_I_SWITCH_0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_led">REG_LED<a class="headerlink" href="#reg_led" title="Permanent link">¶</a></h3>
+<p>Register with LSB bit writable controlling an LED</p>
+<ul>
+<li>Address: <code>0xEF</code></li>
+<li>Reset default: <code>0x0001</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "LED_0",
+            "bits": 1,
+            "attr": [
+                "rw"
+            ],
+            "rotate": -90,
+            "type": 3
+        },
+        {
+            "name": "Reserved",
+            "bits": 15,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 2
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:1</td>
+<td>0x0</td>
+<td>-</td>
+<td>Reserved</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0x1</td>
+<td>LED_0</td>
+<td>Writable bit</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="reg_16_bits">REG_16_BITS<a class="headerlink" href="#reg_16_bits" title="Permanent link">¶</a></h3>
+<p>Register with all bits writable</p>
+<ul>
+<li>Address: <code>0xFF</code></li>
+<li>Reset default: <code>0x0000</code></li>
+</ul>
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "DATA",
+            "bits": 16,
+            "attr": [
+                "rw"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80
+    }
+}
+</script>
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Reset</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:0</td>
+<td>0x0</td>
+<td>DATA</td>
+<td>16-bit writable data field</td>
+</tr>
+</tbody>
+</table>
+</div>
+</article>
+</div>
+<script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+<div class="md-copyright__highlight">
+      Copyright © 2026 Timothée Charrier
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<div class="md-progress" data-md-component="progress" role="progressbar"></div>
+<script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["announce.dismiss", "content.code.annotate", "content.code.copy", "content.tabs.link", "header.autohide", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.suggest", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+<script src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js"></script>
+<script src="../../../assets/javascripts/onload-events.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-chtml.min.js"></script>
+<script src="https://viewer.diagrams.net/js/viewer-static.min.js"></script></body>
+</html>
