@@ -24,7 +24,7 @@ repos:
 
     # Python hooks
     - repo: https://github.com/astral-sh/ruff-pre-commit
-      rev: v0.14.5
+      rev: v0.15.0
       hooks:
           - id: ruff-check
             args: [--fix]
@@ -41,7 +41,7 @@ repos:
                 - --configuration=lint/config/.vsg.yaml
 
     - repo: https://github.com/DavidAnson/markdownlint-cli2
-      rev: v0.19.1
+      rev: v0.20.0
       hooks:
           - id: markdownlint-cli2
             args: ["--fix", "--config", "lint/config/.markdownlint.yaml"]
