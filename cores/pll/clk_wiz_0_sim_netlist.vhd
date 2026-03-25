@@ -1,9 +1,9 @@
 -- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -- Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
--- Date        : Thu Jan  8 11:59:15 2026
--- Host        : L-6R7WDX3 running 64-bit Ubuntu 24.04.3 LTS
+-- Tool Version: Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
+-- Date        : Wed Mar 25 22:33:36 2026
+-- Host        : fedora running 64-bit unknown
 -- Command     : write_vhdl -force -mode funcsim
 --               /home/tim/projects/uart/synthesis/uart/uart.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.vhdl
 -- Design      : clk_wiz_0
@@ -15,7 +15,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
-library UNIFAST;
 entity clk_wiz_0_clk_wiz is
   port (
     clk_out1 : out STD_LOGIC;
@@ -74,7 +73,7 @@ clkout2_buf: unisim.vcomponents.BUFG
       I => clk_out2_clk_wiz_0,
       O => clk_out2
     );
-plle2_adv_inst: entity UNIFAST.PLLE2_ADV
+plle2_adv_inst: unisim.vcomponents.PLLE2_ADV
     generic map(
       BANDWIDTH => "OPTIMIZED",
       CLKFBOUT_MULT => 13,
