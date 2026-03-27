@@ -35,6 +35,7 @@
 -- 1.1      12/10/2025  Timothee Charrier   Update UART_MODEL interface names
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high. Add VGA horizontal and
 --                                          vertical timings test.
+-- /!\ MODIFIED CODE, SEE GITHUB FOR ORIGINAL VERSION: https://github.com/CharrierTim/uart /!\
 -- =====================================================================================================================
 
 library ieee;
@@ -72,7 +73,8 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     -- =================================================================================================================
 
     -- DUT signals
-    signal tb_pad_i_clk           : std_logic;
+    signal tb_pad_i_sys_clk       : std_logic;
+    signal tb_pad_i_vga_clk       : std_logic;
     signal tb_pad_i_rst_p         : std_logic;
     signal tb_pad_i_uart_rx       : std_logic;
     signal tb_pad_o_uart_tx       : std_logic;
@@ -124,7 +126,8 @@ begin
             G_GIT_ID => C_GIT_ID
         )
         port map (
-            PAD_I_CLK       => tb_pad_i_clk,
+            PAD_I_SYS_CLK   => tb_pad_i_sys_clk,
+            PAD_I_VGA_CLK   => tb_pad_i_vga_clk,
             PAD_I_RST_P     => tb_pad_i_rst_p,
             PAD_I_UART_RX   => tb_i_uart_rx,
             PAD_O_UART_TX   => tb_pad_o_uart_tx,
@@ -188,16 +191,29 @@ begin
 
     p_clock_gen : process is
     begin
-        tb_pad_i_clk <= '0';
+        tb_pad_i_sys_clk <= '0';
 
         l_clock_gen : loop
             wait for C_CLK_PERIOD / 2;
-            tb_pad_i_clk <= '1';
+            tb_pad_i_sys_clk <= '1';
             wait for C_CLK_PERIOD / 2;
-            tb_pad_i_clk <= '0';
+            tb_pad_i_sys_clk <= '0';
         end loop l_clock_gen;
 
     end process p_clock_gen;
+
+    p_vga_clock_gen : process is
+    begin
+        tb_pad_i_vga_clk <= '0';
+
+        l_vga_clock_gen : loop
+            wait for C_VGA_CLK_PERIOD / 2;
+            tb_pad_i_vga_clk <= '1';
+            wait for C_VGA_CLK_PERIOD / 2;
+            tb_pad_i_vga_clk <= '0';
+        end loop l_vga_clock_gen;
+
+    end process p_vga_clock_gen;
 
     -- =================================================================================================================
     -- UART TIMINGS VERIFICATION

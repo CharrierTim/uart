@@ -35,6 +35,7 @@
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      17/10/2025  Timothee Charrier   Initial release
 ## 2.0      12/01/2026  Timothee Charrier   Update entire interface
+## /!\ MODIFIED CODE, SEE GITHUB FOR ORIGINAL VERSION: https://github.com/CharrierTim/uart /!\
 ## =====================================================================================================================
 
 import sys
@@ -92,7 +93,6 @@ OLO.add_compile_option(name="nvc.a_flags", value=["--relaxed"])
 # Add the source files to the library
 LIB_SRC: Library = VU.add_library(library_name="lib_rtl")
 LIB_SRC.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
-LIB_SRC.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
@@ -114,9 +114,6 @@ if args.coverage:
 ## =====================================================================================================================
 
 simulator.attach(VU).configure()
-
-simulator.add_library(library_name="unisim")
-simulator.add_library(library_name="unifast")
 
 ## =====================================================================================================================
 # Run

@@ -39,6 +39,7 @@
 --                                          update the VGA timings to 1024*768@60Hz.
 -- 2.0      14/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high and now uses synchronous
 --                                          async reset.
+-- /!\ MODIFIED CODE, SEE GITHUB FOR ORIGINAL VERSION: https://github.com/CharrierTim/uart /!\
 -- =====================================================================================================================
 
 library ieee;
@@ -58,7 +59,8 @@ entity TOP_FPGA is
     );
     port (
         -- Clock and reset
-        PAD_I_CLK       : in    std_logic;
+        PAD_I_SYS_CLK   : in    std_logic;
+        PAD_I_VGA_CLK   : in    std_logic;
         PAD_I_RST_P     : in    std_logic;
 
         -- UART
@@ -131,9 +133,6 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- =================================================================================================================
 
     -- Internal reset and clock
-    signal internal_clk             : std_logic;
-    signal vga_clk                  : std_logic;
-    signal pll_locked               : std_logic;
     signal intermediate_rst_p       : std_logic;
     signal internal_sys_rst_p       : std_logic;
     signal internal_vga_rst_p       : std_logic;
@@ -162,39 +161,13 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- VGA control
     signal reg_vga_colors           : std_logic_vector(12 - 1 downto 0);
 
-    -- =================================================================================================================
-    -- COMPONENTS
-    -- =================================================================================================================
-
-    -- vsg_off
-    component clk_wiz_0 is
-        port (
-            CLK_OUT1          : out   std_logic;
-            CLK_OUT2          : out   std_logic;
-            RESET             : in    std_logic;
-            LOCKED            : out   std_logic;
-            CLK_IN1           : in    std_logic
-        );
-    end component;
-    -- vsg_on
-
 begin
 
     -- =================================================================================================================
     -- PLL and positive reset logic
     -- =================================================================================================================
 
-    inst_pll : component clk_wiz_0
-        port map (
-            clk_out1 => internal_clk,
-            clk_out2 => vga_clk,
-            reset    => PAD_I_RST_P,
-            locked   => pll_locked,
-            clk_in1  => PAD_I_CLK
-        );
-
-    -- Toggle reset from BTN or when PLL is unlocked
-    intermediate_rst_p <= PAD_I_RST_P or (not pll_locked);
+    -- /!\ DIRTY CODE, SEE GITHUB FOR ORIGINAL VERSION: https://github.com/CharrierTim/uart /!\
 
     -- System clock domain positive reset generation
     inst_olo_base_sys_reset_gen : entity olo.olo_base_reset_gen
@@ -205,9 +178,9 @@ begin
             SYNCSTAGES_G       => C_RESYNC_NB_STAGES -- Number of synchronization stages
         )
         port map (
-            Clk    => internal_clk,
+            Clk    => PAD_I_SYS_CLK,
             RstOut => internal_sys_rst_p,
-            RstIn  => intermediate_rst_p
+            RstIn  => PAD_I_RST_P
         );
 
     -- VGA clock domain positive reset generation
@@ -219,9 +192,9 @@ begin
             SYNCSTAGES_G       => C_RESYNC_NB_STAGES
         )
         port map (
-            Clk    => vga_clk,
+            Clk    => PAD_I_VGA_CLK,
             RstOut => internal_vga_rst_p,
-            RstIn  => intermediate_rst_p
+            RstIn  => PAD_I_RST_P
         );
 
     -- =================================================================================================================
@@ -242,7 +215,7 @@ begin
             SYNCSTAGES_G => C_RESYNC_NB_STAGES
         )
         port map (
-            Clk       => internal_clk,
+            Clk       => PAD_I_SYS_CLK,
             Rst       => internal_sys_rst_p,
             DataAsync => async_inputs_slv,
             DataSync  => sync_inputs_slv
@@ -259,7 +232,7 @@ begin
             G_SAMPLING_RATE => C_SAMPLING_RATE
         )
         port map (
-            CLK               => internal_clk,
+            CLK               => PAD_I_SYS_CLK,
             RST_P             => internal_sys_rst_p,
             I_UART_RX         => PAD_I_UART_RX,
             O_UART_TX         => PAD_O_UART_TX,
@@ -282,7 +255,7 @@ begin
             G_GIT_ID_LSB => G_GIT_ID(15 downto  0)
         )
         port map (
-            CLK                 => internal_clk,
+            CLK                 => PAD_I_SYS_CLK,
             RST_P               => internal_sys_rst_p,
             I_SWITCHES          => sync_inputs_slv,
             I_SPI_RX_DATA       => spi_rx_data,
@@ -313,7 +286,7 @@ begin
             G_CLK_PHASE    => C_CLK_PHASE
         )
         port map (
-            CLK             => internal_clk,
+            CLK             => PAD_I_SYS_CLK,
             RST_P           => internal_sys_rst_p,
             O_SCLK          => PAD_O_SCLK,
             O_MOSI          => PAD_O_MOSI,
@@ -342,11 +315,11 @@ begin
         )
         port map (
             -- System clock domain
-            CLK_SYS         => internal_clk,
+            CLK_SYS         => PAD_I_SYS_CLK,
             RST_SYS_P       => internal_sys_rst_p,
             I_MANUAL_COLORS => reg_vga_colors,
             -- VGA clock domain
-            CLK_VGA         => vga_clk,
+            CLK_VGA         => PAD_I_VGA_CLK,
             RST_VGA_P       => internal_vga_rst_p,
             O_HSYNC         => PAD_O_VGA_HSYNC,
             O_VSYNC         => PAD_O_VGA_VSYNC,
