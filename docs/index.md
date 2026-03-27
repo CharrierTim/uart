@@ -42,12 +42,12 @@ Synthesis and implementation are done with Vivado.
 
 ## Tools Versions
 
-| Tool       | Version                                                  |
-| ---------- | -------------------------------------------------------- |
-| **NVC**    | `nvc 1.18.2 (1.18.2. r0.g8893318a5) (Using LLVM 18.1.3)` |
-| **Vunit**  | `commit 1d9f0bdbf917dd486ae7f0902d54598a0b206719`        |
-| **VSG**    | `VHDL Style Guide (VSG) version: 3.35.0`                 |
-| **Vivado** | `2025.1`                                                 |
+| Tool       | Version                                                       |
+| ---------- | ------------------------------------------------------------- |
+| **NVC**    | `nvc 1.19.3 (1.19.3.r0.g72fecb933) (Using LLVM 21.1.8)`       |
+| **Vunit**  | `5.0.0.dev11 commit 1197afd44175df0695eb0bf8d6dd49a4af88b469` |
+| **VSG**    | `VHDL Style Guide (VSG) version: 3.35.0`                      |
+| **Vivado** | `2025.2`                                                      |
 
 ## Clocking Configuration
 
