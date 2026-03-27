@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - **Python**:  Version 3.10 or higher
-- [**NVC**](https://github.com/nickg/nvc/releases/tag/r1.18.2): Version r1.18.2
+- [**NVC**](https://github.com/nickg/nvc/releases/tag/r1.19.3): Version r1.19.3
 - **Vivado**: Version 2025.1
 
 ## Installation
