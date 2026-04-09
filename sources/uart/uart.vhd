@@ -36,6 +36,7 @@
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- 2.1      22/01/2026  Timothee Charrier   Improve FSM readability by adding a soft reset instead of using a condition
 --                                          in clocked p_fsm_seq process.
+-- 2.2      09/04/2026  Timothee Charrier   Refactor soft reset sequential process to be more clear and concise.
 -- =====================================================================================================================
 
 library ieee;
@@ -275,37 +276,40 @@ begin
 
         elsif rising_edge(CLK) then
 
-            -- Transition to the next state.
-            current_state <= next_state;
-
-            -- RX byte count
-            if (current_state = STATE_IDLE) then
-                rx_byte_count <= (others => '0');
-            elsif (rx_byte_valid = '1') then
-                rx_byte_count <= rx_byte_count + 1;
-            end if;
-
-            -- TX byte count
-            if (current_state = STATE_IDLE) then
-                tx_byte_count         <= (others => '0');
-                tx_byte_to_send_valid <= '0';
-            elsif (
-                   (I_READ_DATA_VALID = '1') -- First byte to send
-                   or
-                   (tx_byte_send = '1')      -- Other bytes to send
-               ) then
-                tx_byte_count         <= tx_byte_count + 1;
-                tx_byte_to_send_valid <= '1';
-            else
-                tx_byte_to_send_valid <= '0';
-            end if;
-
             -- Synchronous soft reset
             if (rst_soft_p = '1') then
                 current_state         <= STATE_IDLE;
                 rx_byte_count         <= (others => '0');
                 tx_byte_count         <= (others => '0');
                 tx_byte_to_send_valid <= '0';
+
+            else
+
+                -- Transition to the next state.
+                current_state <= next_state;
+
+                -- RX byte count
+                if (current_state = STATE_IDLE) then
+                    rx_byte_count <= (others => '0');
+                elsif (rx_byte_valid = '1') then
+                    rx_byte_count <= rx_byte_count + 1;
+                end if;
+
+                -- TX byte count
+                if (current_state = STATE_IDLE) then
+                    tx_byte_count         <= (others => '0');
+                    tx_byte_to_send_valid <= '0';
+                elsif (
+                       (I_READ_DATA_VALID = '1') -- First byte to send
+                       or
+                       (tx_byte_send = '1')      -- Other bytes to send
+                   ) then
+                    tx_byte_count         <= tx_byte_count + 1;
+                    tx_byte_to_send_valid <= '1';
+                else
+                    tx_byte_to_send_valid <= '0';
+                end if;
+
             end if;
 
         end if;
