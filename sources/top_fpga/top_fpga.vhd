@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 2.0
+-- @version 2.1
 -- @brief   Top-Level of the FPGA
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -39,6 +39,7 @@
 --                                          update the VGA timings to 1024*768@60Hz.
 -- 2.0      14/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high and now uses synchronous
 --                                          async reset.
+-- 2.1      11/04/2026  Timothee Charrier   Add GIT_ID flag as generic for the regfile module.
 -- =====================================================================================================================
 
 library ieee;

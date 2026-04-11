@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    regfile_pkg.vhd
--- @version 1.0
+-- @version 2.0
 -- @brief   Package containing the registers addresses and value at reset
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -32,6 +32,8 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
+-- 2.0      14/04/2026  Timothee Charrier   Add GIT_STATUS register and update base addresses for the internal
+--                                          registers.
 -- =====================================================================================================================
 
 library ieee;
