@@ -54,7 +54,8 @@ library lib_rtl;
 
 entity TOP_FPGA is
     generic (
-        G_GIT_ID : std_logic_vector(32 - 1 downto 0) := (others => '0')
+        G_GIT_ID     : std_logic_vector(32 - 1 downto 0) := (others => '0');
+        G_GIT_STATUS : std_logic                         := '0'
     );
     port (
         -- Clock and reset
@@ -279,7 +280,8 @@ begin
     inst_regfile : entity lib_rtl.regfile
         generic map (
             G_GIT_ID_MSB => G_GIT_ID(31 downto 16),
-            G_GIT_ID_LSB => G_GIT_ID(15 downto  0)
+            G_GIT_ID_LSB => G_GIT_ID(15 downto  0),
+            G_GIT_STATUS => G_GIT_STATUS
         )
         port map (
             CLK                 => internal_clk,

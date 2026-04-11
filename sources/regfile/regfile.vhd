@@ -48,7 +48,8 @@ library lib_rtl;
 entity REGFILE is
     generic (
         G_GIT_ID_MSB : std_logic_vector(16 - 1 downto 0);
-        G_GIT_ID_LSB : std_logic_vector(16 - 1 downto 0)
+        G_GIT_ID_LSB : std_logic_vector(16 - 1 downto 0);
+        G_GIT_STATUS : std_logic
     );
     port (
         -- Clock and reset
@@ -156,6 +157,10 @@ begin
                     when C_REG_GIT_ID_LSB_ADDR =>
 
                         reg_read <= G_GIT_ID_LSB;
+
+                    when C_REG_GIT_STATUS_ADDR =>
+
+                        reg_read <= 15b"0" & G_GIT_STATUS;
 
                     when C_REG_12_ADDR =>
 

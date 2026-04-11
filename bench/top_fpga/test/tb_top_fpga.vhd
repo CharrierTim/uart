@@ -121,7 +121,8 @@ begin
 
     dut : entity lib_rtl.top_fpga
         generic map (
-            G_GIT_ID => C_GIT_ID
+            G_GIT_ID     => C_GIT_ID,
+            G_GIT_STATUS => C_GIT_STATUS
         )
         port map (
             PAD_I_CLK       => tb_pad_i_clk,
@@ -750,6 +751,7 @@ begin
 
                 proc_uart_check_default_value(C_REG_GIT_ID_MSB);
                 proc_uart_check_default_value(C_REG_GIT_ID_LSB);
+                proc_uart_check_default_value(C_REG_GIT_STATUS);
                 proc_uart_check_default_value(C_REG_12);
                 proc_uart_check_default_value(C_REG_34);
                 proc_uart_check_default_value(C_REG_56);
@@ -767,6 +769,7 @@ begin
 
                 proc_uart_check_read_only(C_REG_GIT_ID_MSB);
                 proc_uart_check_read_only(C_REG_GIT_ID_LSB);
+                proc_uart_check_read_only(C_REG_GIT_STATUS);
                 proc_uart_check_read_only(C_REG_12);
                 proc_uart_check_read_only(C_REG_34);
                 proc_uart_check_read_only(C_REG_56);
