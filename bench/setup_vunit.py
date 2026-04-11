@@ -35,6 +35,7 @@
 ## 1.0      01/11/2025  Timothee Charrier   Initial release
 ## 2.0      07/01/2026  Timothee Charrier   Major refactor: Vunit now supports NVC coverage, no need for a custom
 ##                                          interface.
+## 2.1      11/04/2026  Timothee Charrier   Add Unisim and Unifast library path retrieval methods
 ## =====================================================================================================================
 
 import logging
@@ -98,6 +99,87 @@ class Simulator(ABC):
         """
         self.vu = vu
         return self
+
+    def get_vivado_path(self) -> Path:
+        """Get the path to the Vivado installation.
+
+        Which command returns the path to the Vivado executable.
+        The executable is usually located under `vivado_path/202x.x/bin/vivado`.
+        This method returns the parent directory of `bin`, which is the root of the Vivado installation.
+
+        Returns
+        -------
+        Path
+            The path to the Vivado installation.
+        """
+        vivado_path: str | None = shutil.which("vivado")
+        if not vivado_path:
+            LOGGER.warning("Vivado executable not found in PATH!")
+            return Path()
+
+        return Path(vivado_path).parent.parent.parent
+
+    def get_unisim_vcomp_library_path(self) -> Path:
+        """Get the path for the unisim VCOMP file compiled in unisim library.
+
+        Usually located under `vivado_path/data/vhdl/src/unisims/unisim_VCOMP.vhd`.
+
+        Returns
+        -------
+        Path
+            The path to the library file.
+        """
+        vivado_path: Path = self.get_vivado_path()
+        unisim_vcomp_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VCOMP.vhd"
+
+        if not unisim_vcomp_path.exists():
+            LOGGER.warning("Unisim VCOMP file not found at %s", unisim_vcomp_path)
+            return Path()
+
+        return unisim_vcomp_path
+
+    def get_unisim_vpkg_library_path(self) -> Path:
+        """Get the path for the unisim VPKG file compiled in unisim library.
+
+        Usually located under `vivado_path/data/vhdl/src/unisims/unisim_VPKG.vhd`.
+
+        Returns
+        -------
+        Path
+            The path to the library file.
+        """
+        vivado_path: Path = self.get_vivado_path()
+        unisim_vpkg_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VPKG.vhd"
+
+        if not unisim_vpkg_path.exists():
+            LOGGER.warning("Unisim VPKG file not found at %s", unisim_vpkg_path)
+            return Path()
+
+        return unisim_vpkg_path
+
+    def get_unifast_library_path(self) -> Path:
+        """Get the path for the unifast library files compiled in the unifast library.
+
+        Usually located under `vivado_path/data/vhdl/src/unifast/primitive/*.vhd`.
+
+        Parameters
+        ----------
+        library_name : str
+            Name of the library (e.g., 'unisim', 'unifast').
+
+        Returns
+        -------
+        Path
+            The path to the library.
+        """
+        vivado_path: Path = self.get_vivado_path()
+        unifast_path: Path = vivado_path / "data" / "vhdl" / "src" / "unifast" / "primitive"
+
+        if not unifast_path.exists():
+            LOGGER.warning("Unifast VCOMP file not found at %s", unifast_path)
+            return Path()
+
+        return unifast_path / "*.vhd"
 
     def add_library(self, library_name: str, library_path: str | None = None) -> "Simulator":
         """Add an external library to VUnit.
