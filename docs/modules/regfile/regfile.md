@@ -10,11 +10,11 @@ Internal FPGA registers with read/write registers accessible via the UART line.
 
 <div class="generics-table" markdown="1">
 
-| Generic Name   | Type         | Default Value | Description                                                               |
-| -------------- | ------------ | ------------- | ------------------------------------------------------------------------- |
-| `G_GIT_ID_MSB` | vector[15:0] | 0x0000        | 16 MSB of the git ID containing the sources for the bitstream generation  |
-| `G_GIT_ID_LSB` | vector[15:0] | 0x0000        | 16 LSB of the git ID containing the sources for the bitstream generation  |
-| `G_GIT_STATUS` | std_logic    | 0b0           | Git status flag, 0 if no uncommitted changes (dirty), 1 otherwise (clean) |
+| Generic Name   | Type         | Default Value | Description                                                              |
+| -------------- | ------------ | ------------- | ------------------------------------------------------------------------ |
+| `G_GIT_ID_MSB` | vector[15:0] | 0x0000        | 16 MSB of the git ID containing the sources for the bitstream generation |
+| `G_GIT_ID_LSB` | vector[15:0] | 0x0000        | 16 LSB of the git ID containing the sources for the bitstream generation |
+| `G_GIT_STATUS` | std_logic    | 0b0           | Git status flag, 1 if dirty, 0 if clean                                  |
 
 </div>
 
@@ -96,24 +96,24 @@ A simplified view of the regfile module:
 
 ## Summary
 
-| Name                              | Address | Mode | Description                                                               |
-| --------------------------------- | ------- | ---- | ------------------------------------------------------------------------- |
-| [REG_GIT_ID_MSB](#reg_git_id_msb) | 0x00    | R    | 16 MSB of the git ID containing the sources for the bitstream generation  |
-| [REG_GIT_ID_LSB](#reg_git_id_lsb) | 0x01    | R    | 16 LSB of the git ID containing the sources for the bitstream generation  |
-| [REG_GIT_STATUS](#reg_git_status) | 0x02    | R    | Git status flag, 0 if no uncommitted changes (dirty), 1 otherwise (clean) |
-| [REG_12](#reg_12)                 | 0x03    | R    | Internal register 1 (for testing purposes)                                |
-| [REG_34](#reg_34)                 | 0x04    | R    | Internal register 2 (for testing purposes)                                |
-| [REG_56](#reg_56)                 | 0x05    | R    | Internal register 3 (for testing purposes)                                |
-| [REG_78](#reg_78)                 | 0x06    | R    | Internal register 4 (for testing purposes)                                |
-| [REG_SPI_TX](#reg_spi_tx)         | 0x07    | RW   | Register controlling the SPI data to send                                 |
-| [REG_SPI_RX](#reg_spi_rx)         | 0x08    | R    | Register containing the SPI slave data                                    |
-| [REG_VGA_CTRL](#reg_vga_ctrl)     | 0x09    | RW   | Register controlling the output color of the VGA module                   |
-| [REG_9A](#reg_9a)                 | 0xAB    | R    | Internal register 5 (for testing purposes)                                |
-| [REG_CD](#reg_cd)                 | 0xAC    | R    | Internal register 6 (for testing purposes)                                |
-| [REG_EF](#reg_ef)                 | 0xDC    | R    | Internal register 7 (for testing purposes)                                |
-| [REG_SWITCHES](#reg_switches)     | 0xB1    | R    | Status from the input switches                                            |
-| [REG_LED](#reg_led)               | 0xEF    | RW   | Register with LSB bit writable controlling an LED                         |
-| [REG_16_BITS](#reg_16_bits)       | 0xFF    | RW   | Register with all bits writable                                           |
+| Name                              | Address | Mode | Description                                                              |
+| --------------------------------- | ------- | ---- | ------------------------------------------------------------------------ |
+| [REG_GIT_ID_MSB](#reg_git_id_msb) | 0x00    | R    | 16 MSB of the git ID containing the sources for the bitstream generation |
+| [REG_GIT_ID_LSB](#reg_git_id_lsb) | 0x01    | R    | 16 LSB of the git ID containing the sources for the bitstream generation |
+| [REG_GIT_STATUS](#reg_git_status) | 0x02    | R    | Git status flag, 1 if dirty, 0 if clean                                  |
+| [REG_12](#reg_12)                 | 0x03    | R    | Internal register 1 (for testing purposes)                               |
+| [REG_34](#reg_34)                 | 0x04    | R    | Internal register 2 (for testing purposes)                               |
+| [REG_56](#reg_56)                 | 0x05    | R    | Internal register 3 (for testing purposes)                               |
+| [REG_78](#reg_78)                 | 0x06    | R    | Internal register 4 (for testing purposes)                               |
+| [REG_SPI_TX](#reg_spi_tx)         | 0x07    | RW   | Register controlling the SPI data to send                                |
+| [REG_SPI_RX](#reg_spi_rx)         | 0x08    | R    | Register containing the SPI slave data                                   |
+| [REG_VGA_CTRL](#reg_vga_ctrl)     | 0x09    | RW   | Register controlling the output color of the VGA module                  |
+| [REG_9A](#reg_9a)                 | 0xAB    | R    | Internal register 5 (for testing purposes)                               |
+| [REG_CD](#reg_cd)                 | 0xAC    | R    | Internal register 6 (for testing purposes)                               |
+| [REG_EF](#reg_ef)                 | 0xDC    | R    | Internal register 7 (for testing purposes)                               |
+| [REG_SWITCHES](#reg_switches)     | 0xB1    | R    | Status from the input switches                                           |
+| [REG_LED](#reg_led)               | 0xEF    | RW   | Register with LSB bit writable controlling an LED                        |
+| [REG_16_BITS](#reg_16_bits)       | 0xFF    | RW   | Register with all bits writable                                          |
 
 Where:
 
@@ -190,8 +190,8 @@ Where:
 
 ### REG_GIT_STATUS
 
-Register indicating the git status of the repository at the time of bitstream generation. If the value is 0, there were
-uncommitted changes in the repository, while if the value is 1, there were no uncommitted changes.
+Register indicating the git status of the repository at the time of bitstream generation. If the value is 1, there were
+uncommitted changes in the repository (dirty), while if the value is 0, there were no uncommitted changes (clean).
 
 - Address: `0x02`
 
