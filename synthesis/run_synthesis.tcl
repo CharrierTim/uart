@@ -23,7 +23,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run_synthesis.tcl
-## @version 1.2
+## @version 1.3
 ## @brief   Synthesis script for Vivado
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -35,6 +35,7 @@
 ## 1.1      05/01/2026  Timothee Charrier   Add VGA controller file
 ## 1.2      09/01/2026  Timothee Charrier   Remove deprecated 'resync_slv' module and add open-logic library.
 ##                                          Add report_bus_skew command and report
+## 1.3      11/04/2026  Timothee Charrier   Add GIT_STATUS generic to the top entity.
 ## =====================================================================================================================
 
 
@@ -136,13 +137,29 @@ foreach source $VHDL_SOURCES {
 }
 
 ## =====================================================================================================================
+# Getting GIT STATUS and checking for uncommitted changes (1 if dirty, 0 if clean)
+## =====================================================================================================================
+
+set git_status_porcelain [exec git status --porcelain]
+if {$git_status_porcelain ne ""} {
+    puts "WARNING: Uncommitted changes detected in the repository."
+    puts "Uncommitted changes:\n$git_status_porcelain"
+}
+
+set GIT_STATUS [expr {$git_status_porcelain eq "" ? 0 : 1}]
+
+## =====================================================================================================================
 # Getting GIT ID for internal registers
 ## =====================================================================================================================
 
 set git_hash [exec git log -1 --pretty=%H]
 set GIT_ID   [string range $git_hash 0 7]
 
-set_property generic "G_GIT_ID=32'h$GIT_ID" [current_fileset]
+## =====================================================================================================================
+# Set the generics for the top entity
+## =====================================================================================================================
+
+set_property generic [list G_GIT_ID=32'h$GIT_ID G_GIT_STATUS=1'b$GIT_STATUS] [current_fileset]
 
 ## =====================================================================================================================
 # Adding constraint

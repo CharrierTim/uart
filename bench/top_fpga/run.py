@@ -35,6 +35,7 @@
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      17/10/2025  Timothee Charrier   Initial release
 ## 2.0      12/01/2026  Timothee Charrier   Update entire interface
+## 2.1      11/04/2026  Timothee Charrier   Add `vhdl_ls` file generation
 ## =====================================================================================================================
 
 import sys
@@ -45,7 +46,9 @@ from vunit import VUnit, VUnitCLI
 from vunit.ui.library import Library
 
 sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
+sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent / "cores" / "open-logic" / "sim").resolve()))
 
+from create_vhdl_ls_config import create_configuration
 from setup_vunit import Simulator, select_simulator
 
 ## =====================================================================================================================
@@ -58,12 +61,14 @@ simulator: Simulator = select_simulator()
 # Define paths
 ## =====================================================================================================================
 
-SRC_ROOT: Path = Path(__file__).parent.parent.parent / "sources"
-CORES_ROOT: Path = Path(__file__).parent.parent.parent / "cores"
-MODEL_ROOT: Path = Path(__file__).parent.parent / "models"
-BENCH_ROOT: Path = Path(__file__).parent / "test"
+THIS_DIR: Path = Path(__file__).resolve().parent
+PRJ_ROOT: Path = THIS_DIR.parent.parent
+SRC_ROOT: Path = PRJ_ROOT / "sources"
+CORES_ROOT: Path = PRJ_ROOT / "cores"
+BENCH_ROOT: Path = THIS_DIR
+MODELS_ROOT: Path = PRJ_ROOT / "bench" / "models"
 
-COVERAGE_SPEC_PATH: Path = Path(__file__).parent / "coverage.spec"
+COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
 
 ## =====================================================================================================================
 # Parse command line arguments with custom --coverage flag
@@ -71,6 +76,7 @@ COVERAGE_SPEC_PATH: Path = Path(__file__).parent / "coverage.spec"
 
 cli = VUnitCLI()
 cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
+cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
 args: Namespace = cli.parse_args()
 
 simulator: Simulator = select_simulator(enable_coverage=args.coverage)
@@ -96,8 +102,8 @@ LIB_SRC.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vh
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
-LIB_BENCH.add_source_files(pattern=MODEL_ROOT / "**" / "*.vhd")
-LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
+LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "**" / "*.vhd")
+LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
 
 ## =====================================================================================================================
 # Configure simulation
@@ -117,6 +123,19 @@ simulator.attach(VU).configure()
 
 simulator.add_library(library_name="unisim")
 simulator.add_library(library_name="unifast")
+
+## =====================================================================================================================
+# Generate vhdl_ls configuration if requested and exit
+## =====================================================================================================================
+
+if args.vhdl_ls:
+    files = [
+        [simulator.get_unisim_vpkg_library_path(), "unisim"],
+        [simulator.get_unisim_vcomp_library_path(), "unisim"],
+        [simulator.get_unifast_library_path(), "unifast"],
+    ]
+    create_configuration(output_path=PRJ_ROOT, vunit_proj=simulator.vu, files=files)
+    sys.exit(0)
 
 ## =====================================================================================================================
 # Run

@@ -1,10 +1,13 @@
 [project]
+dependencies = [
+    "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
+    "rtoml",
+]
+
 name = "uart"
 version = "1.0"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
-dependencies = ["vunit-hdl @ git+https://github.com/VUnit/vunit.git@master"]
-
 [project.optional-dependencies]
 
 all = ["uart[dev]", "uart[docs]"]

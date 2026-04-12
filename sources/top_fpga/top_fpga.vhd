@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 2.0
+-- @version 2.1
 -- @brief   Top-Level of the FPGA
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -39,6 +39,7 @@
 --                                          update the VGA timings to 1024*768@60Hz.
 -- 2.0      14/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high and now uses synchronous
 --                                          async reset.
+-- 2.1      11/04/2026  Timothee Charrier   Add GIT_ID flag as generic for the regfile module.
 -- =====================================================================================================================
 
 library ieee;
@@ -54,7 +55,8 @@ library lib_rtl;
 
 entity TOP_FPGA is
     generic (
-        G_GIT_ID : std_logic_vector(32 - 1 downto 0) := (others => '0')
+        G_GIT_ID     : std_logic_vector(32 - 1 downto 0) := (others => '0');
+        G_GIT_STATUS : std_logic                         := '0'
     );
     port (
         -- Clock and reset
@@ -279,7 +281,8 @@ begin
     inst_regfile : entity lib_rtl.regfile
         generic map (
             G_GIT_ID_MSB => G_GIT_ID(31 downto 16),
-            G_GIT_ID_LSB => G_GIT_ID(15 downto  0)
+            G_GIT_ID_LSB => G_GIT_ID(15 downto  0),
+            G_GIT_STATUS => G_GIT_STATUS
         )
         port map (
             CLK                 => internal_clk,

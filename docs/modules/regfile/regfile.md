@@ -14,6 +14,7 @@ Internal FPGA registers with read/write registers accessible via the UART line.
 | -------------- | ------------ | ------------- | ------------------------------------------------------------------------ |
 | `G_GIT_ID_MSB` | vector[15:0] | 0x0000        | 16 MSB of the git ID containing the sources for the bitstream generation |
 | `G_GIT_ID_LSB` | vector[15:0] | 0x0000        | 16 LSB of the git ID containing the sources for the bitstream generation |
+| `G_GIT_STATUS` | std_logic    | 0b0           | Git status flag, 1 if dirty, 0 if clean                                  |
 
 </div>
 
@@ -99,16 +100,17 @@ A simplified view of the regfile module:
 | --------------------------------- | ------- | ---- | ------------------------------------------------------------------------ |
 | [REG_GIT_ID_MSB](#reg_git_id_msb) | 0x00    | R    | 16 MSB of the git ID containing the sources for the bitstream generation |
 | [REG_GIT_ID_LSB](#reg_git_id_lsb) | 0x01    | R    | 16 LSB of the git ID containing the sources for the bitstream generation |
-| [REG_12](#reg_12)                 | 0x02    | R    | Internal register 1                                                      |
-| [REG_34](#reg_34)                 | 0x03    | R    | Internal register 2                                                      |
-| [REG_56](#reg_56)                 | 0x04    | R    | Internal register 3                                                      |
-| [REG_78](#reg_78)                 | 0x05    | R    | Internal register 4                                                      |
-| [REG_SPI_TX](#reg_spi_tx)         | 0x06    | RW   | Register controlling the SPI data to send                                |
-| [REG_SPI_RX](#reg_spi_rx)         | 0x07    | R    | Register containing the SPI slave data                                   |
-| [REG_VGA_CTRL](#reg_vga_ctrl)     | 0x08    | RW   | Register controlling the output color of the VGA module                  |
-| [REG_9A](#reg_9a)                 | 0xAB    | R    | Internal register 5                                                      |
-| [REG_CD](#reg_cd)                 | 0xAC    | R    | Internal register 6                                                      |
-| [REG_EF](#reg_ef)                 | 0xDC    | R    | Internal register 7                                                      |
+| [REG_GIT_STATUS](#reg_git_status) | 0x02    | R    | Git status flag, 1 if dirty, 0 if clean                                  |
+| [REG_12](#reg_12)                 | 0x03    | R    | Internal register 1 (for testing purposes)                               |
+| [REG_34](#reg_34)                 | 0x04    | R    | Internal register 2 (for testing purposes)                               |
+| [REG_56](#reg_56)                 | 0x05    | R    | Internal register 3 (for testing purposes)                               |
+| [REG_78](#reg_78)                 | 0x06    | R    | Internal register 4 (for testing purposes)                               |
+| [REG_SPI_TX](#reg_spi_tx)         | 0x07    | RW   | Register controlling the SPI data to send                                |
+| [REG_SPI_RX](#reg_spi_rx)         | 0x08    | R    | Register containing the SPI slave data                                   |
+| [REG_VGA_CTRL](#reg_vga_ctrl)     | 0x09    | RW   | Register controlling the output color of the VGA module                  |
+| [REG_9A](#reg_9a)                 | 0xAB    | R    | Internal register 5 (for testing purposes)                               |
+| [REG_CD](#reg_cd)                 | 0xAC    | R    | Internal register 6 (for testing purposes)                               |
+| [REG_EF](#reg_ef)                 | 0xDC    | R    | Internal register 7 (for testing purposes)                               |
 | [REG_SWITCHES](#reg_switches)     | 0xB1    | R    | Status from the input switches                                           |
 | [REG_LED](#reg_led)               | 0xEF    | RW   | Register with LSB bit writable controlling an LED                        |
 | [REG_16_BITS](#reg_16_bits)       | 0xFF    | RW   | Register with all bits writable                                          |
@@ -186,11 +188,55 @@ Where:
 | ---- | ----- | ---------- | ---------------------------------------------- |
 | 15:0 | 0x0   | GIT_ID_LSB | Least significant 16 bits of the Git commit ID |
 
+### REG_GIT_STATUS
+
+Register indicating the git status of the repository at the time of bitstream generation. If the value is 1, there were
+uncommitted changes in the repository (dirty), while if the value is 0, there were no uncommitted changes (clean).
+
+- Address: `0x02`
+
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "GIT_STATUS",
+            "bits": 1,
+            "attr": [
+                "ro"
+            ],
+            "rotate": -90,
+            "type": 3
+        },
+        {
+            "name": "Reserved",
+            "bits": 15,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 2
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80
+    }
+}
+</script>
+
+<div class="register-bits-table" markdown="1">
+| Bits | Reset | Name       | Description                             |
+| ---- | ----- | ---------- | --------------------------------------- |
+| 15:1 | 0x0   | -          | Reserved                                |
+| 0    | 0x0   | GIT_STATUS | Git status flag: 1 if dirty, 0 if clean |
+</div>
+
 ### REG_12
 
 Internal register 1
 
-- Address: `0x02`
+- Address: `0x03`
 
 <script type="WaveDrom">
 {
@@ -226,7 +272,7 @@ Internal register 1
 
 Internal register 2
 
-- Address: `0x03`
+- Address: `0x04`
 - Reset default: `0x3434`
 
 <script type="WaveDrom">
@@ -263,7 +309,7 @@ Internal register 2
 
 Internal register 3
 
-- Address: `0x04`
+- Address: `0x05`
 - Reset default: `0x5656`
 
 <script type="WaveDrom">
@@ -296,11 +342,48 @@ Internal register 3
 
 </div>
 
+### REG_78
+
+Internal register 4
+
+- Address: `0x06`
+- Reset default: `0x7878`
+
+<script type="WaveDrom">
+{
+    "reg": [
+        {
+            "name": "0x7878",
+            "bits": 16,
+            "attr": [
+                "ro"
+            ],
+            "rotate": 0,
+            "type": 3
+        }
+    ],
+    "config": {
+        "lanes": 1,
+        "fontsize": 10,
+        "vspace": 80,
+        "bits": 16
+    }
+}
+</script>
+
+<div class="register-bits-table" markdown="1">
+
+| Bits | Reset  | Name | Description |
+| ---- | ------ | ---- | ----------- |
+| 15:0 | 0x7878 | -    | Constant    |
+
+</div>
+
 ### REG_SPI_TX
 
 SPI TX data register
 
-- Address: `0x06`
+- Address: `0x07`
 - Reset default: `0x0000`
 
 <script type="WaveDrom">
@@ -357,7 +440,7 @@ SPI TX data register
 
 SPI RX data register
 
-- Address: `0x07`
+- Address: `0x08`
 - Reset default: `0x0000`
 
 <script type="WaveDrom">
@@ -404,7 +487,7 @@ SPI RX data register
 
 VGA colors data register
 
-- Address: `0x08`
+- Address: `0x09`
 - Reset default: `0x00F0`
 
 <script type="WaveDrom">
@@ -464,43 +547,6 @@ VGA colors data register
 | 11:8  | 0x0   | RED   | Red channel   |
 | 7:4   | 0xF   | GREEN | Green channel |
 | 3:0   | 0x0   | BLUE  | Blue channel  |
-
-</div>
-
-### REG_78
-
-Internal register 4
-
-- Address: `0x05`
-- Reset default: `0x7878`
-
-<script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "0x7878",
-            "bits": 16,
-            "attr": [
-                "ro"
-            ],
-            "rotate": 0,
-            "type": 3
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 80,
-        "bits": 16
-    }
-}
-</script>
-
-<div class="register-bits-table" markdown="1">
-
-| Bits | Reset  | Name | Description |
-| ---- | ------ | ---- | ----------- |
-| 15:0 | 0x7878 | -    | Constant    |
 
 </div>
 

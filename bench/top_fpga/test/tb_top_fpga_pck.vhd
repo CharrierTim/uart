@@ -73,6 +73,7 @@ package TB_TOP_FPGA_PKG is
 
     -- DUT generics
     constant C_GIT_ID                     : std_logic_vector(32 - 1 downto 0) := x"12345678";
+    constant C_GIT_STATUS                 : std_logic                         := '1';
 
     -- UART model constants
     constant C_UART_BAUD_RATE_BPS         : positive := 115_200;
@@ -86,13 +87,14 @@ package TB_TOP_FPGA_PKG is
     -- vsg_off
     constant C_REG_GIT_ID_MSB : t_reg := (addr => 8x"00", data => 16x"1234", name => "REG_GIT_ID_MSB");
     constant C_REG_GIT_ID_LSB : t_reg := (addr => 8x"01", data => 16x"5678", name => "REG_GIT_ID_LSB");
-    constant C_REG_12         : t_reg := (addr => 8x"02", data => 16x"1212", name => "REG_12");
-    constant C_REG_34         : t_reg := (addr => 8x"03", data => 16x"3434", name => "REG_34");
-    constant C_REG_56         : t_reg := (addr => 8x"04", data => 16x"5656", name => "REG_56");
-    constant C_REG_78         : t_reg := (addr => 8x"05", data => 16x"7878", name => "REG_78");
-    constant C_REG_SPI_TX     : t_reg := (addr => 8x"06", data => 16x"0000", name => "REG_SPI_TX");
-    constant C_REG_SPI_RX     : t_reg := (addr => 8x"07", data => 16x"0000", name => "REG_SPI_RX");
-    constant C_REG_VGA_CTRL   : t_reg := (addr => 8x"08", data => 16x"00F0", name => "REG_VGA_CTRL");
+    constant C_REG_GIT_STATUS : t_reg := (addr => 8x"02", data => 16x"0001", name => "REG_GIT_STATUS");
+    constant C_REG_12         : t_reg := (addr => 8x"03", data => 16x"1212", name => "REG_12");
+    constant C_REG_34         : t_reg := (addr => 8x"04", data => 16x"3434", name => "REG_34");
+    constant C_REG_56         : t_reg := (addr => 8x"05", data => 16x"5656", name => "REG_56");
+    constant C_REG_78         : t_reg := (addr => 8x"06", data => 16x"7878", name => "REG_78");
+    constant C_REG_SPI_TX     : t_reg := (addr => 8x"07", data => 16x"0000", name => "REG_SPI_TX");
+    constant C_REG_SPI_RX     : t_reg := (addr => 8x"08", data => 16x"0000", name => "REG_SPI_RX");
+    constant C_REG_VGA_CTRL   : t_reg := (addr => 8x"09", data => 16x"00F0", name => "REG_VGA_CTRL");
     constant C_REG_9A         : t_reg := (addr => 8x"AB", data => 16x"9A9A", name => "REG_9A");
     constant C_REG_CD         : t_reg := (addr => 8x"AC", data => 16x"CDCD", name => "REG_CD");
     constant C_REG_EF         : t_reg := (addr => 8x"DC", data => 16x"EFEF", name => "REG_EF");

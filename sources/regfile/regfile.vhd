@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    registers.vhd
--- @version 2.0
+-- @version 2.1
 -- @brief   Registers for the FPGA
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -33,6 +33,7 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 2.0      14/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+-- 2.1      11/04/2026  Timothee Charrier   Add GIT_ID generic and register to the module.
 -- =====================================================================================================================
 
 library ieee;
@@ -48,7 +49,8 @@ library lib_rtl;
 entity REGFILE is
     generic (
         G_GIT_ID_MSB : std_logic_vector(16 - 1 downto 0);
-        G_GIT_ID_LSB : std_logic_vector(16 - 1 downto 0)
+        G_GIT_ID_LSB : std_logic_vector(16 - 1 downto 0);
+        G_GIT_STATUS : std_logic
     );
     port (
         -- Clock and reset
@@ -156,6 +158,10 @@ begin
                     when C_REG_GIT_ID_LSB_ADDR =>
 
                         reg_read <= G_GIT_ID_LSB;
+
+                    when C_REG_GIT_STATUS_ADDR =>
+
+                        reg_read <= 15b"0" & G_GIT_STATUS;
 
                     when C_REG_12_ADDR =>
 

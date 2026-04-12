@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
-| Date         : Thu Apr  9 14:12:54 2026
+| Date         : Sat Apr 11 18:50:40 2026
 | Host         : fedora running 64-bit unknown
 | Command      : report_bus_skew -file /home/tim/projects/uart/synthesis/results/impl/uart_bus_skew.rpt
 | Design       : TOP_FPGA
@@ -64,7 +64,7 @@ Id  Position  From                            To                              Co
           {inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[7]} \
           {inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[8]} \
           {inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[9]}]]
-                                                                              Slow             15.385       1.030     14.355
+                                                                              Slow             15.385       0.835     14.550
 
 
 2. Bus Skew Report Per Constraint
@@ -141,15 +141,15 @@ Endpoints: 12
 
 From Clock            To Clock              Endpoint Pin                    Reference Pin                   Corner  Actual(ns)  Slack(ns)
 --------------------  --------------------  ------------------------------  ------------------------------  ------  ----------  ---------
-clk_out1_clk_wiz_0    clk_out2_clk_wiz_0    inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[7]/D
+clk_out1_clk_wiz_0    clk_out2_clk_wiz_0    inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[1]/D
                                                                             inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[2]/D
-                                                                                                            Slow         1.030     14.355
+                                                                                                            Slow         0.835     14.550
 
 
-Slack (MET) :             14.355ns  (requirement - actual skew)
-  Endpoint Source:        inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[7]/C
+Slack (MET) :             14.550ns  (requirement - actual skew)
+  Endpoint Source:        inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[1]/C
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0)
-  Endpoint Destination:   inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[7]/D
+  Endpoint Destination:   inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[1]/D
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0)
   Reference Source:       inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[2]/C
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0)
@@ -157,10 +157,10 @@ Slack (MET) :             14.355ns  (requirement - actual skew)
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0)
   Path Type:              Bus Skew (Max at Slow Process Corner)
   Requirement:            15.385ns
-  Endpoint Relative Delay:    2.101ns
-  Reference Relative Delay:   0.379ns
-  Relative CRPR:              0.692ns
-  Actual Bus Skew:            1.030ns  (Endpoint Relative Delay - Reference Relative Delay - Relative CRPR)
+  Endpoint Relative Delay:    1.722ns
+  Reference Relative Delay:   0.271ns
+  Relative CRPR:              0.615ns
+  Actual Bus Skew:            0.835ns  (Endpoint Relative Delay - Reference Relative Delay - Relative CRPR)
 
 Endpoint path:
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
@@ -175,12 +175,12 @@ Endpoint path:
                                                      -8.866    -6.070 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, routed)           1.849    -4.221    inst_pll/inst/clk_out1_clk_wiz_0
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.101    -4.120 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=278, routed)         2.059    -2.061    inst_vga/inst_olo_base_cc_status/i_scc/In_Clk
-    SLICE_X106Y101       FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[7]/C
+                         net (fo=278, routed)         1.866    -2.254    inst_vga/inst_olo_base_cc_status/i_scc/In_Clk
+    SLICE_X106Y94        FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[1]/C
   -------------------------------------------------------------------    -------------------
-    SLICE_X106Y101       FDRE (Prop_fdre_C_Q)         0.419    -1.642 r  inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[7]/Q
-                         net (fo=1, routed)           1.078    -0.563    inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn[7]
-    SLICE_X106Y100       FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[7]/D
+    SLICE_X106Y94        FDRE (Prop_fdre_C_Q)         0.456    -1.798 r  inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[1]/Q
+                         net (fo=1, routed)           0.821    -0.977    inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn[1]
+    SLICE_X107Y93        FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[1]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out2_clk_wiz_0 rise edge)
@@ -193,15 +193,15 @@ Endpoint path:
                                                      -7.970    -5.369 r  inst_pll/inst/plle2_adv_inst/CLKOUT1
                          net (fo=1, routed)           1.686    -3.683    inst_pll/inst/clk_out2_clk_wiz_0
     BUFGCTRL_X0Y1        BUFG (Prop_bufg_I_O)         0.091    -3.592 r  inst_pll/inst/clkout2_buf/O
-                         net (fo=73, routed)          1.861    -1.731    inst_vga/inst_olo_base_cc_status/i_scc/Out_Clk
-    SLICE_X106Y100       FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[7]/C
-                         clock pessimism             -0.701    -2.431
-    SLICE_X106Y100       FDRE (Setup_fdre_C_D)       -0.233    -2.664    inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[7]
+                         net (fo=73, routed)          1.686    -1.906    inst_vga/inst_olo_base_cc_status/i_scc/Out_Clk
+    SLICE_X107Y93        FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[1]/C
+                         clock pessimism             -0.701    -2.607
+    SLICE_X107Y93        FDRE (Setup_fdre_C_D)       -0.092    -2.699    inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[1]
   -------------------------------------------------------------------
-                         data arrival                          -0.563
-                         clock arrival                         -2.664
+                         data arrival                          -0.977
+                         clock arrival                         -2.699
   -------------------------------------------------------------------
-                         relative delay                         2.101
+                         relative delay                         1.722
 
 Reference path:
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
@@ -216,12 +216,12 @@ Reference path:
                                                      -7.970    -5.369 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, routed)           1.686    -3.683    inst_pll/inst/clk_out1_clk_wiz_0
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    -3.592 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=278, routed)         1.860    -1.732    inst_vga/inst_olo_base_cc_status/i_scc/In_Clk
-    SLICE_X107Y103       FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[2]/C
+                         net (fo=278, routed)         1.689    -1.903    inst_vga/inst_olo_base_cc_status/i_scc/In_Clk
+    SLICE_X110Y93        FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[2]/C
   -------------------------------------------------------------------    -------------------
-    SLICE_X107Y103       FDRE (Prop_fdre_C_Q)         0.367    -1.365 r  inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[2]/Q
-                         net (fo=1, routed)           0.554    -0.811    inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn[2]
-    SLICE_X107Y101       FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[2]/D
+    SLICE_X110Y93        FDRE (Prop_fdre_C_Q)         0.367    -1.536 r  inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[2]/Q
+                         net (fo=1, routed)           0.446    -1.090    inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn[2]
+    SLICE_X109Y93        FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[2]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_out2_clk_wiz_0 rise edge)
@@ -234,12 +234,12 @@ Reference path:
                                                      -8.866    -6.070 r  inst_pll/inst/plle2_adv_inst/CLKOUT1
                          net (fo=1, routed)           1.849    -4.221    inst_pll/inst/clk_out2_clk_wiz_0
     BUFGCTRL_X0Y1        BUFG (Prop_bufg_I_O)         0.101    -4.120 r  inst_pll/inst/clkout2_buf/O
-                         net (fo=73, routed)          2.059    -2.061    inst_vga/inst_olo_base_cc_status/i_scc/Out_Clk
-    SLICE_X107Y101       FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[2]/C
-                         clock pessimism              0.701    -1.360
-    SLICE_X107Y101       FDRE (Hold_fdre_C_D)         0.170    -1.190    inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[2]
+                         net (fo=73, routed)          1.866    -2.254    inst_vga/inst_olo_base_cc_status/i_scc/Out_Clk
+    SLICE_X109Y93        FDRE                                         r  inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[2]/C
+                         clock pessimism              0.701    -1.553
+    SLICE_X109Y93        FDRE (Hold_fdre_C_D)         0.192    -1.361    inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[2]
   -------------------------------------------------------------------
-                         data arrival                          -0.811
-                         clock arrival                         -1.190
+                         data arrival                          -1.090
+                         clock arrival                         -1.361
   -------------------------------------------------------------------
-                         relative delay                         0.379
+                         relative delay                         0.271

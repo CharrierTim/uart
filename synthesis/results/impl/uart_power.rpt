@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
-| Date             : Thu Apr  9 14:12:56 2026
+| Date             : Sat Apr 11 18:50:42 2026
 | Host             : fedora running 64-bit unknown
 | Command          : report_power -file /home/tim/projects/uart/synthesis/results/impl/uart_power.rpt
 | Design           : TOP_FPGA
@@ -52,13 +52,13 @@ Table of Contents
 +----------------+-----------+----------+-----------+-----------------+
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
-| Clocks         |     0.003 |        6 |       --- |             --- |
-| Slice Logic    |    <0.001 |      686 |       --- |             --- |
-|   LUT as Logic |    <0.001 |      242 |     53200 |            0.45 |
+| Clocks         |     0.002 |        6 |       --- |             --- |
+| Slice Logic    |    <0.001 |      689 |       --- |             --- |
+|   LUT as Logic |    <0.001 |      249 |     53200 |            0.47 |
 |   Register     |    <0.001 |      351 |    106400 |            0.33 |
 |   Others       |     0.000 |       33 |       --- |             --- |
-|   F7/F8 Muxes  |     0.000 |        9 |     53200 |            0.02 |
-| Signals        |    <0.001 |      500 |       --- |             --- |
+|   F7/F8 Muxes  |     0.000 |        1 |     53200 |           <0.01 |
+| Signals        |    <0.001 |      517 |       --- |             --- |
 | PLL            |     0.123 |        1 |         4 |           25.00 |
 | I/O            |    <0.001 |       26 |       200 |           13.00 |
 | Static Power   |     0.108 |          |           |                 |
@@ -154,5 +154,4 @@ Table of Contents
 | TOP_FPGA   |     0.126 |
 |   inst_pll |     0.124 |
 |     inst   |     0.124 |
-|   inst_vga |     0.001 |
 +------------+-----------+
