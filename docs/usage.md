@@ -86,6 +86,12 @@ vivado -mode batch -nojournal -script run_synthesis.tcl
   language server integration. The file will be generated in the project root as `vhdl_ls.toml`. Known issue
   with `unifast` library, where manually adding `is_third_party = true` fixes the warnings.
 
+The script auto-detects the simulator (1. `nvc` or 2. `GHDL` if `nvc` is not found) but you can also explicitly specify
+the simulator to use:
+
+- `--nvc`: Use `nvc` as the simulator.
+- `--ghdl`: Use `GHDL` as the simulator.
+
 Run the following command to get more help with `VUnit` options:
 
 ```bash

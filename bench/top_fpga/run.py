@@ -41,6 +41,7 @@
 import sys
 from argparse import Namespace
 from pathlib import Path
+from typing import Literal
 
 from vunit import VUnit, VUnitCLI
 from vunit.ui.library import Library
@@ -71,13 +72,16 @@ COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
 cli = VUnitCLI()
 cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
 cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
+cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
+cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
 args: Namespace = cli.parse_args()
 
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
 
-simulator: Simulator = select_simulator(enable_coverage=args.coverage)
+sim_name: Literal["nvc", "ghdl"] | None = "nvc" if args.nvc else "ghdl" if args.ghdl else None
+simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage)
 
 VU: VUnit = VUnit.from_args(args=args)
 VU.add_vhdl_builtins()
