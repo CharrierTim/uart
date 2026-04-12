@@ -79,3 +79,15 @@ Run the following command in the `synthesis` folder:
 ```bash
 vivado -mode batch -nojournal -script run_synthesis.tcl
 ```
+
+## Additional Options
+
+- `--vhdl_ls`: Generate a `vhdl_ls` configuration file for [vhdl_ls](https://github.com/VHDL-LS/rust_hdl_vscode)
+  language server integration. The file will be generated in the project root as `vhdl_ls.toml`. Known issue
+  with `unifast` library, where manually adding `is_third_party = true` fixes the warnings.
+
+Run the following command to get more help with `VUnit` options:
+
+```bash
+python3 bench/top_fpga/run.py --help
+```
