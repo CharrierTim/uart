@@ -35,7 +35,7 @@
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      17/10/2025  Timothee Charrier   Initial release
 ## 2.0      12/01/2026  Timothee Charrier   Update entire interface
-## 2.1      11/04/2026  Timothee Charrier   Add `vhdl_ls` file generation
+## 2.1      12/04/2026  Timothee Charrier   Add `vhdl_ls` file generation and minor fix
 ## =====================================================================================================================
 
 import sys
@@ -50,12 +50,6 @@ sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent / "cores" / "
 
 from create_vhdl_ls_config import create_configuration
 from setup_vunit import Simulator, select_simulator
-
-## =====================================================================================================================
-# Set up the simulator environment
-## =====================================================================================================================
-
-simulator: Simulator = select_simulator()
 
 ## =====================================================================================================================
 # Define paths
@@ -79,11 +73,11 @@ cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage
 cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
 args: Namespace = cli.parse_args()
 
-simulator: Simulator = select_simulator(enable_coverage=args.coverage)
-
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
+
+simulator: Simulator = select_simulator(enable_coverage=args.coverage)
 
 VU: VUnit = VUnit.from_args(args=args)
 VU.add_vhdl_builtins()
