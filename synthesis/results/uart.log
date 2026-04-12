@@ -239,6 +239,7 @@ INFO: [Synth 8-638] synthesizing module 'olo_intf_sync' [/home/tim/projects/uart
     Parameter SyncStages_g bound to: 3 - type: integer
 INFO: [Synth 8-256] done synthesizing module 'olo_intf_sync' (0#1) [/home/tim/projects/uart/cores/open-logic/src/intf/vhdl/olo_intf_sync.vhd:53]
 INFO: [Synth 8-638] synthesizing module 'UART' [/home/tim/projects/uart/sources/uart/uart.vhd:81]
+INFO: [Synth 8-638] synthesizing module 'UART' [/home/tim/projects/uart/sources/uart/uart.vhd:81]
     Parameter G_CLK_FREQ_HZ bound to: 50000000 - type: integer
     Parameter G_BAUD_RATE_BPS bound to: 115200 - type: integer
     Parameter G_SAMPLING_RATE bound to: 16 - type: integer
@@ -1141,7 +1142,9 @@ Phase 5 Rip-up And Reroute | Checksum: 22ef00aef
 Time (s): cpu = 00:00:23 ; elapsed = 00:00:19 . Memory (MB): peak = 3636.258 ; gain = 0.000 ; free physical = 20340 ; free virtual = 34516
 
 Phase 6 Delay and Skew Optimization
+Phase 6 Delay and Skew Optimization
 
+Phase 6.1 Delay CleanUp
 Phase 6.1 Delay CleanUp
 
 Phase 6.1.1 Update Timing
@@ -1229,6 +1232,7 @@ Time (s): cpu = 00:00:23 ; elapsed = 00:00:19 . Memory (MB): peak = 3636.258 ; g
 
 Routing Is Done.
 INFO: [Common 17-83] Releasing license: Implementation
+12 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
 12 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
 route_design completed successfully
 route_design: Time (s): cpu = 00:00:23 ; elapsed = 00:00:19 . Memory (MB): peak = 3636.258 ; gain = 0.000 ; free physical = 20340 ; free virtual = 34516

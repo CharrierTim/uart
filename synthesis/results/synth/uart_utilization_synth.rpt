@@ -162,6 +162,7 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 | LUT2      |   36 |                 LUT |
 | LUT3      |   34 |                 LUT |
 | OBUF      |   19 |                  IO |
+| MUXF7     |    9 |               MuxFx |
 | IBUF      |    7 |                  IO |
 | BUFG      |    3 |               Clock |
 | LUT1      |    2 |                 LUT |

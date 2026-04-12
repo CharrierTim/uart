@@ -191,6 +191,7 @@ Table of Contents
 | LUT2      |   36 |                 LUT |
 | LUT3      |   34 |                 LUT |
 | OBUF      |   19 |                  IO |
+| MUXF7     |    9 |               MuxFx |
 | IBUF      |    7 |                  IO |
 | BUFG      |    3 |               Clock |
 | PLLE2_ADV |    1 |               Clock |

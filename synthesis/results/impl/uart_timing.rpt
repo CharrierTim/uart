@@ -231,7 +231,7 @@ From Clock:  clk_out1_clk_wiz_0
   To Clock:  clk_out1_clk_wiz_0
 
 Setup :            0  Failing Endpoints,  Worst Slack       14.041ns,  Total Violation        0.000ns
-Hold  :            0  Failing Endpoints,  Worst Slack        0.122ns,  Total Violation        0.000ns
+Hold  :            0  Failing Endpoints,  Worst Slack        0.088ns,  Total Violation        0.000ns
 PW    :            0  Failing Endpoints,  Worst Slack        9.500ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
 
@@ -239,9 +239,9 @@ PW    :            0  Failing Endpoints,  Worst Slack        9.500ns,  Total Vio
 Max Delay Paths
 --------------------------------------------------------------------------------------
 Slack (MET) :             14.041ns  (required time - arrival time)
-  Source:                 inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[0]/C
+  Source:                 inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[0]/C
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[1]/D
+  Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[1]/D
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
@@ -269,7 +269,7 @@ Slack (MET) :             14.041ns  (required time - arrival time)
 Slack (MET) :             14.061ns  (required time - arrival time)
   Source:                 inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[1]/C
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[2]/D
+  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[2]/D
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
@@ -297,7 +297,7 @@ Slack (MET) :             14.061ns  (required time - arrival time)
 Slack (MET) :             14.251ns  (required time - arrival time)
   Source:                 inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[1]/C
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[2]/D
+  Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[2]/D
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
@@ -325,7 +325,7 @@ Slack (MET) :             14.251ns  (required time - arrival time)
 Slack (MET) :             14.531ns  (required time - arrival time)
   Source:                 inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[0]/C
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[1]/D
+  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[1]/D
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
@@ -795,13 +795,13 @@ Slack (MET) :             0.122ns  (arrival time - required time)
                          required time                          0.413
                          arrival time                          -0.291
   -------------------------------------------------------------------
-                         slack                                  0.122
+                         slack                                  0.088
 
-Slack (MET) :             0.122ns  (arrival time - required time)
-  Source:                 inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[0]/C
-                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
-  Destination:            inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[1]/D
-                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+Slack (MET) :             0.102ns  (arrival time - required time)
+  Source:                 inst_uart/inst_uart_tx/reg_tx_data_reg[1]/C
+                            (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            inst_uart/inst_uart_tx/reg_tx_data_reg[0]/D
+                            (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Hold (Min at Fast Process Corner)
   Requirement:            0.000ns  (clk_out1_clk_wiz_0 rise@0.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
@@ -850,7 +850,7 @@ Slack (MET) :             0.122ns  (arrival time - required time)
                          required time                          0.442
                          arrival time                          -0.320
   -------------------------------------------------------------------
-                         slack                                  0.122
+                         slack                                  0.102
 
 Slack (MET) :             0.131ns  (arrival time - required time)
   Source:                 inst_olo_intf_sync/Reg0_reg[0]/C
@@ -905,7 +905,7 @@ Slack (MET) :             0.131ns  (arrival time - required time)
                          required time                          0.330
                          arrival time                          -0.199
   -------------------------------------------------------------------
-                         slack                                  0.131
+                         slack                                  0.117
 
 Slack (MET) :             0.139ns  (arrival time - required time)
   Source:                 inst_uart/O_READ_ADDR_VALID_reg/C
@@ -1958,6 +1958,7 @@ Slack (MET) :             11.711ns  (required time - arrival time)
   Source:                 inst_vga/vertical_count_reg[4]/C
                             (rising edge-triggered cell FDCE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
   Destination:            inst_vga/O_BLUE_reg[3]/D
+  Destination:            inst_vga/O_BLUE_reg[3]/D
                             (rising edge-triggered cell FDCE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
   Path Group:             clk_out2_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
@@ -2026,11 +2027,11 @@ Slack (MET) :             11.711ns  (required time - arrival time)
 
 Min Delay Paths
 --------------------------------------------------------------------------------------
-Slack (MET) :             0.122ns  (arrival time - required time)
-  Source:                 inst_olo_base_vga_reset_gen/g_sync.DsSync_reg[0]/C
-                            (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
-  Destination:            inst_olo_base_vga_reset_gen/g_sync.DsSync_reg[1]/D
-                            (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
+Slack (MET) :             0.115ns  (arrival time - required time)
+  Source:                 inst_vga/horizontal_count_reg[3]/C
+                            (rising edge-triggered cell FDCE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
+  Destination:            inst_vga/horizontal_count_reg[4]/D
+                            (rising edge-triggered cell FDCE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
   Path Group:             clk_out2_clk_wiz_0
   Path Type:              Hold (Min at Fast Process Corner)
   Requirement:            0.000ns  (clk_out2_clk_wiz_0 rise@0.000ns - clk_out2_clk_wiz_0 rise@0.000ns)
@@ -2079,7 +2080,7 @@ Slack (MET) :             0.122ns  (arrival time - required time)
                          required time                          0.443
                          arrival time                          -0.321
   -------------------------------------------------------------------
-                         slack                                  0.122
+                         slack                                  0.115
 
 Slack (MET) :             0.187ns  (arrival time - required time)
   Source:                 inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[5]/C
@@ -2673,6 +2674,7 @@ Slack (MET) :             17.927ns  (required time - arrival time)
   Source:                 PAD_I_SWITCH_0
                             (input port)
   Destination:            inst_olo_intf_sync/Reg0_reg[0]/D
+  Destination:            inst_olo_intf_sync/Reg0_reg[0]/D
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
@@ -2701,6 +2703,7 @@ Slack (MET) :             17.927ns  (required time - arrival time)
 Slack (MET) :             17.931ns  (required time - arrival time)
   Source:                 PAD_I_SWITCH_1
                             (input port)
+  Destination:            inst_olo_intf_sync/Reg0_reg[1]/D
   Destination:            inst_olo_intf_sync/Reg0_reg[1]/D
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
@@ -2830,7 +2833,7 @@ Slack (MET) :             13.774ns  (required time - arrival time)
 Slack (MET) :             13.774ns  (required time - arrival time)
   Source:                 inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstBLatch_reg/C
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[2]/PRE
+  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[2]/PRE
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Recovery (Max at Slow Process Corner)
@@ -2858,7 +2861,7 @@ Slack (MET) :             13.774ns  (required time - arrival time)
 Slack (MET) :             14.027ns  (required time - arrival time)
   Source:                 inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstALatch_reg/C
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[0]/PRE
+  Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[0]/PRE
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Recovery (Max at Slow Process Corner)
@@ -2886,7 +2889,7 @@ Slack (MET) :             14.027ns  (required time - arrival time)
 Slack (MET) :             14.027ns  (required time - arrival time)
   Source:                 inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstALatch_reg/C
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[1]/PRE
+  Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[1]/PRE
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Recovery (Max at Slow Process Corner)
@@ -2914,7 +2917,7 @@ Slack (MET) :             14.027ns  (required time - arrival time)
 Slack (MET) :             14.027ns  (required time - arrival time)
   Source:                 inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstALatch_reg/C
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[2]/PRE
+  Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstB2A_reg[2]/PRE
                             (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Recovery (Max at Slow Process Corner)
@@ -2942,7 +2945,7 @@ Slack (MET) :             14.027ns  (required time - arrival time)
 Slack (MET) :             14.220ns  (required time - arrival time)
   Source:                 inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/i_ackb2a/RegIn_reg[0]/C
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/i_ackb2a/Reg0_reg[0]/D
+  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/i_acka2b/Reg0_reg[0]/D
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
@@ -2976,6 +2979,7 @@ Slack (MET) :             14.387ns  (required time - arrival time)
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            15.385ns  (MaxDelay Path 15.385ns)
   Data Path Delay:        0.811ns  (logic 0.478ns (58.907%)  route 0.333ns (41.093%))
+  Data Path Delay:        0.811ns  (logic 0.478ns (58.907%)  route 0.333ns (41.093%))
   Logic Levels:           0
   Timing Exception:       MaxDelay Path 15.385ns -datapath_only
 
@@ -2992,7 +2996,9 @@ Slack (MET) :             14.387ns  (required time - arrival time)
   -------------------------------------------------------------------
                          required time                         15.198
                          arrival time                          -0.811
+                         arrival time                          -0.811
   -------------------------------------------------------------------
+                         slack                                 14.387
                          slack                                 14.387
 
 Slack (MET) :             14.405ns  (required time - arrival time)
@@ -3003,7 +3009,7 @@ Slack (MET) :             14.405ns  (required time - arrival time)
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            15.385ns  (MaxDelay Path 15.385ns)
-  Data Path Delay:        0.758ns  (logic 0.419ns (55.242%)  route 0.339ns (44.758%))
+  Data Path Delay:        0.811ns  (logic 0.478ns (58.907%)  route 0.333ns (41.093%))
   Logic Levels:           0
   Timing Exception:       MaxDelay Path 15.385ns -datapath_only
 
@@ -3018,10 +3024,10 @@ Slack (MET) :             14.405ns  (required time - arrival time)
                          max delay                   15.385    15.385
     SLICE_X110Y90        FDRE (Setup_fdre_C_D)       -0.222    15.163    inst_vga/inst_olo_base_cc_status/i_bcc/i_sync/Reg0_reg[0]
   -------------------------------------------------------------------
-                         required time                         15.163
-                         arrival time                          -0.758
+                         required time                         15.198
+                         arrival time                          -0.811
   -------------------------------------------------------------------
-                         slack                                 14.405
+                         slack                                 14.387
 
 
 
@@ -3044,7 +3050,7 @@ Slack (MET) :             13.746ns  (required time - arrival time)
   Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstB2A_reg[1]/PRE
                             (rising edge-triggered cell FDPE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
   Path Group:             clk_out2_clk_wiz_0
-  Path Type:              Recovery (Max at Slow Process Corner)
+  Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            15.385ns  (MaxDelay Path 15.385ns)
   Data Path Delay:        1.278ns  (logic 0.456ns (35.692%)  route 0.822ns (64.308%))
   Logic Levels:           0
@@ -3097,7 +3103,7 @@ Slack (MET) :             13.788ns  (required time - arrival time)
 Slack (MET) :             13.788ns  (required time - arrival time)
   Source:                 inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstBLatch_reg/C
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstB2A_reg[2]/PRE
+  Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstA2B_reg[0]/PRE
                             (rising edge-triggered cell FDPE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
   Path Group:             clk_out2_clk_wiz_0
   Path Type:              Recovery (Max at Slow Process Corner)
@@ -3129,6 +3135,7 @@ Slack (MET) :             13.989ns  (required time - arrival time)
                             (rising edge-triggered cell FDPE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
   Path Group:             clk_out2_clk_wiz_0
   Path Type:              Recovery (Max at Slow Process Corner)
+  Path Type:              Recovery (Max at Slow Process Corner)
   Requirement:            15.385ns  (MaxDelay Path 15.385ns)
   Data Path Delay:        1.037ns  (logic 0.456ns (43.956%)  route 0.581ns (56.044%))
   Logic Levels:           0
@@ -3157,6 +3164,7 @@ Slack (MET) :             13.989ns  (required time - arrival time)
                             (rising edge-triggered cell FDPE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
   Path Group:             clk_out2_clk_wiz_0
   Path Type:              Recovery (Max at Slow Process Corner)
+  Path Type:              Recovery (Max at Slow Process Corner)
   Requirement:            15.385ns  (MaxDelay Path 15.385ns)
   Data Path Delay:        1.037ns  (logic 0.456ns (43.956%)  route 0.581ns (56.044%))
   Logic Levels:           0
@@ -3184,6 +3192,7 @@ Slack (MET) :             13.989ns  (required time - arrival time)
   Destination:            inst_vga/inst_olo_base_cc_status/i_scc/i_pulse_cc/i_rst/RstRqstA2B_reg[2]/PRE
                             (rising edge-triggered cell FDPE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
   Path Group:             clk_out2_clk_wiz_0
+  Path Type:              Recovery (Max at Slow Process Corner)
   Path Type:              Recovery (Max at Slow Process Corner)
   Requirement:            15.385ns  (MaxDelay Path 15.385ns)
   Data Path Delay:        1.037ns  (logic 0.456ns (43.956%)  route 0.581ns (56.044%))
@@ -3241,6 +3250,7 @@ Slack (MET) :             14.054ns  (required time - arrival time)
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
   Path Group:             clk_out2_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
+  Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            15.385ns  (MaxDelay Path 15.385ns)
   Data Path Delay:        1.269ns  (logic 0.456ns (35.939%)  route 0.813ns (64.061%))
   Logic Levels:           0
@@ -3268,6 +3278,7 @@ Slack (MET) :             14.179ns  (required time - arrival time)
   Destination:            inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[6]/D
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0  {rise@0.000ns fall@7.692ns period=15.385ns})
   Path Group:             clk_out2_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            15.385ns  (MaxDelay Path 15.385ns)
   Data Path Delay:        1.161ns  (logic 0.456ns (39.260%)  route 0.705ns (60.740%))
@@ -3755,6 +3766,7 @@ Slack (MET) :             16.223ns  (required time - arrival time)
                          slack                                 16.223
 
 Slack (MET) :             16.223ns  (required time - arrival time)
+Slack (MET) :             16.223ns  (required time - arrival time)
   Source:                 inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[2]/C
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Destination:            inst_spi_master/reg_o_rx_data_sr_reg[5]/CLR
@@ -3813,7 +3825,9 @@ Slack (MET) :             16.223ns  (required time - arrival time)
                          arrival time                          -0.855
   -------------------------------------------------------------------
                          slack                                 16.223
+                         slack                                 16.223
 
+Slack (MET) :             16.223ns  (required time - arrival time)
 Slack (MET) :             16.223ns  (required time - arrival time)
   Source:                 inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[2]/C
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
@@ -3872,6 +3886,7 @@ Slack (MET) :             16.223ns  (required time - arrival time)
                          required time                         17.079
                          arrival time                          -0.855
   -------------------------------------------------------------------
+                         slack                                 16.223
                          slack                                 16.223
 
 Slack (MET) :             16.223ns  (required time - arrival time)
@@ -4438,6 +4453,7 @@ Slack (MET) :             0.508ns  (arrival time - required time)
 Slack (MET) :             0.512ns  (arrival time - required time)
   Source:                 inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[2]/C
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            inst_uart/inst_uart_rx/i_uart_rx_filtered_d1_reg/PRE
   Destination:            inst_uart/inst_uart_rx/i_uart_rx_filtered_d1_reg/PRE
                             (removal check against rising-edge clock clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             **async_default**

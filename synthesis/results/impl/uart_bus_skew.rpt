@@ -149,10 +149,12 @@ clk_out1_clk_wiz_0    clk_out2_clk_wiz_0    inst_vga/inst_olo_base_cc_status/i_s
 Slack (MET) :             14.550ns  (requirement - actual skew)
   Endpoint Source:        inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[1]/C
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0)
-  Endpoint Destination:   inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[1]/D
+  Endpoint Destination:   inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[7]/D
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0)
   Reference Source:       inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[2]/C
+  Reference Source:       inst_vga/inst_olo_base_cc_status/i_scc/DataLatchIn_reg[2]/C
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0)
+  Reference Destination:  inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[2]/D
   Reference Destination:  inst_vga/inst_olo_base_cc_status/i_scc/Out_Data_Sig_reg[2]/D
                             (rising edge-triggered cell FDRE clocked by clk_out2_clk_wiz_0)
   Path Type:              Bus Skew (Max at Slow Process Corner)
