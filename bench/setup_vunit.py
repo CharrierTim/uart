@@ -352,7 +352,7 @@ class GHDL(Simulator):
     }
 
     def _apply_options(self) -> None:
-        """Apply NVC-specific options."""
+        """Apply GHDL-specific options."""
         # Base flags always applied
         analysis_flags: list[str] = ["-fsynopsys", "-frelaxed", "--warn-no-hide"]
         elab_flags: list[str] = ["-fsynopsys", "-frelaxed"]
