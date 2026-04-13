@@ -162,11 +162,6 @@ class Simulator(ABC):
 
         Usually located under `vivado_path/data/vhdl/src/unifast/primitive/*.vhd`.
 
-        Parameters
-        ----------
-        library_name : str
-            Name of the library (e.g., 'unisim', 'unifast').
-
         Returns
         -------
         Path
