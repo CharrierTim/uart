@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run.py
-## @version 1.0
+## @version 2.1
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
 ##          Top-level module.
 ## @author  Timothee Charrier
