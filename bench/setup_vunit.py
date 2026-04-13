@@ -268,9 +268,9 @@ class Simulator(ABC):
                 try:
                     with open(txt_file, encoding="utf-8") as infile:
                         outfile.write(infile.read())
-                except Exception as e:
-                    LOGGER.error("Failed to read %s: %s", txt_file, e)
+                except (OSError, UnicodeDecodeError) as e:
                     outfile.write(f"[ERROR: Could not read file - {e}]\n")
+                    LOGGER.error("Failed to read %s: %s", txt_file, e)
 
         LOGGER.info("Successfully merged output files to: %s", output_file)
 
