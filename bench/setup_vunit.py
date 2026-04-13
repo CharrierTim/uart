@@ -171,7 +171,7 @@ class Simulator(ABC):
         unifast_path: Path = vivado_path / "data" / "vhdl" / "src" / "unifast" / "primitive"
 
         if not unifast_path.exists():
-            LOGGER.warning("Unifast VCOMP file not found at %s", unifast_path)
+            LOGGER.warning("Unifast primitive directory not found at %s", unifast_path)
             return Path()
 
         return unifast_path / "*.vhd"
