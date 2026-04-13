@@ -46,8 +46,8 @@ from typing import Literal
 from vunit import VUnit, VUnitCLI
 from vunit.ui.library import Library
 
-sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
-sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent / "cores" / "open-logic" / "sim").resolve()))
+sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
+sys.path.insert(0, str((Path(__file__).parent.parent.parent / "cores" / "open-logic" / "sim").resolve()))
 
 from create_vhdl_ls_config import create_configuration
 from setup_vunit import Simulator, select_simulator
@@ -66,7 +66,7 @@ MODELS_ROOT: Path = PRJ_ROOT / "bench" / "models"
 COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
 
 ## =====================================================================================================================
-# Parse command line arguments with custom --coverage flag
+# Parse command line arguments
 ## =====================================================================================================================
 
 cli = VUnitCLI()
