@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    setup_vunit.py
-## @version 2.1
+## @version 2.2
 ## @brief   This module provides simulator classes for VUnit.
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -36,6 +36,7 @@
 ## 2.0      07/01/2026  Timothee Charrier   Major refactor: Vunit now supports NVC coverage, no need for a custom
 ##                                          interface.
 ## 2.1      11/04/2026  Timothee Charrier   Add Unisim and Unifast library path retrieval methods
+## 2.2      17/04/2026  Timothee Charrier   Add `get_simulator_name` method to Simulator base class
 ## =====================================================================================================================
 
 import logging
@@ -217,6 +218,10 @@ class Simulator(ABC):
         return self
 
     @abstractmethod
+    def get_simulator_name(self) -> str:
+        """Get the name of the simulator."""
+
+    @abstractmethod
     def _apply_options(self) -> None:
         """Apply simulator-specific VUnit options."""
 
@@ -295,6 +300,10 @@ class NVC(Simulator):
         "unifast": "~/.nvc/lib/unifast.08",
     }
 
+    def get_simulator_name(self) -> str:
+        """Get the name of the simulator."""
+        return self.SIMULATOR_NAME
+
     def _apply_options(self) -> None:
         """Apply NVC-specific options."""
         # Base flags always applied
@@ -350,6 +359,10 @@ class GHDL(Simulator):
         "unisim": "~/.ghdl/xilinx-vivado/unisim/v08",
         "unifast": "~/.ghdl/xilinx-vivado/unifast/v08",
     }
+
+    def get_simulator_name(self) -> str:
+        """Get the name of the simulator."""
+        return self.SIMULATOR_NAME
 
     def _apply_options(self) -> None:
         """Apply GHDL-specific options."""

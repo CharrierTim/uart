@@ -5,13 +5,12 @@
 +hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.*
 
 # Excluse OLO library modules (IP)
--hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.INST_OLO_BASE_SYS_RESET_GEN.*
--hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.INST_OLO_BASE_VGA_RESET_GEN.*
--hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.INST_OLO_INTF_SYNC.*
--hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.INST_VGA.INST_OLO_BASE_CC_STATUS.*
+-block olo_base_reset_gen
+-block olo_intf_sync
+-block olo_base_cc_status
 
 # Exclude PLL/clock generation (vendor IP)
--block CLK_WIZ_0
+-block clk_wiz_0
 
 # Exclude testbench model
 -hierarchy LIB_BENCH.TB_TOP_FPGA.INST_UART_MODEL.*

@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run.py
-## @version 2.1
+## @version 2.2
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
 ##          Top-level module.
 ## @author  Timothee Charrier
@@ -36,6 +36,8 @@
 ## 1.0      17/10/2025  Timothee Charrier   Initial release
 ## 2.0      12/01/2026  Timothee Charrier   Update entire interface
 ## 2.1      12/04/2026  Timothee Charrier   Add `vhdl_ls` file generation and minor fix
+## 2.2      17/04/2026  Timothee Charrier   Add support for selecting simulator via command line and update coverage
+##                                          collection implementation.
 ## =====================================================================================================================
 
 import sys
@@ -107,11 +109,11 @@ LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
 # Configure simulation
 ## =====================================================================================================================
 
-if args.coverage:
-    LIB_SRC.set_compile_option(name="enable_coverage", value=True)
-    LIB_BENCH.set_compile_option(name="enable_coverage", value=True)
+if args.coverage and simulator.get_simulator_name() == "nvc":
     LIB_BENCH.set_sim_option(name="enable_coverage", value=True)
     LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"])
+else:
+    print("Coverage collection is implemented for nvc simulator only. Ignoring --coverage flag.")
 
 ## =====================================================================================================================
 # Set up simulator
