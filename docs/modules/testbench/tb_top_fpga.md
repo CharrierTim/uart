@@ -69,6 +69,9 @@ The following constants are defined:
 | `C_V_HSYNC_HIGH_TIME_ACCURACY` | time          | 0.01 \* `C_V_HSYNC_HIGH` * `C_V_VGA_PIXEL_BIT_TIME`             | VGA vertical sync high tolerance         |
 | `C_V_WHOLE_LINE_TIME`          | time          | `C_V_SYNC_PULSE_TIME` + `C_V_HSYNC_HIGH_TIME`                   | VGA total vertical frame duration        |
 | `C_V_WHOLE_LINE_TIME_ACCURACY` | time          | `C_V_SYNC_PULSE_TIME_ACCURACY` + `C_V_HSYNC_HIGH_TIME_ACCURACY` | VGA total vertical frame tolerance       |
+| `C_VGA_VECTOR_TEST_1`          | vector[11:0]  | x"ABC"                                                          | Test vector for VGA output verification  |
+| `C_VGA_VECTOR_TEST_2`          | vector[11:0]  | x"123"                                                          | Test vector for VGA output verification  |
+| `C_VGA_VECTOR_TEST_3`          | vector[11:0]  | x"F0F"                                                          | Test vector for VGA output verification  |
 
 ### Registers
 
@@ -78,14 +81,15 @@ The following registers are defined as [`t_reg`](#t_reg):
 | ------------------ | ------- | ----------- |
 | `C_REG_GIT_ID_MSB` | 0x00    | 0x1234      |
 | `C_REG_GIT_ID_LSB` | 0x01    | 0x5678      |
-| `C_REG_12`         | 0x02    | 0x1212      |
-| `C_REG_34`         | 0x03    | 0x3434      |
-| `C_REG_56`         | 0x04    | 0x5656      |
-| `C_REG_78`         | 0x05    | 0x7878      |
-| `C_REG_SPI_TX`     | 0x06    | 0x0000      |
-| `C_REG_SPI_RX`     | 0x07    | 0x0000      |
-| `C_REG_SPI_RX`     | 0x07    | 0x0000      |
-| `C_REG_VGA_CTRL`   | 0x08    | 0x00F0      |
+| `C_REG_GIT_STATUS` | 0x02    | 0x0001      |
+| `C_REG_12`         | 0x03    | 0x1212      |
+| `C_REG_34`         | 0x04    | 0x3434      |
+| `C_REG_56`         | 0x05    | 0x5656      |
+| `C_REG_78`         | 0x06    | 0x7878      |
+| `C_REG_SPI_TX`     | 0x07    | 0x0000      |
+| `C_REG_SPI_RX`     | 0x08    | 0x0000      |
+| `C_REG_SPI_RX`     | 0x08    | 0x0000      |
+| `C_REG_VGA_CTRL`   | 0x09    | 0x00F0      |
 | `C_REG_9A`         | 0xAB    | 0x9A9A      |
 | `C_REG_CD`         | 0xAC    | 0xCDCD      |
 | `C_REG_EF`         | 0xDC    | 0xEFEF      |
@@ -656,3 +660,27 @@ Writes a value to SPI master and verifies correct transmission and reception.
     - Check that sampled SPI data from slave is matching the one decoded in the `REG_SPI_RX` register with procedure [`proc_uart_check`](#procedure-proc_uart_check)
 
 ---
+
+### Procedure `proc_vga_check_outputs`
+
+#### Description
+
+Checks the VGA output signals for a given expected color value.
+Should wait for the next frame but currently just checks the output signals without synchronization,
+which may lead to false negatives if the value is updated in the middle of a frame.
+
+#### Parameters
+
+| Parameter | Type           | Default | Description                      |
+| --------- | -------------- | ------- | -------------------------------- |
+| `value`   | `vector[11:0]` | -       | 12-bit RGBdata to set and verify |
+
+#### Steps
+
+1. **Write Data to VGA register**
+    - Write `value` to the register `C_REG_VGA_CTRL` with procedure [`proc_uart_write`](#procedure-proc_uart_write)
+
+2. **Check VGA Output Signals**
+    - Check that `tb_o_vga_red` equals `value(11 downto 8)` with procedure `check_equal`
+    - Check that `tb_o_vga_green` equals `value(7 downto 4)` with procedure `check_equal`
+    - Check that `tb_o_vga_blue` equals `value(3 downto 0)` with procedure `check_equal`
