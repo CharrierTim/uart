@@ -37,7 +37,8 @@
 ##                                          interface.
 ## 2.1      11/04/2026  Timothee Charrier   Add Unisim and Unifast library path retrieval methods
 ## 2.2      17/04/2026  Timothee Charrier   Add `get_simulator_name` method to Simulator base class
-## 2.3      06/05/2026  Timothee Charrier   Add coverage report generation methods for GHDL
+## 2.3      06/05/2026  Timothee Charrier   Add coverage report generation methods for GHDL and initial Questa or
+##                                          ModelSim support
 ## =====================================================================================================================
 
 import logging
@@ -505,6 +506,87 @@ class GHDL(Simulator):
         LOGGER.info("Coverage report generated at %s", html_report)
 
 
+class QuestaModelSim(Simulator):
+    """Questa/ModelSim simulator implementation."""
+
+    SIMULATOR_NAME: str = "modelsim"
+    EXECUTABLE: str = "vsim"
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        LOGGER.warning(
+            "Questa/ModelSim support is not fully implemented yet. Simulation with unisim/unifast won't work."
+        )
+
+    def get_simulator_name(self) -> str:
+        """Get the name of the simulator."""
+        return self.SIMULATOR_NAME
+
+    def _apply_options(self) -> None:
+        """Apply Questa/ModelSim-specific options."""
+        # Base flags always applied
+        analysis_flags: list[str] = ["-fsynopsys", "-frelaxed", "--warn-no-hide"]
+        elab_flags: list[str] = ["-fsynopsys", "-frelaxed"]
+        sim_flags: list[str] = ["--asserts=disable-at-0"]
+
+        self.vu.add_compile_option(name="ghdl.a_flags", value=analysis_flags)
+        self.vu.set_sim_option(name="ghdl.elab_flags", value=elab_flags)
+        self.vu.set_sim_option(name="ghdl.sim_flags", value=sim_flags)
+
+    def _check_vcover(self) -> bool:
+        """Check if vcover is available for coverage generation.
+
+        Returns
+        -------
+        bool
+            True if vcover is available, False otherwise.
+        """
+        if not shutil.which(cmd="vcover"):
+            LOGGER.warning("vcover executable not found in PATH! Coverage generation will be disabled.")
+            return False
+        return True
+
+    def _generate_coverage(self, results: Results) -> None:
+        """Generate Questa/ModelSim coverage report.
+
+        Parameters
+        ----------
+        results : Results
+            The simulation results from VUnit.
+        """
+        if not self.vu:
+            return
+
+        if not self._check_vcover():
+            return
+
+        output_path: Path = Path(self.vu._output_path)
+        coverage_file: Path = output_path / "coverage_data.ucdb"
+        coverage_dir: Path = output_path / "coverage_report"
+
+        LOGGER.info("Merging coverage files into %s...", coverage_file)
+        results.merge_coverage(file_name=str(coverage_file))
+        LOGGER.info("Coverage files merged")
+
+        # Generate coverage report
+        LOGGER.info("Generating coverage report to %s...", coverage_dir)
+        cmd: list[str] = [
+            "vcover",
+            "report",
+            "-html",
+            "-details",
+            "-annotate",
+            "-code",
+            "bcefs",
+            str(coverage_file),
+            "-output",
+            str(coverage_dir),
+        ]
+        process: Process[list[str]] = Process(cmd)
+        process.consume_output()
+        LOGGER.info("Coverage report generated at %s", coverage_dir)
+
+
 def select_simulator(
     name: str | None = None, enable_coverage: bool = False, result_dir: Path | None = None
 ) -> Simulator:
@@ -524,7 +606,7 @@ def select_simulator(
     Simulator
         Configured simulator instance.
     """
-    simulators = {"nvc": NVC, "ghdl": GHDL}
+    simulators: dict[str, type[Simulator]] = {"nvc": NVC, "ghdl": GHDL, "questa/modelsim": QuestaModelSim}
 
     # Auto-detect if not specified
     if not name:
@@ -540,5 +622,6 @@ def select_simulator(
     if not simulator_class:
         available = ", ".join(simulators.keys())
         LOGGER.error("Unknown simulator: %s. Available: %s", name, available)
+        raise SystemExit(1)
 
     return simulator_class(result_dir=result_dir, enable_coverage=enable_coverage)
