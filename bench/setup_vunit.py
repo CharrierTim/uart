@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    setup_vunit.py
-## @version 2.2
+## @version 2.3
 ## @brief   This module provides simulator classes for VUnit.
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -37,10 +37,12 @@
 ##                                          interface.
 ## 2.1      11/04/2026  Timothee Charrier   Add Unisim and Unifast library path retrieval methods
 ## 2.2      17/04/2026  Timothee Charrier   Add `get_simulator_name` method to Simulator base class
+## 2.3      06/05/2026  Timothee Charrier   Add coverage report generation methods for GHDL
 ## =====================================================================================================================
 
 import logging
 import os
+import re
 import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -383,13 +385,124 @@ class GHDL(Simulator):
         self.vu.set_sim_option(name="ghdl.elab_flags", value=elab_flags)
         self.vu.set_sim_option(name="ghdl.sim_flags", value=sim_flags)
 
+    def _check_gcovr(self) -> bool:
+        """Check if gcovr is available for coverage generation.
+
+        Returns
+        -------
+        bool
+            True if gcovr is available, False otherwise.
+        """
+        if not shutil.which(cmd="gcovr"):
+            LOGGER.warning("gcovr executable not found in PATH! Coverage generation will be disabled.")
+            return False
+        return True
+
+    def _generate_gcc_coverage(self, coverage_file: Path, html_report: Path) -> None:
+        """Generate coverage report using gcovr with GCC backend.
+
+        Parameters
+        ----------
+        coverage_file : Path
+            The path to the coverage data file.
+        html_report : Path
+            The path to the HTML report file.
+        """
+        cmd: list[str] = [
+            "gcovr",
+            str(coverage_file),
+            "--output",
+            str(html_report),
+            "--html",
+            "--html-details",
+        ]
+        process: Process[list[str]] = Process(cmd)
+        process.consume_output()
+
+    def _fix_gcovr_json_version(self, json_file: Path) -> None:
+        """Fix the version string in gcovr JSON coverage file to work around gcovr issues with GHDL coverage files.
+
+        Parameters
+        ----------
+        json_file : Path
+            The path to the JSON coverage file.
+        """
+        try:
+            with open(file=json_file, encoding="utf-8") as f:
+                content = f.read()
+
+            # Replace version string in JSON file
+            content: str = re.sub(
+                pattern=r'"gcovr/format_version":\s*"\d+\.\d+"', repl='"gcovr/format_version": "0.14"', string=content
+            )
+
+            with open(file=json_file, mode="w", encoding="utf-8") as f:
+                f.write(content)
+            LOGGER.info("Modified gcovr.json to fix version issue")
+        except (OSError, UnicodeDecodeError) as e:
+            LOGGER.error("Failed to modify gcovr.json: %s", e)
+
+    def _generate_others_backend_coverage(self, json_file: Path, html_report: Path) -> None:
+        """Generate coverage report using gcovr with JSON coverage file.
+
+        Requires a workaround to fix the version string in the JSON file due to gcovr issues with GHDL coverage files.
+        Without it, gcovr will fail with error `AssertionError: Wrong format version, got 0.6 expected 0.14.`
+
+        Parameters
+        ----------
+        json_file : Path
+            The path to the JSON coverage file.
+        html_report : Path
+            The path to the HTML report file.
+        """
+        self._fix_gcovr_json_version(json_file)
+
+        cmd: list[str] = [
+            "gcovr",
+            "-a",
+            str(json_file),
+            "--output",
+            str(html_report),
+            "--html",
+            "--html-details",
+        ]
+        process: Process[list[str]] = Process(cmd)
+        process.consume_output()
+
     def _generate_coverage(self, results: Results) -> None:
-        """Generate GHDL coverage report."""
+        """Generate GHDL coverage report with gcovr JSON workaround.
+
+        Parameters
+        ----------
+        results : Results
+            The simulation results from VUnit.
+        """
         if not self.vu:
             return
 
-        # Merge coverage databases
-        LOGGER.info("TODO")
+        if not self._check_gcovr():
+            return
+
+        output_path: Path = Path(self.vu._output_path)
+        coverage_file: Path = output_path / "coverage_data"
+        coverage_dir: Path = output_path / "coverage_report"
+        html_report: Path = coverage_dir / "index.html"
+        coverage_dir.mkdir(parents=True, exist_ok=True)
+
+        LOGGER.info("Merging coverage files into %s...", coverage_file)
+        results.merge_coverage(file_name=str(coverage_file))
+        LOGGER.info("Coverage files merged")
+
+        if results._simulator_if._backend == "gcc":
+            self._generate_gcc_coverage(coverage_file=coverage_file, html_report=html_report)
+        else:
+            json_file: Path = coverage_file / "gcovr.json"
+            if not json_file.exists():
+                LOGGER.warning("JSON coverage file not found: %s", json_file)
+                return
+            self._generate_others_backend_coverage(json_file=json_file, html_report=html_report)
+
+        LOGGER.info("Coverage report generated at %s", html_report)
 
 
 def select_simulator(
