@@ -194,6 +194,7 @@ class Simulator(ABC):
         """
         if not self.vu:
             LOGGER.error("Must call attach() before adding libraries!")
+            return
 
         path: str | None = library_path or self.DEFAULT_LIBRARIES.get(library_name)
         if not path:
@@ -213,6 +214,7 @@ class Simulator(ABC):
         """
         if not self.vu:
             LOGGER.error("Must call attach() before configure!")
+            return
 
         self._apply_options()
         return self
@@ -244,8 +246,8 @@ class Simulator(ABC):
 
     def _merge_output_files(self) -> None:
         """Merge all output.txt files from subdirectories into a single file."""
-        vunit_dir = Path(self.vu._output_path)
-        output_file = self.result_dir / "output.txt"
+        vunit_dir: Path = Path(self.vu._output_path)
+        output_file: Path = self.result_dir / "output.txt"
 
         # Check if test_output directory exists
         if not vunit_dir.exists():
@@ -253,7 +255,7 @@ class Simulator(ABC):
             return
 
         # Find all output.txt files
-        output_files = list(vunit_dir.rglob("output.txt"))
+        output_files: list[Path] = list(vunit_dir.rglob("output.txt"))
 
         if not output_files:
             LOGGER.warning("No output.txt files found in %s", vunit_dir)
@@ -293,9 +295,9 @@ class Simulator(ABC):
 class NVC(Simulator):
     """NVC simulator implementation."""
 
-    SIMULATOR_NAME = "nvc"
-    EXECUTABLE = "nvc"
-    DEFAULT_LIBRARIES = {
+    SIMULATOR_NAME: str = "nvc"
+    EXECUTABLE: str = "nvc"
+    DEFAULT_LIBRARIES: dict[str, str] = {
         "unisim": "~/.nvc/lib/unisim.08",
         "unifast": "~/.nvc/lib/unifast.08",
     }
@@ -318,13 +320,19 @@ class NVC(Simulator):
         self.vu.set_sim_option(name="nvc.elab_flags", value=elab_flags, overwrite=False)
 
     def _generate_coverage(self, results: Results) -> None:
-        """Generate NVC coverage report."""
+        """Generate NVC coverage report.
+
+        Parameters
+        ----------
+        results : Results
+            The simulation results from VUnit.
+        """
         if not self.vu:
             return
 
-        output_path = Path(self.vu._output_path)
-        coverage_file = output_path / "coverage_data"
-        coverage_dir = output_path / "coverage_report"
+        output_path: Path = Path(self.vu._output_path)
+        coverage_file: Path = output_path / "coverage_data"
+        coverage_dir: Path = output_path / "coverage_report"
 
         # Merge coverage databases
         LOGGER.info("Merging coverage files into %s.ncdb...", coverage_file)
@@ -338,8 +346,8 @@ class NVC(Simulator):
 
         # Generate coverage report
         LOGGER.info("Generating coverage report to %s...", coverage_dir)
-        cmd = ["nvc", "--cover-report", str(coverage_db), "-o", str(coverage_dir)]
-        process = Process(cmd)
+        cmd: list[str] = ["nvc", "--cover-report", str(coverage_db), "-o", str(coverage_dir)]
+        process: Process[list[str]] = Process(cmd)
         process.consume_output()
         LOGGER.info("Coverage report generated")
 
@@ -353,9 +361,9 @@ class NVC(Simulator):
 class GHDL(Simulator):
     """GHDL simulator implementation."""
 
-    SIMULATOR_NAME = "ghdl"
-    EXECUTABLE = "ghdl"
-    DEFAULT_LIBRARIES = {
+    SIMULATOR_NAME: str = "ghdl"
+    EXECUTABLE: str = "ghdl"
+    DEFAULT_LIBRARIES: dict[str, str] = {
         "unisim": "~/.ghdl/xilinx-vivado/unisim/v08",
         "unifast": "~/.ghdl/xilinx-vivado/unifast/v08",
     }
