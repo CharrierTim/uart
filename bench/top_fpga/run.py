@@ -38,6 +38,7 @@
 ## 2.1      12/04/2026  Timothee Charrier   Add `vhdl_ls` file generation and minor fix
 ## 2.2      17/04/2026  Timothee Charrier   Add support for selecting simulator via command line and update coverage
 ##                                          collection implementation.
+## 2.2      06/05/2026  Timothee Charrier   Add Questa or ModelSim support, fix `LIB_SRC` to `LIB_RTL`
 ## =====================================================================================================================
 
 import sys
@@ -75,14 +76,16 @@ cli = VUnitCLI()
 cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
 cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
 cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
-cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
+cli.parser.add_argument("--questa", "--modelsim", action="store_true", help="Use Questa/ModelSim as the simulator")
 args: Namespace = cli.parse_args()
 
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
 
-sim_name: Literal["nvc", "ghdl"] | None = "nvc" if args.nvc else "ghdl" if args.ghdl else None
+sim_name: Literal["nvc", "ghdl", "questa/modelsim"] | None = (
+    "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if (args.questa or args.modelsim) else None
+)
 simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage)
 
 VU: VUnit = VUnit.from_args(args=args)
@@ -96,9 +99,9 @@ OLO.add_source_files(pattern=CORES_ROOT / "open-logic" / "3rdParty/" / "en_cl_fi
 OLO.add_compile_option(name="nvc.a_flags", value=["--relaxed"])
 
 # Add the source files to the library
-LIB_SRC: Library = VU.add_library(library_name="lib_rtl")
-LIB_SRC.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
-LIB_SRC.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
+LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
+LIB_RTL.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
+LIB_RTL.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
@@ -109,11 +112,17 @@ LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
 # Configure simulation
 ## =====================================================================================================================
 
-if args.coverage and simulator.get_simulator_name() == "nvc":
+if args.coverage:
     LIB_BENCH.set_sim_option(name="enable_coverage", value=True)
-    LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"])
-else:
-    print("Coverage collection is implemented for nvc simulator only. Ignoring --coverage flag.")
+
+    if simulator.get_simulator_name() == "nvc":
+        LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"])
+
+    elif simulator.get_simulator_name() == "modelsim" or simulator.get_simulator_name() == "questa":
+        LIB_RTL.set_compile_option(name="modelsim.vcom_flags", value=["+cover=bcefs"])
+        LIB_RTL.set_compile_option(name="modelsim.vlog_flags", value=["+cover=bcefs"])
+        LIB_BENCH.set_compile_option(name="modelsim.vcom_flags", value=["+cover=bcefs"])
+        LIB_BENCH.set_compile_option(name="modelsim.vlog_flags", value=["+cover=bcefs"])
 
 ## =====================================================================================================================
 # Set up simulator
