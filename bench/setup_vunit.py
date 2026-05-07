@@ -382,9 +382,9 @@ class GHDL(Simulator):
         elab_flags: list[str] = ["-fsynopsys", "-frelaxed"]
         sim_flags: list[str] = ["--asserts=disable-at-0"]
 
-        self.vu.add_compile_option(name="ghdl.a_flags", value=analysis_flags)
-        self.vu.set_sim_option(name="ghdl.elab_flags", value=elab_flags)
-        self.vu.set_sim_option(name="ghdl.sim_flags", value=sim_flags)
+        self.vu.add_compile_option(name="ghdl.a_flags", value=analysis_flags, overwrite=False)
+        self.vu.set_sim_option(name="ghdl.elab_flags", value=elab_flags, overwrite=False)
+        self.vu.set_sim_option(name="ghdl.sim_flags", value=sim_flags, overwrite=False)
 
     def _check_gcovr(self) -> bool:
         """Check if gcovr is available for coverage generation.
