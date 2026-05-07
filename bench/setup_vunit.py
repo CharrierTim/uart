@@ -37,7 +37,7 @@
 ##                                          interface.
 ## 2.1      11/04/2026  Timothee Charrier   Add Unisim and Unifast library path retrieval methods
 ## 2.2      17/04/2026  Timothee Charrier   Add `get_simulator_name` method to Simulator base class
-## 2.3      06/05/2026  Timothee Charrier   Add coverage report generation methods for GHDL and initial Questa or
+## 2.3      07/05/2026  Timothee Charrier   Add coverage report generation methods for GHDL and initial Questa or
 ##                                          ModelSim support
 ## =====================================================================================================================
 
@@ -524,14 +524,6 @@ class QuestaModelSim(Simulator):
 
     def _apply_options(self) -> None:
         """Apply Questa/ModelSim-specific options."""
-        # Base flags always applied
-        analysis_flags: list[str] = ["-fsynopsys", "-frelaxed", "--warn-no-hide"]
-        elab_flags: list[str] = ["-fsynopsys", "-frelaxed"]
-        sim_flags: list[str] = ["--asserts=disable-at-0"]
-
-        self.vu.add_compile_option(name="ghdl.a_flags", value=analysis_flags)
-        self.vu.set_sim_option(name="ghdl.elab_flags", value=elab_flags)
-        self.vu.set_sim_option(name="ghdl.sim_flags", value=sim_flags)
 
     def _check_vcover(self) -> bool:
         """Check if vcover is available for coverage generation.
