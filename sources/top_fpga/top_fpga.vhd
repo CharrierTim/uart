@@ -33,7 +33,7 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 1.1      10/12/2025  Timothee Charrier   Remove generic from UART module, update resync_slv module generic names
--- 1.2      16/12/2025  Timothee Charrier   Use new PLL outputing a 50 MHz and 25 MHz clock
+-- 1.2      16/12/2025  Timothee Charrier   Use new PLL outputting a 50 MHz and 25 MHz clock
 -- 1.3      17/12/2025  Timothee Charrier   Update regfile module to interface with new VGA module
 -- 1.4      09/01/2026  Timothee Charrier   The FPGA now uses open-logic modules for clock domain crossing. Also
 --                                          update the VGA timings to 1024*768@60Hz.
