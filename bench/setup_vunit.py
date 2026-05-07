@@ -524,6 +524,17 @@ class QuestaModelSim(Simulator):
 
     def _apply_options(self) -> None:
         """Apply Questa/ModelSim-specific options."""
+        vcom_flags: list[str] = []
+        vlog_flags: list[str] = []
+        vsim_flags: list[str] = []
+        vopt_flags: list[str] = []
+        three_step_flow: bool = True
+
+        self.vu.set_compile_option(name="modelsim.vcom_flags", value=vcom_flags)
+        self.vu.set_compile_option(name="modelsim.vlog_flags", value=vlog_flags)
+        self.vu.set_sim_option(name="modelsim.vsim_flags", value=vsim_flags, overwrite=False)
+        self.vu.set_sim_option(name="modelsim.vopt_flags", value=vopt_flags, overwrite=False)
+        self.vu.set_sim_option(name="modelsim.three_step_flow", value=three_step_flow)
 
     def _check_vcover(self) -> bool:
         """Check if vcover is available for coverage generation.
