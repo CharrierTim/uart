@@ -526,7 +526,7 @@ class QuestaModelSim(Simulator):
         """Apply Questa/ModelSim-specific options."""
         vcom_flags: list[str] = []
         vlog_flags: list[str] = []
-        vsim_flags: list[str] = []
+        vsim_flags: list[str] = ["-t", "fs"]
         vopt_flags: list[str] = []
         three_step_flow: bool = True
 
