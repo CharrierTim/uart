@@ -103,7 +103,6 @@ OLO.add_compile_option(name="nvc.a_flags", value=["--relaxed"])
 # Add the source files to the library
 LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
 LIB_RTL.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
-LIB_RTL.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
@@ -132,8 +131,6 @@ if args.coverage:
 
 simulator.attach(VU).configure()
 
-simulator.add_library(library_name="unisim")
-simulator.add_library(library_name="unifast")
 
 ## =====================================================================================================================
 # Generate vhdl_ls configuration if requested and exit

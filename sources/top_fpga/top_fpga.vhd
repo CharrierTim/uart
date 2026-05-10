@@ -61,6 +61,7 @@ entity TOP_FPGA is
     port (
         -- Clock and reset
         PAD_I_CLK       : in    std_logic;
+        PAD_I_VGA_CLK   : in    std_logic;
         PAD_I_RST_P     : in    std_logic;
 
         -- UART
@@ -164,36 +165,15 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- VGA control
     signal reg_vga_colors           : std_logic_vector(12 - 1 downto 0);
 
-    -- =================================================================================================================
-    -- COMPONENTS
-    -- =================================================================================================================
-
-    -- vsg_off
-    component clk_wiz_0 is
-        port (
-            CLK_OUT1          : out   std_logic;
-            CLK_OUT2          : out   std_logic;
-            RESET             : in    std_logic;
-            LOCKED            : out   std_logic;
-            CLK_IN1           : in    std_logic
-        );
-    end component;
-    -- vsg_on
-
 begin
 
     -- =================================================================================================================
     -- PLL and positive reset logic
     -- =================================================================================================================
 
-    inst_pll : component clk_wiz_0
-        port map (
-            clk_out1 => internal_clk,
-            clk_out2 => vga_clk,
-            reset    => PAD_I_RST_P,
-            locked   => pll_locked,
-            clk_in1  => PAD_I_CLK
-        );
+    -- Tests without the PLL for fast simulation only
+    internal_clk <= PAD_I_CLK;
+    vga_clk      <= PAD_I_VGA_CLK;
 
     -- Toggle reset from BTN or when PLL is unlocked
     intermediate_rst_p <= PAD_I_RST_P or (not pll_locked);

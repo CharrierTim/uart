@@ -74,6 +74,7 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
 
     -- DUT signals
     signal tb_pad_i_clk           : std_logic;
+    signal tb_pad_i_vga_clk       : std_logic;
     signal tb_pad_i_rst_p         : std_logic;
     signal tb_pad_i_uart_rx       : std_logic;
     signal tb_pad_o_uart_tx       : std_logic;
@@ -127,6 +128,7 @@ begin
         )
         port map (
             PAD_I_CLK       => tb_pad_i_clk,
+            PAD_I_VGA_CLK   => tb_pad_i_vga_clk,
             PAD_I_RST_P     => tb_pad_i_rst_p,
             PAD_I_UART_RX   => tb_i_uart_rx,
             PAD_O_UART_TX   => tb_pad_o_uart_tx,
@@ -200,6 +202,19 @@ begin
         end loop l_clock_gen;
 
     end process p_clock_gen;
+
+    p_vga_clock_gen : process is
+    begin
+        tb_pad_i_vga_clk <= '0';
+
+        l_vga_clock_gen : loop
+            wait for C_VGA_CLK_PERIOD / 2;
+            tb_pad_i_vga_clk <= '1';
+            wait for C_VGA_CLK_PERIOD / 2;
+            tb_pad_i_vga_clk <= '0';
+        end loop l_vga_clock_gen;
+
+    end process p_vga_clock_gen;
 
     -- =================================================================================================================
     -- UART TIMINGS VERIFICATION

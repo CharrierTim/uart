@@ -69,8 +69,11 @@ package TB_TOP_FPGA_PKG is
     -- =================================================================================================================
 
     -- Clock period for the testbench
-    constant C_FREQ_HZ                    : positive := 100_000_000;
+    constant C_FREQ_HZ                    : positive := 50_000_000;
     constant C_CLK_PERIOD                 : time     := 1 sec / C_FREQ_HZ;
+
+    constant C_VGA_CLK_FREQ_HZ            : positive := 65_000_000;
+    constant C_VGA_CLK_PERIOD             : time     := 1 sec / C_VGA_CLK_FREQ_HZ;
 
     -- DUT generics
     constant C_GIT_ID                     : std_logic_vector(32 - 1 downto 0) := x"12345678";
