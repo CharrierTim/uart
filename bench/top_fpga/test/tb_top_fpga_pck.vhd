@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_top_fpga_pck.vhd
--- @version 2.0
+-- @version 2.1
 -- @brief   Package for the Top-Level testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -33,6 +33,7 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 2.0      12/01/2026  Timothee Charrier   Add VGA horizontal and vertical timings constants
+-- 2.1      17/04/2026  Timothee Charrier   Add VGA test vectors and procedure to check VGA outputs
 -- =====================================================================================================================
 
 library ieee;
@@ -158,6 +159,10 @@ package TB_TOP_FPGA_PKG is
     constant C_V_HSYNC_HIGH_TIME_ACCURACY : time := C_V_HSYNC_HIGH * C_V_VGA_PIXEL_BIT_TIME * 0.01;
     constant C_V_WHOLE_LINE_TIME          : time := C_V_SYNC_PULSE_TIME + C_V_HSYNC_HIGH_TIME;
     constant C_V_WHOLE_LINE_TIME_ACCURACY : time := C_V_SYNC_PULSE_TIME_ACCURACY + C_V_HSYNC_HIGH_TIME_ACCURACY;
+
+    constant C_VGA_VECTOR_TEST_1          : std_logic_vector(12 - 1 downto 0) := x"ABC";
+    constant C_VGA_VECTOR_TEST_2          : std_logic_vector(12 - 1 downto 0) := x"123";
+    constant C_VGA_VECTOR_TEST_3          : std_logic_vector(12 - 1 downto 0) := x"F0F";
 
     -- =================================================================================================================
     -- PROCEDURES

@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 2.0
+-- @version 2.1
 -- @brief   Top-Level Testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -35,6 +35,7 @@
 -- 1.1      12/10/2025  Timothee Charrier   Update UART_MODEL interface names
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high. Add VGA horizontal and
 --                                          vertical timings test.
+-- 2.1      17/04/2026  Timothee Charrier   Add VGA test vectors and procedure to check VGA outputs
 -- =====================================================================================================================
 
 library ieee;
@@ -722,6 +723,38 @@ begin
 
         end procedure proc_spi_check;
 
+        -- =============================================================================================================
+        -- proc_vga_check_outputs
+        -- Description: Checks the VGA output signals for a given expected color value.
+        --
+        -- Parameters:
+        --   value - 12-bit data to transmit and verify (4 bits per color channel)
+        --
+        -- Example:
+        --   proc_vga_check_outputs(x"ABC");
+        --
+        -- =============================================================================================================
+
+        procedure proc_vga_check_outputs (
+            constant value : std_logic_vector(12 - 1 downto 0)
+        ) is
+        begin
+
+            info("");
+            info("Writing VGA output signals into register " & C_REG_VGA_CTRL.name &
+                "with value 0x" & to_hstring(value));
+
+            proc_uart_write(C_REG_VGA_CTRL, "0000" & value);
+
+            wait for 100 ns;
+
+            -- Check the VGA output signals match the expected value
+            check_equal(tb_pad_o_vga_red,   value(11 downto 8), "Checking VGA red output");
+            check_equal(tb_pad_o_vga_green, value( 7 downto 4), "Checking VGA green output");
+            check_equal(tb_pad_o_vga_blue,  value( 3 downto 0), "Checking VGA blue output");
+
+        end procedure proc_vga_check_outputs;
+
     begin
 
         -- Set up the test runner
@@ -1156,6 +1189,14 @@ begin
                 info("-----------------------------------------------------------------------------");
                 info(" Checking VGA RGB outputs are matching configuration");
                 info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                proc_vga_check_outputs(C_VGA_VECTOR_TEST_1);
+                proc_vga_check_outputs(C_VGA_VECTOR_TEST_2);
+                proc_vga_check_outputs(C_VGA_VECTOR_TEST_3);
 
                 info("");
                 info("-----------------------------------------------------------------------------");

@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run.py
-## @version 2.0
+## @version 2.2
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
 ##          SPI master module.
 ## @author  Timothee Charrier
@@ -35,18 +35,21 @@
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      17/10/2025  Timothee Charrier   Initial release
 ## 2.0      12/01/2026  Timothee Charrier   Update entire interface
+## 2.1      12/04/2026  Timothee Charrier   Add custom args and update paths
+## 2.2      06/05/2026  Timothee Charrier   Add Questa or ModelSim support, fix `LIB_SRC` to `LIB_RTL`
 ## =====================================================================================================================
 
 import sys
 from argparse import Namespace
 from itertools import product
 from pathlib import Path
+from typing import Literal
 
 from vunit import VUnit, VUnitCLI
 from vunit.ui.library import Library
 from vunit.ui.testbench import TestBench
 
-sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
+sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 
 from setup_vunit import Simulator, select_simulator
 
@@ -54,24 +57,34 @@ from setup_vunit import Simulator, select_simulator
 # Define paths
 ## =====================================================================================================================
 
-SRC_ROOT: Path = Path(__file__).parent.parent.parent / "sources"
-BENCH_ROOT: Path = Path(__file__).parent / "test"
-MODEL_ROOT: Path = Path(__file__).parent.parent / "models" / "spi"
-COVERAGE_SPEC_PATH: Path = Path(__file__).parent / "coverage.spec"
+THIS_DIR: Path = Path(__file__).resolve().parent
+PRJ_ROOT: Path = THIS_DIR.parent.parent
+SRC_ROOT: Path = PRJ_ROOT / "sources"
+BENCH_ROOT: Path = THIS_DIR
+MODELS_ROOT: Path = PRJ_ROOT / "bench" / "models"
+
+COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
 
 ## =====================================================================================================================
-# Parse command line arguments with custom --coverage flag
+# Parse command line arguments
 ## =====================================================================================================================
 
 cli = VUnitCLI()
 cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
+cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
+cli.parser.add_argument("--modelsim", dest="questa", action="store_true", help="Use ModelSim/Questa as the simulator")
+cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
+cli.parser.add_argument("--questa", dest="questa", action="store_true", help="Use Questa/ModelSim as the simulator")
 args: Namespace = cli.parse_args()
-
-simulator: Simulator = select_simulator(enable_coverage=args.coverage)
 
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
+
+sim_name: Literal["nvc", "ghdl", "questa/modelsim"] | None = (
+    "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if args.questa else None
+)
+simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage)
 
 VU: VUnit = VUnit.from_args(args=args)
 VU.add_vhdl_builtins()
@@ -79,23 +92,29 @@ VU.add_verification_components()
 VU.add_random()
 
 # Add the source files to the library
-LIB_SRC: Library = VU.add_library(library_name="lib_rtl")
-LIB_SRC.add_source_files(pattern=SRC_ROOT / "spi" / "*.vhd")
+LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
+LIB_RTL.add_source_files(pattern=SRC_ROOT / "spi" / "*.vhd")
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
-LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
-LIB_BENCH.add_source_files(pattern=MODEL_ROOT / "*.vhd")
+LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
+LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "**" / "*.vhd")
 
 ## =====================================================================================================================
 # Configure simulation
 ## =====================================================================================================================
 
 if args.coverage:
-    LIB_SRC.set_compile_option(name="enable_coverage", value=True)
-    LIB_BENCH.set_compile_option(name="enable_coverage", value=True)
     LIB_BENCH.set_sim_option(name="enable_coverage", value=True)
-    LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"])
+
+    if simulator.get_simulator_name() == "nvc":
+        LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"])
+
+    elif simulator.get_simulator_name() == "modelsim" or simulator.get_simulator_name() == "questa":
+        LIB_RTL.set_compile_option(name="modelsim.vcom_flags", value=["+cover=bcefs"])
+        LIB_RTL.set_compile_option(name="modelsim.vlog_flags", value=["+cover=bcefs"])
+        LIB_BENCH.set_compile_option(name="modelsim.vcom_flags", value=["+cover=bcefs"])
+        LIB_BENCH.set_compile_option(name="modelsim.vlog_flags", value=["+cover=bcefs"])
 
 ## =====================================================================================================================
 # Set up simulator
