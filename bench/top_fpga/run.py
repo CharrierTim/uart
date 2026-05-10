@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run.py
-## @version 2.2
+## @version 2.3
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
 ##          Top-level module.
 ## @author  Timothee Charrier
@@ -39,7 +39,7 @@
 ## 2.2      17/04/2026  Timothee Charrier   Add support for selecting simulator via command line and update coverage
 ##                                          collection implementation.
 ## 2.2      06/05/2026  Timothee Charrier   Add Questa or ModelSim support, fix `LIB_SRC` to `LIB_RTL`
-## 2.3      10/05/2026  Timothee Charrier   Fix missing GHDL parser flag
+## 2.3      10/05/2026  Timothee Charrier   Fix missing GHDL parser flag and add custom vhdl_ls.toml generation method
 ## =====================================================================================================================
 
 import sys
@@ -53,7 +53,6 @@ from vunit.ui.library import Library
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 sys.path.insert(0, str((Path(__file__).parent.parent.parent / "cores" / "open-logic" / "sim").resolve()))
 
-from create_vhdl_ls_config import create_configuration
 from setup_vunit import Simulator, select_simulator
 
 ## =====================================================================================================================
@@ -145,7 +144,7 @@ if args.vhdl_ls:
         [simulator.get_unisim_vcomp_library_path(), "unisim"],
         [simulator.get_unifast_library_path(), "unifast"],
     ]
-    create_configuration(output_path=PRJ_ROOT, vunit_proj=simulator.vu, files=files)
+    simulator.generate_vhdl_ls_toml(external_libraries=files, output_path=PRJ_ROOT)
     sys.exit(0)
 
 ## =====================================================================================================================

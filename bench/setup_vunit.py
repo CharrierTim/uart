@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    setup_vunit.py
-## @version 2.3
+## @version 2.4
 ## @brief   This module provides simulator classes for VUnit.
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -39,6 +39,7 @@
 ## 2.2      17/04/2026  Timothee Charrier   Add `get_simulator_name` method to Simulator base class
 ## 2.3      07/05/2026  Timothee Charrier   Add coverage report generation methods for GHDL and initial Questa or
 ##                                          ModelSim support
+## 2.4      10/05/2026  Timothee Charrier   Add custom vhdl_ls.toml generation method
 ## =====================================================================================================================
 
 import logging
@@ -47,12 +48,15 @@ import re
 import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Any, TypeAlias
 
+import rtoml
 from vunit import VUnit
 from vunit.ostools import Process
 from vunit.ui.results import Results
 
 LOGGER: logging.Logger = logging.getLogger(name=__name__)
+VHDL_LS_TOML: TypeAlias = dict[str, Any]
 
 
 class Simulator(ABC):
@@ -61,6 +65,7 @@ class Simulator(ABC):
     SIMULATOR_NAME: str = ""
     EXECUTABLE: str = ""
     DEFAULT_LIBRARIES: dict[str, str] = {}
+    THIRD_PARTY_LIBRARIES: set[str] = {"vunit_lib", "osvvm", "unisim", "unifast", "xil_defaultlib"}
 
     def __init__(self, result_dir: Path | None = None, enable_coverage: bool = False) -> None:
         """Initialize the simulator.
@@ -293,6 +298,91 @@ class Simulator(ABC):
         results : Results
             The simulation results from VUnit.
         """
+
+    def _add_file_to_vhdl_ls_config(
+        self,
+        toml_data: VHDL_LS_TOML,
+        file_path: Path,
+        library_name: str,
+    ) -> None:
+        """Add a file to the vhdl_ls configuration.
+
+        Adapted from `cores/open-logic/sim/create_vhdl_ls_config.py` to be used with the VUnit project.
+        See https://github.com/open-logic/open-logic/blob/main/sim/create_vhdl_ls_config.py for the original version.
+
+        Parameters
+        ----------
+        toml_data : dict[str, dict[str, Any]]
+            The TOML data structure to which the file will be added.
+        file_path : Path
+            The path to the VHDL file.
+        library_name : str
+            The name of the library to which the file belongs.
+        """
+        libraries = toml_data.setdefault("libraries", {})
+        library_entry = libraries.setdefault(library_name, {"files": []})
+        library_entry.setdefault("files", [])
+
+        # Exclude known third-party libraries from user code analysis
+        if library_name in self.THIRD_PARTY_LIBRARIES:
+            library_entry["is_third_party"] = True
+
+        library_entry["files"].append(str(file_path.resolve()))
+
+    def generate_vhdl_ls_toml(
+        self,
+        external_libraries: list[tuple[Path, str]] | None = None,
+        output_path: Path | None = None,
+    ) -> None:
+        """Generate `vhdl_ls.toml` file for the rust_hdl VHDL Language Server (https://github.com/VHDL-LS/rust_hdl).
+
+        Adapted from `cores/open-logic/sim/create_vhdl_ls_config.py` to be used with the VUnit project.
+        See https://github.com/open-logic/open-logic/blob/main/sim/create_vhdl_ls_config.py for the original version.
+
+        Parameters
+        ----------
+        external_libraries : list[tuple[Path, str]] | None
+            List of tuples containing library paths and names to include in the configuration. Defaults to None.
+            Example: [(Path("/path/to/unisim_VPKG.vhd"), "unisim")]
+        output_path : Path | None
+            Directory to save the generated configuration file. Defaults to the project root.
+        """
+        if not self.vu:
+            LOGGER.error("Must call attach() before generating vhdl_ls configuration!")
+            return
+
+        if output_path is None:
+            output_path = Path.cwd()
+
+        toml_data: VHDL_LS_TOML = {"libraries": {}}
+
+        # Add files from the VUnit project
+        for source_file in self.vu.get_compile_order():
+            self._add_file_to_vhdl_ls_config(
+                toml_data=toml_data,
+                file_path=Path(source_file.name),
+                library_name=source_file.library.name,
+            )
+
+        # Add external libraries if provided
+        for file_path, library_name in external_libraries or []:
+            self._add_file_to_vhdl_ls_config(
+                toml_data=toml_data,
+                file_path=file_path,
+                library_name=library_name,
+            )
+
+        # Ignore unused work library statement
+        toml_data.setdefault("lint", {})["unnecessary_work_library"] = False
+
+        # Write the TOML data to a file
+        config_file: Path = output_path / "vhdl_ls.toml"
+        try:
+            with open(file=config_file, mode="w", encoding="utf-8") as f:
+                rtoml.dump(obj=toml_data, file=f, pretty=True)
+            LOGGER.info("vhdl_ls configuration generated at: %s", config_file)
+        except OSError as e:
+            LOGGER.error("Failed to write vhdl_ls configuration: %s", e)
 
 
 class NVC(Simulator):
