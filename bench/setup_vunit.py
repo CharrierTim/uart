@@ -202,7 +202,7 @@ class Simulator(ABC):
         """
         if not self.vu:
             LOGGER.error("Must call attach() before adding libraries!")
-            return
+            return self
 
         path: str | None = library_path or self.DEFAULT_LIBRARIES.get(library_name)
         if not path:
@@ -222,7 +222,7 @@ class Simulator(ABC):
         """
         if not self.vu:
             LOGGER.error("Must call attach() before configure!")
-            return
+            return self
 
         self._apply_options()
         return self
