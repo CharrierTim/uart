@@ -39,6 +39,7 @@
 ## 2.2      17/04/2026  Timothee Charrier   Add support for selecting simulator via command line and update coverage
 ##                                          collection implementation.
 ## 2.2      06/05/2026  Timothee Charrier   Add Questa or ModelSim support, fix `LIB_SRC` to `LIB_RTL`
+## 2.3      10/05/2026  Timothee Charrier   Fix missing GHDL parser flag
 ## =====================================================================================================================
 
 import sys
@@ -74,9 +75,10 @@ COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
 
 cli = VUnitCLI()
 cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
-cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
+cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
 cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
 cli.parser.add_argument("--questa", "--modelsim", action="store_true", help="Use Questa/ModelSim as the simulator")
+cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
 args: Namespace = cli.parse_args()
 
 ## =====================================================================================================================
