@@ -68,8 +68,8 @@ COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
 
 cli = VUnitCLI()
 cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
-cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
 cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
+cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
 cli.parser.add_argument("--questa", "--modelsim", action="store_true", help="Use Questa/ModelSim as the simulator")
 args: Namespace = cli.parse_args()
 
