@@ -75,8 +75,9 @@ COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
 cli = VUnitCLI()
 cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
 cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
+cli.parser.add_argument("--modelsim", dest="questa", action="store_true", help="Use ModelSim/Questa as the simulator")
 cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
-cli.parser.add_argument("--questa", "--modelsim", action="store_true", help="Use Questa/ModelSim as the simulator")
+cli.parser.add_argument("--questa", dest="questa", action="store_true", help="Use Questa/ModelSim as the simulator")
 cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
 args: Namespace = cli.parse_args()
 
@@ -85,7 +86,7 @@ args: Namespace = cli.parse_args()
 ## =====================================================================================================================
 
 sim_name: Literal["nvc", "ghdl", "questa/modelsim"] | None = (
-    "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if (args.questa or args.modelsim) else None
+    "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if args.questa else None
 )
 simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage)
 
