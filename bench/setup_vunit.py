@@ -33,7 +33,7 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      01/11/2025  Timothee Charrier   Initial release
-## 2.0      07/01/2026  Timothee Charrier   Major refactor: Vunit now supports NVC coverage, no need for a custom
+## 2.0      07/01/2026  Timothee Charrier   Major refactor: VUnit now supports NVC coverage, no need for a custom
 ##                                          interface.
 ## 2.1      11/04/2026  Timothee Charrier   Add Unisim and Unifast library path retrieval methods
 ## 2.2      17/04/2026  Timothee Charrier   Add `get_simulator_name` method to Simulator base class

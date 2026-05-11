@@ -7,7 +7,7 @@ Documentation of the UART Project for the Zedboard device.
 An UART-based FPGA peripheral control system featuring some basic IPs from scratch (UART, SPI, VGA, etc.) and IPs from
 [Open Logic FPGA Standard Library](https://github.com/open-logic/open-logic).
 
-Verification with [`Vunit` framework](https://github.com/VUnit/vunit) and [`nvc` simulator](https://github.com/nickg/nvc)
+Verification with [`VUnit` framework](https://github.com/VUnit/vunit) and [`nvc` simulator](https://github.com/nickg/nvc)
 with code coverage.
 
 Synthesis and implementation are done with Vivado.
@@ -44,8 +44,8 @@ Synthesis and implementation are done with Vivado.
 
 | Tool       | Version                                                       |
 | ---------- | ------------------------------------------------------------- |
-| **NVC**    | `nvc 1.20.1 (1.20.1.r0.g72fecb933) (Using LLVM 21.1.8)`       |
-| **Vunit**  | `5.0.0.dev11 commit 1197afd44175df0695eb0bf8d6dd49a4af88b469` |
+| **NVC**    | `nvc 1.20.1 (1.20.1.r0.g8e7f19506) (Using LLVM 22.1.4)`       |
+| **VUnit**  | `5.0.0.dev11 commit 1197afd44175df0695eb0bf8d6dd49a4af88b469` |
 | **VSG**    | `VHDL Style Guide (VSG) version: 3.35.0`                      |
 | **Vivado** | `2025.2`                                                      |
 
