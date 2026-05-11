@@ -319,8 +319,8 @@ class Simulator(ABC):
         library_name : str
             The name of the library to which the file belongs.
         """
-        libraries = toml_data.setdefault("libraries", {})
-        library_entry = libraries.setdefault(library_name, {"files": []})
+        libraries: dict[str, dict[str, Any]] = toml_data.setdefault("libraries", {})
+        library_entry: dict[str, Any] = libraries.setdefault(library_name, {"files": []})
         library_entry.setdefault("files", [])
 
         # Exclude known third-party libraries from user code analysis
@@ -711,7 +711,7 @@ def select_simulator(
                     break
 
     # Create the appropriate simulator
-    simulator_class = simulators.get(name)
+    simulator_class: type[Simulator] | None = simulators.get(name)
     if not simulator_class:
         available = ", ".join(simulators.keys())
         LOGGER.error("Unknown simulator: %s. Available: %s", name, available)
