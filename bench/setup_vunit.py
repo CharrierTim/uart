@@ -688,7 +688,7 @@ def select_simulator(
     Parameters
     ----------
     name : str | None
-        Simulator name ('nvc' or 'ghdl'). If None, auto-detects.
+        Simulator name ('nvc', 'ghdl' or 'questa/modelsim'). If None, auto-detects.
     enable_coverage : bool
         Enable coverage collection and reporting. Defaults to False.
     result_dir : Path | None
@@ -698,6 +698,11 @@ def select_simulator(
     -------
     Simulator
         Configured simulator instance.
+
+    Raises
+    ------
+    SystemExit
+        If the specified simulator is unknown or if no suitable simulator is found during auto-detection.
     """
     simulators: dict[str, type[Simulator]] = {"nvc": NVC, "ghdl": GHDL, "questa/modelsim": QuestaModelSim}
 
