@@ -99,7 +99,7 @@ class Simulator(ABC):
 
     def _check_executable(self) -> None:
         """Check if the simulator executable is available."""
-        if not shutil.which(self.EXECUTABLE):
+        if not shutil.which(cmd=self.EXECUTABLE):
             raise SystemExit(f"ERROR: {self.EXECUTABLE} executable not found in PATH!")
 
     def _set_environment(self) -> None:
@@ -134,7 +134,7 @@ class Simulator(ABC):
         Path
             The path to the Vivado installation.
         """
-        vivado_path: str | None = shutil.which("vivado")
+        vivado_path: str | None = shutil.which(cmd="vivado")
         if not vivado_path:
             LOGGER.warning("Vivado executable not found in PATH!")
             return Path()
@@ -222,7 +222,7 @@ class Simulator(ABC):
             LOGGER.error("No default path for library '%s'", library_name)
 
         expanded_path: str = os.path.expanduser(path)
-        self.vu.add_external_library(library_name, expanded_path)
+        self.vu.add_external_library(library_name=library_name, path=expanded_path)
         return self
 
     def configure(self) -> "Simulator":
@@ -261,7 +261,7 @@ class Simulator(ABC):
         self._merge_output_files()
 
         if self.enable_coverage:
-            self._generate_coverage(results)
+            self._generate_coverage(results=results)
         else:
             LOGGER.info("Coverage generation skipped (not enabled)")
 
@@ -453,14 +453,14 @@ class NVC(Simulator):
         # Generate coverage report
         LOGGER.info("Generating coverage report to %s...", coverage_dir)
         cmd: list[str] = ["nvc", "--cover-report", str(coverage_db), "-o", str(coverage_dir)]
-        process: Process[list[str]] = Process(cmd)
+        process: Process[list[str]] = Process(args=cmd)
         process.consume_output()
         LOGGER.info("Coverage report generated at %s", coverage_dir)
 
         # Copy to results directory
         self.result_dir.mkdir(parents=True, exist_ok=True)
-        output_file = self.result_dir / "coverage_data.ncdb"
-        shutil.copy2(coverage_db, output_file)
+        output_file: Path = self.result_dir / "coverage_data.ncdb"
+        shutil.copy2(src=coverage_db, dst=output_file)
         LOGGER.info("Coverage database copied to %s", output_file)
 
 
@@ -520,7 +520,7 @@ class GHDL(Simulator):
             "--html",
             "--html-details",
         ]
-        process: Process[list[str]] = Process(cmd)
+        process: Process[list[str]] = Process(args=cmd)
         process.consume_output()
 
     def _fix_gcovr_json_version(self, json_file: Path) -> None:
@@ -559,7 +559,7 @@ class GHDL(Simulator):
         html_report : Path
             The path to the HTML report file.
         """
-        self._fix_gcovr_json_version(json_file)
+        self._fix_gcovr_json_version(json_file=json_file)
 
         cmd: list[str] = [
             "gcovr",
@@ -570,7 +570,7 @@ class GHDL(Simulator):
             "--html",
             "--html-details",
         ]
-        process: Process[list[str]] = Process(cmd)
+        process: Process[list[str]] = Process(args=cmd)
         process.consume_output()
 
     def _generate_coverage(self, results: Results) -> None:
@@ -724,14 +724,14 @@ def select_simulator(
         name = os.environ.get("VUNIT_SIMULATOR")
         if not name:
             for sim_name in simulators:
-                if shutil.which(sim_name):
+                if shutil.which(cmd=sim_name):
                     name = sim_name
                     break
 
     # Create the appropriate simulator
     simulator_class: type[Simulator] | None = simulators.get(name)
     if not simulator_class:
-        available = ", ".join(simulators.keys())
+        available: str = ", ".join(simulators.keys())
         LOGGER.error("Unknown simulator: %s. Available: %s", name, available)
         raise SystemExit(1)
 
