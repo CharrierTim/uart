@@ -23,3 +23,7 @@ synthesis/uart
 **/*.backup.log
 **/*.backup.jou
 **/*.bit
+
+# IPs testbench
+bench/uart/results
+bench/spi/results
