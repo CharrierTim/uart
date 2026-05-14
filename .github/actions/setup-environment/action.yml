@@ -1,6 +1,9 @@
 name: Setup Environment Action
 description: "Setup the environment for the CI"
 
+# Adapted from Open-Logic's setup-environment action:
+# https://github.com/open-logic/open-logic/blob/main/.github/actions/simulation/action.yml
+
 inputs:
     os:
         description: "CI environment"
@@ -24,6 +27,17 @@ runs:
           run: |
               sudo apt-get update
               xargs -a .github/workflows/apt-dependencies.txt sudo apt-get install -y
+
+        - name: Download and extract GHDL
+          shell: bash
+          run: |
+              mkdir -p ~/ghdl
+              wget https://github.com/ghdl/ghdl/releases/download/v6.0.0-rc2/ghdl-mcode-6.0.0-rc2-ubuntu24.04-x86_64.tar.gz
+              tar zxvf ghdl-mcode-6.0.0-rc2-ubuntu24.04-x86_64.tar.gz -C ~/ghdl
+
+        - name: Add GHDL to PATH
+          shell: bash
+          run: echo "$HOME/ghdl/bin" >> $GITHUB_PATH
 
         - name: mkdir
           shell: bash
