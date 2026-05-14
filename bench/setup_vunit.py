@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    setup_vunit.py
-## @version 2.4
+## @version 2.5
 ## @brief   This module provides simulator classes for VUnit.
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -40,6 +40,7 @@
 ## 2.3      07/05/2026  Timothee Charrier   Add coverage report generation methods for GHDL and initial Questa or
 ##                                          ModelSim support
 ## 2.4      10/05/2026  Timothee Charrier   Add custom vhdl_ls.toml generation method
+## 2.5      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory
 ## =====================================================================================================================
 
 import logging
@@ -77,12 +78,24 @@ class Simulator(ABC):
         enable_coverage : bool
             Enable coverage collection and reporting. Defaults to False.
         """
-        self.result_dir: Path = result_dir or Path.cwd() / "bench" / "results"
+        self.result_dir: Path = result_dir
         self.enable_coverage: bool = enable_coverage
         self.vu: VUnit | None = None
 
+        self._check_results_dir()
         self._check_executable()
         self._set_environment()
+
+    def _check_results_dir(self) -> None:
+        """Check if the results directory exists and is writable."""
+        if not self.result_dir.exists():
+            try:
+                self.result_dir.mkdir(parents=True, exist_ok=True)
+                LOGGER.info("Created results directory: %s", self.result_dir)
+            except OSError as e:
+                raise SystemExit(f"ERROR: Could not create results directory at {self.result_dir} - {e}") from e
+        elif not os.access(path=self.result_dir, mode=os.W_OK):
+            raise SystemExit(f"ERROR: Results directory is not writable: {self.result_dir}")
 
     def _check_executable(self) -> None:
         """Check if the simulator executable is available."""
@@ -269,7 +282,7 @@ class Simulator(ABC):
             LOGGER.warning("No output.txt files found in %s", vunit_dir)
             return
 
-        with open(output_file, "w", encoding="utf-8") as outfile:
+        with open(file=output_file, mode="w", encoding="utf-8") as outfile:
             LOGGER.info("Merging %d output.txt files...", len(output_files))
 
             for txt_file in sorted(output_files):
@@ -281,7 +294,7 @@ class Simulator(ABC):
 
                 # Write the contents of the file
                 try:
-                    with open(txt_file, encoding="utf-8") as infile:
+                    with open(file=txt_file, encoding="utf-8") as infile:
                         outfile.write(infile.read())
                 except (OSError, UnicodeDecodeError) as e:
                     outfile.write(f"[ERROR: Could not read file - {e}]\n")

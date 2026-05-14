@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run.py
-## @version 2.3
+## @version 2.4
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
 ##          Top-level module.
 ## @author  Timothee Charrier
@@ -40,6 +40,7 @@
 ##                                          collection implementation.
 ## 2.2      06/05/2026  Timothee Charrier   Add Questa or ModelSim support, fix `LIB_SRC` to `LIB_RTL`
 ## 2.3      10/05/2026  Timothee Charrier   Fix missing GHDL parser flag and add custom vhdl_ls.toml generation method
+## 2.4      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory
 ## =====================================================================================================================
 
 import sys
@@ -67,6 +68,7 @@ BENCH_ROOT: Path = THIS_DIR
 MODELS_ROOT: Path = PRJ_ROOT / "bench" / "models"
 
 COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
+RESULTS_DIR: Path = THIS_DIR / "results"
 
 ## =====================================================================================================================
 # Parse command line arguments
@@ -88,7 +90,7 @@ args: Namespace = cli.parse_args()
 sim_name: Literal["nvc", "ghdl", "questa/modelsim"] | None = (
     "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if args.questa else None
 )
-simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage)
+simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage, result_dir=RESULTS_DIR)
 
 VU: VUnit = VUnit.from_args(args=args)
 VU.add_vhdl_builtins()
