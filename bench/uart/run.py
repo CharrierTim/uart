@@ -106,7 +106,7 @@ if args.coverage:
     LIB_BENCH.set_sim_option(name="enable_coverage", value=True)
 
     if simulator.get_simulator_name() == "nvc":
-        LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"])
+        LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"], overwrite=False)
 
     elif simulator.get_simulator_name() == "modelsim" or simulator.get_simulator_name() == "questa":
         LIB_RTL.set_compile_option(name="modelsim.vcom_flags", value=["+cover=bcefs"])
