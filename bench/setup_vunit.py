@@ -455,7 +455,7 @@ class NVC(Simulator):
         cmd: list[str] = ["nvc", "--cover-report", str(coverage_db), "-o", str(coverage_dir)]
         process: Process[list[str]] = Process(cmd)
         process.consume_output()
-        LOGGER.info("Coverage report generated")
+        LOGGER.info("Coverage report generated at %s", coverage_dir)
 
         # Copy to results directory
         self.result_dir.mkdir(parents=True, exist_ok=True)
