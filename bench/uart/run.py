@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run.py
-## @version 2.2
+## @version 2.3
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
 ##          UART modules.
 ## @author  Timothee Charrier
@@ -37,6 +37,7 @@
 ## 2.0      12/01/2026  Timothee Charrier   Update entire interface
 ## 2.1      13/04/2026  Timothee Charrier   Add custom args and update paths
 ## 2.2      06/05/2026  Timothee Charrier   Add Questa or ModelSim support, fix `LIB_SRC` to `LIB_RTL`
+## 2.3      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory
 ## =====================================================================================================================
 
 import sys
@@ -61,6 +62,7 @@ SRC_ROOT: Path = PRJ_ROOT / "sources"
 BENCH_ROOT: Path = THIS_DIR
 
 COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
+RESULTS_DIR: Path = THIS_DIR / "results"
 
 ## =====================================================================================================================
 # Parse command line arguments
@@ -81,7 +83,7 @@ args: Namespace = cli.parse_args()
 sim_name: Literal["nvc", "ghdl", "questa/modelsim"] | None = (
     "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if args.questa else None
 )
-simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage)
+simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage, result_dir=RESULTS_DIR)
 
 VU: VUnit = VUnit.from_args(args=args)
 VU.add_vhdl_builtins()
@@ -104,7 +106,7 @@ if args.coverage:
     LIB_BENCH.set_sim_option(name="enable_coverage", value=True)
 
     if simulator.get_simulator_name() == "nvc":
-        LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"])
+        LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"], overwrite=False)
 
     elif simulator.get_simulator_name() == "modelsim" or simulator.get_simulator_name() == "questa":
         LIB_RTL.set_compile_option(name="modelsim.vcom_flags", value=["+cover=bcefs"])

@@ -3,4 +3,4 @@
 
 +hierarchy LIB_BENCH.TB_SPI_MASTER.DUT.*
 
--hierarchy LIB_BENCH.TB_SPI_MASTER.INST_SPI_SLAVE_MODEL.*
+-block spi_slave_model

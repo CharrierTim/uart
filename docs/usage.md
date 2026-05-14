@@ -6,6 +6,11 @@
 - [**NVC**](https://github.com/nickg/nvc/releases/tag/r1.20.1): Version r1.20.1
 - **Vivado**: Version 2025.2
 
+Can also be tested with:
+
+- [**GHDL**](https://github.com/ghdl/ghdl/releases/tag/v6.0.0-rc2): GHDL 6.0.0-rc2 (6.0.0.rc2.r0.gb981f25f3) [Dunoon edition]
+- **QuestaSim**: Questa Altera Starter FPGA Edition-64 vsim 2025.2 Simulator 2025.05 May 31 2025
+
 ## Installation
 
 ### 1. Clone the Repository
@@ -91,6 +96,7 @@ the simulator to use:
 
 - `--nvc`: Use `nvc` as the simulator.
 - `--ghdl`: Use `GHDL` as the simulator.
+- `--questa` or `--modelsim`: Use `QuestaSim`/`ModelSim` as the simulator.
 
 Run the following command to get more help with `VUnit` options:
 

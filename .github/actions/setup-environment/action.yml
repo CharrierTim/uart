@@ -1,6 +1,9 @@
 name: Setup Environment Action
 description: "Setup the environment for the CI"
 
+# Adapted from Open-Logic's setup-environment action:
+# https://github.com/open-logic/open-logic/blob/main/.github/actions/simulation/action.yml
+
 inputs:
     os:
         description: "CI environment"
@@ -25,6 +28,17 @@ runs:
               sudo apt-get update
               xargs -a .github/workflows/apt-dependencies.txt sudo apt-get install -y
 
+        - name: Download and extract GHDL
+          shell: bash
+          run: |
+              mkdir -p ~/ghdl
+              wget https://github.com/ghdl/ghdl/releases/download/v6.0.0-rc2/ghdl-mcode-6.0.0-rc2-ubuntu24.04-x86_64.tar.gz
+              tar zxvf ghdl-mcode-6.0.0-rc2-ubuntu24.04-x86_64.tar.gz -C ~/ghdl
+
+        - name: Add GHDL to PATH
+          shell: bash
+          run: echo "$HOME/ghdl/bin" >> $GITHUB_PATH
+
         - name: mkdir
           shell: bash
           run: mkdir -p ~/nvc
@@ -34,7 +48,7 @@ runs:
           uses: actions/cache@v4
           with:
               path: ~/nvc
-              key: ${{ runner.os }}-nvc-r1.18.2
+              key: ${{ runner.os }}-nvc-r1.20.1
 
         - name: Build NVC if not cached
           if: steps.cache-nvc.outputs.cache-hit != 'true'
@@ -42,7 +56,7 @@ runs:
           run: |
               git clone https://github.com/nickg/nvc.git ~/nvc
               cd ~/nvc
-              git checkout r1.18.2
+              git checkout r1.20.1
               ./autogen.sh
               mkdir build && cd build
               ../configure

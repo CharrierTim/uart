@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    setup_vunit.py
-## @version 2.4
+## @version 2.5
 ## @brief   This module provides simulator classes for VUnit.
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -33,13 +33,14 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      01/11/2025  Timothee Charrier   Initial release
-## 2.0      07/01/2026  Timothee Charrier   Major refactor: Vunit now supports NVC coverage, no need for a custom
+## 2.0      07/01/2026  Timothee Charrier   Major refactor: VUnit now supports NVC coverage, no need for a custom
 ##                                          interface.
 ## 2.1      11/04/2026  Timothee Charrier   Add Unisim and Unifast library path retrieval methods
 ## 2.2      17/04/2026  Timothee Charrier   Add `get_simulator_name` method to Simulator base class
 ## 2.3      07/05/2026  Timothee Charrier   Add coverage report generation methods for GHDL and initial Questa or
 ##                                          ModelSim support
 ## 2.4      10/05/2026  Timothee Charrier   Add custom vhdl_ls.toml generation method
+## 2.5      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory
 ## =====================================================================================================================
 
 import logging
@@ -77,16 +78,28 @@ class Simulator(ABC):
         enable_coverage : bool
             Enable coverage collection and reporting. Defaults to False.
         """
-        self.result_dir: Path = result_dir or Path.cwd() / "bench" / "results"
+        self.result_dir: Path = result_dir
         self.enable_coverage: bool = enable_coverage
         self.vu: VUnit | None = None
 
+        self._check_results_dir()
         self._check_executable()
         self._set_environment()
 
+    def _check_results_dir(self) -> None:
+        """Check if the results directory exists and is writable."""
+        if not self.result_dir.exists():
+            try:
+                self.result_dir.mkdir(parents=True, exist_ok=True)
+                LOGGER.info("Created results directory: %s", self.result_dir)
+            except OSError as e:
+                raise SystemExit(f"ERROR: Could not create results directory at {self.result_dir} - {e}") from e
+        elif not os.access(path=self.result_dir, mode=os.W_OK):
+            raise SystemExit(f"ERROR: Results directory is not writable: {self.result_dir}")
+
     def _check_executable(self) -> None:
         """Check if the simulator executable is available."""
-        if not shutil.which(self.EXECUTABLE):
+        if not shutil.which(cmd=self.EXECUTABLE):
             raise SystemExit(f"ERROR: {self.EXECUTABLE} executable not found in PATH!")
 
     def _set_environment(self) -> None:
@@ -121,7 +134,7 @@ class Simulator(ABC):
         Path
             The path to the Vivado installation.
         """
-        vivado_path: str | None = shutil.which("vivado")
+        vivado_path: str | None = shutil.which(cmd="vivado")
         if not vivado_path:
             LOGGER.warning("Vivado executable not found in PATH!")
             return Path()
@@ -209,7 +222,7 @@ class Simulator(ABC):
             LOGGER.error("No default path for library '%s'", library_name)
 
         expanded_path: str = os.path.expanduser(path)
-        self.vu.add_external_library(library_name, expanded_path)
+        self.vu.add_external_library(library_name=library_name, path=expanded_path)
         return self
 
     def configure(self) -> "Simulator":
@@ -248,7 +261,7 @@ class Simulator(ABC):
         self._merge_output_files()
 
         if self.enable_coverage:
-            self._generate_coverage(results)
+            self._generate_coverage(results=results)
         else:
             LOGGER.info("Coverage generation skipped (not enabled)")
 
@@ -269,7 +282,7 @@ class Simulator(ABC):
             LOGGER.warning("No output.txt files found in %s", vunit_dir)
             return
 
-        with open(output_file, "w", encoding="utf-8") as outfile:
+        with open(file=output_file, mode="w", encoding="utf-8") as outfile:
             LOGGER.info("Merging %d output.txt files...", len(output_files))
 
             for txt_file in sorted(output_files):
@@ -281,7 +294,7 @@ class Simulator(ABC):
 
                 # Write the contents of the file
                 try:
-                    with open(txt_file, encoding="utf-8") as infile:
+                    with open(file=txt_file, encoding="utf-8") as infile:
                         outfile.write(infile.read())
                 except (OSError, UnicodeDecodeError) as e:
                     outfile.write(f"[ERROR: Could not read file - {e}]\n")
@@ -319,8 +332,8 @@ class Simulator(ABC):
         library_name : str
             The name of the library to which the file belongs.
         """
-        libraries = toml_data.setdefault("libraries", {})
-        library_entry = libraries.setdefault(library_name, {"files": []})
+        libraries: dict[str, dict[str, Any]] = toml_data.setdefault("libraries", {})
+        library_entry: dict[str, Any] = libraries.setdefault(library_name, {"files": []})
         library_entry.setdefault("files", [])
 
         # Exclude known third-party libraries from user code analysis
@@ -440,14 +453,14 @@ class NVC(Simulator):
         # Generate coverage report
         LOGGER.info("Generating coverage report to %s...", coverage_dir)
         cmd: list[str] = ["nvc", "--cover-report", str(coverage_db), "-o", str(coverage_dir)]
-        process: Process[list[str]] = Process(cmd)
+        process: Process[list[str]] = Process(args=cmd)
         process.consume_output()
-        LOGGER.info("Coverage report generated")
+        LOGGER.info("Coverage report generated at %s", coverage_dir)
 
         # Copy to results directory
         self.result_dir.mkdir(parents=True, exist_ok=True)
-        output_file = self.result_dir / "coverage_data.ncdb"
-        shutil.copy2(coverage_db, output_file)
+        output_file: Path = self.result_dir / "coverage_data.ncdb"
+        shutil.copy2(src=coverage_db, dst=output_file)
         LOGGER.info("Coverage database copied to %s", output_file)
 
 
@@ -507,7 +520,7 @@ class GHDL(Simulator):
             "--html",
             "--html-details",
         ]
-        process: Process[list[str]] = Process(cmd)
+        process: Process[list[str]] = Process(args=cmd)
         process.consume_output()
 
     def _fix_gcovr_json_version(self, json_file: Path) -> None:
@@ -546,7 +559,7 @@ class GHDL(Simulator):
         html_report : Path
             The path to the HTML report file.
         """
-        self._fix_gcovr_json_version(json_file)
+        self._fix_gcovr_json_version(json_file=json_file)
 
         cmd: list[str] = [
             "gcovr",
@@ -557,7 +570,7 @@ class GHDL(Simulator):
             "--html",
             "--html-details",
         ]
-        process: Process[list[str]] = Process(cmd)
+        process: Process[list[str]] = Process(args=cmd)
         process.consume_output()
 
     def _generate_coverage(self, results: Results) -> None:
@@ -688,7 +701,7 @@ def select_simulator(
     Parameters
     ----------
     name : str | None
-        Simulator name ('nvc' or 'ghdl'). If None, auto-detects.
+        Simulator name ('nvc', 'ghdl' or 'questa/modelsim'). If None, auto-detects.
     enable_coverage : bool
         Enable coverage collection and reporting. Defaults to False.
     result_dir : Path | None
@@ -698,6 +711,11 @@ def select_simulator(
     -------
     Simulator
         Configured simulator instance.
+
+    Raises
+    ------
+    SystemExit
+        If the specified simulator is unknown or if no suitable simulator is found during auto-detection.
     """
     simulators: dict[str, type[Simulator]] = {"nvc": NVC, "ghdl": GHDL, "questa/modelsim": QuestaModelSim}
 
@@ -706,14 +724,14 @@ def select_simulator(
         name = os.environ.get("VUNIT_SIMULATOR")
         if not name:
             for sim_name in simulators:
-                if shutil.which(sim_name):
+                if shutil.which(cmd=sim_name):
                     name = sim_name
                     break
 
     # Create the appropriate simulator
-    simulator_class = simulators.get(name)
+    simulator_class: type[Simulator] | None = simulators.get(name)
     if not simulator_class:
-        available = ", ".join(simulators.keys())
+        available: str = ", ".join(simulators.keys())
         LOGGER.error("Unknown simulator: %s. Available: %s", name, available)
         raise SystemExit(1)
 
