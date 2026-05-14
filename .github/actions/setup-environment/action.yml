@@ -33,7 +33,7 @@ runs:
           run: |
               mkdir -p ~/ghdl
               wget https://github.com/ghdl/ghdl/releases/download/v6.0.0-rc2/ghdl-mcode-6.0.0-rc2-ubuntu24.04-x86_64.tar.gz
-              tar zxvf ghdl-mcode-6.0.0-rc2-ubuntu24.04-x86_64.tar.gz -C ~/ghdl
+              tar zxvf ghdl-mcode-6.0.0-rc2-ubuntu24.04-x86_64.tar.gz -C ~/ghdl --strip-components=1
 
         - name: Add GHDL to PATH
           shell: bash

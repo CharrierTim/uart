@@ -40,7 +40,8 @@
 ## 2.3      07/05/2026  Timothee Charrier   Add coverage report generation methods for GHDL and initial Questa or
 ##                                          ModelSim support
 ## 2.4      10/05/2026  Timothee Charrier   Add custom vhdl_ls.toml generation method
-## 2.5      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory
+## 2.5      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory.
+##                                          Fix a runtime error with GHDL invalid option.
 ## =====================================================================================================================
 
 import logging
@@ -485,7 +486,7 @@ class GHDL(Simulator):
         elab_flags: list[str] = ["-fsynopsys", "-frelaxed"]
         sim_flags: list[str] = ["--asserts=disable-at-0"]
 
-        self.vu.add_compile_option(name="ghdl.a_flags", value=analysis_flags, overwrite=False)
+        self.vu.add_compile_option(name="ghdl.a_flags", value=analysis_flags)
         self.vu.set_sim_option(name="ghdl.elab_flags", value=elab_flags, overwrite=False)
         self.vu.set_sim_option(name="ghdl.sim_flags", value=sim_flags, overwrite=False)
 
