@@ -24,9 +24,9 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    lint.py
-## @version 1.0
+## @version 2.0
 ## @brief   Script linting all HDL files specified.
-#           https://github.com/open-logic/open-logic/blob/main/lint/script/script.py
+#           Adapted from https://github.com/open-logic/open-logic/blob/main/lint/script/script.py
 ## @author  Timothee Charrier
 ## =====================================================================================================================
 ## REVISION HISTORY
@@ -34,41 +34,53 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      18/11/2025  Timothee Charrier   Initial release
+## 2.0      17/05/2026  Timothee Charrier   Update script and add new excluded directory (`sources/regblock`)
 ## =====================================================================================================================
 
 import argparse
-import os
+import logging
+import subprocess
 from pathlib import Path
+from typing import Literal
 
-# Change directory to the script directory
-os.chdir(Path(__file__).parent)
+LOGGER: logging.Logger = logging.getLogger(name=__name__)
 
-# Detect arguments
-parser = argparse.ArgumentParser(description="Lint all VHDL files in the project")
-parser.add_argument("--debug", action="store_true", help="Lint files one by one and stop on any errors")
-parser.add_argument("--syntastic", action="store_true", help="Output in syntastic format")
+## =====================================================================================================================
+# Define paths
+## =====================================================================================================================
 
-args: argparse.Namespace = parser.parse_args()
+THIS_DIR: Path = Path(__file__).resolve().parent
+PRJ_ROOT: Path = THIS_DIR.parent.parent.parent
+VSG_CONFIG: Path = THIS_DIR.parent / "config" / ".vsg.yaml"
+VSG_REPORT: Path = THIS_DIR.parent / "report" / "vsg_vhdl.xml"
 
-# Define the directory to search
-DIR = "../.."
+NOT_LINTED: list[str] = []
+NOT_LINTED_DIR: list[Path] = [
+    PRJ_ROOT / "sources" / "regblock",
+    PRJ_ROOT / "cores",
+    PRJ_ROOT / ".venv",
+    PRJ_ROOT / "vunit_out",
+    PRJ_ROOT / "bench" / "models" / "spi",
+]
 
-# Not linted files
-NOT_LINTED = []
-NOT_LINTED_DIR: list[str] = [
-    "../../cores",
-    "../../.venv",
-    "../../vunit_out",
-    "../../bench/models/spi",
-]  # 3rd party libraries
+## =====================================================================================================================
+# Functions
+## =====================================================================================================================
 
 
-def files_to_string(string, file_paths):
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Lint all VHDL files in the project")
+    parser.add_argument("--debug", action="store_true", help="Lint files one by one and stop on any errors")
+    parser.add_argument("--syntastic", action="store_true", help="Output in syntastic format")
+    return parser.parse_args()
+
+
+def _files_to_string(separator: str, file_paths: list[Path]) -> str:
     """Join file paths into a single string with a custom separator.
 
     Parameters
     ----------
-    string : str
+    separator : str
         The separator string to use between file paths.
     file_paths : list[Path]
         List of file paths to join.
@@ -78,10 +90,15 @@ def files_to_string(string, file_paths):
     str
         A string containing all file paths joined by the separator.
     """
-    return string.join(str(path) for path in file_paths)
+    return separator.join(str(path) for path in file_paths)
 
 
-def find_vhd_files(directory):
+def _is_excluded(file_path: Path) -> bool:
+    resolved_path: Path = file_path.resolve()
+    return any(resolved_path.is_relative_to(excluded_dir.resolve()) for excluded_dir in NOT_LINTED_DIR)
+
+
+def _find_vhd_files(directory: Path) -> list[Path]:
     """Recursively find all VHDL files in the specified directory.
 
     Excludes files and directories specified in NOT_LINTED and NOT_LINTED_DIR.
@@ -96,55 +113,63 @@ def find_vhd_files(directory):
     list[Path]
         A list of resolved Path objects for all found VHDL files.
     """
-    vhd_files = []
+    vhd_files: list[Path] = []
 
-    for file in directory.rglob("*.vhd"):
-        # Skip directories that are not relevant (including subdirectories)
-        if any(file.resolve().is_relative_to(Path(not_linted).resolve()) for not_linted in NOT_LINTED_DIR):
+    for file in directory.rglob(pattern="*.vhd"):
+        if _is_excluded(file_path=file):
             continue
-
-        # Skip not linted files
         if file.name in NOT_LINTED:
             continue
-
-        # Append file
         vhd_files.append(file.resolve())
     return vhd_files
 
 
-# Configure output format
-output_format = "-of vsg"
-if args.syntastic:
-    output_format = "-of syntastic"
+def _run_vsg(args: list[str]) -> None:
+    result: subprocess.CompletedProcess[bytes] = subprocess.run(args, check=True)
+    if result.returncode != 0:
+        raise SystemExit("ERROR: Linting of VHDL files failed - check report")
 
-# Get the list of .vhd files
-vhd_files_list = find_vhd_files(Path(DIR))
 
-# Print the list of files found
-print("VHDL Files")
-print(files_to_string("\n", vhd_files_list))
-print()
-print("Start Linting")
+## =====================================================================================================================
+# Main script
+## =====================================================================================================================
 
-error_occurred = False
 
-# Execute linting for VHD files
-if args.debug:
-    for file in vhd_files_list:
-        print(f"Linting {file}")
-        result = os.system(f"vsg -c ../config/.vsg.yaml -f {file} {output_format}")
-        if result != 0:
-            raise Exception(f"Error: Linting of {file} failed - check report")
-else:
-    all_files = files_to_string(" ", vhd_files_list)
-    result = os.system(
-        f"vsg -c ../config/.vsg.yaml -f {all_files} --junit ../report/vsg_vhdl.xml --all_phases {output_format}"
-    )
-    if result != 0:
-        error_occurred = True
+def main() -> None:
+    """Entry point of the script."""
+    args: argparse.Namespace = _parse_args()
 
-if error_occurred:
-    raise Exception("Error: Linting of VHDL files failed - check report")
+    output_format: Literal["-of syntastic", "-of vsg"] = "-of syntastic" if args.syntastic else "-of vsg"
+    vhd_files_list: list[Path] = _find_vhd_files(directory=PRJ_ROOT)
 
-# Print success message
-print("All VHDL files linted successfully")
+    print("VHDL Files")
+    print(_files_to_string(separator="\n", file_paths=vhd_files_list))
+    print()
+    print("Start Linting")
+
+    if args.debug:
+        for file in vhd_files_list:
+            print(f"Linting {file}")
+            _run_vsg(args=["vsg", "-c", str(VSG_CONFIG), "-f", str(file), *output_format.split()])
+    else:
+        vsg_args = [
+            "vsg",
+            "-c",
+            str(VSG_CONFIG),
+            "-f",
+            *[str(path) for path in vhd_files_list],
+            "--junit",
+            str(VSG_REPORT),
+            "--all_phases",
+            *output_format.split(),
+        ]
+        _run_vsg(args=vsg_args)
+
+    print("All VHDL files linted successfully")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
+    LOGGER.info("Linting VHDL files...")
+    main()
+    LOGGER.info("Done!")

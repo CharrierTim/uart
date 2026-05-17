@@ -37,8 +37,7 @@ jobs:
             - name: Run Linting
               shell: bash
               run: |
-                  cd ./tools/vsg/script
-                  python3 lint.py
+                  python3 /tools/vsg/script/lint.py
 
             # Upload Linting results
             - name: Upload Linting results
