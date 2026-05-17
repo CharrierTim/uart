@@ -1,7 +1,7 @@
 [project]
 dependencies = [
-    "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
     "rtoml",
+    "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
 ]
 
 name = "uart"
@@ -12,9 +12,18 @@ requires-python = ">=3.10"
 
 all = ["uart[dev]", "uart[docs]"]
 
-dev = ["docstrfmt", "pre-commit", "pytest", "ruff", "vsg"]
+dev = [
+    "docstrfmt",
+    "peakrdl-markdown",
+    "peakrdl-regblock-vhdl",
+    "peakrdl",
+    "pre-commit",
+    "pytest",
+    "ruff",
+    "vsg",
+]
 
-docs = ["mkdocs", "mkdocs-material", "pymdown-extensions", "mkdocs-drawio"]
+docs = ["mkdocs", "mkdocs-drawio", "mkdocs-material", "pymdown-extensions"]
 
 [tool.ruff]
 exclude = [
