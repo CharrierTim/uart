@@ -25,5 +25,9 @@ synthesis/uart
 **/*.bit
 
 # IPs testbench
-bench/uart/results
-bench/spi/results
+bench/uart/results/*
+bench/spi/results/*
+bench/regblock/results/*
+
+# Generated files
+tools/peakrdl/report/html/*
