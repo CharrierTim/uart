@@ -416,7 +416,7 @@ class NVC(Simulator):
     def _apply_options(self) -> None:
         """Apply NVC-specific options."""
         # Base flags always applied
-        global_flags: list[str] = ["--ieee-warnings=off-at-0"]
+        global_flags: list[str] = ["--ieee-warnings=off"]
         elab_flags: list[str] = []
 
         # Add coverage flags if enabled
@@ -484,7 +484,7 @@ class GHDL(Simulator):
         # Base flags always applied
         analysis_flags: list[str] = ["-fsynopsys", "-frelaxed", "--warn-no-hide"]
         elab_flags: list[str] = ["-fsynopsys", "-frelaxed"]
-        sim_flags: list[str] = ["--asserts=disable-at-0"]
+        sim_flags: list[str] = ["--ieee-asserts=disable"]
 
         self.vu.add_compile_option(name="ghdl.a_flags", value=analysis_flags)
         self.vu.set_sim_option(name="ghdl.elab_flags", value=elab_flags, overwrite=False)
@@ -636,6 +636,7 @@ class QuestaModelSim(Simulator):
 
         self.vu.set_compile_option(name="modelsim.vcom_flags", value=vcom_flags)
         self.vu.set_compile_option(name="modelsim.vlog_flags", value=vlog_flags)
+        self.vu.set_sim_option(name="disable_ieee_warnings", value=True)
         self.vu.set_sim_option(name="modelsim.vsim_flags", value=vsim_flags, overwrite=False)
         self.vu.set_sim_option(name="modelsim.vopt_flags", value=vopt_flags, overwrite=False)
         self.vu.set_sim_option(name="modelsim.three_step_flow", value=three_step_flow)
