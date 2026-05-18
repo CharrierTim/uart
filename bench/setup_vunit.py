@@ -418,6 +418,7 @@ class NVC(Simulator):
         # Base flags always applied
         global_flags: list[str] = ["--ieee-warnings=off"]
         elab_flags: list[str] = []
+        sim_flags: list[str] = []
 
         # Add coverage flags if enabled
         if self.enable_coverage:
@@ -425,6 +426,7 @@ class NVC(Simulator):
 
         self.vu.set_sim_option(name="nvc.global_flags", value=global_flags, overwrite=False)
         self.vu.set_sim_option(name="nvc.elab_flags", value=elab_flags, overwrite=False)
+        self.vu.set_sim_option(name="nvc.sim_flags", value=sim_flags, overwrite=False)
 
     def _generate_coverage(self, results: Results) -> None:
         """Generate NVC coverage report.
