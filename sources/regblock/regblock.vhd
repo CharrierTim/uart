@@ -406,22 +406,29 @@ begin
         variable is_valid_rw : std_logic;
     begin
         is_valid_addr := '0';
-        is_valid_rw := '1'; -- No valid RW check
+        is_valid_rw := '0';
         decoded_reg_strb.git_hash <= cpuif_req_masked and (cpuif_addr = 16#0#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#0#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#0#) and not cpuif_req_is_wr);
         decoded_reg_strb.git_status <= cpuif_req_masked and (cpuif_addr = 16#4#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#4#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#4#) and not cpuif_req_is_wr);
         decoded_reg_strb.fpga_id <= cpuif_req_masked and (cpuif_addr = 16#8#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#8#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#8#) and not cpuif_req_is_wr);
         decoded_reg_strb.spi_tx_data <= cpuif_req_masked and (cpuif_addr = 16#C#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#C#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#C#));
         decoded_reg_strb.spi_rx_data <= cpuif_req_masked and (cpuif_addr = 16#10#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#10#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#10#) and not cpuif_req_is_wr);
         decoded_reg_strb.vga_color <= cpuif_req_masked and (cpuif_addr = 16#14#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#14#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#14#));
         decoded_reg_strb.switch_status <= cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#18#));
-        decoded_err <= not is_valid_addr and decoded_req;
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr);
+        decoded_err <= (not is_valid_addr or (is_valid_addr and not is_valid_rw)) and decoded_req;
     end process;
 
     -- Pass down signals to next stage

@@ -132,6 +132,7 @@ def _export_vhdl(root: "RootNode", output_dir: Path) -> None:
         cpuif_cls=AXI4Lite_Cpuif,
         default_reset_async=True,
         err_if_bad_addr=True,
+        err_if_bad_rw=True,
         copy_utils_pkg=True,
     )
     LOGGER.info("VHDL register block implementation generated in %s", output_dir)
