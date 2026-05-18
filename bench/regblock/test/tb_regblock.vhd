@@ -42,11 +42,6 @@ library lib_rtl;
     use lib_rtl.axi4lite_intf_pkg.all;
     use lib_rtl.regblock_pkg.all;
 
-library olo;
-    use olo.olo_test_pkg_axi.all;
-    use olo.olo_axi_pkg_protocol.all;
-    use olo.olo_test_axi_master_pkg.all;
-
 library vunit_lib;
     use vunit_lib.signal_checker_pkg.all;
     context vunit_lib.vunit_context;
@@ -76,51 +71,6 @@ end entity TB_REGBLOCK;
 architecture TB_REGBLOCK_ARCH of TB_REGBLOCK is
 
     -- =================================================================================================================
-    -- CONSTANTS for AXI4-LITE
-    -- =================================================================================================================
-
-    constant C_ID_WIDTH   : integer := 0;
-    constant C_ADDR_WIDTH : integer := 5;
-    constant C_USER_WIDTH : integer := 0;
-    constant C_DATA_WIDTH : integer := 32;
-    constant C_BYTE_WIDTH : integer := C_DATA_WIDTH / 8;
-
-    subtype  st_idrange   is natural range C_ID_WIDTH - 1 downto 0;
-
-    subtype  st_addrrange is natural range C_ADDR_WIDTH - 1 downto 0;
-
-    subtype  st_userrange is natural range C_USER_WIDTH - 1 downto 0;
-
-    subtype  st_datarange is natural range C_DATA_WIDTH - 1 downto 0;
-
-    subtype  st_byterange is natural range C_BYTE_WIDTH - 1 downto 0;
-
-    signal   AxiMs        : axi_ms_t (
-                                      ar_id(st_idrange),
-                                      aw_id(st_idrange),
-                                      ar_addr(st_addrrange),
-                                      aw_addr(st_addrrange),
-                                      ar_user(st_userrange),
-                                      aw_user(st_userrange),
-                                      w_user(st_userrange),
-                                      w_data(st_datarange),
-                                      w_strb(st_byterange));
-
-    signal   AxiSm        : axi_sm_t (
-                                      r_id(st_idrange),
-                                      b_id(st_idrange),
-                                      r_user(st_userrange),
-                                      b_user(st_userrange),
-                                      r_data(st_datarange));
-
-    -- *** Verification Compnents ***
-    constant C_AXIMASTER  : olo_test_axi_master_t := new_olo_test_axi_master (
-            data_width => C_DATA_WIDTH,
-            addr_width => C_ADDR_WIDTH,
-            id_width   => C_ID_WIDTH
-        );
-
-    -- =================================================================================================================
     -- SIGNALS
     -- =================================================================================================================
 
@@ -135,6 +85,37 @@ architecture TB_REGBLOCK_ARCH of TB_REGBLOCK is
     signal tb_s_axil_o    : axi4lite_slave_out_intf(RDATA(31 downto 0));
     signal tb_hwif_in     : regblock_in_t;
     signal tb_hwif_out    : regblock_out_t;
+
+    -- AXI-Lite master <-> slave signals
+    signal arready        : std_logic;
+    signal arvalid        : std_logic;
+    signal araddr         : std_logic_vector(4 downto 0);
+
+    signal rready         : std_logic;
+    signal rvalid         : std_logic;
+    signal rdata          : std_logic_vector(31 downto 0);
+    signal rresp          : std_logic_vector(1 downto 0);
+
+    signal awready        : std_logic;
+    signal awvalid        : std_logic;
+    signal awaddr         : std_logic_vector(4 downto 0);
+
+    signal wready         : std_logic;
+    signal wvalid         : std_logic;
+    signal wdata          : std_logic_vector(31 downto 0);
+    signal wstrb          : std_logic_vector(3 downto 0);
+
+    signal bvalid         : std_logic;
+    signal bready         : std_logic;
+    signal bresp          : std_logic_vector(1 downto 0);
+
+    -- =================================================================================================================
+    -- CONSTANTS for verification components
+    -- =================================================================================================================
+
+    constant C_BUS_HANDLE : bus_master_t := new_bus(
+            data_length    => wdata'length,
+            address_length => awaddr'length);
 
 begin
 
@@ -156,48 +137,53 @@ begin
     -- AXI-LITE VERIFICATION COMPONENT
     -- =================================================================================================================
 
-    inst_vc_master : entity olo.olo_test_axi_lite_master_vc
+    inst_axi_lite_master : entity vunit_lib.axi_lite_master
         generic map (
-            INSTANCE => C_AXIMASTER
+            BUS_HANDLE => C_BUS_HANDLE
         )
         port map (
-            Clk    => tb_clk,
-            Axi_Ms => AxiMs,
-            Axi_Sm => AxiSm
+            aclk    => tb_clk,
+            arready => arready,
+            arvalid => arvalid,
+            araddr  => araddr,
+            rready  => rready,
+            rvalid  => rvalid,
+            rdata   => rdata,
+            rresp   => rresp,
+            awready => awready,
+            awvalid => awvalid,
+            awaddr  => awaddr,
+            wready  => wready,
+            wvalid  => wvalid,
+            wdata   => wdata,
+            wstrb   => wstrb,
+            bvalid  => bvalid,
+            bready  => bready,
+            bresp   => bresp
         );
 
-    -- AXI-Lite: VC (AxiMs/AxiSm) <-> DUT (tb_s_axil_i/o)
-    tb_s_axil_i.AWVALID <= AxiMs.aw_valid;
-    tb_s_axil_i.AWADDR  <= AxiMs.aw_addr;
-    tb_s_axil_i.AWPROT  <=
-    (
-        others => '0'
-    );
+    tb_s_axil_i.AWVALID <= awvalid;
+    tb_s_axil_i.AWADDR  <= awaddr;
+    tb_s_axil_i.AWPROT  <= "000";
 
-    tb_s_axil_i.WVALID  <= AxiMs.w_valid;
-    tb_s_axil_i.WDATA   <= AxiMs.w_data;
-    tb_s_axil_i.WSTRB   <= AxiMs.w_strb;
+    tb_s_axil_i.WVALID  <= wvalid;
+    tb_s_axil_i.WDATA   <= wdata;
+    tb_s_axil_i.WSTRB   <= wstrb;
 
-    tb_s_axil_i.BREADY  <= AxiMs.b_ready;
+    tb_s_axil_i.BREADY  <= bready;
+    tb_s_axil_i.ARVALID <= arvalid;
+    tb_s_axil_i.ARADDR  <= araddr;
+    tb_s_axil_i.ARPROT  <= "000";
+    tb_s_axil_i.RREADY  <= rready;
 
-    tb_s_axil_i.ARVALID <= AxiMs.ar_valid;
-    tb_s_axil_i.ARADDR  <= AxiMs.ar_addr;
-    tb_s_axil_i.ARPROT  <=
-    (
-        others => '0'
-    );
-
-    tb_s_axil_i.RREADY  <= AxiMs.r_ready;
-
-    AxiSm.aw_ready      <= tb_s_axil_o.AWREADY;
-    AxiSm.w_ready       <= tb_s_axil_o.WREADY;
-    AxiSm.b_valid       <= tb_s_axil_o.BVALID;
-    AxiSm.b_resp        <= tb_s_axil_o.BRESP;
-
-    AxiSm.ar_ready      <= tb_s_axil_o.ARREADY;
-    AxiSm.r_valid       <= tb_s_axil_o.RVALID;
-    AxiSm.r_resp        <= tb_s_axil_o.RRESP;
-    AxiSm.r_data        <= tb_s_axil_o.RDATA;
+    arready             <= tb_s_axil_o.ARREADY;
+    rvalid              <= tb_s_axil_o.RVALID;
+    rdata               <= tb_s_axil_o.RDATA;
+    rresp               <= tb_s_axil_o.RRESP;
+    awready             <= tb_s_axil_o.AWREADY;
+    wready              <= tb_s_axil_o.WREADY;
+    bvalid              <= tb_s_axil_o.BVALID;
+    bresp               <= tb_s_axil_o.BRESP;
 
     -- =================================================================================================================
     -- CLK GENERATION
@@ -282,20 +268,29 @@ begin
         procedure proc_axi_lite_check_default_value (
             constant reg : t_reg
         ) is
+            variable v_returned_data : std_logic_vector(rdata'range);
         begin
 
             info("");
             info("Checking register " & reg.name & " value after reset");
 
-            -- Check the default value
             info(
                 "Reading value from register "          & reg.name &
                 " at address 0x"                        & to_hstring(reg.addr) &
                 " and expecting 0x"                     & to_hstring(reg.data));
 
-            expect_single_read(net, C_AXIMASTER, reg.addr, reg.data);
+            -- Check the default value of the register after reset
+            read_axi_lite(
+                net,
+                C_BUS_HANDLE,
+                reg.addr,
+                axi_resp_okay,
+                v_returned_data);
 
-            wait until rising_edge(tb_clk) and AxiSm.r_valid = '1';
+            check_equal(
+                v_returned_data,
+                reg.data,
+                "Default value mismatch for register " & reg.name);
 
         end procedure proc_axi_lite_check_default_value;
 
@@ -303,6 +298,7 @@ begin
         -- proc_axi_lite_read
         --
         -- Description: This procedure reads a value from a specified AXI-Lite register.
+        --              An error is raised if a read-only register is accessed for a write operation -> axi_resp_slverr
         --
         -- Parameters:
         --   reg : t_reg - The register to read from.
@@ -314,23 +310,25 @@ begin
         procedure proc_axi_lite_check_read_only (
             constant reg : t_reg
         ) is
+            variable v_returned_data : std_logic_vector(rdata'range);
         begin
 
             info("");
             info("Checking register " & reg.name & " is in read-only mode");
 
-            -- Attempt to write the opposite reset value to the register
             info(
                 "Attempting to write value 0x" & to_hstring(not reg.data) & " to register " & reg.name &
                 " at address 0x"               & to_hstring(reg.addr));
 
-            push_single_write(
-                net        => net,
-                axi_master => C_AXIMASTER,
-                addr       => reg.addr,
-                data       => not reg.data); -- Write the opposite of the reset value
+            -- Attempt to write the opposite reset value to the register
+            write_axi_lite(
+                net,
+                C_BUS_HANDLE,
+                reg.addr,
+                not reg.data, -- Write the opposite of the reset value
+                axi_resp_slverr);
 
-            wait until rising_edge(tb_clk) and AxiSm.b_valid = '1';
+            wait until rising_edge(tb_clk) and bvalid = '1';
 
             -- Check if the register value remains unchanged
             info(
@@ -338,9 +336,17 @@ begin
                 " at address 0x"                            & to_hstring(reg.addr) &
                 " and expecting 0x"                         & to_hstring(reg.data));
 
-            expect_single_read(net, C_AXIMASTER, reg.addr, reg.data);
+            read_axi_lite(
+                net,
+                C_BUS_HANDLE,
+                reg.addr,
+                axi_resp_okay,
+                v_returned_data);
 
-            wait until rising_edge(tb_clk) and AxiSm.r_valid = '1';
+            check_equal(
+                v_returned_data,
+                reg.data,
+                "Read-only register " & reg.name & " value changed after write attempt");
 
         end procedure proc_axi_lite_check_read_only;
 
@@ -361,24 +367,27 @@ begin
         procedure proc_axi_lite_check_read_write (
             constant reg : t_reg
         ) is
+            variable v_returned_data : std_logic_vector(rdata'range);
         begin
 
             info("");
             info("Checking register " & reg.name & " is in read-write mode");
 
-            -- Write the expected value to the register
-
             info(
                 "Writing value 0x" & to_hstring(not reg.data) & " to register " & reg.name &
                 " at address 0x" & to_hstring(reg.addr));
 
-            push_single_write(
-                net        => net,
-                axi_master => C_AXIMASTER,
-                addr       => reg.addr,
-                data       => (not reg.data) and reg.used_bits_mask); -- Only writable bits should be updated
+            wait until rising_edge(tb_clk);
 
-            wait until rising_edge(tb_clk) and AxiSm.b_valid = '1';
+            -- Write the expected value to the register
+            write_axi_lite(
+                net,
+                C_BUS_HANDLE,
+                reg.addr,
+                (not reg.data) and reg.used_bits_mask, -- Only writable bits should be updated
+                axi_resp_okay);
+
+            wait until rising_edge(tb_clk) and bvalid = '1';
 
             -- Check if the register value is updated correctly
             info(
@@ -386,9 +395,12 @@ begin
                 " at address 0x"                            & to_hstring(reg.addr) &
                 " and expecting 0x"                         & to_hstring(not reg.data and reg.used_bits_mask));
 
-            expect_single_read(net, C_AXIMASTER, reg.addr, unsigned(not reg.data) and unsigned(reg.used_bits_mask));
-
-            wait until rising_edge(tb_clk) and AxiSm.r_valid = '1';
+            read_axi_lite(
+                net,
+                C_BUS_HANDLE,
+                reg.addr,
+                axi_resp_okay,
+                v_returned_data);
 
         end procedure proc_axi_lite_check_read_write;
 
@@ -411,33 +423,31 @@ begin
         -- =============================================================================================================
 
         procedure proc_axi_lite_read_bad_addr (
-            addr           : unsigned;
-            expected_data  : unsigned         := 32x"0000_0000";
-            id             : std_logic_vector := "X";
-            ar_valid_delay : time             := 0 ns;
-            r_ready_delay  : time             := 0 ns
+            addr           : std_logic_vector( 4 downto 0);
+            expected_data  : std_logic_vector(31 downto 0) := 32x"0000_0000";
+            id             : std_logic_vector              := "X";
+            ar_valid_delay : time                          := 0 ns;
+            r_ready_delay  : time                          := 0 ns
         ) is
+            variable v_returned_data : std_logic_vector(rdata'range);
         begin
 
             info("");
             info("Checking read from invalid AXI-Lite address 0x" & to_hstring(addr));
 
-            push_ar(
-                net        => net,
-                axi_master => C_AXIMASTER,
-                addr       => addr,
-                id         => id,
-                delay      => 0 ns);
+            wait until rising_edge(tb_clk);
 
-            expect_r(
-                net         => net,
-                axi_master  => C_AXIMASTER,
-                start_value => expected_data,    -- Usually expected to be 0 for invalid addresses
-                resp        => AxiResp_SlvErr_c, -- Expecting slave error response for invalid address
-                id          => id,
-                delay       => 0 ns);
+            read_axi_lite(
+                net            => net,
+                bus_handle     => C_BUS_HANDLE,
+                address        => addr,
+                expected_rresp => axi_resp_slverr,
+                data           => v_returned_data);
 
-            wait until rising_edge(tb_clk) and AxiSm.r_valid = '1';
+            check_equal(
+                v_returned_data,
+                std_logic_vector(expected_data),
+                "Data mismatch when reading from invalid address 0x" & to_hstring(addr));
 
         end procedure proc_axi_lite_read_bad_addr;
 
@@ -463,41 +473,35 @@ begin
         -- =================================================================================================
 
         procedure proc_axi_lite_write_bad_addr (
-            addr           : unsigned;
-            data           : unsigned         := 32x"ABCD_1234";
-            strb           : std_logic_vector := "X";
-            id             : std_logic_vector := "X";
-            aw_valid_delay : time             := 0 ns;
-            w_valid_delay  : time             := 0 ns;
-            b_ready_delay  : time             := 0 ns
+            addr           : std_logic_vector( 4 downto 0);
+            data           : std_logic_vector(31 downto 0) := 32x"ABCD_1234";
+            strb           : std_logic_vector              := "X";
+            id             : std_logic_vector              := "X";
+            aw_valid_delay : time                          := 0 ns;
+            w_valid_delay  : time                          := 0 ns;
+            b_ready_delay  : time                          := 0 ns
         ) is
         begin
 
             info("");
             info("Checking write to invalid AXI-Lite address 0x" & to_hstring(addr));
 
-            push_aw(
-                net        => net,
-                axi_master => C_AXIMASTER,
-                addr       => addr,
-                id         => id,
-                delay      => aw_valid_delay);
+            wait until rising_edge(tb_clk);
 
-            push_w(
-                net         => net,
-                axi_master  => C_AXIMASTER,
-                start_value => data,
-                delay       => w_valid_delay,
-                first_strb  => strb);
+            write_axi_lite(
+                net            => net,
+                bus_handle     => C_BUS_HANDLE,
+                address        => addr,
+                data           => data,
+                expected_bresp => axi_resp_slverr);
 
-            expect_b(
-                net        => net,
-                axi_master => C_AXIMASTER,
-                resp       => AxiResp_SlvErr_c, -- Expecting slave error response for invalid address
-                id         => id,
-                delay      => b_ready_delay);
+            wait until rising_edge(tb_clk) and bvalid = '1';
 
-            wait until rising_edge(tb_clk) and AxiSm.b_valid = '1';
+            check_equal(
+                bresp,
+                axi_resp_slverr,
+                "Response mismatch when writing to invalid address 0x" & to_hstring(addr) &
+                " - Got AXI response `" & to_string(bresp) & "` expected SLVERR(10)");
 
         end procedure proc_axi_lite_write_bad_addr;
 
@@ -510,7 +514,7 @@ begin
         show(get_logger(default_checker), display_handler, pass);
 
         -- Set time unit to ns for display handler
-        set_format(display_handler, log_time_unit => ms);
+        set_format(display_handler, log_time_unit => us);
 
         -- Disable stop on errors from my_logger and its children
         disable_stop(get_logger(default_checker), error);
@@ -582,17 +586,17 @@ begin
                 check_equal(
                     tb_hwif_out.vga_color.red.value,
                     C_REG_VGA_COLOR.data(3 downto 0),
-                    "VGA_COLOR[3:0] (red) default value mismatch after reset");
+                    "VGA_COLOR[3:0]   default value mismatch after reset");
 
                 check_equal(
                     tb_hwif_out.vga_color.green.value,
                     C_REG_VGA_COLOR.data(7 downto 4),
-                    "VGA_COLOR[7:4] (green) default value mismatch after reset");
+                    "VGA_COLOR[7:4]   default value mismatch after reset");
 
                 check_equal(
                     tb_hwif_out.vga_color.blue.value,
                     C_REG_VGA_COLOR.data(11 downto 8),
-                    "VGA_COLOR[11:8] (blue) default value mismatch after reset");
+                    "VGA_COLOR[11:8]  default value mismatch after reset");
 
             elsif run("test_regblock_bad_addr") then
 
@@ -605,13 +609,16 @@ begin
                 info(" Reading from invalid AXI-Lite address");
                 info("-----------------------------------------------------------------------------");
 
-                proc_axi_lite_read_bad_addr(x"1E");
-                proc_axi_lite_read_bad_addr(x"1F");
+                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(30, araddr'length)));
+                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(31, araddr'length)));
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Writing to invalid AXI-Lite address");
                 info("-----------------------------------------------------------------------------");
+
+                proc_axi_lite_write_bad_addr(std_logic_vector(to_unsigned(30, awaddr'length)));
+                proc_axi_lite_write_bad_addr(std_logic_vector(to_unsigned(31, awaddr'length)));
 
                 proc_axi_lite_write_bad_addr(x"1E");
                 proc_axi_lite_write_bad_addr(x"1F");

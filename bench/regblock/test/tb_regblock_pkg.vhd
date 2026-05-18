@@ -53,10 +53,10 @@ package TB_REGBLOCK_PKG is
     -- =================================================================================================================
 
     type t_reg is record
-        name           : string;                    -- Name
-        addr           : unsigned( 5 - 1 downto 0); -- Address
-        data           : unsigned(32 - 1 downto 0); -- Value at reset
-        used_bits_mask : unsigned(32 - 1 downto 0); -- Mask of bits that are unused
+        name           : string;                            -- Name
+        addr           : std_logic_vector( 5 - 1 downto 0); -- Address
+        data           : std_logic_vector(32 - 1 downto 0); -- Value at reset
+        used_bits_mask : std_logic_vector(32 - 1 downto 0); -- Mask of bits that are unused
     end record t_reg;
 
     -- =================================================================================================================

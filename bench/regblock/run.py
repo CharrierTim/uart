@@ -89,12 +89,6 @@ VU.add_vhdl_builtins()
 VU.add_verification_components()
 VU.add_random()
 
-OLO: Library = VU.add_library(library_name="olo")
-OLO.add_source_files(pattern=OLO_ROOT / "src" / "**" / "*.vhd")
-OLO.add_source_files(pattern=OLO_ROOT / "3rdParty/" / "en_cl_fix" / "hdl" / "*.vhd")
-OLO.add_source_files(pattern=OLO_ROOT / "test" / "tb" / "*.vhd")
-OLO.add_compile_option(name="nvc.a_flags", value=["--relaxed"])
-
 # Add the source files to the library
 LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
 LIB_RTL.add_source_files(pattern=SRC_ROOT / "regblock" / "*.vhd")
