@@ -39,6 +39,9 @@ library ieee;
     use ieee.numeric_std.all;
     use ieee.math_real.all;
 
+library lib_rtl;
+    use lib_rtl.regblock_pkg.all;
+
 library vunit_lib;
     context vunit_lib.vunit_context;
 
@@ -53,10 +56,10 @@ package TB_REGBLOCK_PKG is
     -- =================================================================================================================
 
     type t_reg is record
-        name           : string;                            -- Name
-        addr           : std_logic_vector( 5 - 1 downto 0); -- Address
-        data           : std_logic_vector(32 - 1 downto 0); -- Value at reset
-        used_bits_mask : std_logic_vector(32 - 1 downto 0); -- Mask of bits that are unused
+        name           : string;                                                 -- Name
+        addr           : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0); -- Address
+        data           : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);     -- Value at reset
+        used_bits_mask : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);     -- Mask of bits that are unused
     end record t_reg;
 
     -- =================================================================================================================
@@ -64,63 +67,81 @@ package TB_REGBLOCK_PKG is
     -- =================================================================================================================
 
     -- Clock configuration
-    constant C_CLK_FREQ_HZ       : positive := 50_000_000;
-    constant C_CLK_PERIOD        : time     := 1 sec / C_CLK_FREQ_HZ;
+    constant C_CLK_FREQ_HZ         : positive := 50_000_000;
+    constant C_CLK_PERIOD          : time     := 1 sec / C_CLK_FREQ_HZ;
 
-    constant C_REG_GIT_HASH      : t_reg :=
+    constant C_REG_MAX_ADDR        : positive := REGBLOCK_SIZE;
+
+    constant C_REG_GIT_HASH        : t_reg :=
     (
         name           => "GIT_HASH",
-        addr           => 5x"00",
+        addr           => 6x"00",
         data           => 32x"DEAD_BEEF",
         used_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_GIT_STATUS    : t_reg :=
+    constant C_REG_GIT_STATUS      : t_reg :=
     (
         name           => "GIT_STATUS",
-        addr           => 5x"04",
+        addr           => 6x"04",
         data           => 32x"0000_0001",
         used_bits_mask => 32x"0000_0001"
     );
 
-    constant C_REG_FPGA_ID       : t_reg :=
+    constant C_REG_FPGA_ID         : t_reg :=
     (
         name           => "FPGA_ID",
-        addr           => 5x"08",
+        addr           => 6x"08",
         data           => 32x"1234_5678",
         used_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_SPI_TX_DATA   : t_reg :=
+    constant C_REG_SPI_TX_DATA     : t_reg :=
     (
         name           => "SPI_TX_DATA",
-        addr           => 5x"0C",
+        addr           => 6x"0C",
         data           => 32x"0000_0000",
         used_bits_mask => 32x"0000_00FF"
     );
 
-    constant C_REG_SPI_RX_DATA   : t_reg :=
+    constant C_REG_SPI_RX_DATA     : t_reg :=
     (
         name           => "SPI_RX_DATA",
-        addr           => 5x"10",
+        addr           => 6x"10",
         data           => 32x"0000_0000",
         used_bits_mask => 32x"0000_00FF"
     );
 
-    constant C_REG_VGA_COLOR     : t_reg :=
+    constant C_REG_VGA_COLOR       : t_reg :=
     (
         name           => "VGA_COLOR",
-        addr           => 5x"14",
+        addr           => 6x"14",
         data           => 32x"0000_00F0",
         used_bits_mask => 32x"0000_0FFF"
     );
 
-    constant C_REG_SWITCH_STATUS : t_reg :=
+    constant C_REG_SWITCH_STATUS   : t_reg :=
     (
         name           => "SWITCH_STATUS",
-        addr           => 5x"18",
+        addr           => 6x"18",
         data           => 32x"0000_0003",
         used_bits_mask => 32x"0000_0003"
+    );
+
+    constant C_REG_TEST_REGISTER_1 : t_reg :=
+    (
+        name           => "TEST_REGISTER_1",
+        addr           => 6x"1C",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"FFFF_FFFF"
+    );
+
+    constant C_REG_TEST_REGISTER_2 : t_reg :=
+    (
+        name           => "TEST_REGISTER_2",
+        addr           => 6x"20",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"FFFF_FFFF"
     );
 
     -- =================================================================================================================
