@@ -614,27 +614,27 @@ begin
                 check_equal(
                     tb_hwif_out.spi_rx_data.rx_data.value,
                     C_REG_SPI_RX_DATA.data(15 downto 8),
-                    "SPI_RX_DATA[7:0] default value mismatch after reset");
+                    "SPI_RX_DATA[15:8] default value mismatch after reset");
 
                 check_equal(
                     tb_hwif_out.spi_tx_data.tx_data.value,
                     C_REG_SPI_TX_DATA.data(7 downto 0),
-                    "SPI_TX_DATA[7:0] default value mismatch after reset");
+                    "SPI_TX_DATA[7:0]  default value mismatch after reset");
 
                 check_equal(
                     tb_hwif_out.vga_color.red.value,
                     C_REG_VGA_COLOR.data(3 downto 0),
-                    "VGA_COLOR[3:0]   default value mismatch after reset");
+                    "VGA_COLOR[3:0]    default value mismatch after reset");
 
                 check_equal(
                     tb_hwif_out.vga_color.green.value,
                     C_REG_VGA_COLOR.data(7 downto 4),
-                    "VGA_COLOR[7:4]   default value mismatch after reset");
+                    "VGA_COLOR[7:4]    default value mismatch after reset");
 
                 check_equal(
                     tb_hwif_out.vga_color.blue.value,
                     C_REG_VGA_COLOR.data(11 downto 8),
-                    "VGA_COLOR[11:8]  default value mismatch after reset");
+                    "VGA_COLOR[11:8]   default value mismatch after reset");
 
             elsif run("test_regblock_bad_addr") then
 
