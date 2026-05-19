@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    setup_vunit.py
-## @version 2.5
+## @version 2.6
 ## @brief   This module provides simulator classes for VUnit.
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -42,6 +42,8 @@
 ## 2.4      10/05/2026  Timothee Charrier   Add custom vhdl_ls.toml generation method
 ## 2.5      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory.
 ##                                          Fix a runtime error with GHDL invalid option.
+## 2.6      17/06/2026  Timothee Charrier   Now takes the run file directory as an argument to properly handle the
+##                                          results directory and coverage specific options.
 ## =====================================================================================================================
 
 import logging
@@ -69,18 +71,20 @@ class Simulator(ABC):
     DEFAULT_LIBRARIES: dict[str, str] = {}
     THIRD_PARTY_LIBRARIES: set[str] = {"vunit_lib", "osvvm", "unisim", "unifast", "xil_defaultlib"}
 
-    def __init__(self, result_dir: Path | None = None, enable_coverage: bool = False) -> None:
+    def __init__(self, enable_coverage: bool = False, run_file_dir: Path | None = None) -> None:
         """Initialize the simulator.
 
         Parameters
         ----------
-        result_dir : Path | None
-            Directory for simulation results. Defaults to ./bench/results
         enable_coverage : bool
             Enable coverage collection and reporting. Defaults to False.
+        run_file_dir : Path
+            Directory containing the run file.
         """
-        self.result_dir: Path = result_dir
         self.enable_coverage: bool = enable_coverage
+        self.run_file_dir: Path | None = run_file_dir
+        self.results_dir: Path | None = (self.run_file_dir / "results") if self.run_file_dir else None
+
         self.vu: VUnit | None = None
 
         self._check_results_dir()
@@ -89,14 +93,14 @@ class Simulator(ABC):
 
     def _check_results_dir(self) -> None:
         """Check if the results directory exists and is writable."""
-        if not self.result_dir.exists():
+        if not self.results_dir.exists():
             try:
-                self.result_dir.mkdir(parents=True, exist_ok=True)
-                LOGGER.info("Created results directory: %s", self.result_dir)
+                self.results_dir.mkdir(parents=True, exist_ok=True)
+                LOGGER.info("Created results directory: %s", self.results_dir)
             except OSError as e:
-                raise SystemExit(f"ERROR: Could not create results directory at {self.result_dir} - {e}") from e
-        elif not os.access(path=self.result_dir, mode=os.W_OK):
-            raise SystemExit(f"ERROR: Results directory is not writable: {self.result_dir}")
+                raise SystemExit(f"ERROR: Could not create results directory at {self.results_dir} - {e}") from e
+        elif not os.access(path=self.results_dir, mode=os.W_OK):
+            raise SystemExit(f"ERROR: Results directory is not writable: {self.results_dir}")
 
     def _check_executable(self) -> None:
         """Check if the simulator executable is available."""
@@ -269,7 +273,7 @@ class Simulator(ABC):
     def _merge_output_files(self) -> None:
         """Merge all output.txt files from subdirectories into a single file."""
         vunit_dir: Path = Path(self.vu._output_path)
-        output_file: Path = self.result_dir / "output.txt"
+        output_file: Path = self.results_dir / "output.txt"
 
         # Check if test_output directory exists
         if not vunit_dir.exists():
@@ -422,7 +426,17 @@ class NVC(Simulator):
 
         # Add coverage flags if enabled
         if self.enable_coverage:
+            coverage_spec_path: Path = (
+                self.run_file_dir / "coverage.spec" if self.run_file_dir else Path("coverage.spec")
+            )
+            if not coverage_spec_path.exists():
+                LOGGER.warning(
+                    "Coverage spec file not found at %s. Coverage will be enabled but may not work properly without a valid spec file.",
+                    coverage_spec_path,
+                )
+
             elab_flags.append("--cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable")
+            elab_flags.append(f"--cover-spec={coverage_spec_path}")
 
         self.vu.set_sim_option(name="nvc.global_flags", value=global_flags, overwrite=False)
         self.vu.set_sim_option(name="nvc.elab_flags", value=elab_flags, overwrite=False)
@@ -461,8 +475,8 @@ class NVC(Simulator):
         LOGGER.info("Coverage report generated at %s", coverage_dir)
 
         # Copy to results directory
-        self.result_dir.mkdir(parents=True, exist_ok=True)
-        output_file: Path = self.result_dir / "coverage_data.ncdb"
+        self.results_dir.mkdir(parents=True, exist_ok=True)
+        output_file: Path = self.results_dir / "coverage_data.ncdb"
         shutil.copy2(src=coverage_db, dst=output_file)
         LOGGER.info("Coverage database copied to %s", output_file)
 
@@ -487,6 +501,9 @@ class GHDL(Simulator):
         analysis_flags: list[str] = ["-fsynopsys", "-frelaxed", "--warn-no-hide"]
         elab_flags: list[str] = ["-fsynopsys", "-frelaxed"]
         sim_flags: list[str] = ["--ieee-asserts=disable"]
+
+        if self.enable_coverage:
+            self.vu.set_sim_option(name="enable_coverage", value=True)
 
         self.vu.add_compile_option(name="ghdl.a_flags", value=analysis_flags)
         self.vu.set_sim_option(name="ghdl.elab_flags", value=elab_flags, overwrite=False)
@@ -636,6 +653,11 @@ class QuestaModelSim(Simulator):
         vopt_flags: list[str] = []
         three_step_flow: bool = True
 
+        if self.enable_coverage:
+            self.vu.set_sim_option(name="enable_coverage", value=True)
+            vcom_flags.append("+cover=bcefs")
+            vlog_flags.append("+cover=bcefs")
+
         self.vu.set_compile_option(name="modelsim.vcom_flags", value=vcom_flags)
         self.vu.set_compile_option(name="modelsim.vlog_flags", value=vlog_flags)
         self.vu.set_sim_option(name="disable_ieee_warnings", value=True)
@@ -698,7 +720,7 @@ class QuestaModelSim(Simulator):
 
 
 def select_simulator(
-    name: str | None = None, enable_coverage: bool = False, result_dir: Path | None = None
+    name: str | None = None, enable_coverage: bool = False, run_file_dir: Path | None = None
 ) -> Simulator:
     """Select and create a simulator.
 
@@ -708,8 +730,8 @@ def select_simulator(
         Simulator name ('nvc', 'ghdl' or 'questa/modelsim'). If None, auto-detects.
     enable_coverage : bool
         Enable coverage collection and reporting. Defaults to False.
-    result_dir : Path | None
-        Directory for simulation results. Defaults to ./vunit_out
+    run_file_dir : Path | None
+        Directory of the `run.py` file. Defaults to None.
 
     Returns
     -------
@@ -739,4 +761,4 @@ def select_simulator(
         LOGGER.error("Unknown simulator: %s. Available: %s", name, available)
         raise SystemExit(1)
 
-    return simulator_class(result_dir=result_dir, enable_coverage=enable_coverage)
+    return simulator_class(enable_coverage=enable_coverage, run_file_dir=run_file_dir)
