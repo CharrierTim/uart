@@ -57,7 +57,6 @@ PRJ_ROOT: Path = THIS_DIR.parent.parent
 SRC_ROOT: Path = PRJ_ROOT / "sources"
 CORES_ROOT: Path = PRJ_ROOT / "cores"
 BENCH_ROOT: Path = THIS_DIR
-MODELS_ROOT: Path = PRJ_ROOT / "bench" / "models"
 
 COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
 RESULTS_DIR: Path = THIS_DIR / "results"
@@ -95,7 +94,6 @@ LIB_RTL.add_source_files(pattern=SRC_ROOT / "regblock" / "*.vhd")
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
-LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "**" / "*.vhd")
 
 ## =====================================================================================================================
 # Configure simulation
