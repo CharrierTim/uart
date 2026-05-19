@@ -208,6 +208,14 @@ begin
 
     p_test_runner : process is
 
+        variable v_tmp_data      : std_logic_vector(rdata'range);
+        variable v_expected_data : std_logic_vector(rdata'range);
+        variable v_rnd           : randomptype;
+        variable v_rnd_reg       : t_reg
+                (
+                name(1 to C_REG_TEST_REGISTER_1.name'length)
+               );
+
         -- =============================================================================================================
         -- proc_reset_dut
         -- Description: This procedure resets the DUT to a known state.
@@ -657,6 +665,125 @@ begin
 
                 proc_axi_lite_write_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 4, awaddr'length)));
                 proc_axi_lite_write_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 8, awaddr'length)));
+
+            elsif run("test_regblock_bad_rw") then
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 10 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Writing to a read-only register with write transaction");
+                info("-----------------------------------------------------------------------------");
+
+                info("");
+                info("Writing to read-only register " & C_REG_GIT_HASH.name & " at address 0x"
+                    & to_hstring(C_REG_GIT_HASH.addr) & " with value 0x"    & to_hstring(not C_REG_GIT_HASH.data) &
+                    " and expecting SLVERR response");
+
+                -- Doing it manually instead of using proc_axi_lite_write to be able to check the response of the
+                -- write transaction without the procedure's checks interfering
+                write_axi_lite(
+                    net            => net,
+                    bus_handle     => C_BUS_HANDLE,
+                    address        => C_REG_GIT_HASH.addr,
+                    data           => not C_REG_GIT_HASH.data,
+                    expected_bresp => axi_resp_slverr);
+
+                wait until rising_edge(tb_clk) and bvalid = '1';
+
+                check_equal(
+                    bresp,
+                    axi_resp_slverr,
+                    "Response mismatch when writing to read-only register " & C_REG_GIT_HASH.name &
+                    " and expected SLVERR(10)");
+
+            elsif run("test_regblock_random_rw") then
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 10 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Performing random read/write operations on AXI-Lite on TEST registers");
+                info("-----------------------------------------------------------------------------");
+
+                for i in 1 to 32 loop
+
+                    v_expected_data := v_rnd.RandSlv(rdata'length);
+
+                    if (v_rnd.RandInt(0, 1) = 0) then
+                        v_rnd_reg := C_REG_TEST_REGISTER_1;
+                    else
+                        v_rnd_reg := C_REG_TEST_REGISTER_2;
+                    end if;
+
+                    info("");
+                    info("[" & to_string(i) & "/32] Write 0x"  & to_hstring(v_expected_data) & " to register " &
+                        v_rnd_reg.name      & " at address 0x" & to_hstring(v_rnd_reg.addr));
+
+                    -- Writes a random value to one of the registers and
+                    -- checks if the read value matches the written value
+                    proc_axi_lite_write(v_rnd_reg, v_expected_data);
+                    proc_axi_lite_check(v_rnd_reg, v_expected_data);
+
+                end loop;
+
+            elsif (run("test_regblock_write_byte_enable")) then
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 10 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking AXI-Lite write operations with LSB byte enable only");
+                info("-----------------------------------------------------------------------------");
+                info("");
+
+                proc_axi_lite_write(
+                    reg            => C_REG_TEST_REGISTER_1,
+                    data           => not C_REG_TEST_REGISTER_1.data,
+                    expected_bresp => axi_resp_okay,
+                    byte_enable    => "0001"); -- Only the least significant byte should be written
+
+                proc_axi_lite_check(
+                    reg            => C_REG_TEST_REGISTER_1,
+                    expected_data  => (
+                                        (31 downto 8 => C_REG_TEST_REGISTER_1.data(31 downto 8)),
+                                        ( 7 downto 0 => not C_REG_TEST_REGISTER_1.data(7 downto 0))
+                                      ),
+                    expected_rresp => axi_resp_okay,
+                    msg            => "Only the least significant byte of TEST_REGISTER_1 should be updated");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 10 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking AXI-Lite write operations with byte_enable set to `0b1010`");
+                info("-----------------------------------------------------------------------------");
+                info("");
+
+                proc_axi_lite_write(
+                    reg            => C_REG_TEST_REGISTER_1,
+                    data           => not C_REG_TEST_REGISTER_1.data,
+                    expected_bresp => axi_resp_okay,
+                    byte_enable    => "1010"); -- MSB and 3rd byte should be written
+
+                proc_axi_lite_check(
+                    reg            => C_REG_TEST_REGISTER_1,
+                    expected_data  => (
+                                        (31 downto 24 => not C_REG_TEST_REGISTER_1.data(31 downto 24)),
+                                        (23 downto 16 => C_REG_TEST_REGISTER_1.data(23 downto 16)),
+                                        (15 downto 8  => not C_REG_TEST_REGISTER_1.data(15 downto 8)),
+                                        ( 7 downto 0  => C_REG_TEST_REGISTER_1.data(7 downto 0))
+                                      ),
+                    expected_rresp => axi_resp_okay,
+                    msg            => "Only the MSB and the third byte of TEST_REGISTER_1 should be updated");
 
             end if;
 
