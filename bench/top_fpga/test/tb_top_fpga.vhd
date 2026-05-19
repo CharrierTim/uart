@@ -763,7 +763,7 @@ begin
         -- Show PASS log messages for checks
         show(get_logger(default_checker), display_handler, pass);
 
-        -- Set time unit to ns for display handler
+        -- Set time unit for display handler
         set_format(display_handler, log_time_unit => ms);
 
         -- Disable stop on errors from my_logger and its children
