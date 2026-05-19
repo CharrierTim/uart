@@ -55,8 +55,7 @@ from setup_vunit import Simulator, select_simulator
 THIS_DIR: Path = Path(__file__).resolve().parent
 PRJ_ROOT: Path = THIS_DIR.parent.parent
 SRC_ROOT: Path = PRJ_ROOT / "sources"
-CORE_ROOT: Path = PRJ_ROOT / "cores"
-OLO_ROOT: Path = CORE_ROOT / "open-logic"
+CORES_ROOT: Path = PRJ_ROOT / "cores"
 BENCH_ROOT: Path = THIS_DIR
 MODELS_ROOT: Path = PRJ_ROOT / "bench" / "models"
 
