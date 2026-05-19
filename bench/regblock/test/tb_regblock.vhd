@@ -210,7 +210,7 @@ begin
 
         -- =============================================================================================================
         -- proc_reset_dut
-        -- Description: This procedure resets the DUT to a know state.
+        -- Description: This procedure resets the DUT to a known state.
         --
         -- Parameters:
         --   None
