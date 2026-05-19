@@ -20,7 +20,8 @@ runs:
           shell: bash
           run: |
               python3 bench/uart/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
-              python3 bench/spi/run.py  --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
+              python3 bench/spi/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
+              python3 bench/regblock/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
 
         - name: Upload sim results
           if: always()
