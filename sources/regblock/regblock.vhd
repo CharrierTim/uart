@@ -14,10 +14,10 @@ entity regblock is
         arst : in std_logic;
 
         s_axil_i : in axi4lite_slave_in_intf(
-            AWADDR(4 downto 0),
+            AWADDR(5 downto 0),
             WDATA(31 downto 0),
             WSTRB(3 downto 0),
-            ARADDR(4 downto 0)
+            ARADDR(5 downto 0)
         );
         s_axil_o : out axi4lite_slave_out_intf(
             RDATA(31 downto 0)
@@ -34,7 +34,7 @@ architecture rtl of regblock is
     ----------------------------------------------------------------------------
     signal cpuif_req : std_logic;
     signal cpuif_req_is_wr : std_logic;
-    signal cpuif_addr : std_logic_vector(4 downto 0);
+    signal cpuif_addr : std_logic_vector(5 downto 0);
     signal cpuif_wr_data : std_logic_vector(31 downto 0);
     signal cpuif_wr_biten : std_logic_vector(31 downto 0);
     signal cpuif_req_stall_wr : std_logic;
@@ -52,10 +52,10 @@ architecture rtl of regblock is
     signal axil_n_in_flight : unsigned(1 downto 0);
     signal axil_prev_was_rd : std_logic;
     signal axil_arvalid : std_logic;
-    signal axil_araddr : std_logic_vector(4 downto 0);
+    signal axil_araddr : std_logic_vector(5 downto 0);
     signal axil_ar_accept : std_logic;
     signal axil_awvalid : std_logic;
-    signal axil_awaddr : std_logic_vector(4 downto 0);
+    signal axil_awaddr : std_logic_vector(5 downto 0);
     signal axil_wvalid : std_logic;
     signal axil_wdata : std_logic_vector(31 downto 0);
     signal axil_wstrb : std_logic_vector(3 downto 0);
@@ -82,10 +82,12 @@ architecture rtl of regblock is
         spi_rx_data : std_logic;
         vga_color : std_logic;
         switch_status : std_logic;
+        test_register_1 : std_logic;
+        test_register_2 : std_logic;
     end record;
     signal decoded_reg_strb : decoded_reg_strb_t;
     signal decoded_err : std_logic;
-    signal decoded_addr : std_logic_vector(4 downto 0);
+    signal decoded_addr : std_logic_vector(5 downto 0);
     signal decoded_req : std_logic;
     signal decoded_req_is_wr : std_logic;
     signal decoded_wr_data : std_logic_vector(31 downto 0);
@@ -134,10 +136,30 @@ architecture rtl of regblock is
         red : \regblock.vga_color.red_combo_t\;
     end record;
 
+    type \regblock.test_register_1.test_bits_combo_t\ is record
+        next_q : std_logic_vector(31 downto 0);
+        load_next : std_logic;
+    end record;
+
+    type \regblock.test_register_1_combo_t\ is record
+        test_bits : \regblock.test_register_1.test_bits_combo_t\;
+    end record;
+
+    type \regblock.test_register_2.test_bits_combo_t\ is record
+        next_q : std_logic_vector(31 downto 0);
+        load_next : std_logic;
+    end record;
+
+    type \regblock.test_register_2_combo_t\ is record
+        test_bits : \regblock.test_register_2.test_bits_combo_t\;
+    end record;
+
     type field_combo_t is record
         spi_tx_data : \regblock.spi_tx_data_combo_t\;
         spi_rx_data : \regblock.spi_rx_data_combo_t\;
         vga_color : \regblock.vga_color_combo_t\;
+        test_register_1 : \regblock.test_register_1_combo_t\;
+        test_register_2 : \regblock.test_register_2_combo_t\;
     end record;
     signal field_combo : field_combo_t;
 
@@ -176,17 +198,35 @@ architecture rtl of regblock is
         red : \regblock.vga_color.red_storage_t\;
     end record;
 
+    type \regblock.test_register_1.test_bits_storage_t\ is record
+        value : std_logic_vector(31 downto 0);
+    end record;
+
+    type \regblock.test_register_1_storage_t\ is record
+        test_bits : \regblock.test_register_1.test_bits_storage_t\;
+    end record;
+
+    type \regblock.test_register_2.test_bits_storage_t\ is record
+        value : std_logic_vector(31 downto 0);
+    end record;
+
+    type \regblock.test_register_2_storage_t\ is record
+        test_bits : \regblock.test_register_2.test_bits_storage_t\;
+    end record;
+
     type field_storage_t is record
         spi_tx_data : \regblock.spi_tx_data_storage_t\;
         spi_rx_data : \regblock.spi_rx_data_storage_t\;
         vga_color : \regblock.vga_color_storage_t\;
+        test_register_1 : \regblock.test_register_1_storage_t\;
+        test_register_2 : \regblock.test_register_2_storage_t\;
     end record;
     signal field_storage : field_storage_t;
 
     ----------------------------------------------------------------------------
     -- Readback Signals
     ----------------------------------------------------------------------------
-    signal rd_mux_addr : unsigned(4 downto 0);
+    signal rd_mux_addr : unsigned(5 downto 0);
     signal readback_err : std_logic;
     signal readback_done : std_logic;
     signal readback_data : std_logic_vector(31 downto 0);
@@ -292,21 +332,21 @@ begin
             if axil_arvalid and not axil_prev_was_rd then
                 cpuif_req <= '1';
                 cpuif_req_is_wr <= '0';
-                cpuif_addr <= (4 downto 2 => axil_araddr(4 downto 2), others => '0');
+                cpuif_addr <= (5 downto 2 => axil_araddr(5 downto 2), others => '0');
                 if not cpuif_req_stall_rd then
                     axil_ar_accept <= '1';
                 end if;
             elsif axil_awvalid and axil_wvalid then
                 cpuif_req <= '1';
                 cpuif_req_is_wr <= '1';
-                cpuif_addr <= (4 downto 2 => axil_awaddr(4 downto 2), others => '0');
+                cpuif_addr <= (5 downto 2 => axil_awaddr(5 downto 2), others => '0');
                 if not cpuif_req_stall_wr then
                     axil_aw_accept <= '1';
                 end if;
             elsif axil_arvalid then
                 cpuif_req <= '1';
                 cpuif_req_is_wr <= '0';
-                cpuif_addr <= (4 downto 2 => axil_araddr(4 downto 2), others => '0');
+                cpuif_addr <= (5 downto 2 => axil_araddr(5 downto 2), others => '0');
                 if not cpuif_req_stall_rd then
                     axil_ar_accept <= '1';
                 end if;
@@ -428,6 +468,12 @@ begin
         decoded_reg_strb.switch_status <= cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#18#));
         is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr);
+        decoded_reg_strb.test_register_1 <= cpuif_req_masked and (cpuif_addr = 16#1C#);
+        is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#1C#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#1C#));
+        decoded_reg_strb.test_register_2 <= cpuif_req_masked and (cpuif_addr = 16#20#);
+        is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#20#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#20#));
         decoded_err <= (not is_valid_addr or (is_valid_addr and not is_valid_rw)) and decoded_req;
     end process;
 
@@ -589,6 +635,62 @@ begin
     end process;
     hwif_out.vga_color.red.value <= field_storage.vga_color.red.value;
 
+    -- Field: regblock.test_register_1.test_bits
+    process(all)
+        variable next_c: std_logic_vector(31 downto 0);
+        variable load_next_c: std_logic;
+    begin
+        next_c := field_storage.test_register_1.test_bits.value;
+        load_next_c := '0';
+        if decoded_reg_strb.test_register_1 and decoded_req_is_wr then -- SW write
+            next_c := (field_storage.test_register_1.test_bits.value and not decoded_wr_biten(31 downto 0)) or (decoded_wr_data(31 downto 0) and decoded_wr_biten(31 downto 0));
+            load_next_c := '1';
+        end if;
+        field_combo.test_register_1.test_bits.next_q <= next_c;
+        field_combo.test_register_1.test_bits.load_next <= load_next_c;
+    end process;
+    process(clk, arst) begin
+        if arst then -- async reset
+            field_storage.test_register_1.test_bits.value <= 32x"0";
+        elsif rising_edge(clk) then
+            if false then -- sync reset
+                field_storage.test_register_1.test_bits.value <= 32x"0";
+            else
+                if field_combo.test_register_1.test_bits.load_next then
+                    field_storage.test_register_1.test_bits.value <= field_combo.test_register_1.test_bits.next_q;
+                end if;
+            end if;
+        end if;
+    end process;
+
+    -- Field: regblock.test_register_2.test_bits
+    process(all)
+        variable next_c: std_logic_vector(31 downto 0);
+        variable load_next_c: std_logic;
+    begin
+        next_c := field_storage.test_register_2.test_bits.value;
+        load_next_c := '0';
+        if decoded_reg_strb.test_register_2 and decoded_req_is_wr then -- SW write
+            next_c := (field_storage.test_register_2.test_bits.value and not decoded_wr_biten(31 downto 0)) or (decoded_wr_data(31 downto 0) and decoded_wr_biten(31 downto 0));
+            load_next_c := '1';
+        end if;
+        field_combo.test_register_2.test_bits.next_q <= next_c;
+        field_combo.test_register_2.test_bits.load_next <= load_next_c;
+    end process;
+    process(clk, arst) begin
+        if arst then -- async reset
+            field_storage.test_register_2.test_bits.value <= 32x"0";
+        elsif rising_edge(clk) then
+            if false then -- sync reset
+                field_storage.test_register_2.test_bits.value <= 32x"0";
+            else
+                if field_combo.test_register_2.test_bits.load_next then
+                    field_storage.test_register_2.test_bits.value <= field_combo.test_register_2.test_bits.next_q;
+                end if;
+            end if;
+        end if;
+    end process;
+
     ----------------------------------------------------------------------------
     -- Write response
     ----------------------------------------------------------------------------
@@ -628,6 +730,12 @@ begin
             readback_data_var(0) := hwif_in.switch_status.switch_0.next_q;
             readback_data_var(1) := hwif_in.switch_status.switch_1.next_q;
             readback_data_var(2) := hwif_in.switch_status.switch_2.next_q;
+        end if;
+        if rd_mux_addr = 16#1C# then
+            readback_data_var(31 downto 0) := field_storage.test_register_1.test_bits.value;
+        end if;
+        if rd_mux_addr = 16#20# then
+            readback_data_var(31 downto 0) := field_storage.test_register_2.test_bits.value;
         end if;
         readback_data <= readback_data_var;
         readback_done <= decoded_req and not decoded_req_is_wr;

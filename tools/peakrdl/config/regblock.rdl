@@ -156,4 +156,30 @@ addrmap regblock {
             reset = 0;
         } switch_2[2:2];
     } switch_status @ 0x18;
+
+    reg {
+        name = "Test Register 1";
+        desc = "Register used to test a 32-bit read/write register with all bits used for data.";
+
+        default sw = rw;
+        default hw = na;
+
+        field {
+            desc = "Test bits";
+            reset = 0;
+        } test_bits[31:0];
+    } test_register_1 @ 0x1C;
+
+    reg {
+        name = "Test Register 2";
+        desc = "Register used to test a 32-bit read/write register with all bits used for data.";
+
+        default sw = rw;
+        default hw = na;
+
+        field {
+            desc = "Test bits";
+            reset = 0;
+        } test_bits[31:0];
+    } test_register_2 @ 0x20;
 };

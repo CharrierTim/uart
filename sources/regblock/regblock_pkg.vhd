@@ -8,8 +8,8 @@ use ieee.fixed_pkg.all;
 package regblock_pkg is
 
     constant REGBLOCK_DATA_WIDTH : positive := 32;
-    constant REGBLOCK_MIN_ADDR_WIDTH : positive := 5;
-    constant REGBLOCK_SIZE : positive := 28;
+    constant REGBLOCK_MIN_ADDR_WIDTH : positive := 6;
+    constant REGBLOCK_SIZE : positive := 36;
 
     type \regblock.git_hash.hash_in_t\ is record
         next_q : std_logic_vector(31 downto 0);
