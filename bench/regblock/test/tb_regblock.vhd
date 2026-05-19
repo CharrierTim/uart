@@ -752,9 +752,9 @@ begin
                 proc_axi_lite_check(
                     reg            => C_REG_TEST_REGISTER_1,
                     expected_data  => (
-                                        (31 downto 8 => C_REG_TEST_REGISTER_1.data(31 downto 8)),
-                                        ( 7 downto 0 => not C_REG_TEST_REGISTER_1.data(7 downto 0))
-                                      ),
+                        C_REG_TEST_REGISTER_1.data(31 downto 8) &
+                        not C_REG_TEST_REGISTER_1.data(7 downto 0)
+                    ),
                     expected_rresp => axi_resp_okay,
                     msg            => "Only the least significant byte of TEST_REGISTER_1 should be updated");
 
@@ -777,11 +777,11 @@ begin
                 proc_axi_lite_check(
                     reg            => C_REG_TEST_REGISTER_1,
                     expected_data  => (
-                                        (31 downto 24 => not C_REG_TEST_REGISTER_1.data(31 downto 24)),
-                                        (23 downto 16 => C_REG_TEST_REGISTER_1.data(23 downto 16)),
-                                        (15 downto 8  => not C_REG_TEST_REGISTER_1.data(15 downto 8)),
-                                        ( 7 downto 0  => C_REG_TEST_REGISTER_1.data(7 downto 0))
-                                      ),
+                        not C_REG_TEST_REGISTER_1.data(31 downto 24) &
+                        C_REG_TEST_REGISTER_1.data(23 downto 16)     &
+                        not C_REG_TEST_REGISTER_1.data(15 downto 8)  &
+                        C_REG_TEST_REGISTER_1.data(7 downto 0)
+                    ),
                     expected_rresp => axi_resp_okay,
                     msg            => "Only the MSB and the third byte of TEST_REGISTER_1 should be updated");
 
