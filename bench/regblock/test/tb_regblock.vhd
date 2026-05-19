@@ -78,32 +78,32 @@ architecture TB_REGBLOCK_ARCH of TB_REGBLOCK is
     signal tb_clk         : std_logic;
     signal tb_arst_h      : std_logic;
     signal tb_s_axil_i    : axi4lite_slave_in_intf(
-                                                   AWADDR(4 downto 0),
-                                                   WDATA(31 downto 0),
-                                                   WSTRB(3 downto 0),
-                                                   ARADDR(4 downto 0));
-    signal tb_s_axil_o    : axi4lite_slave_out_intf(RDATA(31 downto 0));
+                                                   AWADDR(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0),
+                                                   WDATA(REGBLOCK_DATA_WIDTH - 1 downto 0),
+                                                   WSTRB(REGBLOCK_DATA_WIDTH / 8 - 1 downto 0),
+                                                   ARADDR(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0));
+    signal tb_s_axil_o    : axi4lite_slave_out_intf(RDATA(REGBLOCK_DATA_WIDTH - 1 downto 0));
     signal tb_hwif_in     : regblock_in_t;
     signal tb_hwif_out    : regblock_out_t;
 
     -- AXI-Lite master <-> slave signals
     signal arready        : std_logic;
     signal arvalid        : std_logic;
-    signal araddr         : std_logic_vector(4 downto 0);
+    signal araddr         : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
 
     signal rready         : std_logic;
     signal rvalid         : std_logic;
-    signal rdata          : std_logic_vector(31 downto 0);
+    signal rdata          : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
     signal rresp          : std_logic_vector(1 downto 0);
 
     signal awready        : std_logic;
     signal awvalid        : std_logic;
-    signal awaddr         : std_logic_vector(4 downto 0);
+    signal awaddr         : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
 
     signal wready         : std_logic;
     signal wvalid         : std_logic;
-    signal wdata          : std_logic_vector(31 downto 0);
-    signal wstrb          : std_logic_vector(3 downto 0);
+    signal wdata          : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
+    signal wstrb          : std_logic_vector(REGBLOCK_DATA_WIDTH / 8 - 1 downto 0);
 
     signal bvalid         : std_logic;
     signal bready         : std_logic;
@@ -253,6 +253,100 @@ begin
         end procedure proc_reset_dut;
 
         -- =============================================================================================================
+        -- proc_axi_lite_check
+        --
+        -- Description: This procedure checks if the value read from a specified AXI-Lite register matches the expected
+        --              value and response.
+        --
+        -- Parameters:
+        --   reg            : t_reg            - The register to check.
+        --   expected_data  : std_logic_vector - The expected data value to be returned when reading the register.
+        --   expected_rresp : axi_resp_t       - The expected response when reading the register.
+        --   msg            : string           - A message to display if the check fails.
+        --
+        -- Example:
+        --   proc_axi_lite_check(C_REG_16_BITS, x"ABCD_1234");
+        -- or
+        --   proc_axi_lite_check(C_REG_16_BITS, x"ABCD_1234", axi_resp_slverr, "Invalid read from register");
+        -- =============================================================================================================
+
+        procedure proc_axi_lite_check (
+            constant reg            : t_reg;
+            constant expected_data  : std_logic_vector;
+            constant expected_rresp : axi_resp_t := axi_resp_okay;
+            constant msg            : string     := ""
+        ) is
+            variable v_returned_data : std_logic_vector(rdata'range);
+        begin
+
+            info(
+                "Reading value from register " & reg.name &
+                " at address 0x"               & to_hstring(reg.addr) &
+                " and expecting 0x"            & to_hstring(expected_data));
+
+            -- Check the default value of the register after reset
+            read_axi_lite(
+                net,
+                C_BUS_HANDLE,
+                reg.addr,
+                expected_rresp,
+                v_returned_data);
+
+            if (msg'length = 0) then
+                check_equal(
+                    v_returned_data,
+                    expected_data,
+                    "Value mismatch for register " & reg.name);
+            else
+                check_equal(
+                    v_returned_data,
+                    expected_data,
+                    msg);
+            end if;
+
+        end procedure proc_axi_lite_check;
+
+        -- =============================================================================================================
+        -- proc_axi_lite_write
+        --
+        -- Description: This procedure writes a value to a specified AXI-Lite register.
+        --
+        -- Parameters:
+        --   reg            : t_reg            - The register to write to.
+        --   data           : std_logic_vector - The data value to write to the register.
+        --   expected_bresp : axi_resp_t       - The expected response when writing to the register.
+        --                                       (optional, default is OKAY)
+        --   byte_enable    : std_logic_vector - The byte enable value to use for the write transaction
+        --                                       (optional, default is all bytes enabled).
+        -- Example:
+        --   proc_axi_lite_write(C_REG_16_BITS, x"ABCD_1234");
+        -- =============================================================================================================
+
+        procedure proc_axi_lite_write (
+            constant reg            : t_reg;
+            constant data           : std_logic_vector;
+            constant expected_bresp : axi_resp_t                    := axi_resp_okay;
+            constant byte_enable    : std_logic_vector(wstrb'range) := (others => '1')
+        ) is
+        begin
+
+            info(
+                "Writing value 0x" & to_hstring(data)     & " to register "           & reg.name               &
+                " at address 0x"   & to_hstring(reg.addr) & " with byte enable 0b"    & to_string(byte_enable) &
+                " and expecting AXI response `"           & to_string(expected_bresp) & "`");
+
+            -- Check the default value of the register after reset
+            write_axi_lite(
+                net,
+                C_BUS_HANDLE,
+                reg.addr,
+                data,
+                expected_bresp,
+                byte_enable);
+
+        end procedure proc_axi_lite_write;
+
+        -- =============================================================================================================
         -- proc_axi_lite_check_default_value
         --
         -- Description: This procedure checks if the default value of a specified AXI-Lite register matches the expected
@@ -268,29 +362,16 @@ begin
         procedure proc_axi_lite_check_default_value (
             constant reg : t_reg
         ) is
-            variable v_returned_data : std_logic_vector(rdata'range);
         begin
 
             info("");
             info("Checking register " & reg.name & " value after reset");
 
-            info(
-                "Reading value from register "          & reg.name &
-                " at address 0x"                        & to_hstring(reg.addr) &
-                " and expecting 0x"                     & to_hstring(reg.data));
-
             -- Check the default value of the register after reset
-            read_axi_lite(
-                net,
-                C_BUS_HANDLE,
-                reg.addr,
-                axi_resp_okay,
-                v_returned_data);
-
-            check_equal(
-                v_returned_data,
+            proc_axi_lite_check(
+                reg,
                 reg.data,
-                "Default value mismatch for register " & reg.name);
+                axi_resp_okay);
 
         end procedure proc_axi_lite_check_default_value;
 
@@ -310,7 +391,6 @@ begin
         procedure proc_axi_lite_check_read_only (
             constant reg : t_reg
         ) is
-            variable v_returned_data : std_logic_vector(rdata'range);
         begin
 
             info("");
@@ -321,31 +401,16 @@ begin
                 " at address 0x"               & to_hstring(reg.addr));
 
             -- Attempt to write the opposite reset value to the register
-            write_axi_lite(
-                net,
-                C_BUS_HANDLE,
-                reg.addr,
-                not reg.data, -- Write the opposite of the reset value
-                axi_resp_slverr);
-
-            wait until rising_edge(tb_clk) and bvalid = '1';
+            proc_axi_lite_write(
+                reg,
+                not reg.data,
+                axi_resp_slverr); -- Expecting SLVERR response for write attempts to read-only registers
 
             -- Check if the register value remains unchanged
-            info(
-                "Reading back value from register "         & reg.name             &
-                " at address 0x"                            & to_hstring(reg.addr) &
-                " and expecting 0x"                         & to_hstring(reg.data));
-
-            read_axi_lite(
-                net,
-                C_BUS_HANDLE,
-                reg.addr,
-                axi_resp_okay,
-                v_returned_data);
-
-            check_equal(
-                v_returned_data,
+            proc_axi_lite_check(
+                reg,
                 reg.data,
+                axi_resp_okay,
                 "Read-only register " & reg.name & " value changed after write attempt");
 
         end procedure proc_axi_lite_check_read_only;
@@ -367,40 +432,22 @@ begin
         procedure proc_axi_lite_check_read_write (
             constant reg : t_reg
         ) is
-            variable v_returned_data : std_logic_vector(rdata'range);
         begin
 
             info("");
             info("Checking register " & reg.name & " is in read-write mode");
 
-            info(
-                "Writing value 0x" & to_hstring(not reg.data) & " to register " & reg.name &
-                " at address 0x" & to_hstring(reg.addr));
-
             wait until rising_edge(tb_clk);
 
-            -- Write the expected value to the register
-            write_axi_lite(
-                net,
-                C_BUS_HANDLE,
-                reg.addr,
-                (not reg.data) and reg.used_bits_mask, -- Only writable bits should be updated
-                axi_resp_okay);
-
-            wait until rising_edge(tb_clk) and bvalid = '1';
+            -- Write the opposite of the reset value to ensure a change is made to the register
+            proc_axi_lite_write(reg, (not reg.data) and reg.used_bits_mask);
 
             -- Check if the register value is updated correctly
-            info(
-                "Reading back value from register "         & reg.name &
-                " at address 0x"                            & to_hstring(reg.addr) &
-                " and expecting 0x"                         & to_hstring(not reg.data and reg.used_bits_mask));
-
-            read_axi_lite(
-                net,
-                C_BUS_HANDLE,
-                reg.addr,
+            proc_axi_lite_check(
+                reg,
+                (not reg.data) and reg.used_bits_mask,
                 axi_resp_okay,
-                v_returned_data);
+                "Read-write register " & reg.name & " value mismatch after write");
 
         end procedure proc_axi_lite_check_read_write;
 
@@ -423,11 +470,11 @@ begin
         -- =============================================================================================================
 
         procedure proc_axi_lite_read_bad_addr (
-            addr           : std_logic_vector( 4 downto 0);
-            expected_data  : std_logic_vector(31 downto 0) := 32x"0000_0000";
-            id             : std_logic_vector              := "X";
-            ar_valid_delay : time                          := 0 ns;
-            r_ready_delay  : time                          := 0 ns
+            addr           : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
+            expected_data  : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0) := 32x"0000_0000";
+            id             : std_logic_vector                                   := "X";
+            ar_valid_delay : time                                               := 0 ns;
+            r_ready_delay  : time                                               := 0 ns
         ) is
             variable v_returned_data : std_logic_vector(rdata'range);
         begin
@@ -460,12 +507,6 @@ begin
         -- Parameters:
         --   addr            : unsigned         - The invalid address to write to.
         --   data            : unsigned         - The data value to write (optional, default is 0xABCD_1234).
-        --   strb            : std_logic_vector - The byte strobe value to use for the write transaction
-        --                                        (optional, default is "X").
-        --   id              : std_logic_vector - The ID to use for the write transaction (optional, default is "X").
-        --   aw_valid_delay  : time             - The delay before asserting AWVALID     (optional, default is 0 ns).
-        --   w_valid_delay   : time             - The delay before asserting WVALID      (optional, default is 0 ns).
-        --   b_ready_delay   : time             - The delay before asserting BREADY      (optional, default is 0 ns).
         --
         -- Examples:
         --   proc_axi_lite_write_bad_addr(x"1F");
@@ -473,13 +514,8 @@ begin
         -- =================================================================================================
 
         procedure proc_axi_lite_write_bad_addr (
-            addr           : std_logic_vector( 4 downto 0);
-            data           : std_logic_vector(31 downto 0) := 32x"ABCD_1234";
-            strb           : std_logic_vector              := "X";
-            id             : std_logic_vector              := "X";
-            aw_valid_delay : time                          := 0 ns;
-            w_valid_delay  : time                          := 0 ns;
-            b_ready_delay  : time                          := 0 ns
+            addr : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
+            data : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0) := 32x"ABCD_1234"
         ) is
         begin
 
@@ -495,13 +531,11 @@ begin
                 data           => data,
                 expected_bresp => axi_resp_slverr);
 
-            wait until rising_edge(tb_clk) and bvalid = '1';
-
             check_equal(
                 bresp,
                 axi_resp_slverr,
                 "Response mismatch when writing to invalid address 0x" & to_hstring(addr) &
-                " - Got AXI response `" & to_string(bresp) & "` expected SLVERR(10)");
+                " - Got AXI response `" & to_string(bresp) & "` expected SLVERR(0b10)");
 
         end procedure proc_axi_lite_write_bad_addr;
 
@@ -513,7 +547,7 @@ begin
         -- Show PASS log messages for checks
         show(get_logger(default_checker), display_handler, pass);
 
-        -- Set time unit to ns for display handler
+        -- Set time unit for display handler
         set_format(display_handler, log_time_unit => us);
 
         -- Disable stop on errors from my_logger and its children
@@ -539,6 +573,8 @@ begin
                 proc_axi_lite_check_default_value(C_REG_SPI_RX_DATA);
                 proc_axi_lite_check_default_value(C_REG_VGA_COLOR);
                 proc_axi_lite_check_default_value(C_REG_SWITCH_STATUS);
+                proc_axi_lite_check_default_value(C_REG_TEST_REGISTER_1);
+                proc_axi_lite_check_default_value(C_REG_TEST_REGISTER_2);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -561,6 +597,8 @@ begin
 
                 proc_axi_lite_check_read_write(C_REG_SPI_TX_DATA);
                 proc_axi_lite_check_read_write(C_REG_VGA_COLOR);
+                proc_axi_lite_check_read_write(C_REG_TEST_REGISTER_1);
+                proc_axi_lite_check_read_write(C_REG_TEST_REGISTER_2);
 
             elsif run("test_regblock_hw_if") then
 
@@ -609,19 +647,16 @@ begin
                 info(" Reading from invalid AXI-Lite address");
                 info("-----------------------------------------------------------------------------");
 
-                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(30, araddr'length)));
-                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(31, araddr'length)));
+                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 4, araddr'length)));
+                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 8, araddr'length)));
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Writing to invalid AXI-Lite address");
                 info("-----------------------------------------------------------------------------");
 
-                proc_axi_lite_write_bad_addr(std_logic_vector(to_unsigned(30, awaddr'length)));
-                proc_axi_lite_write_bad_addr(std_logic_vector(to_unsigned(31, awaddr'length)));
-
-                proc_axi_lite_write_bad_addr(x"1E");
-                proc_axi_lite_write_bad_addr(x"1F");
+                proc_axi_lite_write_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 4, awaddr'length)));
+                proc_axi_lite_write_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 8, awaddr'length)));
 
             end if;
 
