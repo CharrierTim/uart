@@ -435,6 +435,8 @@ class NVC(Simulator):
                     coverage_spec_path,
                 )
 
+            self.vu.set_sim_option(name="enable_coverage", value=True)
+
             elab_flags.append("--cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable")
             elab_flags.append(f"--cover-spec={coverage_spec_path}")
 
