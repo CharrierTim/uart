@@ -118,3 +118,11 @@ docstring-code-line-length = 120
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
+
+## =====================================================================================================================
+# Workaround for `error: Multiple top-level packages discovered in a flat-layout:`
+# See https://stackoverflow.com/questions/72294299/multiple-top-level-packages-discovered-in-a-flat-layout
+## =====================================================================================================================
+
+[tool.setuptools]
+py-modules = []
