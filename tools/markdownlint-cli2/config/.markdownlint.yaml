@@ -23,7 +23,7 @@
 ## =====================================================================================================================
 ##  @project uart
 ##  @file    .markdownlint-cli2.yaml
-##  @version 1.0
+##  @version 1.1
 ##  @brief   Configuration file for markdownlint.
 ##           File from https://github.com/DavidAnson/markdownlint
 ##  @author  Timothee Charrier
@@ -33,6 +33,8 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      04/12/2025  Timothee Charrier   Initial release
+## 1.1      20/05/2026  Timothee Charrier   Remove MD046 rule as it is not compatible with the code block style used for
+##                                          the content tabs.
 ## =====================================================================================================================
 
 # Default state for all rules
@@ -239,9 +241,7 @@ MD044:
 MD045: true
 
 # MD046/code-block-style : Code block style : https://github.com/DavidAnson/markdownlint/blob/v0.40.0/doc/md046.md
-MD046:
-    # Block style
-    style: "consistent"
+MD046: false
 
 # MD047/single-trailing-newline : Files should end with a single newline character : https://github.com/DavidAnson/markdownlint/blob/v0.40.0/doc/md047.md
 MD047: true
