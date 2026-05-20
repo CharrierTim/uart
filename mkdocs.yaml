@@ -27,8 +27,8 @@ theme:
               name: Switch to light mode
 
     font:
-        text: Inter
-        code: Fira Code
+        text: Roboto
+        code: Roboto Mono
 
     features:
         - announce.dismiss
