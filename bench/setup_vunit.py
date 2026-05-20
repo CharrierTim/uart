@@ -44,6 +44,8 @@
 ##                                          Fix a runtime error with GHDL invalid option.
 ## 2.6      17/06/2026  Timothee Charrier   Now takes the run file directory as an argument to properly handle the
 ##                                          results directory and coverage specific options.
+##          18/06/2026                      Only enable coverage for the libraries we want to cover instead of globally,
+##                                          as coverage can significantly reduce performance.
 ## =====================================================================================================================
 
 import logging
@@ -52,12 +54,15 @@ import re
 import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, TypeAlias
+from typing import TYPE_CHECKING, Any, TypeAlias
 
 import rtoml
 from vunit import VUnit
 from vunit.ostools import Process
 from vunit.ui.results import Results
+
+if TYPE_CHECKING:
+    from vunit.ui.library import Library
 
 LOGGER: logging.Logger = logging.getLogger(name=__name__)
 VHDL_LS_TOML: TypeAlias = dict[str, Any]
@@ -70,6 +75,7 @@ class Simulator(ABC):
     EXECUTABLE: str = ""
     DEFAULT_LIBRARIES: dict[str, str] = {}
     THIRD_PARTY_LIBRARIES: set[str] = {"vunit_lib", "osvvm", "unisim", "unifast", "xil_defaultlib"}
+    DEFAULT_LIBRARIES_TO_COVER: set[str] = {"lib_bench"}
 
     def __init__(self, enable_coverage: bool = False, run_file_dir: Path | None = None) -> None:
         """Initialize the simulator.
@@ -229,6 +235,17 @@ class Simulator(ABC):
         expanded_path: str = os.path.expanduser(path)
         self.vu.add_external_library(library_name=library_name, path=expanded_path)
         return self
+
+    def get_libraries_to_cover(self) -> list["Library"]:
+        """Get the library objects to include in coverage collection.
+
+        Returns
+        -------
+        list[Library]
+            The library objects to cover.
+        """
+        libs_by_name: dict["Library"] = {lib.name: lib for lib in self.vu.get_libraries()}  # noqa: UP037
+        return [libs_by_name[name] for name in self.DEFAULT_LIBRARIES_TO_COVER if name in libs_by_name]
 
     def configure(self) -> "Simulator":
         """Apply simulator-specific configuration.
@@ -435,10 +452,20 @@ class NVC(Simulator):
                     coverage_spec_path,
                 )
 
-            self.vu.set_sim_option(name="enable_coverage", value=True)
-
-            elab_flags.append("--cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable")
             elab_flags.append(f"--cover-spec={coverage_spec_path}")
+
+            # Coverage reduces performance, so we only enable it for the libraries we want to cover instead of globally.
+            # Coverage on `lib_bench` is enough for nvc, but more libraries can be added to `DEFAULT_LIBRARIES_TO_COVER` if needed.
+            libs_to_cover: list["Library"] = self.get_libraries_to_cover()  # noqa: UP037
+            LOGGER.info("Enabling coverage for libraries: %s", ", ".join(lib.name for lib in libs_to_cover))
+
+            for lib in libs_to_cover:
+                lib.set_sim_option(name="enable_coverage", value=True)
+                lib.set_sim_option(
+                    name="nvc.elab_flags",
+                    value=["--cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable,"],
+                    overwrite=False,
+                )
 
         self.vu.set_sim_option(name="nvc.global_flags", value=global_flags, overwrite=False)
         self.vu.set_sim_option(name="nvc.elab_flags", value=elab_flags, overwrite=False)
@@ -505,7 +532,13 @@ class GHDL(Simulator):
         sim_flags: list[str] = ["--ieee-asserts=disable"]
 
         if self.enable_coverage:
-            self.vu.set_sim_option(name="enable_coverage", value=True)
+            # Coverage reduces performance, so we only enable it for the libraries we want to cover instead of globally.
+            # Coverage on `lib_bench` is enough for ghdl.
+            libs_to_cover: list["Library"] = self.get_libraries_to_cover()  # noqa: UP037
+            LOGGER.info("Enabling coverage for libraries: %s", ", ".join(lib.name for lib in libs_to_cover))
+
+            for lib in libs_to_cover:
+                lib.set_sim_option(name="enable_coverage", value=True)
 
         self.vu.add_compile_option(name="ghdl.a_flags", value=analysis_flags)
         self.vu.set_sim_option(name="ghdl.elab_flags", value=elab_flags, overwrite=False)
@@ -636,6 +669,7 @@ class QuestaModelSim(Simulator):
 
     SIMULATOR_NAME: str = "modelsim"
     EXECUTABLE: str = "vsim"
+    DEFAULT_LIBRARIES_TO_COVER: set[str] = {"lib_bench", "lib_rtl"}
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -655,17 +689,26 @@ class QuestaModelSim(Simulator):
         vopt_flags: list[str] = []
         three_step_flow: bool = True
 
-        if self.enable_coverage:
-            self.vu.set_sim_option(name="enable_coverage", value=True)
-            vcom_flags.append("+cover=bcefs")
-            vlog_flags.append("+cover=bcefs")
-
         self.vu.set_compile_option(name="modelsim.vcom_flags", value=vcom_flags)
         self.vu.set_compile_option(name="modelsim.vlog_flags", value=vlog_flags)
         self.vu.set_sim_option(name="disable_ieee_warnings", value=True)
         self.vu.set_sim_option(name="modelsim.vsim_flags", value=vsim_flags, overwrite=False)
         self.vu.set_sim_option(name="modelsim.vopt_flags", value=vopt_flags, overwrite=False)
         self.vu.set_sim_option(name="modelsim.three_step_flow", value=three_step_flow)
+
+        if self.enable_coverage:
+            # Coverage reduces performance, so we only enable it for the libraries we want to cover instead of globally.
+            # Coverage on `lib_bench` is not enough for Questa/ModelSim. Also need to add `lib_rtl`.
+            libs_to_cover: list["Library"] = self.get_libraries_to_cover()  # noqa: UP037
+            LOGGER.info("Enabling coverage for libraries: %s", ", ".join(lib.name for lib in libs_to_cover))
+
+            for lib in libs_to_cover:
+                lib.set_compile_option(name="modelsim.vcom_flags", value=["+cover=bcefs"])
+                lib.set_compile_option(name="modelsim.vlog_flags", value=["+cover=bcefs"])
+
+                # Cannot enable simulation on a RTL-only library, only on the testbench library.
+                if lib.name == "lib_bench":
+                    lib.set_sim_option(name="enable_coverage", value=True)
 
     def _check_vcover(self) -> bool:
         """Check if vcover is available for coverage generation.
