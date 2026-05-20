@@ -66,6 +66,9 @@ markdown_extensions:
     - pymdownx.keys
     - pymdownx.mark
     - pymdownx.tilde
+    - pymdownx.superfences
+    - pymdownx.tabbed:
+          alternate_style: true
     - toc:
           permalink: true
           toc_depth: 3

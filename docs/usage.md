@@ -2,14 +2,14 @@
 
 ## Prerequisites
 
-- **Python**:  Version 3.10 or higher
-- [**NVC**](https://github.com/nickg/nvc/releases/tag/r1.20.1): Version r1.20.1
-- **Vivado**: Version 2025.2
+- **Python**:  Version 3.14 or higher
+- [**NVC**](https://github.com/nickg/nvc/releases/tag/r1.20.1): `Version r1.20.1`
+- **Vivado**: `Version 2025.2`
 
-Can also be tested with:
+Also be tested with:
 
-- [**GHDL**](https://github.com/ghdl/ghdl/releases/tag/v6.0.0-rc2): GHDL 6.0.0-rc2 (6.0.0.rc2.r0.gb981f25f3) [Dunoon edition]
-- **QuestaSim**: Questa Altera Starter FPGA Edition-64 vsim 2025.2 Simulator 2025.05 May 31 2025
+- [**GHDL**](https://github.com/ghdl/ghdl/releases/tag/v6.0.0-rc2): `GHDL 6.0.0-rc2 (6.0.0.rc2.r0.gb981f25f3) [Dunoon edition]`
+- **QuestaSim**: `Questa Altera Starter FPGA Edition-64 vsim 2025.2 Simulator 2025.05 May 31 2025`
 
 ## Installation
 
@@ -30,13 +30,45 @@ git submodule update --init --recursive
 
 ### 2. Set Up Python Environment
 
+!!! bug
+    `uv` requires version >= 0.11.15
+
+    Without a higher or equal version, you may encounter an error with `VUnit`.
+    See [this issue](https://github.com/astral-sh/uv/issues/9822) for more details.
+
 Create a Python virtual environment and install the required dependencies:
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install .
-```
+=== "Linux/macOS"
+
+    === "`uv`"
+
+        ```bash
+        uv venv
+        ```
+
+    === "`pip`"
+
+        ```bash
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install .
+        ```
+
+=== "Windows"
+
+    === "`uv`"
+
+        ```bash
+        uv venv
+        ```
+
+    === "`pip`"
+
+        ```bash
+        python -m venv .venv
+        .venv\Scripts\activate
+        pip install .
+        ```
 
 ## Running Tests
 
@@ -49,17 +81,69 @@ pip install .
 
 To run the top-level FPGA testbench:
 
-```bash
-python3 bench/top_fpga/run.py
-```
+=== "Linux/macOS"
+
+    === "`uv`"
+
+        ```bash
+        uv run bench/top_fpga/run.py
+        ```
+
+    === "`pip`"
+
+        ```bash
+        source .venv/bin/activate
+        python3 bench/top_fpga/run.py
+        ```
+
+=== "Windows"
+
+    === "`uv`"
+
+        ```bash
+        uv run bench/top_fpga/run.py
+        ```
+
+    === "`pip`"
+
+        ```bash
+        .venv\Scripts\activate
+        python bench/top_fpga/run.py
+        ```
 
 ### Parallel Execution
 
 Run testcases in parallel using multiple threads for faster execution:
 
-```bash
-python3 bench/top_fpga/run.py -p0
-```
+=== "Linux/macOS"
+
+    === "`uv`"
+
+        ```bash
+        uv run bench/top_fpga/run.py -- -p0
+        ```
+
+    === "`pip`"
+
+        ```bash
+        source .venv/bin/activate
+        python3 bench/top_fpga/run.py -p0
+        ```
+
+=== "Windows"
+
+    === "`uv`"
+
+        ```bash
+        uv run bench/top_fpga/run.py -- -p0
+        ```
+
+    === "`pip`"
+
+        ```bash
+        .venv\Scripts\activate
+        python bench/top_fpga/run.py -p0
+        ```
 
 Where:
 
@@ -70,9 +154,35 @@ Where:
 
 Enable code coverage collection and generate an HTML coverage report:
 
-```bash
-python3 bench/top_fpga/run.py --coverage
-```
+=== "Linux/macOS"
+
+    === "`uv`"
+
+        ```bash
+        uv run bench/top_fpga/run.py --coverage
+        ```
+
+    === "`pip`"
+
+        ```bash
+        source .venv/bin/activate
+        python3 bench/top_fpga/run.py --coverage
+        ```
+
+=== "Windows"
+
+    === "`uv`"
+
+        ```bash
+        uv run bench/top_fpga/run.py --coverage
+        ```
+
+    === "`pip`"
+
+        ```bash
+        .venv\Scripts\activate
+        python bench/top_fpga/run.py --coverage
+        ```
 
 The coverage report will be generated in the `vunit_out/coverage_report` folder.
 Open `vunit_out/coverage_report/index.html` in your browser to view the results.
@@ -91,7 +201,7 @@ vivado -mode batch -nojournal -script run_synthesis.tcl
   language server integration. The file will be generated in the project root as `vhdl_ls.toml`. Known issue
   with `unifast` library, where manually adding `is_third_party = true` fixes the warnings.
 
-The script auto-detects the simulator (1. `nvc` or 2. `GHDL` if `nvc` is not found) but you can also explicitly specify
+The script auto-detects the simulator (1. `nvc` or 2. `GHDL` or 3. `QuestaSim`/`ModelSim`) but you can also explicitly specify
 the simulator to use:
 
 - `--nvc`: Use `nvc` as the simulator.
@@ -100,6 +210,14 @@ the simulator to use:
 
 Run the following command to get more help with `VUnit` options:
 
-```bash
-python3 bench/top_fpga/run.py --help
-```
+=== "Linux/macOS"
+
+    ```bash
+    python3 bench/top_fpga/run.py --help
+    ```
+
+=== "Windows"
+
+    ```bash
+    python bench/top_fpga/run.py --help
+    ```
