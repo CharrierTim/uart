@@ -1,16 +1,24 @@
 [project]
+name = "uart"
+
+authors = [{ name = "Timothée Charrier" }]
+maintainers = [{ name = "Timothée Charrier" }]
+
 dependencies = [
     "rtoml",
     "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
 ]
-
-name = "uart"
-version = "1.0"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
 requires-python = ">=3.10"
-[project.optional-dependencies]
+version = "1.0"
 
-all = ["uart[dev]", "uart[docs]"]
+## =====================================================================================================================
+# Dependency groups
+## =====================================================================================================================
+
+[dependency-groups]
 
 dev = [
     "docstrfmt",
@@ -24,6 +32,10 @@ dev = [
 ]
 
 docs = ["mkdocs", "mkdocs-drawio", "mkdocs-material", "pymdown-extensions"]
+
+## =====================================================================================================================
+# Ruff configuration
+## =====================================================================================================================
 
 [tool.ruff]
 exclude = [
@@ -106,6 +118,3 @@ docstring-code-line-length = 120
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
-
-[tool.setuptools]
-py-modules = []
