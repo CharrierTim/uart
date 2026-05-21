@@ -1,43 +1,43 @@
 name: Simulations
 on:
-    push:
-        branches:
-            - main
-            - dev
-        paths:
-            - "sources/**/*.vhd"
-            - "bench/**"
-            - "pyproject.toml"
-            - ".github/actions/simulation/**"
-            - ".github/actions/setup-environment/**"
-            - ".github/workflows/simulations.yml"
-    pull_request:
-        paths:
-            - "sources/**/*.vhd"
-            - "bench/**"
-            - "pyproject.toml"
-            - ".github/actions/simulation/**"
-            - ".github/actions/setup-environment/**"
-            - ".github/workflows/simulations.yml"
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - "sources/**/*.vhd"
+      - "bench/**"
+      - "pyproject.toml"
+      - ".github/actions/simulation/**"
+      - ".github/actions/setup-environment/**"
+      - ".github/workflows/simulations.yml"
+  pull_request:
+    paths:
+      - "sources/**/*.vhd"
+      - "bench/**"
+      - "pyproject.toml"
+      - ".github/actions/simulation/**"
+      - ".github/actions/setup-environment/**"
+      - ".github/workflows/simulations.yml"
 
 jobs:
-    sim:
-        runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                simulator: [ghdl, nvc]
-        steps:
-            - name: Checkout repo
-              uses: actions/checkout@v6
+  sim:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        simulator: [ghdl, nvc]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
 
-            - name: Setup environment
-              uses: ./.github/actions/setup-environment
-              with:
-                  os: ${{ runner.os }}
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+        with:
+          os: ${{ runner.os }}
 
-            - name: Run simulations
-              uses: ./.github/actions/simulation
-              with:
-                  os: ${{ runner.os }}
-                  simulator: ${{ matrix.simulator }}
+      - name: Run simulations
+        uses: ./.github/actions/simulation
+        with:
+          os: ${{ runner.os }}
+          simulator: ${{ matrix.simulator }}
