@@ -42,10 +42,12 @@
 ## 2.4      10/05/2026  Timothee Charrier   Add custom vhdl_ls.toml generation method
 ## 2.5      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory.
 ##                                          Fix a runtime error with GHDL invalid option.
-## 2.6      17/06/2026  Timothee Charrier   Now takes the run file directory as an argument to properly handle the
+## 2.6      17/05/2026  Timothee Charrier   Now takes the run file directory as an argument to properly handle the
 ##                                          results directory and coverage specific options.
-##          18/06/2026                      Only enable coverage for the libraries we want to cover instead of globally,
+##          18/05/2026                      Only enable coverage for the libraries we want to cover instead of globally,
 ##                                          as coverage can significantly reduce performance.
+##          22/05/2026                      Add unisim and unifast workarounds for Questa/ModelSim support, which is
+##                                          currently very slow due to issues with pre-compilation of these libraries.
 ## =====================================================================================================================
 
 import logging
@@ -54,7 +56,7 @@ import re
 import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeAlias
+from typing import TYPE_CHECKING, Any, TypeAlias, override
 
 import rtoml
 from vunit import VUnit
@@ -671,15 +673,52 @@ class QuestaModelSim(Simulator):
     EXECUTABLE: str = "vsim"
     DEFAULT_LIBRARIES_TO_COVER: set[str] = {"lib_bench", "lib_rtl"}
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        LOGGER.warning(
-            "Questa/ModelSim support is not fully implemented yet. Simulation with unisim/unifast won't work."
-        )
-
     def get_simulator_name(self) -> str:
         """Get the name of the simulator."""
         return self.SIMULATOR_NAME
+
+    @override
+    def add_library(self, library_name: str, library_path: str | None = None) -> "Simulator":
+        """Add an external library to VUnit for Questa/ModelSim.
+
+        Very slow workaround for unisim and unifast libraries,
+        my current QuestaSim version fails to pre-compile with the `compxlib` command...
+
+        Parameters
+        ----------
+        library_name : str
+            Name of the library (e.g., 'unisim', 'unifast').
+        library_path : str | None
+            Path to the library. If None, uses the default path.
+
+        Returns
+        -------
+        Simulator
+            Self for method chaining.
+        """
+        if not self.vu:
+            LOGGER.error("Must call attach() before adding libraries!")
+            return self
+
+        LOGGER.warning(
+            (
+                "Manually adding library '%s' with source files instead of using pre-compiled libraries. Expect very slow simulation times."
+            ),
+            library_name,
+        )
+
+        if library_name == "unisim":
+            UNISIM: Library = self.vu.add_library(library_name="unisim")
+            unisim_dir: Path = self.get_vivado_path() / "data" / "vhdl" / "src" / "unisims"
+            UNISIM.add_source_file(file_name=self.get_unisim_vpkg_library_path())
+            UNISIM.add_source_file(file_name=self.get_unisim_vcomp_library_path())
+            UNISIM.add_source_files(pattern=str(unisim_dir / "primitive" / "*.vhd"))
+
+        elif library_name == "unifast":
+            UNIFAST: Library = self.vu.add_library(library_name="unifast")
+            UNIFAST.add_source_files(pattern=self.get_unifast_library_path())
+
+        return self
 
     def _apply_options(self) -> None:
         """Apply Questa/ModelSim-specific options."""
