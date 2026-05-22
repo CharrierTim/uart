@@ -41,7 +41,7 @@ from typing import TYPE_CHECKING
 from peakrdl_html import HTMLExporter
 from peakrdl_markdown import MarkdownExporter
 from peakrdl_regblock_vhdl import RegblockExporter
-from peakrdl_regblock_vhdl.cpuif.axi4lite import AXI4Lite_Cpuif
+from peakrdl_regblock_vhdl.cpuif.axi4lite import AXI4Lite_Cpuif_flattened
 from peakrdl_regblock_vhdl.udps import ALL_UDPS
 from systemrdl import RDLCompileError, RDLCompiler
 from systemrdl.node import RootNode
@@ -129,7 +129,7 @@ def _export_vhdl(root: "RootNode", output_dir: Path) -> None:
     exporter.export(
         node=root,
         output_dir=output_dir,
-        cpuif_cls=AXI4Lite_Cpuif,
+        cpuif_cls=AXI4Lite_Cpuif_flattened,
         default_reset_async=True,
         err_if_bad_addr=True,
         err_if_bad_rw=True,

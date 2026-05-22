@@ -75,47 +75,37 @@ architecture TB_REGBLOCK_ARCH of TB_REGBLOCK is
     -- =================================================================================================================
 
     -- DUT signals
-    signal tb_clk         : std_logic;
-    signal tb_arst_h      : std_logic;
-    signal tb_s_axil_i    : axi4lite_slave_in_intf(
-                                                   AWADDR(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0),
-                                                   WDATA(REGBLOCK_DATA_WIDTH - 1 downto 0),
-                                                   WSTRB(REGBLOCK_DATA_WIDTH / 8 - 1 downto 0),
-                                                   ARADDR(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0));
-    signal tb_s_axil_o    : axi4lite_slave_out_intf(RDATA(REGBLOCK_DATA_WIDTH - 1 downto 0));
-    signal tb_hwif_in     : regblock_in_t;
-    signal tb_hwif_out    : regblock_out_t;
-
-    -- AXI-Lite master <-> slave signals
-    signal arready        : std_logic;
-    signal arvalid        : std_logic;
-    signal araddr         : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
-
-    signal rready         : std_logic;
-    signal rvalid         : std_logic;
-    signal rdata          : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
-    signal rresp          : std_logic_vector(1 downto 0);
-
-    signal awready        : std_logic;
-    signal awvalid        : std_logic;
-    signal awaddr         : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
-
-    signal wready         : std_logic;
-    signal wvalid         : std_logic;
-    signal wdata          : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
-    signal wstrb          : std_logic_vector(REGBLOCK_DATA_WIDTH / 8 - 1 downto 0);
-
-    signal bvalid         : std_logic;
-    signal bready         : std_logic;
-    signal bresp          : std_logic_vector(1 downto 0);
+    signal tb_clk            : std_logic;
+    signal tb_arst_h         : std_logic;
+    signal tb_s_axil_awready : std_logic;
+    signal tb_s_axil_awvalid : std_logic;
+    signal tb_s_axil_awaddr  : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
+    signal tb_s_axil_awprot  : std_logic_vector(2 downto 0);
+    signal tb_s_axil_wready  : std_logic;
+    signal tb_s_axil_wvalid  : std_logic;
+    signal tb_s_axil_wdata   : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
+    signal tb_s_axil_wstrb   : std_logic_vector(REGBLOCK_DATA_WIDTH / 8 - 1 downto 0);
+    signal tb_s_axil_bready  : std_logic;
+    signal tb_s_axil_bvalid  : std_logic;
+    signal tb_s_axil_bresp   : std_logic_vector(1 downto 0);
+    signal tb_s_axil_arready : std_logic;
+    signal tb_s_axil_arvalid : std_logic;
+    signal tb_s_axil_araddr  : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
+    signal tb_s_axil_arprot  : std_logic_vector(2 downto 0);
+    signal tb_s_axil_rready  : std_logic;
+    signal tb_s_axil_rvalid  : std_logic;
+    signal tb_s_axil_rdata   : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
+    signal tb_s_axil_rresp   : std_logic_vector(1 downto 0);
+    signal tb_hwif_in        : regblock_in_t;
+    signal tb_hwif_out       : regblock_out_t;
 
     -- =================================================================================================================
     -- CONSTANTS for verification components
     -- =================================================================================================================
 
-    constant C_BUS_HANDLE : bus_master_t := new_bus(
-            data_length    => wdata'length,
-            address_length => awaddr'length);
+    constant C_BUS_HANDLE    : bus_master_t := new_bus(
+            data_length    => tb_s_axil_wdata'length,
+            address_length => tb_s_axil_awaddr'length);
 
 begin
 
@@ -125,12 +115,29 @@ begin
 
     dut : entity lib_rtl.regblock
         port map (
-            clk      => tb_clk,
-            arst     => tb_arst_h,
-            s_axil_i => tb_s_axil_i,
-            s_axil_o => tb_s_axil_o,
-            hwif_in  => tb_hwif_in,
-            hwif_out => tb_hwif_out
+            clk            => tb_clk,
+            arst           => tb_arst_h,
+            s_axil_awready => tb_s_axil_awready,
+            s_axil_awvalid => tb_s_axil_awvalid,
+            s_axil_awaddr  => tb_s_axil_awaddr,
+            s_axil_awprot  => tb_s_axil_awprot,
+            s_axil_wready  => tb_s_axil_wready,
+            s_axil_wvalid  => tb_s_axil_wvalid,
+            s_axil_wdata   => tb_s_axil_wdata,
+            s_axil_wstrb   => tb_s_axil_wstrb,
+            s_axil_bready  => tb_s_axil_bready,
+            s_axil_bvalid  => tb_s_axil_bvalid,
+            s_axil_bresp   => tb_s_axil_bresp,
+            s_axil_arready => tb_s_axil_arready,
+            s_axil_arvalid => tb_s_axil_arvalid,
+            s_axil_araddr  => tb_s_axil_araddr,
+            s_axil_arprot  => tb_s_axil_arprot,
+            s_axil_rready  => tb_s_axil_rready,
+            s_axil_rvalid  => tb_s_axil_rvalid,
+            s_axil_rdata   => tb_s_axil_rdata,
+            s_axil_rresp   => tb_s_axil_rresp,
+            hwif_in        => tb_hwif_in,
+            hwif_out       => tb_hwif_out
         );
 
     -- =================================================================================================================
@@ -143,47 +150,24 @@ begin
         )
         port map (
             aclk    => tb_clk,
-            arready => arready,
-            arvalid => arvalid,
-            araddr  => araddr,
-            rready  => rready,
-            rvalid  => rvalid,
-            rdata   => rdata,
-            rresp   => rresp,
-            awready => awready,
-            awvalid => awvalid,
-            awaddr  => awaddr,
-            wready  => wready,
-            wvalid  => wvalid,
-            wdata   => wdata,
-            wstrb   => wstrb,
-            bvalid  => bvalid,
-            bready  => bready,
-            bresp   => bresp
+            arready => tb_s_axil_arready,
+            arvalid => tb_s_axil_arvalid,
+            araddr  => tb_s_axil_araddr,
+            rready  => tb_s_axil_rready,
+            rvalid  => tb_s_axil_rvalid,
+            rdata   => tb_s_axil_rdata,
+            rresp   => tb_s_axil_rresp,
+            awready => tb_s_axil_awready,
+            awvalid => tb_s_axil_awvalid,
+            awaddr  => tb_s_axil_awaddr,
+            wready  => tb_s_axil_wready,
+            wvalid  => tb_s_axil_wvalid,
+            wdata   => tb_s_axil_wdata,
+            wstrb   => tb_s_axil_wstrb,
+            bvalid  => tb_s_axil_bvalid,
+            bready  => tb_s_axil_bready,
+            bresp   => tb_s_axil_bresp
         );
-
-    tb_s_axil_i.AWVALID <= awvalid;
-    tb_s_axil_i.AWADDR  <= awaddr;
-    tb_s_axil_i.AWPROT  <= "000";
-
-    tb_s_axil_i.WVALID  <= wvalid;
-    tb_s_axil_i.WDATA   <= wdata;
-    tb_s_axil_i.WSTRB   <= wstrb;
-
-    tb_s_axil_i.BREADY  <= bready;
-    tb_s_axil_i.ARVALID <= arvalid;
-    tb_s_axil_i.ARADDR  <= araddr;
-    tb_s_axil_i.ARPROT  <= "000";
-    tb_s_axil_i.RREADY  <= rready;
-
-    arready             <= tb_s_axil_o.ARREADY;
-    rvalid              <= tb_s_axil_o.RVALID;
-    rdata               <= tb_s_axil_o.RDATA;
-    rresp               <= tb_s_axil_o.RRESP;
-    awready             <= tb_s_axil_o.AWREADY;
-    wready              <= tb_s_axil_o.WREADY;
-    bvalid              <= tb_s_axil_o.BVALID;
-    bresp               <= tb_s_axil_o.BRESP;
 
     -- =================================================================================================================
     -- CLK GENERATION
@@ -208,8 +192,7 @@ begin
 
     p_test_runner : process is
 
-        variable v_tmp_data      : std_logic_vector(rdata'range);
-        variable v_expected_data : std_logic_vector(rdata'range);
+        variable v_expected_data : std_logic_vector(tb_s_axil_rdata'range);
         variable v_rnd           : randomptype;
         variable v_rnd_reg       : t_reg
                 (
@@ -237,6 +220,8 @@ begin
 
             -- Reset the DUT by setting the input state to all zeros
             tb_arst_h                                <= '1';
+            tb_s_axil_awprot                         <= (others => '0');
+            tb_s_axil_arprot                         <= (others => '0');
 
             tb_hwif_in.GIT_HASH.hash.next_q          <= std_logic_vector(C_REG_GIT_HASH.data);
             tb_hwif_in.GIT_STATUS.status.next_q      <= std_logic(C_REG_GIT_STATUS.data(0));
@@ -284,7 +269,7 @@ begin
             constant expected_rresp : axi_resp_t := axi_resp_okay;
             constant msg            : string     := ""
         ) is
-            variable v_returned_data : std_logic_vector(rdata'range);
+            variable v_returned_data : std_logic_vector(tb_s_axil_rdata'range);
         begin
 
             info(
@@ -333,8 +318,8 @@ begin
         procedure proc_axi_lite_write (
             constant reg            : t_reg;
             constant data           : std_logic_vector;
-            constant expected_bresp : axi_resp_t                    := axi_resp_okay;
-            constant byte_enable    : std_logic_vector(wstrb'range) := (others => '1')
+            constant expected_bresp : axi_resp_t                              := axi_resp_okay;
+            constant byte_enable    : std_logic_vector(tb_s_axil_wstrb'range) := (others => '1')
         ) is
         begin
 
@@ -478,13 +463,10 @@ begin
         -- =============================================================================================================
 
         procedure proc_axi_lite_read_bad_addr (
-            addr           : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
-            expected_data  : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0) := 32x"0000_0000";
-            id             : std_logic_vector                                   := "X";
-            ar_valid_delay : time                                               := 0 ns;
-            r_ready_delay  : time                                               := 0 ns
+            addr          : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
+            expected_data : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0) := 32x"0000_0000"
         ) is
-            variable v_returned_data : std_logic_vector(rdata'range);
+            variable v_returned_data : std_logic_vector(tb_s_axil_rdata'range);
         begin
 
             info("");
@@ -540,10 +522,10 @@ begin
                 expected_bresp => axi_resp_slverr);
 
             check_equal(
-                bresp,
+                tb_s_axil_bresp,
                 axi_resp_slverr,
                 "Response mismatch when writing to invalid address 0x" & to_hstring(addr) &
-                " - Got AXI response `" & to_string(bresp) & "` expected SLVERR(0b10)");
+                " - Got AXI response `" & to_string(tb_s_axil_bresp) & "` expected SLVERR(0b10)");
 
         end procedure proc_axi_lite_write_bad_addr;
 
@@ -655,16 +637,18 @@ begin
                 info(" Reading from invalid AXI-Lite address");
                 info("-----------------------------------------------------------------------------");
 
-                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 4, araddr'length)));
-                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 8, araddr'length)));
+                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 4, tb_s_axil_araddr'length)));
+                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 8, tb_s_axil_araddr'length)));
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Writing to invalid AXI-Lite address");
                 info("-----------------------------------------------------------------------------");
 
-                proc_axi_lite_write_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 4, awaddr'length)));
-                proc_axi_lite_write_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 8, awaddr'length)));
+                proc_axi_lite_write_bad_addr(
+                    std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 4, tb_s_axil_awaddr'length)));
+                proc_axi_lite_write_bad_addr(
+                    std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 8, tb_s_axil_awaddr'length)));
 
             elsif run("test_regblock_bad_rw") then
 
@@ -691,10 +675,10 @@ begin
                     data           => not C_REG_GIT_HASH.data,
                     expected_bresp => axi_resp_slverr);
 
-                wait until rising_edge(tb_clk) and bvalid = '1';
+                wait until rising_edge(tb_clk) and tb_s_axil_bvalid = '1';
 
                 check_equal(
-                    bresp,
+                    tb_s_axil_bresp,
                     axi_resp_slverr,
                     "Response mismatch when writing to read-only register " & C_REG_GIT_HASH.name &
                     " and expected SLVERR(10)");
@@ -712,7 +696,7 @@ begin
 
                 for i in 1 to 32 loop
 
-                    v_expected_data := v_rnd.RandSlv(rdata'length);
+                    v_expected_data := v_rnd.RandSlv(tb_s_axil_rdata'length);
 
                     if (v_rnd.RandInt(0, 1) = 0) then
                         v_rnd_reg := C_REG_TEST_REGISTER_1;

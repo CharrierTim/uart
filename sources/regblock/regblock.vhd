@@ -5,7 +5,6 @@ context ieee.ieee_std_context;
 use ieee.fixed_pkg.all;
 
 use work.regblock_pkg.all;
-use work.axi4lite_intf_pkg.all;
 use work.reg_utils.all;
 
 entity regblock is
@@ -13,15 +12,25 @@ entity regblock is
         clk : in std_logic;
         arst : in std_logic;
 
-        s_axil_i : in axi4lite_slave_in_intf(
-            AWADDR(5 downto 0),
-            WDATA(31 downto 0),
-            WSTRB(3 downto 0),
-            ARADDR(5 downto 0)
-        );
-        s_axil_o : out axi4lite_slave_out_intf(
-            RDATA(31 downto 0)
-        );
+        s_axil_awready : out std_logic;
+        s_axil_awvalid : in std_logic;
+        s_axil_awaddr : in std_logic_vector(5 downto 0);
+        s_axil_awprot : in std_logic_vector(2 downto 0);
+        s_axil_wready : out std_logic;
+        s_axil_wvalid : in std_logic;
+        s_axil_wdata : in std_logic_vector(31 downto 0);
+        s_axil_wstrb : in std_logic_vector(3 downto 0);
+        s_axil_bready : in std_logic;
+        s_axil_bvalid : out std_logic;
+        s_axil_bresp : out std_logic_vector(1 downto 0);
+        s_axil_arready : out std_logic;
+        s_axil_arvalid : in std_logic;
+        s_axil_araddr : in std_logic_vector(5 downto 0);
+        s_axil_arprot : in std_logic_vector(2 downto 0);
+        s_axil_rready : in std_logic;
+        s_axil_rvalid : out std_logic;
+        s_axil_rdata : out std_logic_vector(31 downto 0);
+        s_axil_rresp : out std_logic_vector(1 downto 0);
 
         hwif_in : in regblock_in_t;
         hwif_out : out regblock_out_t
@@ -235,18 +244,7 @@ begin
     ----------------------------------------------------------------------------
     -- CPU Bus interface
     ----------------------------------------------------------------------------
-    -- pragma translate_off
-    cpuif_generics: process begin
-        assert_bad_addr_width: assert s_axil_i.ARADDR'length >= REGBLOCK_MIN_ADDR_WIDTH
-            report "Interface address width of " & integer'image(s_axil_i.ARADDR'length) & " is too small. Shall be at least " & integer'image(REGBLOCK_MIN_ADDR_WIDTH) & " bits"
-            severity failure;
-        assert_bad_data_width: assert s_axil_i.WDATA'length = REGBLOCK_DATA_WIDTH
-            report "Interface data width of " & integer'image(s_axil_i.WDATA'length) & " is incorrect. Shall be " & integer'image(REGBLOCK_DATA_WIDTH) & " bits"
-            severity failure;
-        wait;
-    end process;
-    -- pragma translate_on
-
+    
 
     -- Max Outstanding Transactions: 2
     -- Transaction request acceptance
@@ -278,9 +276,9 @@ begin
                     axil_prev_was_rd <= '1';
                     axil_arvalid <= '0';
                 end if;
-                if s_axil_i.ARVALID and s_axil_o.ARREADY then
+                if s_axil_arvalid and s_axil_arready then
                     axil_arvalid <= '1';
-                    axil_araddr <= s_axil_i.ARADDR;
+                    axil_araddr <= s_axil_araddr;
                 end if;
 
                 -- AW* & W* acceptance registers
@@ -289,14 +287,14 @@ begin
                     axil_awvalid <= '0';
                     axil_wvalid <= '0';
                 end if;
-                if s_axil_i.AWVALID and s_axil_o.AWREADY then
+                if s_axil_awvalid and s_axil_awready then
                     axil_awvalid <= '1';
-                    axil_awaddr <= s_axil_i.AWADDR;
+                    axil_awaddr <= s_axil_awaddr;
                 end if;
-                if s_axil_i.WVALID and s_axil_o.WREADY then
+                if s_axil_wvalid and s_axil_wready then
                     axil_wvalid <= '1';
-                    axil_wdata <= s_axil_i.WDATA;
-                    axil_wstrb <= s_axil_i.WSTRB;
+                    axil_wdata <= s_axil_wdata;
+                    axil_wstrb <= s_axil_wstrb;
                 end if;
 
                 -- Keep track of in-flight transactions
@@ -310,9 +308,9 @@ begin
     end process;
 
     process(all) begin
-        s_axil_o.ARREADY <= not axil_arvalid or axil_ar_accept;
-        s_axil_o.AWREADY <= not axil_awvalid or axil_aw_accept;
-        s_axil_o.WREADY <= not axil_wvalid or axil_aw_accept;
+        s_axil_arready <= not axil_arvalid or axil_ar_accept;
+        s_axil_awready <= not axil_awvalid or axil_aw_accept;
+        s_axil_wready <= not axil_wvalid or axil_aw_accept;
     end process;
 
     -- Request dispatch
@@ -397,29 +395,29 @@ begin
 
     process(all) begin
         axil_resp_acked <= '0';
-        s_axil_o.BVALID <= '0';
-        s_axil_o.RVALID <= '0';
+        s_axil_bvalid <= '0';
+        s_axil_rvalid <= '0';
         if axil_resp_rptr /= axil_resp_wptr then
             if axil_resp_buffer(to_integer(axil_resp_rptr(0 downto 0))).is_wr then
-                s_axil_o.BVALID <= '1';
-                if s_axil_i.BREADY then
+                s_axil_bvalid <= '1';
+                if s_axil_bready then
                     axil_resp_acked <= '1';
                 end if;
             else
-                s_axil_o.RVALID <= '1';
-                if s_axil_i.RREADY then
+                s_axil_rvalid <= '1';
+                if s_axil_rready then
                     axil_resp_acked <= '1';
                 end if;
             end if;
         end if;
 
-        s_axil_o.RDATA <= axil_resp_buffer(to_integer(axil_resp_rptr(0 downto 0))).rdata;
+        s_axil_rdata <= axil_resp_buffer(to_integer(axil_resp_rptr(0 downto 0))).rdata;
         if axil_resp_buffer(to_integer(axil_resp_rptr(0 downto 0))).err then
-            s_axil_o.BRESP <= "10";
-            s_axil_o.RRESP <= "10";
+            s_axil_bresp <= "10";
+            s_axil_rresp <= "10";
         else
-            s_axil_o.BRESP <= "00";
-            s_axil_o.RRESP <= "00";
+            s_axil_bresp <= "00";
+            s_axil_rresp <= "00";
         end if;
     end process;
 
