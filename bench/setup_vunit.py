@@ -842,7 +842,14 @@ def select_simulator(
     simulator_class: type[Simulator] | None = simulators.get(name)
     if not simulator_class:
         available: str = ", ".join(simulators.keys())
-        LOGGER.error("Unknown simulator: %s. Available: %s", name, available)
+        LOGGER.error(
+            (
+                "Could not determine simulator to use from args or VUNIT_SIMULATOR "
+                "Ensure that the simulator executable is in PATH or specify the simulator name explicitly.\n"
+                "Available simulators: %s"
+            ),
+            available,
+        )
         raise SystemExit(1)
 
     return simulator_class(enable_coverage=enable_coverage, run_file_dir=run_file_dir)
