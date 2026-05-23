@@ -683,9 +683,6 @@ begin
 
             info("Sending value 0x" & to_hstring(value) & " to SPI master");
 
-            -- Reset C_REG_SPI before for the rising edge detection
-            proc_uart_write(C_REG_SPI_TX, x"0000");
-
             -- Write the data
             proc_uart_write(C_REG_SPI_TX_CONTROL, x"0000_01" & value);
 
