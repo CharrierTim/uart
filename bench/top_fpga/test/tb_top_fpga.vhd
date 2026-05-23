@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 2.1
+-- @version 2.2
 -- @brief   Top-Level Testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -36,6 +36,11 @@
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high. Add VGA horizontal and
 --                                          vertical timings test.
 -- 2.1      17/04/2026  Timothee Charrier   Add VGA test vectors and procedure to check VGA outputs
+-- 2.2      23/05/2026  Timothee Charrier   Major refactor with:
+--                                              - Update register (now SystemDL-generated) definitions to 32 bits
+--                                              - Update LED functionality to bad address indicator
+--                                              - Fix proc_vga_check_outputs to correctly sample VGA outputs during
+--                                                active video time and avoid sampling during blanking intervals
 -- =====================================================================================================================
 
 library ieee;
@@ -747,7 +752,19 @@ begin
 
             proc_uart_write(C_REG_VGA_COLOR, x"0000_0" & value);
 
-            wait for 100 ns;
+            --
+            -- Wait for the VGA output to be active
+            --
+
+            -- Wait for start of active frame (after VSYNC pulse + back porch)
+            wait until rising_edge(tb_pad_o_vga_vsync);
+            wait for C_V_BACK_PORCH * C_H_WHOLE_LINE_TIME;
+
+            -- Wait for start of active line (after HSYNC pulse + back porch)
+            wait until rising_edge(tb_pad_o_vga_hsync);
+            wait for C_H_BACK_PORCH * C_H_VGA_PIXEL_BIT_TIME;
+            -- Sample after the pixel edge to avoid reading the previous blanking value
+            wait for C_H_VGA_PIXEL_BIT_TIME / 2;
 
             -- Check the VGA output signals match the expected value
             check_equal(tb_pad_o_vga_red,   value(11 downto 8), "Checking VGA red output");
