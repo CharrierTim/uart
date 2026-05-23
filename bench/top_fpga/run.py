@@ -42,6 +42,8 @@
 ## 2.3      10/05/2026  Timothee Charrier   Fix missing GHDL parser flag and add custom vhdl_ls.toml generation method
 ## 2.4      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory
 ## 2.5      19/05/2026  Timothee Charrier   Improved `Simulator` class removing coverage flags from this file
+##          23/05/2026  Timothee Charrier   Fix `post_run` callback that should be called regardless of coverage being
+##                                          enabled or not for output results merge.
 ## =====================================================================================================================
 
 import sys
@@ -136,8 +138,4 @@ if args.vhdl_ls:
 # Run
 ## =====================================================================================================================
 
-# Only set post_run callback if coverage is enabled
-if args.coverage:
-    VU.main(post_run=simulator.post_run)
-else:
-    VU.main()
+VU.main(post_run=simulator.post_run)

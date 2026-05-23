@@ -102,8 +102,4 @@ simulator.attach(VU).configure()
 # Run
 ## =====================================================================================================================
 
-# Only set post_run callback if coverage is enabled
-if args.coverage:
-    VU.main(post_run=simulator.post_run)
-else:
-    VU.main()
+VU.main(post_run=simulator.post_run)

@@ -39,6 +39,8 @@
 ## 2.2      06/05/2026  Timothee Charrier   Add Questa or ModelSim support, fix `LIB_SRC` to `LIB_RTL`
 ## 2.3      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory
 ## 2.4      19/05/2026  Timothee Charrier   Improved `Simulator` class removing coverage flags from this file
+##          23/05/2026  Timothee Charrier   Fix `post_run` callback that should be called regardless of coverage being
+##                                          enabled or not for output results merge.
 ## =====================================================================================================================
 
 import sys
@@ -138,8 +140,5 @@ generate_spi_tests(TB_SPI, cpol_values=[0, 1], cpha_values=[0, 1])
 # Run
 ## =====================================================================================================================
 
-# Only set post_run callback if coverage is enabled
-if args.coverage:
-    VU.main(post_run=simulator.post_run)
-else:
-    VU.main()
+
+VU.main(post_run=simulator.post_run)
