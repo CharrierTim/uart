@@ -77,11 +77,11 @@ entity UART_MODEL is
         I_READ_ADDR       : in    std_logic_vector( 8 - 1 downto 0);
         I_READ_ADDR_VALID : in    std_logic;
         -- vsg_disable_next_line port_012 : In a model, default value is fine
-        O_READ_DATA       : out   std_logic_vector(16 - 1 downto 0) := (others => '0');
+        O_READ_DATA       : out   std_logic_vector(32 - 1 downto 0) := (others => '0');
         O_READ_DATA_VALID : out   std_logic;
         -- Write interface
         I_WRITE_ADDRESS   : in    std_logic_vector( 8 - 1 downto 0);
-        I_WRITE_DATA      : in    std_logic_vector(16 - 1 downto 0);
+        I_WRITE_DATA      : in    std_logic_vector(32 - 1 downto 0);
         I_WRITE_VALID     : in    std_logic
     );
 end entity UART_MODEL;
@@ -220,7 +220,11 @@ begin
         push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_ADDRESS(7 downto 4)));
         push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_ADDRESS(3 downto 0)));
 
-        -- Send data (4 ASCII hex characters MSB-first)
+        -- Send data (8 ASCII hex characters MSB-first)
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(31 downto 28)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(27 downto 24)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(23 downto 20)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(19 downto 16)));
         push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(15 downto 12)));
         push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(11 downto  8)));
         push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA( 7 downto  4)));
@@ -232,14 +236,14 @@ begin
     end process p_write;
 
     -- =================================================================================================================
-    -- Read process: send "R" AA "\r", then parse 4 ASCII hex chars (DDDD) then CR
+    -- Read process: send "R" AA "\r", then parse 8 ASCII hex chars (DDDDDDDD) then CR
     -- =================================================================================================================
 
     p_read : process is
 
         variable v_byte : std_logic_vector( 7 downto 0);
         variable v_last : boolean;
-        variable v_data : std_logic_vector(15 downto 0);
+        variable v_data : std_logic_vector(31 downto 0);
 
     begin
 
@@ -258,11 +262,11 @@ begin
         -- Send carriage return
         push_stream(net, C_UART_STREAM_MASTER, C_CHAR_CR);
 
-        -- Get the 4 ASCII characters for the 16-bit data value
-        for char in 0 to 3 loop
+        -- Get the 8 ASCII characters for the 32-bit data value
+        for char in 0 to 7 loop
 
             pop_stream(net, C_UART_STREAM_SLAVE, v_byte, v_last);
-            v_data(15 - 4 * char downto 12 - 4 * char) := func_ascii_to_nibble(v_byte);
+            v_data(31 - 4 * char downto 28 - 4 * char) := func_ascii_to_nibble(v_byte);
 
         end loop;
 
