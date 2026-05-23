@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 2.1
+-- @version 2.2
 -- @brief   Top-Level of the FPGA
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -40,6 +40,9 @@
 -- 2.0      14/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high and now uses synchronous
 --                                          async reset.
 -- 2.1      11/04/2026  Timothee Charrier   Add GIT_ID flag as generic for the regfile module.
+-- 2.2      23/05/2026  Timothee Charrier   Use SystemRDL-generated registers and update the UART interface to AXI4-Lite
+--                                          LED now indicates AXI bad address transactions.
+--                                          Add FPGA_ID generic and register.
 -- =====================================================================================================================
 
 library ieee;
@@ -48,6 +51,7 @@ library ieee;
 library olo;
 
 library lib_rtl;
+    use lib_rtl.regblock_pkg.all;
 
 -- =====================================================================================================================
 -- ENTITY
@@ -56,7 +60,8 @@ library lib_rtl;
 entity TOP_FPGA is
     generic (
         G_GIT_ID     : std_logic_vector(32 - 1 downto 0) := (others => '0');
-        G_GIT_STATUS : std_logic                         := '0'
+        G_GIT_STATUS : std_logic                         := '0';
+        G_FPGA_ID    : std_logic_vector(32 - 1 downto 0) := (others => '0')
     );
     port (
         -- Clock and reset
@@ -144,25 +149,31 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal async_inputs_slv         : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
     signal sync_inputs_slv          : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
 
-    -- Read interface
-    signal read_addr                : std_logic_vector( 8 - 1 downto 0);
-    signal read_addr_valid          : std_logic;
-    signal read_data                : std_logic_vector(16 - 1 downto 0);
-    signal read_data_valid          : std_logic;
+    -- Reglock signals
+    signal axil_awready             : std_logic;
+    signal axil_awvalid             : std_logic;
+    signal axil_awaddr              : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
+    signal axil_awprot              : std_logic_vector(2 downto 0);
+    signal axil_wready              : std_logic;
+    signal axil_wvalid              : std_logic;
+    signal axil_wdata               : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
+    signal axil_wstrb               : std_logic_vector(REGBLOCK_DATA_WIDTH / 8 - 1 downto 0);
+    signal axil_bready              : std_logic;
+    signal axil_bvalid              : std_logic;
+    signal axil_bresp               : std_logic_vector(1 downto 0);
+    signal axil_arready             : std_logic;
+    signal axil_arvalid             : std_logic;
+    signal axil_araddr              : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
+    signal axil_arprot              : std_logic_vector(2 downto 0);
+    signal axil_rready              : std_logic;
+    signal axil_rvalid              : std_logic;
+    signal axil_rdata               : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
+    signal axil_rresp               : std_logic_vector(1 downto 0);
+    signal hwif_in                  : regblock_in_t;
+    signal hwif_out                 : regblock_out_t;
 
-    -- Write interface
-    signal write_addr               : std_logic_vector( 8 - 1 downto 0);
-    signal write_data               : std_logic_vector(16 - 1 downto 0);
-    signal write_addr_valid         : std_logic;
-
-    -- SPI data
-    signal spi_tx_data              : std_logic_vector( 8 - 1 downto 0);
-    signal spi_tx_data_valid        : std_logic;
-    signal spi_rx_data              : std_logic_vector( 8 - 1 downto 0);
-    signal spi_rx_data_valid        : std_logic;
-
-    -- VGA control
-    signal reg_vga_colors           : std_logic_vector(12 - 1 downto 0);
+    -- VGA registers
+    signal manual_colors            : std_logic_vector(11 downto 0);
 
     -- =================================================================================================================
     -- COMPONENTS
@@ -261,47 +272,80 @@ begin
             G_SAMPLING_RATE => C_SAMPLING_RATE
         )
         port map (
-            CLK               => internal_clk,
-            RST_P             => internal_sys_rst_p,
-            I_UART_RX         => PAD_I_UART_RX,
-            O_UART_TX         => PAD_O_UART_TX,
-            O_READ_ADDR       => read_addr,
-            O_READ_ADDR_VALID => read_addr_valid,
-            I_READ_DATA       => read_data,
-            I_READ_DATA_VALID => read_data_valid,
-            O_WRITE_ADDR      => write_addr,
-            O_WRITE_DATA      => write_data,
-            O_WRITE_VALID     => write_addr_valid
+            CLK            => internal_clk,
+            RST_P          => internal_sys_rst_p,
+            I_UART_RX      => PAD_I_UART_RX,
+            O_UART_TX      => PAD_O_UART_TX,
+            M_AXIL_AWREADY => axil_awready,
+            M_AXIL_AWVALID => axil_awvalid,
+            M_AXIL_AWADDR  => axil_awaddr,
+            M_AXIL_AWPROT  => axil_awprot,
+            M_AXIL_WREADY  => axil_wready,
+            M_AXIL_WVALID  => axil_wvalid,
+            M_AXIL_WDATA   => axil_wdata,
+            M_AXIL_WSTRB   => axil_wstrb,
+            M_AXIL_BREADY  => axil_bready,
+            M_AXIL_BVALID  => axil_bvalid,
+            M_AXIL_BRESP   => axil_bresp,
+            M_AXIL_ARREADY => axil_arready,
+            M_AXIL_ARVALID => axil_arvalid,
+            M_AXIL_ARADDR  => axil_araddr,
+            M_AXIL_ARPROT  => axil_arprot,
+            M_AXIL_RREADY  => axil_rready,
+            M_AXIL_RVALID  => axil_rvalid,
+            M_AXIL_RDATA   => axil_rdata,
+            M_AXIL_RRESP   => axil_rresp
         );
 
     -- =================================================================================================================
     -- REGFILE MODULE
     -- =================================================================================================================
 
-    inst_regfile : entity lib_rtl.regfile
-        generic map (
-            G_GIT_ID_MSB => G_GIT_ID(31 downto 16),
-            G_GIT_ID_LSB => G_GIT_ID(15 downto  0),
-            G_GIT_STATUS => G_GIT_STATUS
-        )
+    -- FPGA information registers
+    hwif_in.git_hash.hash.next_q     <= G_GIT_ID;
+    hwif_in.git_status.status.next_q <= G_GIT_STATUS;
+    hwif_in.fpga_id.id.next_q        <= G_FPGA_ID;
+
+    -- Switches registers
+    hwif_in.switch_status.switch_2.next_q <= sync_inputs_slv(2);
+    hwif_in.switch_status.switch_1.next_q <= sync_inputs_slv(1);
+    hwif_in.switch_status.switch_0.next_q <= sync_inputs_slv(0);
+
+    inst_reglock : entity lib_rtl.regblock
         port map (
-            CLK                 => internal_clk,
-            RST_P               => internal_sys_rst_p,
-            I_SWITCHES          => sync_inputs_slv,
-            I_SPI_RX_DATA       => spi_rx_data,
-            I_SPI_RX_DATA_VALID => spi_rx_data_valid,
-            I_READ_ADDR         => read_addr,
-            I_READ_ADDR_VALID   => read_addr_valid,
-            O_READ_DATA         => read_data,
-            O_READ_DATA_VALID   => read_data_valid,
-            I_WRITE_ADDR        => write_addr,
-            I_WRITE_DATA        => write_data,
-            I_WRITE_VALID       => write_addr_valid,
-            O_LED_0             => PAD_O_LED_0,
-            O_SPI_TX_DATA       => spi_tx_data,
-            O_SPI_TX_DATA_VALID => spi_tx_data_valid,
-            O_VGA_COLORS        => reg_vga_colors
+            clk            => internal_clk,
+            arst           => internal_sys_rst_p,
+            s_axil_awready => axil_awready,
+            s_axil_awvalid => axil_awvalid,
+            s_axil_awaddr  => axil_awaddr,
+            s_axil_awprot  => axil_awprot,
+            s_axil_wready  => axil_wready,
+            s_axil_wvalid  => axil_wvalid,
+            s_axil_wdata   => axil_wdata,
+            s_axil_wstrb   => axil_wstrb,
+            s_axil_bready  => axil_bready,
+            s_axil_bvalid  => axil_bvalid,
+            s_axil_bresp   => axil_bresp,
+            s_axil_arready => axil_arready,
+            s_axil_arvalid => axil_arvalid,
+            s_axil_araddr  => axil_araddr,
+            s_axil_arprot  => axil_arprot,
+            s_axil_rready  => axil_rready,
+            s_axil_rvalid  => axil_rvalid,
+            s_axil_rdata   => axil_rdata,
+            s_axil_rresp   => axil_rresp,
+            hwif_in        => hwif_in,
+            hwif_out       => hwif_out
         );
+
+    -- vsg_off: increment bad_address_counter on AXI error responses
+    hwif_in.bad_address_counter.count.incr   <= '1' when ((axil_bvalid = '1' and axil_bready = '1' and axil_bresp = "10")
+                                                        or
+                                                        (axil_rvalid = '1' and axil_rready = '1' and axil_rresp = "10")) else
+                                                '0';
+
+    hwif_in.bad_address_counter.count.next_q <= hwif_out.bad_address_counter.count.value;
+    -- vsg_on
 
     -- =================================================================================================================
     -- SPI MODULE
@@ -322,15 +366,16 @@ begin
             O_MOSI          => PAD_O_MOSI,
             I_MISO          => PAD_I_MISO,
             O_CS_N          => PAD_O_CS_N,
-            I_TX_DATA       => spi_tx_data,
-            I_TX_DATA_VALID => spi_tx_data_valid,
-            O_RX_DATA       => spi_rx_data,
-            O_RX_DATA_VALID => spi_rx_data_valid
+            I_TX_DATA       => hwif_out.spi_tx_control.tx_data.value,
+            I_TX_DATA_VALID => hwif_out.spi_tx_control.tx_data_valid.value,
+            O_RX_DATA       => hwif_in.spi_rx_data.rx_data.next_q
         );
 
     -- =================================================================================================================
     -- VGA MODULE
     -- =================================================================================================================
+
+    manual_colors <= hwif_out.vga_color.red.value & hwif_out.vga_color.green.value & hwif_out.vga_color.blue.value;
 
     inst_vga : entity lib_rtl.vga_controller
         generic map (
@@ -347,7 +392,7 @@ begin
             -- System clock domain
             CLK_SYS         => internal_clk,
             RST_SYS_P       => internal_sys_rst_p,
-            I_MANUAL_COLORS => reg_vga_colors,
+            I_MANUAL_COLORS => manual_colors,
             -- VGA clock domain
             CLK_VGA         => vga_clk,
             RST_VGA_P       => internal_vga_rst_p,
@@ -357,5 +402,28 @@ begin
             O_GREEN         => PAD_O_VGA_GREEN,
             O_BLUE          => PAD_O_VGA_BLUE
         );
+
+    -- =================================================================================================================
+    -- LED CONTROL: LED_0 is ON when the value of the counter 'bad_address_counter' is greater than 0
+    -- =================================================================================================================
+
+    p_led : process (internal_clk, internal_sys_rst_p) is
+    begin
+
+        if (internal_sys_rst_p = '1') then
+
+            PAD_O_LED_0 <= '0';
+
+        elsif rising_edge(internal_clk) then
+
+            if (hwif_out.bad_address_counter.count.value > x"00000000") then
+                PAD_O_LED_0 <= '1';
+            else
+                PAD_O_LED_0 <= '0';
+            end if;
+
+        end if;
+
+    end process p_led;
 
 end architecture TOP_FPGA_ARCH;
