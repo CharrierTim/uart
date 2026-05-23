@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_top_fpga_pck.vhd
--- @version 2.1
+-- @version 2.2
 -- @brief   Package for the Top-Level testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -34,6 +34,7 @@
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 2.0      12/01/2026  Timothee Charrier   Add VGA horizontal and vertical timings constants
 -- 2.1      17/04/2026  Timothee Charrier   Add VGA test vectors and procedure to check VGA outputs
+-- 2.2      23/05/2026  Timothee Charrier   Update register related definitions to 32 bits
 -- =====================================================================================================================
 
 library ieee;
