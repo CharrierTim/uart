@@ -99,7 +99,7 @@ package TB_REGBLOCK_PKG is
         name           => "SPI_TX_DATA",
         addr           => 8x"0C",
         data           => 32x"0000_0000",
-        used_bits_mask => 32x"0000_00FF"
+        used_bits_mask => 32x"0000_01FF"
     );
 
     constant C_REG_SPI_RX_DATA         : t_reg :=

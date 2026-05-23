@@ -83,8 +83,13 @@ package regblock_pkg is
         value : std_logic_vector(7 downto 0);
     end record;
 
+    type \regblock.spi_tx_data.tx_data_valid_out_t\ is record
+        value : std_logic;
+    end record;
+
     type \regblock.spi_tx_data_out_t\ is record
         tx_data : \regblock.spi_tx_data.tx_data_out_t\;
+        tx_data_valid : \regblock.spi_tx_data.tx_data_valid_out_t\;
     end record;
 
     type \regblock.spi_rx_data.rx_data_out_t\ is record

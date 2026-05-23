@@ -112,8 +112,14 @@ architecture rtl of regblock is
         load_next : std_logic;
     end record;
 
+    type \regblock.spi_tx_data.tx_data_valid_combo_t\ is record
+        next_q : std_logic;
+        load_next : std_logic;
+    end record;
+
     type \regblock.spi_tx_data_combo_t\ is record
         tx_data : \regblock.spi_tx_data.tx_data_combo_t\;
+        tx_data_valid : \regblock.spi_tx_data.tx_data_valid_combo_t\;
     end record;
 
     type \regblock.spi_rx_data.rx_data_combo_t\ is record
@@ -190,8 +196,13 @@ architecture rtl of regblock is
         value : std_logic_vector(7 downto 0);
     end record;
 
+    type \regblock.spi_tx_data.tx_data_valid_storage_t\ is record
+        value : std_logic;
+    end record;
+
     type \regblock.spi_tx_data_storage_t\ is record
         tx_data : \regblock.spi_tx_data.tx_data_storage_t\;
+        tx_data_valid : \regblock.spi_tx_data.tx_data_valid_storage_t\;
     end record;
 
     type \regblock.spi_rx_data.rx_data_storage_t\ is record
@@ -542,6 +553,38 @@ begin
     end process;
     hwif_out.spi_tx_data.tx_data.value <= field_storage.spi_tx_data.tx_data.value;
 
+    -- Field: regblock.spi_tx_data.tx_data_valid
+    process(all)
+        variable next_c: std_logic;
+        variable load_next_c: std_logic;
+    begin
+        next_c := field_storage.spi_tx_data.tx_data_valid.value;
+        load_next_c := '0';
+        if decoded_reg_strb.spi_tx_data and decoded_req_is_wr then -- SW write
+            next_c := (field_storage.spi_tx_data.tx_data_valid.value and not decoded_wr_biten(8)) or (decoded_wr_data(8) and decoded_wr_biten(8));
+            load_next_c := '1';
+        else -- singlepulse clears back to 0
+            next_c := '0';
+            load_next_c := '1';
+        end if;
+        field_combo.spi_tx_data.tx_data_valid.next_q <= next_c;
+        field_combo.spi_tx_data.tx_data_valid.load_next <= load_next_c;
+    end process;
+    process(clk, arst) begin
+        if arst then -- async reset
+            field_storage.spi_tx_data.tx_data_valid.value <= '0';
+        elsif rising_edge(clk) then
+            if false then -- sync reset
+                field_storage.spi_tx_data.tx_data_valid.value <= '0';
+            else
+                if field_combo.spi_tx_data.tx_data_valid.load_next then
+                    field_storage.spi_tx_data.tx_data_valid.value <= field_combo.spi_tx_data.tx_data_valid.next_q;
+                end if;
+            end if;
+        end if;
+    end process;
+    hwif_out.spi_tx_data.tx_data_valid.value <= field_storage.spi_tx_data.tx_data_valid.value;
+
     -- Field: regblock.spi_rx_data.rx_data
     process(all)
         variable next_c: std_logic_vector(7 downto 0);
@@ -777,6 +820,7 @@ begin
         end if;
         if rd_mux_addr = 16#C# then
             readback_data_var(7 downto 0) := field_storage.spi_tx_data.tx_data.value;
+            readback_data_var(8) := field_storage.spi_tx_data.tx_data_valid.value;
         end if;
         if rd_mux_addr = 16#10# then
             readback_data_var(7 downto 0) := field_storage.spi_rx_data.rx_data.value;
