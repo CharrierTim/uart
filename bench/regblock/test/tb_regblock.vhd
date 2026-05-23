@@ -337,6 +337,8 @@ begin
                 expected_bresp,
                 byte_enable);
 
+            wait until rising_edge(tb_clk) and tb_s_axil_bvalid = '1';
+
         end procedure proc_axi_lite_write;
 
         -- =============================================================================================================
@@ -520,6 +522,8 @@ begin
                 address        => addr,
                 data           => data,
                 expected_bresp => axi_resp_slverr);
+
+            wait until rising_edge(tb_clk) and tb_s_axil_bvalid = '1';
 
             check_equal(
                 tb_s_axil_bresp,
