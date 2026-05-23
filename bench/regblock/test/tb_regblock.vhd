@@ -140,6 +140,17 @@ begin
             hwif_out       => tb_hwif_out
         );
 
+    -- Increment on error responses (valid + ready handshake)
+
+    -- vsg_off
+    tb_hwif_in.bad_address_counter.count.incr   <= '1' when (
+                                                              (tb_s_axil_bvalid = '1' and tb_s_axil_bready = '1' and tb_s_axil_bresp = axi_resp_slverr) or
+                                                              (tb_s_axil_rvalid = '1' and tb_s_axil_rready = '1' and tb_s_axil_rresp = axi_resp_slverr)
+                                                          ) else
+                                                   '0';
+    tb_hwif_in.bad_address_counter.count.next_q <= tb_hwif_out.bad_address_counter.count.value;
+    -- vsg_on
+
     -- =================================================================================================================
     -- AXI-LITE VERIFICATION COMPONENT
     -- =================================================================================================================
@@ -193,6 +204,7 @@ begin
     p_test_runner : process is
 
         variable v_expected_data : std_logic_vector(tb_s_axil_rdata'range);
+        variable v_rand_addr     : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
         variable v_rnd           : randomptype;
         variable v_rnd_reg       : t_reg
                 (
@@ -566,7 +578,7 @@ begin
                 proc_axi_lite_check_default_value(C_REG_SPI_TX_DATA);
                 proc_axi_lite_check_default_value(C_REG_SPI_RX_DATA);
                 proc_axi_lite_check_default_value(C_REG_VGA_COLOR);
-                proc_axi_lite_check_default_value(C_REG_SWITCH_STATUS);
+                proc_axi_lite_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
                 proc_axi_lite_check_default_value(C_REG_TEST_REGISTER_1);
                 proc_axi_lite_check_default_value(C_REG_TEST_REGISTER_2);
 
@@ -636,23 +648,72 @@ begin
                 proc_reset_dut;
                 wait for 10 us;
 
+                -- Check if the bad address counter is at 0 after reset
+                proc_axi_lite_check(
+                    reg            => C_REG_BAD_ADDRESS_COUNTER,
+                    expected_data  => x"0000_0000",
+                    expected_rresp => axi_resp_okay,
+                    msg            => "BAD_ADDRESS_COUNTER should be 0 after reset");
+
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Reading from invalid AXI-Lite address");
                 info("-----------------------------------------------------------------------------");
 
-                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 4, tb_s_axil_araddr'length)));
-                proc_axi_lite_read_bad_addr(std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 8, tb_s_axil_araddr'length)));
+                proc_axi_lite_read_bad_addr(x"7C");
+                proc_axi_lite_read_bad_addr(x"40");
+
+                -- Check if the bad address counter has incremented by 2 after the two invalid read attempts
+                proc_axi_lite_check(
+                    reg            => C_REG_BAD_ADDRESS_COUNTER,
+                    expected_data  => x"0000_0002",
+                    expected_rresp => axi_resp_okay,
+                    msg            => "BAD_ADDRESS_COUNTER should be 2 after two invalid read attempts");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Writing to invalid AXI-Lite address");
                 info("-----------------------------------------------------------------------------");
 
-                proc_axi_lite_write_bad_addr(
-                    std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 4, tb_s_axil_awaddr'length)));
-                proc_axi_lite_write_bad_addr(
-                    std_logic_vector(to_unsigned(C_REG_MAX_ADDR + 8, tb_s_axil_awaddr'length)));
+                proc_axi_lite_write_bad_addr(x"7C");
+                proc_axi_lite_write_bad_addr(x"40");
+
+                -- Check if the bad address counter has incremented by 2 more (total 4)
+                proc_axi_lite_check(
+                    reg            => C_REG_BAD_ADDRESS_COUNTER,
+                    expected_data  => x"0000_0004",
+                    expected_rresp => axi_resp_okay,
+                    msg            => "BAD_ADDRESS_COUNTER should be 4 after two invalid write attempts");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 10 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Performing 42 random invalid read/write to random addresses.");
+                info("-----------------------------------------------------------------------------");
+
+                for i in 1 to 42 loop
+
+                    v_rand_addr := v_rnd.RandSlv(C_ADDR_BELOW_MIN, C_ADDR_ABOVE_MAX);
+
+                    if (v_rnd.RandInt(0, 1) = 0) then
+                        proc_axi_lite_read_bad_addr(v_rand_addr);
+                    else
+                        proc_axi_lite_write_bad_addr(v_rand_addr);
+                    end if;
+
+                    wait for 100 ns;
+
+                end loop;
+
+                -- Check if the bad address counter has incremented by n more
+                proc_axi_lite_check(
+                    reg            => C_REG_BAD_ADDRESS_COUNTER,
+                    expected_data  => std_logic_vector(to_unsigned(42, tb_s_axil_rdata'length)),
+                    expected_rresp => axi_resp_okay,
+                    msg            => "BAD_ADDRESS_COUNTER should be 42 after 42 additional invalid read/write attempts");
 
             elsif run("test_regblock_bad_rw") then
 
