@@ -124,8 +124,7 @@ begin
             O_CS_N          => tb_o_cs_n,
             I_TX_DATA       => tb_i_tx_data,
             I_TX_DATA_VALID => tb_i_tx_data_valid,
-            O_RX_DATA       => tb_o_rx_data,
-            O_RX_DATA_VALID => tb_o_rx_data_valid
+            O_RX_DATA       => tb_o_rx_data
         );
 
     -- =================================================================================================================
