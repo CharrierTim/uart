@@ -89,6 +89,13 @@ addrmap regblock {
             desc = "TX data to be sent";
             reset = 0;
         } tx_data[7:0];
+
+        field{
+            desc  = "SPI transaction valid signal.";
+            reset = 0;
+            singlepulse;
+        } tx_data_valid[8:8];
+
     } spi_tx_data @ 0x0C;
 
     reg {
