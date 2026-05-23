@@ -36,7 +36,7 @@
 
 addrmap regblock {
     name = "SOC Control and Status Registers (CSR)";
-    desc = "Registers accessible on the Axi bus providing control and status functionality.";
+    desc = "Registers accessible on the AXI4 Lite bus providing control and status functionality.";
 
     reg {
         name = "Git Hash";
@@ -95,7 +95,7 @@ addrmap regblock {
 
         field{
             desc  =
-            "SPI transaction valid signal.Asserts for one cycle when written 1
+            "SPI transaction valid signal. Asserts for one cycle when written 1
             and then clears back to 0 on the next cycle";
             reset = 0;
             singlepulse;
@@ -118,7 +118,7 @@ addrmap regblock {
     } spi_rx_data @ 0x10;
 
     reg {
-        name = "VGA Color";
+        name = "VGA Color Control";
         desc = "
         Register used to set the VGA output color.
         The color is specified in RGB format, with 4 bits for each channel (red, green, blue).
@@ -142,7 +142,7 @@ addrmap regblock {
             reset = 0;
         } blue[3:0];
 
-    } vga_color @ 0x14;
+    } vga_color_control @ 0x14;
 
     reg {
         name = "Switch Status";

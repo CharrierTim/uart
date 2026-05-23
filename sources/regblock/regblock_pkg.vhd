@@ -92,22 +92,22 @@ package regblock_pkg is
         tx_data_valid : \regblock.spi_tx_control.tx_data_valid_out_t\;
     end record;
 
-    type \regblock.vga_color.blue_out_t\ is record
+    type \regblock.vga_color_control.blue_out_t\ is record
         value : std_logic_vector(3 downto 0);
     end record;
 
-    type \regblock.vga_color.green_out_t\ is record
+    type \regblock.vga_color_control.green_out_t\ is record
         value : std_logic_vector(3 downto 0);
     end record;
 
-    type \regblock.vga_color.red_out_t\ is record
+    type \regblock.vga_color_control.red_out_t\ is record
         value : std_logic_vector(3 downto 0);
     end record;
 
-    type \regblock.vga_color_out_t\ is record
-        blue : \regblock.vga_color.blue_out_t\;
-        green : \regblock.vga_color.green_out_t\;
-        red : \regblock.vga_color.red_out_t\;
+    type \regblock.vga_color_control_out_t\ is record
+        blue : \regblock.vga_color_control.blue_out_t\;
+        green : \regblock.vga_color_control.green_out_t\;
+        red : \regblock.vga_color_control.red_out_t\;
     end record;
 
     type \regblock.bad_address_counter.count_out_t\ is record
@@ -120,7 +120,7 @@ package regblock_pkg is
 
     type regblock_out_t is record
         spi_tx_control : \regblock.spi_tx_control_out_t\;
-        vga_color : \regblock.vga_color_out_t\;
+        vga_color_control : \regblock.vga_color_control_out_t\;
         bad_address_counter : \regblock.bad_address_counter_out_t\;
     end record;
 end package;

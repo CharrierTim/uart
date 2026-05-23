@@ -110,7 +110,7 @@ package TB_REGBLOCK_PKG is
         used_bits_mask => 32x"0000_00FF"
     );
 
-    constant C_REG_VGA_COLOR           : t_reg :=
+    constant C_REG_VGA_COLOR_CONTROL   : t_reg :=
     (
         name           => "VGA_COLOR",
         addr           => 8x"14",

@@ -375,7 +375,9 @@ begin
     -- VGA MODULE
     -- =================================================================================================================
 
-    manual_colors <= hwif_out.vga_color.red.value & hwif_out.vga_color.green.value & hwif_out.vga_color.blue.value;
+    manual_colors <= hwif_out.vga_color_control.red.value   &
+                     hwif_out.vga_color_control.green.value &
+                     hwif_out.vga_color_control.blue.value;
 
     inst_vga : entity lib_rtl.vga_controller
         generic map (

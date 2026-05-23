@@ -89,7 +89,7 @@ architecture rtl of regblock is
         fpga_id : std_logic;
         spi_tx_control : std_logic;
         spi_rx_data : std_logic;
-        vga_color : std_logic;
+        vga_color_control : std_logic;
         switch_status : std_logic;
         bad_address_counter : std_logic;
         test_register_1 : std_logic;
@@ -122,25 +122,25 @@ architecture rtl of regblock is
         tx_data_valid : \regblock.spi_tx_control.tx_data_valid_combo_t\;
     end record;
 
-    type \regblock.vga_color.blue_combo_t\ is record
+    type \regblock.vga_color_control.blue_combo_t\ is record
         next_q : std_logic_vector(3 downto 0);
         load_next : std_logic;
     end record;
 
-    type \regblock.vga_color.green_combo_t\ is record
+    type \regblock.vga_color_control.green_combo_t\ is record
         next_q : std_logic_vector(3 downto 0);
         load_next : std_logic;
     end record;
 
-    type \regblock.vga_color.red_combo_t\ is record
+    type \regblock.vga_color_control.red_combo_t\ is record
         next_q : std_logic_vector(3 downto 0);
         load_next : std_logic;
     end record;
 
-    type \regblock.vga_color_combo_t\ is record
-        blue : \regblock.vga_color.blue_combo_t\;
-        green : \regblock.vga_color.green_combo_t\;
-        red : \regblock.vga_color.red_combo_t\;
+    type \regblock.vga_color_control_combo_t\ is record
+        blue : \regblock.vga_color_control.blue_combo_t\;
+        green : \regblock.vga_color_control.green_combo_t\;
+        red : \regblock.vga_color_control.red_combo_t\;
     end record;
 
     type \regblock.bad_address_counter.count_combo_t\ is record
@@ -174,7 +174,7 @@ architecture rtl of regblock is
 
     type field_combo_t is record
         spi_tx_control : \regblock.spi_tx_control_combo_t\;
-        vga_color : \regblock.vga_color_combo_t\;
+        vga_color_control : \regblock.vga_color_control_combo_t\;
         bad_address_counter : \regblock.bad_address_counter_combo_t\;
         test_register_1 : \regblock.test_register_1_combo_t\;
         test_register_2 : \regblock.test_register_2_combo_t\;
@@ -195,22 +195,22 @@ architecture rtl of regblock is
         tx_data_valid : \regblock.spi_tx_control.tx_data_valid_storage_t\;
     end record;
 
-    type \regblock.vga_color.blue_storage_t\ is record
+    type \regblock.vga_color_control.blue_storage_t\ is record
         value : std_logic_vector(3 downto 0);
     end record;
 
-    type \regblock.vga_color.green_storage_t\ is record
+    type \regblock.vga_color_control.green_storage_t\ is record
         value : std_logic_vector(3 downto 0);
     end record;
 
-    type \regblock.vga_color.red_storage_t\ is record
+    type \regblock.vga_color_control.red_storage_t\ is record
         value : std_logic_vector(3 downto 0);
     end record;
 
-    type \regblock.vga_color_storage_t\ is record
-        blue : \regblock.vga_color.blue_storage_t\;
-        green : \regblock.vga_color.green_storage_t\;
-        red : \regblock.vga_color.red_storage_t\;
+    type \regblock.vga_color_control_storage_t\ is record
+        blue : \regblock.vga_color_control.blue_storage_t\;
+        green : \regblock.vga_color_control.green_storage_t\;
+        red : \regblock.vga_color_control.red_storage_t\;
     end record;
 
     type \regblock.bad_address_counter.count_storage_t\ is record
@@ -239,7 +239,7 @@ architecture rtl of regblock is
 
     type field_storage_t is record
         spi_tx_control : \regblock.spi_tx_control_storage_t\;
-        vga_color : \regblock.vga_color_storage_t\;
+        vga_color_control : \regblock.vga_color_control_storage_t\;
         bad_address_counter : \regblock.bad_address_counter_storage_t\;
         test_register_1 : \regblock.test_register_1_storage_t\;
         test_register_2 : \regblock.test_register_2_storage_t\;
@@ -469,7 +469,7 @@ begin
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#C#));
         decoded_reg_strb.spi_rx_data <= cpuif_req_masked and (cpuif_addr = 16#10#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#10#));
-        decoded_reg_strb.vga_color <= cpuif_req_masked and (cpuif_addr = 16#14#);
+        decoded_reg_strb.vga_color_control <= cpuif_req_masked and (cpuif_addr = 16#14#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#14#));
         decoded_reg_strb.switch_status <= cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#18#));
@@ -556,92 +556,92 @@ begin
     end process;
     hwif_out.spi_tx_control.tx_data_valid.value <= field_storage.spi_tx_control.tx_data_valid.value;
 
-    -- Field: regblock.vga_color.blue
+    -- Field: regblock.vga_color_control.blue
     process(all)
         variable next_c: std_logic_vector(3 downto 0);
         variable load_next_c: std_logic;
     begin
-        next_c := field_storage.vga_color.blue.value;
+        next_c := field_storage.vga_color_control.blue.value;
         load_next_c := '0';
-        if decoded_reg_strb.vga_color and decoded_req_is_wr then -- SW write
-            next_c := (field_storage.vga_color.blue.value and not decoded_wr_biten(3 downto 0)) or (decoded_wr_data(3 downto 0) and decoded_wr_biten(3 downto 0));
+        if decoded_reg_strb.vga_color_control and decoded_req_is_wr then -- SW write
+            next_c := (field_storage.vga_color_control.blue.value and not decoded_wr_biten(3 downto 0)) or (decoded_wr_data(3 downto 0) and decoded_wr_biten(3 downto 0));
             load_next_c := '1';
         end if;
-        field_combo.vga_color.blue.next_q <= next_c;
-        field_combo.vga_color.blue.load_next <= load_next_c;
+        field_combo.vga_color_control.blue.next_q <= next_c;
+        field_combo.vga_color_control.blue.load_next <= load_next_c;
     end process;
     process(clk, arst) begin
         if arst then -- async reset
-            field_storage.vga_color.blue.value <= 4x"0";
+            field_storage.vga_color_control.blue.value <= 4x"0";
         elsif rising_edge(clk) then
             if false then -- sync reset
-                field_storage.vga_color.blue.value <= 4x"0";
+                field_storage.vga_color_control.blue.value <= 4x"0";
             else
-                if field_combo.vga_color.blue.load_next then
-                    field_storage.vga_color.blue.value <= field_combo.vga_color.blue.next_q;
+                if field_combo.vga_color_control.blue.load_next then
+                    field_storage.vga_color_control.blue.value <= field_combo.vga_color_control.blue.next_q;
                 end if;
             end if;
         end if;
     end process;
-    hwif_out.vga_color.blue.value <= field_storage.vga_color.blue.value;
+    hwif_out.vga_color_control.blue.value <= field_storage.vga_color_control.blue.value;
 
-    -- Field: regblock.vga_color.green
+    -- Field: regblock.vga_color_control.green
     process(all)
         variable next_c: std_logic_vector(3 downto 0);
         variable load_next_c: std_logic;
     begin
-        next_c := field_storage.vga_color.green.value;
+        next_c := field_storage.vga_color_control.green.value;
         load_next_c := '0';
-        if decoded_reg_strb.vga_color and decoded_req_is_wr then -- SW write
-            next_c := (field_storage.vga_color.green.value and not decoded_wr_biten(7 downto 4)) or (decoded_wr_data(7 downto 4) and decoded_wr_biten(7 downto 4));
+        if decoded_reg_strb.vga_color_control and decoded_req_is_wr then -- SW write
+            next_c := (field_storage.vga_color_control.green.value and not decoded_wr_biten(7 downto 4)) or (decoded_wr_data(7 downto 4) and decoded_wr_biten(7 downto 4));
             load_next_c := '1';
         end if;
-        field_combo.vga_color.green.next_q <= next_c;
-        field_combo.vga_color.green.load_next <= load_next_c;
+        field_combo.vga_color_control.green.next_q <= next_c;
+        field_combo.vga_color_control.green.load_next <= load_next_c;
     end process;
     process(clk, arst) begin
         if arst then -- async reset
-            field_storage.vga_color.green.value <= 4x"F";
+            field_storage.vga_color_control.green.value <= 4x"F";
         elsif rising_edge(clk) then
             if false then -- sync reset
-                field_storage.vga_color.green.value <= 4x"F";
+                field_storage.vga_color_control.green.value <= 4x"F";
             else
-                if field_combo.vga_color.green.load_next then
-                    field_storage.vga_color.green.value <= field_combo.vga_color.green.next_q;
+                if field_combo.vga_color_control.green.load_next then
+                    field_storage.vga_color_control.green.value <= field_combo.vga_color_control.green.next_q;
                 end if;
             end if;
         end if;
     end process;
-    hwif_out.vga_color.green.value <= field_storage.vga_color.green.value;
+    hwif_out.vga_color_control.green.value <= field_storage.vga_color_control.green.value;
 
-    -- Field: regblock.vga_color.red
+    -- Field: regblock.vga_color_control.red
     process(all)
         variable next_c: std_logic_vector(3 downto 0);
         variable load_next_c: std_logic;
     begin
-        next_c := field_storage.vga_color.red.value;
+        next_c := field_storage.vga_color_control.red.value;
         load_next_c := '0';
-        if decoded_reg_strb.vga_color and decoded_req_is_wr then -- SW write
-            next_c := (field_storage.vga_color.red.value and not decoded_wr_biten(11 downto 8)) or (decoded_wr_data(11 downto 8) and decoded_wr_biten(11 downto 8));
+        if decoded_reg_strb.vga_color_control and decoded_req_is_wr then -- SW write
+            next_c := (field_storage.vga_color_control.red.value and not decoded_wr_biten(11 downto 8)) or (decoded_wr_data(11 downto 8) and decoded_wr_biten(11 downto 8));
             load_next_c := '1';
         end if;
-        field_combo.vga_color.red.next_q <= next_c;
-        field_combo.vga_color.red.load_next <= load_next_c;
+        field_combo.vga_color_control.red.next_q <= next_c;
+        field_combo.vga_color_control.red.load_next <= load_next_c;
     end process;
     process(clk, arst) begin
         if arst then -- async reset
-            field_storage.vga_color.red.value <= 4x"0";
+            field_storage.vga_color_control.red.value <= 4x"0";
         elsif rising_edge(clk) then
             if false then -- sync reset
-                field_storage.vga_color.red.value <= 4x"0";
+                field_storage.vga_color_control.red.value <= 4x"0";
             else
-                if field_combo.vga_color.red.load_next then
-                    field_storage.vga_color.red.value <= field_combo.vga_color.red.next_q;
+                if field_combo.vga_color_control.red.load_next then
+                    field_storage.vga_color_control.red.value <= field_combo.vga_color_control.red.next_q;
                 end if;
             end if;
         end if;
     end process;
-    hwif_out.vga_color.red.value <= field_storage.vga_color.red.value;
+    hwif_out.vga_color_control.red.value <= field_storage.vga_color_control.red.value;
 
     -- Field: regblock.bad_address_counter.count
     process(all)
@@ -768,9 +768,9 @@ begin
             readback_data_var(7 downto 0) := hwif_in.spi_rx_data.rx_data.next_q;
         end if;
         if rd_mux_addr = 16#14# then
-            readback_data_var(3 downto 0) := field_storage.vga_color.blue.value;
-            readback_data_var(7 downto 4) := field_storage.vga_color.green.value;
-            readback_data_var(11 downto 8) := field_storage.vga_color.red.value;
+            readback_data_var(3 downto 0) := field_storage.vga_color_control.blue.value;
+            readback_data_var(7 downto 4) := field_storage.vga_color_control.green.value;
+            readback_data_var(11 downto 8) := field_storage.vga_color_control.red.value;
         end if;
         if rd_mux_addr = 16#18# then
             readback_data_var(0) := hwif_in.switch_status.switch_0.next_q;

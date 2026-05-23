@@ -578,7 +578,7 @@ begin
                 proc_axi_lite_check_default_value(C_REG_FPGA_ID);
                 proc_axi_lite_check_default_value(C_REG_SPI_TX_CONTROL);
                 proc_axi_lite_check_default_value(C_REG_SPI_RX_DATA);
-                proc_axi_lite_check_default_value(C_REG_VGA_COLOR);
+                proc_axi_lite_check_default_value(C_REG_VGA_COLOR_CONTROL);
                 proc_axi_lite_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
                 proc_axi_lite_check_default_value(C_REG_TEST_REGISTER_1);
                 proc_axi_lite_check_default_value(C_REG_TEST_REGISTER_2);
@@ -603,7 +603,7 @@ begin
                 wait for 10 us;
 
                 proc_axi_lite_check_read_write(C_REG_SPI_TX_CONTROL);
-                proc_axi_lite_check_read_write(C_REG_VGA_COLOR);
+                proc_axi_lite_check_read_write(C_REG_VGA_COLOR_CONTROL);
                 proc_axi_lite_check_read_write(C_REG_TEST_REGISTER_1);
                 proc_axi_lite_check_read_write(C_REG_TEST_REGISTER_2);
 
@@ -621,22 +621,22 @@ begin
                 check_equal(
                     tb_hwif_out.spi_tx_control.tx_data.value,
                     C_REG_SPI_TX_CONTROL.data(7 downto 0),
-                    "SPI_TX_DATA[7:0]  default value mismatch after reset");
+                    "SPI_TX_DATA[7:0] default value mismatch after reset");
 
                 check_equal(
-                    tb_hwif_out.vga_color.red.value,
-                    C_REG_VGA_COLOR.data(3 downto 0),
-                    "VGA_COLOR[3:0]    default value mismatch after reset");
+                    tb_hwif_out.vga_color_control.red.value,
+                    C_REG_VGA_COLOR_CONTROL.data(3 downto 0),
+                    "VGA_COLOR[3:0]   default value mismatch after reset");
 
                 check_equal(
-                    tb_hwif_out.vga_color.green.value,
-                    C_REG_VGA_COLOR.data(7 downto 4),
-                    "VGA_COLOR[7:4]    default value mismatch after reset");
+                    tb_hwif_out.vga_color_control.green.value,
+                    C_REG_VGA_COLOR_CONTROL.data(7 downto 4),
+                    "VGA_COLOR[7:4]   default value mismatch after reset");
 
                 check_equal(
-                    tb_hwif_out.vga_color.blue.value,
-                    C_REG_VGA_COLOR.data(11 downto 8),
-                    "VGA_COLOR[11:8]   default value mismatch after reset");
+                    tb_hwif_out.vga_color_control.blue.value,
+                    C_REG_VGA_COLOR_CONTROL.data(11 downto 8),
+                    "VGA_COLOR[11:8]  default value mismatch after reset");
 
             elsif run("test_regblock_bad_addr") then
 

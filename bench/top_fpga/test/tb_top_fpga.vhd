@@ -744,10 +744,10 @@ begin
         begin
 
             info("");
-            info("Writing VGA output signals into register " & C_REG_VGA_COLOR.name &
+            info("Writing VGA output signals into register " & C_REG_VGA_COLOR_CONTROL.name &
                 " with value 0x" & to_hstring(value));
 
-            proc_uart_write(C_REG_VGA_COLOR, x"0000_0" & value);
+            proc_uart_write(C_REG_VGA_COLOR_CONTROL, x"0000_0" & value);
 
             --
             -- Wait for the VGA output to be active
@@ -1152,8 +1152,8 @@ begin
                 proc_reset_dut;
                 wait for 100 us;
 
-                proc_uart_check_default_value(C_REG_VGA_COLOR);
-                proc_uart_check_read_write(C_REG_VGA_COLOR, x"0000_0F0F");
+                proc_uart_check_default_value(C_REG_VGA_COLOR_CONTROL);
+                proc_uart_check_read_write(C_REG_VGA_COLOR_CONTROL, x"0000_0F0F");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1164,21 +1164,21 @@ begin
                 proc_reset_dut;
                 wait for 100 us;
 
-                proc_uart_write(C_REG_VGA_COLOR, x"0000_0ABC");
+                proc_uart_write(C_REG_VGA_COLOR_CONTROL, x"0000_0ABC");
                 wait for 10 us;
-                proc_uart_check(C_REG_VGA_COLOR, x"0000_0ABC");
+                proc_uart_check(C_REG_VGA_COLOR_CONTROL, x"0000_0ABC");
 
-                proc_uart_write(C_REG_VGA_COLOR, x"0000_0F00");
+                proc_uart_write(C_REG_VGA_COLOR_CONTROL, x"0000_0F00");
                 wait for 10 us;
-                proc_uart_check(C_REG_VGA_COLOR, x"0000_0F00");
+                proc_uart_check(C_REG_VGA_COLOR_CONTROL, x"0000_0F00");
 
-                proc_uart_write(C_REG_VGA_COLOR, x"0000_00F0");
+                proc_uart_write(C_REG_VGA_COLOR_CONTROL, x"0000_00F0");
                 wait for 10 us;
-                proc_uart_check(C_REG_VGA_COLOR, x"0000_00F0");
+                proc_uart_check(C_REG_VGA_COLOR_CONTROL, x"0000_00F0");
 
-                proc_uart_write(C_REG_VGA_COLOR, x"0000_0F0F");
+                proc_uart_write(C_REG_VGA_COLOR_CONTROL, x"0000_0F0F");
                 wait for 10 us;
-                proc_uart_check(C_REG_VGA_COLOR, x"0000_0F0F");
+                proc_uart_check(C_REG_VGA_COLOR_CONTROL, x"0000_0F0F");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
