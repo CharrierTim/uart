@@ -8,8 +8,8 @@ use ieee.fixed_pkg.all;
 package regblock_pkg is
 
     constant REGBLOCK_DATA_WIDTH : positive := 32;
-    constant REGBLOCK_MIN_ADDR_WIDTH : positive := 6;
-    constant REGBLOCK_SIZE : positive := 36;
+    constant REGBLOCK_MIN_ADDR_WIDTH : positive := 8;
+    constant REGBLOCK_SIZE : positive := 256;
 
     type \regblock.git_hash.hash_in_t\ is record
         next_q : std_logic_vector(31 downto 0);
@@ -61,12 +61,22 @@ package regblock_pkg is
         switch_2 : \regblock.switch_status.switch_2_in_t\;
     end record;
 
+    type \regblock.bad_address_counter.count_in_t\ is record
+        next_q : std_logic_vector(31 downto 0);
+        incr : std_logic;
+    end record;
+
+    type \regblock.bad_address_counter_in_t\ is record
+        count : \regblock.bad_address_counter.count_in_t\;
+    end record;
+
     type regblock_in_t is record
         git_hash : \regblock.git_hash_in_t\;
         git_status : \regblock.git_status_in_t\;
         fpga_id : \regblock.fpga_id_in_t\;
         spi_rx_data : \regblock.spi_rx_data_in_t\;
         switch_status : \regblock.switch_status_in_t\;
+        bad_address_counter : \regblock.bad_address_counter_in_t\;
     end record;
 
     type \regblock.spi_tx_data.tx_data_out_t\ is record
@@ -103,9 +113,18 @@ package regblock_pkg is
         red : \regblock.vga_color.red_out_t\;
     end record;
 
+    type \regblock.bad_address_counter.count_out_t\ is record
+        value : std_logic_vector(31 downto 0);
+    end record;
+
+    type \regblock.bad_address_counter_out_t\ is record
+        count : \regblock.bad_address_counter.count_out_t\;
+    end record;
+
     type regblock_out_t is record
         spi_tx_data : \regblock.spi_tx_data_out_t\;
         spi_rx_data : \regblock.spi_rx_data_out_t\;
         vga_color : \regblock.vga_color_out_t\;
+        bad_address_counter : \regblock.bad_address_counter_out_t\;
     end record;
 end package;

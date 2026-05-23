@@ -158,6 +158,21 @@ addrmap regblock {
     } switch_status @ 0x18;
 
     reg {
+        name = "Bad address counter";
+        desc = "Register used to count the number of bad address accesses.";
+
+        default sw = r;
+        default hw = rw;
+
+        field {
+            desc = "Counter value, incremented on each bad address access";
+            reset = 0;
+            counter;
+        } count[31:0];
+
+    } bad_address_counter @ 0x1C;
+
+    reg {
         name = "Test Register 1";
         desc = "Register used to test a 32-bit read/write register with all bits used for data.";
 
@@ -168,7 +183,7 @@ addrmap regblock {
             desc = "Test bits";
             reset = 0;
         } test_bits[31:0];
-    } test_register_1 @ 0x1C;
+    } test_register_1 @ 0xF8;
 
     reg {
         name = "Test Register 2";
@@ -181,5 +196,5 @@ addrmap regblock {
             desc = "Test bits";
             reset = 0;
         } test_bits[31:0];
-    } test_register_2 @ 0x20;
+    } test_register_2 @ 0xFC;
 };

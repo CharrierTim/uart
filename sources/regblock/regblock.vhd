@@ -14,7 +14,7 @@ entity regblock is
 
         s_axil_awready : out std_logic;
         s_axil_awvalid : in std_logic;
-        s_axil_awaddr : in std_logic_vector(5 downto 0);
+        s_axil_awaddr : in std_logic_vector(7 downto 0);
         s_axil_awprot : in std_logic_vector(2 downto 0);
         s_axil_wready : out std_logic;
         s_axil_wvalid : in std_logic;
@@ -25,7 +25,7 @@ entity regblock is
         s_axil_bresp : out std_logic_vector(1 downto 0);
         s_axil_arready : out std_logic;
         s_axil_arvalid : in std_logic;
-        s_axil_araddr : in std_logic_vector(5 downto 0);
+        s_axil_araddr : in std_logic_vector(7 downto 0);
         s_axil_arprot : in std_logic_vector(2 downto 0);
         s_axil_rready : in std_logic;
         s_axil_rvalid : out std_logic;
@@ -43,7 +43,7 @@ architecture rtl of regblock is
     ----------------------------------------------------------------------------
     signal cpuif_req : std_logic;
     signal cpuif_req_is_wr : std_logic;
-    signal cpuif_addr : std_logic_vector(5 downto 0);
+    signal cpuif_addr : std_logic_vector(7 downto 0);
     signal cpuif_wr_data : std_logic_vector(31 downto 0);
     signal cpuif_wr_biten : std_logic_vector(31 downto 0);
     signal cpuif_req_stall_wr : std_logic;
@@ -61,10 +61,10 @@ architecture rtl of regblock is
     signal axil_n_in_flight : unsigned(1 downto 0);
     signal axil_prev_was_rd : std_logic;
     signal axil_arvalid : std_logic;
-    signal axil_araddr : std_logic_vector(5 downto 0);
+    signal axil_araddr : std_logic_vector(7 downto 0);
     signal axil_ar_accept : std_logic;
     signal axil_awvalid : std_logic;
-    signal axil_awaddr : std_logic_vector(5 downto 0);
+    signal axil_awaddr : std_logic_vector(7 downto 0);
     signal axil_wvalid : std_logic;
     signal axil_wdata : std_logic_vector(31 downto 0);
     signal axil_wstrb : std_logic_vector(3 downto 0);
@@ -91,12 +91,13 @@ architecture rtl of regblock is
         spi_rx_data : std_logic;
         vga_color : std_logic;
         switch_status : std_logic;
+        bad_address_counter : std_logic;
         test_register_1 : std_logic;
         test_register_2 : std_logic;
     end record;
     signal decoded_reg_strb : decoded_reg_strb_t;
     signal decoded_err : std_logic;
-    signal decoded_addr : std_logic_vector(5 downto 0);
+    signal decoded_addr : std_logic_vector(7 downto 0);
     signal decoded_req : std_logic;
     signal decoded_req_is_wr : std_logic;
     signal decoded_wr_data : std_logic_vector(31 downto 0);
@@ -145,6 +146,17 @@ architecture rtl of regblock is
         red : \regblock.vga_color.red_combo_t\;
     end record;
 
+    type \regblock.bad_address_counter.count_combo_t\ is record
+        next_q : std_logic_vector(31 downto 0);
+        load_next : std_logic;
+        incrthreshold : std_logic;
+        overflow : std_logic;
+    end record;
+
+    type \regblock.bad_address_counter_combo_t\ is record
+        count : \regblock.bad_address_counter.count_combo_t\;
+    end record;
+
     type \regblock.test_register_1.test_bits_combo_t\ is record
         next_q : std_logic_vector(31 downto 0);
         load_next : std_logic;
@@ -167,6 +179,7 @@ architecture rtl of regblock is
         spi_tx_data : \regblock.spi_tx_data_combo_t\;
         spi_rx_data : \regblock.spi_rx_data_combo_t\;
         vga_color : \regblock.vga_color_combo_t\;
+        bad_address_counter : \regblock.bad_address_counter_combo_t\;
         test_register_1 : \regblock.test_register_1_combo_t\;
         test_register_2 : \regblock.test_register_2_combo_t\;
     end record;
@@ -207,6 +220,14 @@ architecture rtl of regblock is
         red : \regblock.vga_color.red_storage_t\;
     end record;
 
+    type \regblock.bad_address_counter.count_storage_t\ is record
+        value : std_logic_vector(31 downto 0);
+    end record;
+
+    type \regblock.bad_address_counter_storage_t\ is record
+        count : \regblock.bad_address_counter.count_storage_t\;
+    end record;
+
     type \regblock.test_register_1.test_bits_storage_t\ is record
         value : std_logic_vector(31 downto 0);
     end record;
@@ -227,6 +248,7 @@ architecture rtl of regblock is
         spi_tx_data : \regblock.spi_tx_data_storage_t\;
         spi_rx_data : \regblock.spi_rx_data_storage_t\;
         vga_color : \regblock.vga_color_storage_t\;
+        bad_address_counter : \regblock.bad_address_counter_storage_t\;
         test_register_1 : \regblock.test_register_1_storage_t\;
         test_register_2 : \regblock.test_register_2_storage_t\;
     end record;
@@ -235,7 +257,7 @@ architecture rtl of regblock is
     ----------------------------------------------------------------------------
     -- Readback Signals
     ----------------------------------------------------------------------------
-    signal rd_mux_addr : unsigned(5 downto 0);
+    signal rd_mux_addr : unsigned(7 downto 0);
     signal readback_err : std_logic;
     signal readback_done : std_logic;
     signal readback_data : std_logic_vector(31 downto 0);
@@ -330,21 +352,21 @@ begin
             if axil_arvalid and not axil_prev_was_rd then
                 cpuif_req <= '1';
                 cpuif_req_is_wr <= '0';
-                cpuif_addr <= (5 downto 2 => axil_araddr(5 downto 2), others => '0');
+                cpuif_addr <= (7 downto 2 => axil_araddr(7 downto 2), others => '0');
                 if not cpuif_req_stall_rd then
                     axil_ar_accept <= '1';
                 end if;
             elsif axil_awvalid and axil_wvalid then
                 cpuif_req <= '1';
                 cpuif_req_is_wr <= '1';
-                cpuif_addr <= (5 downto 2 => axil_awaddr(5 downto 2), others => '0');
+                cpuif_addr <= (7 downto 2 => axil_awaddr(7 downto 2), others => '0');
                 if not cpuif_req_stall_wr then
                     axil_aw_accept <= '1';
                 end if;
             elsif axil_arvalid then
                 cpuif_req <= '1';
                 cpuif_req_is_wr <= '0';
-                cpuif_addr <= (5 downto 2 => axil_araddr(5 downto 2), others => '0');
+                cpuif_addr <= (7 downto 2 => axil_araddr(7 downto 2), others => '0');
                 if not cpuif_req_stall_rd then
                     axil_ar_accept <= '1';
                 end if;
@@ -466,12 +488,15 @@ begin
         decoded_reg_strb.switch_status <= cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#18#));
         is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr);
-        decoded_reg_strb.test_register_1 <= cpuif_req_masked and (cpuif_addr = 16#1C#);
+        decoded_reg_strb.bad_address_counter <= cpuif_req_masked and (cpuif_addr = 16#1C#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#1C#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#1C#));
-        decoded_reg_strb.test_register_2 <= cpuif_req_masked and (cpuif_addr = 16#20#);
-        is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#20#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#20#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#1C#) and not cpuif_req_is_wr);
+        decoded_reg_strb.test_register_1 <= cpuif_req_masked and (cpuif_addr = 16#F8#);
+        is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#F8#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#F8#));
+        decoded_reg_strb.test_register_2 <= cpuif_req_masked and (cpuif_addr = 16#FC#);
+        is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#FC#));
+        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#FC#));
         decoded_err <= (not is_valid_addr or (is_valid_addr and not is_valid_rw)) and decoded_req;
     end process;
 
@@ -633,6 +658,43 @@ begin
     end process;
     hwif_out.vga_color.red.value <= field_storage.vga_color.red.value;
 
+    -- Field: regblock.bad_address_counter.count
+    process(all)
+        variable next_c: std_logic_vector(31 downto 0);
+        variable load_next_c: std_logic;
+    begin
+        next_c := field_storage.bad_address_counter.count.value;
+        load_next_c := '0';
+        
+        -- HW Write
+        next_c := hwif_in.bad_address_counter.count.next_q;
+        load_next_c := '1';
+        if hwif_in.bad_address_counter.count.incr then -- increment
+            field_combo.bad_address_counter.count.overflow <= to_std_logic((to_unsigned("0" & next_c) + to_unsigned(33x"1")) > to_unsigned(34x"FFFFFFFF"));
+            next_c := to_std_logic_vector(to_unsigned(next_c) + to_unsigned(32x"1"));
+            load_next_c := '1';
+        else
+            field_combo.bad_address_counter.count.overflow <= '0';
+        end if;
+        field_combo.bad_address_counter.count.incrthreshold <= to_std_logic(unsigned(field_storage.bad_address_counter.count.value) >= to_unsigned(32x"FFFFFFFF"));
+        field_combo.bad_address_counter.count.next_q <= next_c;
+        field_combo.bad_address_counter.count.load_next <= load_next_c;
+    end process;
+    process(clk, arst) begin
+        if arst then -- async reset
+            field_storage.bad_address_counter.count.value <= 32x"0";
+        elsif rising_edge(clk) then
+            if false then -- sync reset
+                field_storage.bad_address_counter.count.value <= 32x"0";
+            else
+                if field_combo.bad_address_counter.count.load_next then
+                    field_storage.bad_address_counter.count.value <= field_combo.bad_address_counter.count.next_q;
+                end if;
+            end if;
+        end if;
+    end process;
+    hwif_out.bad_address_counter.count.value <= field_storage.bad_address_counter.count.value;
+
     -- Field: regblock.test_register_1.test_bits
     process(all)
         variable next_c: std_logic_vector(31 downto 0);
@@ -730,9 +792,12 @@ begin
             readback_data_var(2) := hwif_in.switch_status.switch_2.next_q;
         end if;
         if rd_mux_addr = 16#1C# then
+            readback_data_var(31 downto 0) := field_storage.bad_address_counter.count.value;
+        end if;
+        if rd_mux_addr = 16#F8# then
             readback_data_var(31 downto 0) := field_storage.test_register_1.test_bits.value;
         end if;
-        if rd_mux_addr = 16#20# then
+        if rd_mux_addr = 16#FC# then
             readback_data_var(31 downto 0) := field_storage.test_register_2.test_bits.value;
         end if;
         readback_data <= readback_data_var;
