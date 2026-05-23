@@ -1031,8 +1031,25 @@ begin
                     time'image(C_UART_READ_CMD_TIME) &
                     " after reading from bad address");
 
-                -- De-select the manual UART
-                tb_i_uart_select <= '0';
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Writing to a bad address (0x98) and checking LED_0 is indicating error");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_write(C_REG_BAD_ADDR, x"FEDC_BA98");
+                wait for C_UART_WRITE_CMD_TIME;
+
+                check_equal(tb_pad_o_led_0, '1', "LED_0 should be ON indicating error when writing to bad address");
+                check_equal(
+                    tb_pad_o_led_0'stable(C_UART_WRITE_CMD_TIME),
+                    '1',
+                    "LED_0 should remain stable ON for at least " &
+                    time'image(C_UART_WRITE_CMD_TIME) &
+                    " after writing to bad address");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
