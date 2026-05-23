@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    spi_master.vhd
--- @version 2.0
+-- @version 2.1
 -- @brief   SPI master module supporting all four SPI modes (0-3).
 --
 --          SPI Mode Configuration (adapted from Texas Instruments KeyStone Architecture Serial Peripheral Interface
@@ -56,6 +56,7 @@
 -- 1.0      24/11/2025  Timothee Charrier   Initial release
 -- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+-- 2.1      23/05/2026  Timothee Charrier   Remove o_rx_data_valid signal and associated logic
 -- =====================================================================================================================
 
 library ieee;
@@ -87,8 +88,7 @@ entity SPI_MASTER is
         -- Data interface
         I_TX_DATA       : in    std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
         I_TX_DATA_VALID : in    std_logic;
-        O_RX_DATA       : out   std_logic_vector(G_NB_DATA_BITS - 1 downto 0);
-        O_RX_DATA_VALID : out   std_logic
+        O_RX_DATA       : out   std_logic_vector(G_NB_DATA_BITS - 1 downto 0)
     );
 end entity SPI_MASTER;
 
@@ -146,7 +146,6 @@ architecture SPI_MASTER_ARCH of SPI_MASTER is
     signal next_state              : t_state;
     signal next_o_mosi             : std_logic;
     signal next_o_cs_n             : std_logic;
-    signal next_o_valid            : std_logic;
 
     -- Bit count
     signal bit_counter             : unsigned(C_BIT_COUNTER_WIDTH - 1 downto 0);
@@ -437,9 +436,8 @@ begin
     begin
 
         -- Default assignment
-        next_o_mosi  <= '0';
-        next_o_cs_n  <= '1';
-        next_o_valid <= '0';
+        next_o_mosi <= '0';
+        next_o_cs_n <= '1';
 
         case current_state is
 
@@ -488,8 +486,6 @@ begin
 
             when STATE_DONE =>
 
-                next_o_valid <= '1';
-
         end case;
 
     end process p_next_outputs_comb;
@@ -506,7 +502,6 @@ begin
             O_MOSI           <= '0';
             O_CS_N           <= '1';
             O_RX_DATA        <= (others => '0');
-            O_RX_DATA_VALID  <= '0';
 
             reg_o_rx_data_sr <= (others => '0');
 
@@ -517,10 +512,9 @@ begin
                                     reg_resync_i_miso(reg_resync_i_miso'high);
             end if;
 
-            O_MOSI          <= next_o_mosi;
-            O_CS_N          <= next_o_cs_n;
-            O_RX_DATA       <= reg_o_rx_data_sr;
-            O_RX_DATA_VALID <= next_o_valid;
+            O_MOSI    <= next_o_mosi;
+            O_CS_N    <= next_o_cs_n;
+            O_RX_DATA <= reg_o_rx_data_sr;
 
         end if;
 
