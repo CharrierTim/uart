@@ -122,7 +122,7 @@ package TB_REGBLOCK_PKG is
     (
         name           => "SWITCH_STATUS",
         addr           => 8x"18",
-        data           => 32x"0000_0003",
+        data           => 32x"0000_0000",
         used_bits_mask => 32x"0000_0003"
     );
 
