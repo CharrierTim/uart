@@ -223,13 +223,13 @@ begin
             tb_s_axil_awprot                         <= (others => '0');
             tb_s_axil_arprot                         <= (others => '0');
 
-            tb_hwif_in.GIT_HASH.hash.next_q          <= std_logic_vector(C_REG_GIT_HASH.data);
-            tb_hwif_in.GIT_STATUS.status.next_q      <= std_logic(C_REG_GIT_STATUS.data(0));
-            tb_hwif_in.FPGA_ID.id.next_q             <= std_logic_vector(C_REG_FPGA_ID.data);
-            tb_hwif_in.SPI_RX_DATA.rx_data.next_q    <= std_logic_vector(C_REG_SPI_RX_DATA.data(15 downto 8));
-            tb_hwif_in.SWITCH_STATUS.switch_0.next_q <= std_logic(C_REG_Switch_STATUS.data(0));
-            tb_hwif_in.SWITCH_STATUS.switch_1.next_q <= std_logic(C_REG_Switch_STATUS.data(1));
-            tb_hwif_in.SWITCH_STATUS.switch_2.next_q <= std_logic(C_REG_Switch_STATUS.data(2));
+            tb_hwif_in.GIT_HASH.hash.next_q          <= C_REG_GIT_HASH.data;
+            tb_hwif_in.GIT_STATUS.status.next_q      <= C_REG_GIT_STATUS.data(0);
+            tb_hwif_in.FPGA_ID.id.next_q             <= C_REG_FPGA_ID.data;
+            tb_hwif_in.SPI_RX_DATA.rx_data.next_q    <= C_REG_SPI_RX_DATA.data(15 downto 8);
+            tb_hwif_in.SWITCH_STATUS.switch_0.next_q <= C_REG_Switch_STATUS.data(0);
+            tb_hwif_in.SWITCH_STATUS.switch_1.next_q <= C_REG_Switch_STATUS.data(1);
+            tb_hwif_in.SWITCH_STATUS.switch_2.next_q <= C_REG_Switch_STATUS.data(2);
 
             wait for c_clock_cycles * C_CLK_PERIOD;
 
