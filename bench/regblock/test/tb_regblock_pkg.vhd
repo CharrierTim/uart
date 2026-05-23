@@ -94,12 +94,12 @@ package TB_REGBLOCK_PKG is
         used_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_SPI_TX_DATA         : t_reg :=
+    constant C_REG_SPI_TX_CONTROL      : t_reg :=
     (
-        name           => "SPI_TX_DATA",
+        name           => "SPI_TX_CONTROL",
         addr           => 8x"0C",
         data           => 32x"0000_0000",
-        used_bits_mask => 32x"0000_01FF"
+        used_bits_mask => 32x"0000_00FF"
     );
 
     constant C_REG_SPI_RX_DATA         : t_reg :=

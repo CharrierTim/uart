@@ -79,25 +79,17 @@ package regblock_pkg is
         bad_address_counter : \regblock.bad_address_counter_in_t\;
     end record;
 
-    type \regblock.spi_tx_data.tx_data_out_t\ is record
+    type \regblock.spi_tx_control.tx_data_out_t\ is record
         value : std_logic_vector(7 downto 0);
     end record;
 
-    type \regblock.spi_tx_data.tx_data_valid_out_t\ is record
+    type \regblock.spi_tx_control.tx_data_valid_out_t\ is record
         value : std_logic;
     end record;
 
-    type \regblock.spi_tx_data_out_t\ is record
-        tx_data : \regblock.spi_tx_data.tx_data_out_t\;
-        tx_data_valid : \regblock.spi_tx_data.tx_data_valid_out_t\;
-    end record;
-
-    type \regblock.spi_rx_data.rx_data_out_t\ is record
-        value : std_logic_vector(7 downto 0);
-    end record;
-
-    type \regblock.spi_rx_data_out_t\ is record
-        rx_data : \regblock.spi_rx_data.rx_data_out_t\;
+    type \regblock.spi_tx_control_out_t\ is record
+        tx_data : \regblock.spi_tx_control.tx_data_out_t\;
+        tx_data_valid : \regblock.spi_tx_control.tx_data_valid_out_t\;
     end record;
 
     type \regblock.vga_color.blue_out_t\ is record
@@ -127,8 +119,7 @@ package regblock_pkg is
     end record;
 
     type regblock_out_t is record
-        spi_tx_data : \regblock.spi_tx_data_out_t\;
-        spi_rx_data : \regblock.spi_rx_data_out_t\;
+        spi_tx_control : \regblock.spi_tx_control_out_t\;
         vga_color : \regblock.vga_color_out_t\;
         bad_address_counter : \regblock.bad_address_counter_out_t\;
     end record;

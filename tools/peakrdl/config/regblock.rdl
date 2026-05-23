@@ -48,6 +48,7 @@ addrmap regblock {
         field {
             desc = "Hash value";
         } hash[31:0];
+
     } git_hash @ 0x00;
 
     reg {
@@ -64,6 +65,7 @@ addrmap regblock {
         field {
             desc = "Status value";
         } status[0:0];
+
     } git_status @ 0x04;
 
     reg {
@@ -76,10 +78,11 @@ addrmap regblock {
         field {
             desc = "ID value";
         } id[31:0];
+
     } fpga_id @ 0x08;
 
     reg {
-        name = "SPI TX Data";
+        name = "SPI TX Control";
         desc = "Register used to send data over SPI. Writing to this register starts the SPI transaction.";
 
         default sw = rw;
@@ -91,24 +94,27 @@ addrmap regblock {
         } tx_data[7:0];
 
         field{
-            desc  = "SPI transaction valid signal.";
+            desc  =
+            "SPI transaction valid signal.Asserts for one cycle when written 1
+            and then clears back to 0 on the next cycle";
             reset = 0;
             singlepulse;
         } tx_data_valid[8:8];
 
-    } spi_tx_data @ 0x0C;
+    } spi_tx_control @ 0x0C;
 
     reg {
         name = "SPI RX Data";
-        desc = "Register used to receive data over SPI. Reading this register returns the received SPI data.";
+        desc = "Register used to receive data over SPI.";
 
         default sw = r;
-        default hw = rw;
+        default hw = w;
 
         field {
             desc  = "RX data received over SPI";
             reset = 0;
         } rx_data[7:0];
+
     } spi_rx_data @ 0x10;
 
     reg {
@@ -135,6 +141,7 @@ addrmap regblock {
             desc  = "Blue channel intensity (0-15)";
             reset = 0;
         } blue[3:0];
+
     } vga_color @ 0x14;
 
     reg {
@@ -162,6 +169,7 @@ addrmap regblock {
             desc  = "Status of switch 2";
             reset = 0;
         } switch_2[2:2];
+
     } switch_status @ 0x18;
 
     reg {
@@ -190,6 +198,7 @@ addrmap regblock {
             desc  = "Test bits";
             reset = 0;
         } test_bits[31:0];
+
     } test_register_1 @ 0xF8;
 
     reg {
@@ -203,5 +212,6 @@ addrmap regblock {
             desc  = "Test bits";
             reset = 0;
         } test_bits[31:0];
+
     } test_register_2 @ 0xFC;
 };

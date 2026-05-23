@@ -408,10 +408,11 @@ begin
                 " at address 0x"               & to_hstring(reg.addr));
 
             -- Attempt to write the opposite reset value to the register
+            -- Expecting RESPOK response for write attempts to read-only registers because rw error is disabled.
             proc_axi_lite_write(
                 reg,
                 not reg.data,
-                axi_resp_slverr); -- Expecting SLVERR response for write attempts to read-only registers
+                axi_resp_okay);
 
             -- Check if the register value remains unchanged
             proc_axi_lite_check(
@@ -575,7 +576,7 @@ begin
                 proc_axi_lite_check_default_value(C_REG_GIT_HASH);
                 proc_axi_lite_check_default_value(C_REG_GIT_STATUS);
                 proc_axi_lite_check_default_value(C_REG_FPGA_ID);
-                proc_axi_lite_check_default_value(C_REG_SPI_TX_DATA);
+                proc_axi_lite_check_default_value(C_REG_SPI_TX_CONTROL);
                 proc_axi_lite_check_default_value(C_REG_SPI_RX_DATA);
                 proc_axi_lite_check_default_value(C_REG_VGA_COLOR);
                 proc_axi_lite_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
@@ -601,7 +602,7 @@ begin
                 proc_reset_dut;
                 wait for 10 us;
 
-                proc_axi_lite_check_read_write(C_REG_SPI_TX_DATA);
+                proc_axi_lite_check_read_write(C_REG_SPI_TX_CONTROL);
                 proc_axi_lite_check_read_write(C_REG_VGA_COLOR);
                 proc_axi_lite_check_read_write(C_REG_TEST_REGISTER_1);
                 proc_axi_lite_check_read_write(C_REG_TEST_REGISTER_2);
@@ -618,13 +619,8 @@ begin
                 info("-----------------------------------------------------------------------------");
 
                 check_equal(
-                    tb_hwif_out.spi_rx_data.rx_data.value,
-                    C_REG_SPI_RX_DATA.data(15 downto 8),
-                    "SPI_RX_DATA[15:8] default value mismatch after reset");
-
-                check_equal(
-                    tb_hwif_out.spi_tx_data.tx_data.value,
-                    C_REG_SPI_TX_DATA.data(7 downto 0),
+                    tb_hwif_out.spi_tx_control.tx_data.value,
+                    C_REG_SPI_TX_CONTROL.data(7 downto 0),
                     "SPI_TX_DATA[7:0]  default value mismatch after reset");
 
                 check_equal(
@@ -714,39 +710,6 @@ begin
                     expected_data  => std_logic_vector(to_unsigned(42, tb_s_axil_rdata'length)),
                     expected_rresp => axi_resp_okay,
                     msg            => "BAD_ADDRESS_COUNTER should be 42 after 42 additional invalid read/write attempts");
-
-            elsif run("test_regblock_bad_rw") then
-
-                -- Reset DUT
-                proc_reset_dut;
-                wait for 10 us;
-
-                info("");
-                info("-----------------------------------------------------------------------------");
-                info(" Writing to a read-only register with write transaction");
-                info("-----------------------------------------------------------------------------");
-
-                info("");
-                info("Writing to read-only register " & C_REG_GIT_HASH.name & " at address 0x"
-                    & to_hstring(C_REG_GIT_HASH.addr) & " with value 0x"    & to_hstring(not C_REG_GIT_HASH.data) &
-                    " and expecting SLVERR response");
-
-                -- Doing it manually instead of using proc_axi_lite_write to be able to check the response of the
-                -- write transaction without the procedure's checks interfering
-                write_axi_lite(
-                    net            => net,
-                    bus_handle     => C_BUS_HANDLE,
-                    address        => C_REG_GIT_HASH.addr,
-                    data           => not C_REG_GIT_HASH.data,
-                    expected_bresp => axi_resp_slverr);
-
-                wait until rising_edge(tb_clk) and tb_s_axil_bvalid = '1';
-
-                check_equal(
-                    tb_s_axil_bresp,
-                    axi_resp_slverr,
-                    "Response mismatch when writing to read-only register " & C_REG_GIT_HASH.name &
-                    " and expected SLVERR(10)");
 
             elsif run("test_regblock_random_rw") then
 

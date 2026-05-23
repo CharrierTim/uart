@@ -87,7 +87,7 @@ architecture rtl of regblock is
         git_hash : std_logic;
         git_status : std_logic;
         fpga_id : std_logic;
-        spi_tx_data : std_logic;
+        spi_tx_control : std_logic;
         spi_rx_data : std_logic;
         vga_color : std_logic;
         switch_status : std_logic;
@@ -107,28 +107,19 @@ architecture rtl of regblock is
     -- Field Logic Signals
     ----------------------------------------------------------------------------
     -- Field Combinational Signals
-    type \regblock.spi_tx_data.tx_data_combo_t\ is record
+    type \regblock.spi_tx_control.tx_data_combo_t\ is record
         next_q : std_logic_vector(7 downto 0);
         load_next : std_logic;
     end record;
 
-    type \regblock.spi_tx_data.tx_data_valid_combo_t\ is record
+    type \regblock.spi_tx_control.tx_data_valid_combo_t\ is record
         next_q : std_logic;
         load_next : std_logic;
     end record;
 
-    type \regblock.spi_tx_data_combo_t\ is record
-        tx_data : \regblock.spi_tx_data.tx_data_combo_t\;
-        tx_data_valid : \regblock.spi_tx_data.tx_data_valid_combo_t\;
-    end record;
-
-    type \regblock.spi_rx_data.rx_data_combo_t\ is record
-        next_q : std_logic_vector(7 downto 0);
-        load_next : std_logic;
-    end record;
-
-    type \regblock.spi_rx_data_combo_t\ is record
-        rx_data : \regblock.spi_rx_data.rx_data_combo_t\;
+    type \regblock.spi_tx_control_combo_t\ is record
+        tx_data : \regblock.spi_tx_control.tx_data_combo_t\;
+        tx_data_valid : \regblock.spi_tx_control.tx_data_valid_combo_t\;
     end record;
 
     type \regblock.vga_color.blue_combo_t\ is record
@@ -182,8 +173,7 @@ architecture rtl of regblock is
     end record;
 
     type field_combo_t is record
-        spi_tx_data : \regblock.spi_tx_data_combo_t\;
-        spi_rx_data : \regblock.spi_rx_data_combo_t\;
+        spi_tx_control : \regblock.spi_tx_control_combo_t\;
         vga_color : \regblock.vga_color_combo_t\;
         bad_address_counter : \regblock.bad_address_counter_combo_t\;
         test_register_1 : \regblock.test_register_1_combo_t\;
@@ -192,25 +182,17 @@ architecture rtl of regblock is
     signal field_combo : field_combo_t;
 
     -- Field Storage Signals
-    type \regblock.spi_tx_data.tx_data_storage_t\ is record
+    type \regblock.spi_tx_control.tx_data_storage_t\ is record
         value : std_logic_vector(7 downto 0);
     end record;
 
-    type \regblock.spi_tx_data.tx_data_valid_storage_t\ is record
+    type \regblock.spi_tx_control.tx_data_valid_storage_t\ is record
         value : std_logic;
     end record;
 
-    type \regblock.spi_tx_data_storage_t\ is record
-        tx_data : \regblock.spi_tx_data.tx_data_storage_t\;
-        tx_data_valid : \regblock.spi_tx_data.tx_data_valid_storage_t\;
-    end record;
-
-    type \regblock.spi_rx_data.rx_data_storage_t\ is record
-        value : std_logic_vector(7 downto 0);
-    end record;
-
-    type \regblock.spi_rx_data_storage_t\ is record
-        rx_data : \regblock.spi_rx_data.rx_data_storage_t\;
+    type \regblock.spi_tx_control_storage_t\ is record
+        tx_data : \regblock.spi_tx_control.tx_data_storage_t\;
+        tx_data_valid : \regblock.spi_tx_control.tx_data_valid_storage_t\;
     end record;
 
     type \regblock.vga_color.blue_storage_t\ is record
@@ -256,8 +238,7 @@ architecture rtl of regblock is
     end record;
 
     type field_storage_t is record
-        spi_tx_data : \regblock.spi_tx_data_storage_t\;
-        spi_rx_data : \regblock.spi_rx_data_storage_t\;
+        spi_tx_control : \regblock.spi_tx_control_storage_t\;
         vga_color : \regblock.vga_color_storage_t\;
         bad_address_counter : \regblock.bad_address_counter_storage_t\;
         test_register_1 : \regblock.test_register_1_storage_t\;
@@ -477,38 +458,28 @@ begin
         variable is_valid_rw : std_logic;
     begin
         is_valid_addr := '0';
-        is_valid_rw := '0';
+        is_valid_rw := '1'; -- No valid RW check
         decoded_reg_strb.git_hash <= cpuif_req_masked and (cpuif_addr = 16#0#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#0#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#0#) and not cpuif_req_is_wr);
         decoded_reg_strb.git_status <= cpuif_req_masked and (cpuif_addr = 16#4#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#4#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#4#) and not cpuif_req_is_wr);
         decoded_reg_strb.fpga_id <= cpuif_req_masked and (cpuif_addr = 16#8#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#8#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#8#) and not cpuif_req_is_wr);
-        decoded_reg_strb.spi_tx_data <= cpuif_req_masked and (cpuif_addr = 16#C#);
+        decoded_reg_strb.spi_tx_control <= cpuif_req_masked and (cpuif_addr = 16#C#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#C#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#C#));
         decoded_reg_strb.spi_rx_data <= cpuif_req_masked and (cpuif_addr = 16#10#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#10#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#10#) and not cpuif_req_is_wr);
         decoded_reg_strb.vga_color <= cpuif_req_masked and (cpuif_addr = 16#14#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#14#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#14#));
         decoded_reg_strb.switch_status <= cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#18#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr);
         decoded_reg_strb.bad_address_counter <= cpuif_req_masked and (cpuif_addr = 16#1C#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#1C#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#1C#) and not cpuif_req_is_wr);
         decoded_reg_strb.test_register_1 <= cpuif_req_masked and (cpuif_addr = 16#F8#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#F8#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#F8#));
         decoded_reg_strb.test_register_2 <= cpuif_req_masked and (cpuif_addr = 16#FC#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#FC#));
-        is_valid_rw := is_valid_rw or (cpuif_req_masked and (cpuif_addr = 16#FC#));
-        decoded_err <= (not is_valid_addr or (is_valid_addr and not is_valid_rw)) and decoded_req;
+        decoded_err <= not is_valid_addr and decoded_req;
     end process;
 
     -- Pass down signals to next stage
@@ -524,95 +495,66 @@ begin
     -- Field logic
     ----------------------------------------------------------------------------
     
-    -- Field: regblock.spi_tx_data.tx_data
+    -- Field: regblock.spi_tx_control.tx_data
     process(all)
         variable next_c: std_logic_vector(7 downto 0);
         variable load_next_c: std_logic;
     begin
-        next_c := field_storage.spi_tx_data.tx_data.value;
+        next_c := field_storage.spi_tx_control.tx_data.value;
         load_next_c := '0';
-        if decoded_reg_strb.spi_tx_data and decoded_req_is_wr then -- SW write
-            next_c := (field_storage.spi_tx_data.tx_data.value and not decoded_wr_biten(7 downto 0)) or (decoded_wr_data(7 downto 0) and decoded_wr_biten(7 downto 0));
+        if decoded_reg_strb.spi_tx_control and decoded_req_is_wr then -- SW write
+            next_c := (field_storage.spi_tx_control.tx_data.value and not decoded_wr_biten(7 downto 0)) or (decoded_wr_data(7 downto 0) and decoded_wr_biten(7 downto 0));
             load_next_c := '1';
         end if;
-        field_combo.spi_tx_data.tx_data.next_q <= next_c;
-        field_combo.spi_tx_data.tx_data.load_next <= load_next_c;
+        field_combo.spi_tx_control.tx_data.next_q <= next_c;
+        field_combo.spi_tx_control.tx_data.load_next <= load_next_c;
     end process;
     process(clk, arst) begin
         if arst then -- async reset
-            field_storage.spi_tx_data.tx_data.value <= 8x"0";
+            field_storage.spi_tx_control.tx_data.value <= 8x"0";
         elsif rising_edge(clk) then
             if false then -- sync reset
-                field_storage.spi_tx_data.tx_data.value <= 8x"0";
+                field_storage.spi_tx_control.tx_data.value <= 8x"0";
             else
-                if field_combo.spi_tx_data.tx_data.load_next then
-                    field_storage.spi_tx_data.tx_data.value <= field_combo.spi_tx_data.tx_data.next_q;
+                if field_combo.spi_tx_control.tx_data.load_next then
+                    field_storage.spi_tx_control.tx_data.value <= field_combo.spi_tx_control.tx_data.next_q;
                 end if;
             end if;
         end if;
     end process;
-    hwif_out.spi_tx_data.tx_data.value <= field_storage.spi_tx_data.tx_data.value;
+    hwif_out.spi_tx_control.tx_data.value <= field_storage.spi_tx_control.tx_data.value;
 
-    -- Field: regblock.spi_tx_data.tx_data_valid
+    -- Field: regblock.spi_tx_control.tx_data_valid
     process(all)
         variable next_c: std_logic;
         variable load_next_c: std_logic;
     begin
-        next_c := field_storage.spi_tx_data.tx_data_valid.value;
+        next_c := field_storage.spi_tx_control.tx_data_valid.value;
         load_next_c := '0';
-        if decoded_reg_strb.spi_tx_data and decoded_req_is_wr then -- SW write
-            next_c := (field_storage.spi_tx_data.tx_data_valid.value and not decoded_wr_biten(8)) or (decoded_wr_data(8) and decoded_wr_biten(8));
+        if decoded_reg_strb.spi_tx_control and decoded_req_is_wr then -- SW write
+            next_c := (field_storage.spi_tx_control.tx_data_valid.value and not decoded_wr_biten(8)) or (decoded_wr_data(8) and decoded_wr_biten(8));
             load_next_c := '1';
         else -- singlepulse clears back to 0
             next_c := '0';
             load_next_c := '1';
         end if;
-        field_combo.spi_tx_data.tx_data_valid.next_q <= next_c;
-        field_combo.spi_tx_data.tx_data_valid.load_next <= load_next_c;
+        field_combo.spi_tx_control.tx_data_valid.next_q <= next_c;
+        field_combo.spi_tx_control.tx_data_valid.load_next <= load_next_c;
     end process;
     process(clk, arst) begin
         if arst then -- async reset
-            field_storage.spi_tx_data.tx_data_valid.value <= '0';
+            field_storage.spi_tx_control.tx_data_valid.value <= '0';
         elsif rising_edge(clk) then
             if false then -- sync reset
-                field_storage.spi_tx_data.tx_data_valid.value <= '0';
+                field_storage.spi_tx_control.tx_data_valid.value <= '0';
             else
-                if field_combo.spi_tx_data.tx_data_valid.load_next then
-                    field_storage.spi_tx_data.tx_data_valid.value <= field_combo.spi_tx_data.tx_data_valid.next_q;
+                if field_combo.spi_tx_control.tx_data_valid.load_next then
+                    field_storage.spi_tx_control.tx_data_valid.value <= field_combo.spi_tx_control.tx_data_valid.next_q;
                 end if;
             end if;
         end if;
     end process;
-    hwif_out.spi_tx_data.tx_data_valid.value <= field_storage.spi_tx_data.tx_data_valid.value;
-
-    -- Field: regblock.spi_rx_data.rx_data
-    process(all)
-        variable next_c: std_logic_vector(7 downto 0);
-        variable load_next_c: std_logic;
-    begin
-        next_c := field_storage.spi_rx_data.rx_data.value;
-        load_next_c := '0';
-        
-        -- HW Write
-        next_c := hwif_in.spi_rx_data.rx_data.next_q;
-        load_next_c := '1';
-        field_combo.spi_rx_data.rx_data.next_q <= next_c;
-        field_combo.spi_rx_data.rx_data.load_next <= load_next_c;
-    end process;
-    process(clk, arst) begin
-        if arst then -- async reset
-            field_storage.spi_rx_data.rx_data.value <= 8x"0";
-        elsif rising_edge(clk) then
-            if false then -- sync reset
-                field_storage.spi_rx_data.rx_data.value <= 8x"0";
-            else
-                if field_combo.spi_rx_data.rx_data.load_next then
-                    field_storage.spi_rx_data.rx_data.value <= field_combo.spi_rx_data.rx_data.next_q;
-                end if;
-            end if;
-        end if;
-    end process;
-    hwif_out.spi_rx_data.rx_data.value <= field_storage.spi_rx_data.rx_data.value;
+    hwif_out.spi_tx_control.tx_data_valid.value <= field_storage.spi_tx_control.tx_data_valid.value;
 
     -- Field: regblock.vga_color.blue
     process(all)
@@ -819,11 +761,11 @@ begin
             readback_data_var(31 downto 0) := hwif_in.fpga_id.id.next_q;
         end if;
         if rd_mux_addr = 16#C# then
-            readback_data_var(7 downto 0) := field_storage.spi_tx_data.tx_data.value;
-            readback_data_var(8) := field_storage.spi_tx_data.tx_data_valid.value;
+            readback_data_var(7 downto 0) := field_storage.spi_tx_control.tx_data.value;
+            readback_data_var(8) := field_storage.spi_tx_control.tx_data_valid.value;
         end if;
         if rd_mux_addr = 16#10# then
-            readback_data_var(7 downto 0) := field_storage.spi_rx_data.rx_data.value;
+            readback_data_var(7 downto 0) := hwif_in.spi_rx_data.rx_data.next_q;
         end if;
         if rd_mux_addr = 16#14# then
             readback_data_var(3 downto 0) := field_storage.vga_color.blue.value;
