@@ -106,7 +106,7 @@ addrmap regblock {
         default hw = rw;
 
         field {
-            desc = "RX data received over SPI";
+            desc  = "RX data received over SPI";
             reset = 0;
         } rx_data[7:0];
     } spi_rx_data @ 0x10;
@@ -122,17 +122,17 @@ addrmap regblock {
         default hw = r;
 
         field {
-            desc = "Red channel intensity (0-15)";
+            desc  = "Red channel intensity (0-15)";
             reset = 0;
         } red[11:8];
 
         field {
-            desc = "Green channel intensity (0-15)";
+            desc  = "Green channel intensity (0-15)";
             reset = 15;
         } green[7:4];
 
         field {
-            desc = "Blue channel intensity (0-15)";
+            desc  = "Blue channel intensity (0-15)";
             reset = 0;
         } blue[3:0];
     } vga_color @ 0x14;
@@ -149,17 +149,17 @@ addrmap regblock {
         default hw = w;
 
         field {
-            desc = "Status of switch 0";
+            desc  = "Status of switch 0";
             reset = 0;
         } switch_0[0:0];
 
         field {
-            desc = "Status of switch 1";
+            desc  = "Status of switch 1";
             reset = 0;
         } switch_1[1:1];
 
         field {
-            desc = "Status of switch 2";
+            desc  = "Status of switch 2";
             reset = 0;
         } switch_2[2:2];
     } switch_status @ 0x18;
@@ -172,7 +172,7 @@ addrmap regblock {
         default hw = rw;
 
         field {
-            desc = "Counter value, incremented on each bad address access";
+            desc  = "Counter value, incremented on each bad address access";
             reset = 0;
             counter;
         } count[31:0];
@@ -187,7 +187,7 @@ addrmap regblock {
         default hw = na;
 
         field {
-            desc = "Test bits";
+            desc  = "Test bits";
             reset = 0;
         } test_bits[31:0];
     } test_register_1 @ 0xF8;
@@ -200,7 +200,7 @@ addrmap regblock {
         default hw = na;
 
         field {
-            desc = "Test bits";
+            desc  = "Test bits";
             reset = 0;
         } test_bits[31:0];
     } test_register_2 @ 0xFC;
