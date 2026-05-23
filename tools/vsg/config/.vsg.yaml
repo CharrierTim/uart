@@ -23,7 +23,7 @@
 ## =====================================================================================================================
 ##  @project uart
 ##  @file    .vsg.yaml
-##  @version 1.0
+##  @version 1.1
 ##  @brief   Configuration file for VHDL Style Guide (VSG). Some part are adapted from:
 ##              - https://github.com/open-logic/open-logic/blob/main/lint/config/vsg_config.yml | By Patrick Studer
 ##  @author  Timothee Charrier
@@ -33,6 +33,7 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      11/28/2025  Timothee Charrier   Initial release
+## 1.1      23/05/2026  Timothee Charrier   Add AXI signal prefixes to port names rule
 ## =====================================================================================================================
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -3497,7 +3498,8 @@ rule:
     disable: false
     exceptions: ["CLK", "SCL_", "SDA_"]
     fixable: false
-    prefixes: ["I_", "O_", "IO_", "PAD_", "CLK_", "RST_", "REG_"]
+    prefixes:
+      ["I_", "O_", "IO_", "PAD_", "CLK_", "RST_", "REG_", "M_AXIL", S_AXISL"]
     severity: Warning
 
   port_012:
