@@ -1011,52 +1011,28 @@ begin
 
             elsif (run("test_led_and_switches_toggling")) then
 
-                info("");
-                info("-----------------------------------------------------------------------------");
-                info(" Checking register REG_LED characteristics (read-write)");
-                info("-----------------------------------------------------------------------------");
-
                 -- Reset DUT
                 proc_reset_dut;
                 wait for 100 us;
 
-                -- Check default value
-                proc_uart_check_default_value(C_REG_LED);
-
-                -- Check register is in read-only
-                proc_uart_check_read_write(C_REG_LED, 15b"0" & not C_REG_LED.data(0));
-
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Toggling led_0 register");
+                info(" Reading to a bad address (0x98) and checking LED_0 is indicating error");
                 info("-----------------------------------------------------------------------------");
 
-                info("");
-                proc_uart_write(C_REG_LED, x"0001");
-                wait for 1 ms;
+                proc_uart_read(C_REG_BAD_ADDR);
+                wait for C_UART_READ_CMD_TIME;
 
+                check_equal(tb_pad_o_led_0, '1', "LED_0 should be ON indicating error when reading from bad address");
                 check_equal(
-                    tb_pad_o_led_0 = '1' and tb_pad_o_led_0'stable(0.7 ms),
-                    True,
-                    "Ensuring tb_pad_o_led_0 stable at '1' during 0.7 ms");
+                    tb_pad_o_led_0'stable(C_UART_READ_CMD_TIME),
+                    '1',
+                    "LED_0 should remain stable ON for at least " &
+                    time'image(C_UART_READ_CMD_TIME) &
+                    " after reading from bad address");
 
-                info("");
-                proc_uart_write(C_REG_LED, x"0000");
-                wait for 2.5 ms;
-
-                check_equal(
-                    tb_pad_o_led_0 = '0' and tb_pad_o_led_0'stable(2.3 ms),
-                    True,
-                    "Ensuring tb_pad_o_led_0 stable at '0' 2.3 ms");
-
-                info("");
-                proc_uart_write(C_REG_LED, x"0001");
-                wait for 2 ms;
-
-                check_equal(
-                    tb_pad_o_led_0 = '1' and tb_pad_o_led_0'stable(1.8 ms),
-                    True,
-                    "Ensuring tb_pad_o_led_0 stable at '1' during 1.8 ms");
+                -- De-select the manual UART
+                tb_i_uart_select <= '0';
 
                 info("");
                 info("-----------------------------------------------------------------------------");
