@@ -22,6 +22,7 @@ runs:
         uv run bench/uart/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
         uv run bench/spi/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
         uv run bench/regblock/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
+        uv run bench/top_fpga/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage --fast_pll
 
     - name: Upload sim results
       if: always()
