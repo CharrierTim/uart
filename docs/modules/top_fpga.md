@@ -126,9 +126,9 @@ The FPGA instantiates the [uart](uart/uart.md) module with the following generic
 
 </div>
 
-### Regfile
+### Regblock
 
-The FPGA instantiates the [regfile](regfile/regfile.md) module with the following generics:
+The FPGA instantiates the [regblock](regblock/regblock.md) module with the following generics:
 
 <div class="generics-table" markdown="1">
 
