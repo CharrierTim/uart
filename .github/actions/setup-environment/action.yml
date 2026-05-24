@@ -50,7 +50,7 @@ runs:
       uses: actions/cache@v5
       with:
         path: ~/nvc
-        key: ${{ runner.os }}-nvc-r1.20.1
+        key: ${{ runner.os }}-nvc-r1.21.0
 
     - name: Build NVC if not cached
       if: steps.cache-nvc.outputs.cache-hit != 'true'
@@ -58,7 +58,7 @@ runs:
       run: |
         git clone https://github.com/nickg/nvc.git ~/nvc
         cd ~/nvc
-        git checkout r1.20.1
+        git checkout r1.21.0
         ./autogen.sh
         mkdir build && cd build
         ../configure
