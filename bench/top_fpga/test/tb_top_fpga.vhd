@@ -1020,8 +1020,23 @@ begin
 
                 info("");
                 info("-----------------------------------------------------------------------------");
+                info(" Checking " & C_REG_BAD_ADDR.name & " register default value");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking " & C_REG_BAD_ADDR.name & " is in read-only mode");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_check_read_only(C_REG_BAD_ADDRESS_COUNTER);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
                 info(" Reading to a bad address (0x98) and checking LED_0 is indicating error");
                 info("-----------------------------------------------------------------------------");
+                info("");
 
                 proc_uart_read(C_REG_BAD_ADDR);
                 wait for C_UART_READ_CMD_TIME;
@@ -1042,6 +1057,7 @@ begin
                 info("-----------------------------------------------------------------------------");
                 info(" Writing to a bad address (0x98) and checking LED_0 is indicating error");
                 info("-----------------------------------------------------------------------------");
+                info("");
 
                 proc_uart_write(C_REG_BAD_ADDR, x"FEDC_BA98");
                 wait for C_UART_WRITE_CMD_TIME;
