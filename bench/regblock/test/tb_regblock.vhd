@@ -39,7 +39,6 @@ library ieee;
     use ieee.numeric_std.all;
 
 library lib_rtl;
-    use lib_rtl.axi4lite_intf_pkg.all;
     use lib_rtl.regblock_pkg.all;
 
 library vunit_lib;
@@ -593,6 +592,7 @@ begin
                 proc_axi_lite_check_read_only(C_REG_FPGA_ID);
                 proc_axi_lite_check_read_only(C_REG_SPI_RX_DATA);
                 proc_axi_lite_check_read_only(C_REG_SWITCH_STATUS);
+                proc_axi_lite_check_read_only(C_REG_BAD_ADDRESS_COUNTER);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
