@@ -59,7 +59,7 @@ THIS_DIR: Path = Path(__file__).resolve().parent
 PRJ_ROOT: Path = THIS_DIR.parent.parent.parent
 VHDL_OUTPUT_DIR: Path = PRJ_ROOT / "sources" / "regblock"
 HTML_REPORT_OUTPUT_DIR: Path = THIS_DIR.parent / "report"
-MARKDOWN_REPORT_OUTPUT_PATH: Path = PRJ_ROOT / "docs" / "modules" / "regblock.md"
+MARKDOWN_REPORT_OUTPUT_PATH: Path = THIS_DIR.parent / "report" / "markdown" / "regblock.md"
 DEFAULT_INPUT_FILES: tuple[Path, ...] = (PRJ_ROOT / "tools" / "peakrdl" / "config" / "regblock.rdl",)
 
 
