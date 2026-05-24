@@ -341,7 +341,7 @@ begin
     -- vsg_off: increment bad_address_counter on AXI error responses
     hwif_in.bad_address_counter.count.incr   <= '1' when ((axil_bvalid = '1' and axil_bready = '1' and axil_bresp = "10")
                                                         or
-                                                        (axil_rvalid = '1' and axil_rready = '1' and axil_rresp = "10")) else
+                                                          (axil_rvalid = '1' and axil_rready = '1' and axil_rresp = "10")) else
                                                 '0';
 
     hwif_in.bad_address_counter.count.next_q <= hwif_out.bad_address_counter.count.value;
