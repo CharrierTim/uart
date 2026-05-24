@@ -110,14 +110,15 @@ source $CORES_DIR/open-logic/tools/vivado/import_sources.tcl
 ## =====================================================================================================================
 
 set VHDL_SOURCES [list \
-    [list lib_rtl "$SOURCES_DIR/regfile/regfile_pkg.vhd" 2008] \
-    [list lib_rtl "$SOURCES_DIR/regfile/regfile.vhd"     2008] \
-    [list lib_rtl "$SOURCES_DIR/vga/vga_controller.vhd"  2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/uart_rx.vhd"        2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/uart_tx.vhd"        2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/uart.vhd"           2008] \
-    [list lib_rtl "$SOURCES_DIR/spi/spi_master.vhd"      2008] \
-    [list lib_rtl "$SOURCES_DIR/top_fpga/top_fpga.vhd"   2008] \
+    [list lib_rtl "$SOURCES_DIR/regblock/reg_utils.vhd"    2008] \
+    [list lib_rtl "$SOURCES_DIR/regblock/regblock_pkg.vhd" 2008] \
+    [list lib_rtl "$SOURCES_DIR/regblock/regblock.vhd"     2008] \
+    [list lib_rtl "$SOURCES_DIR/vga/vga_controller.vhd"    2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart_rx.vhd"          2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart_tx.vhd"          2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart.vhd"             2008] \
+    [list lib_rtl "$SOURCES_DIR/spi/spi_master.vhd"        2008] \
+    [list lib_rtl "$SOURCES_DIR/top_fpga/top_fpga.vhd"     2008] \
 ]
 
 foreach source $VHDL_SOURCES {
