@@ -37,7 +37,7 @@
 -- 2.1      22/01/2026  Timothee Charrier   Improve FSM readability by adding a soft reset instead of using a condition
 --                                          in clocked p_fsm_seq process.
 -- 2.2      09/04/2026  Timothee Charrier   Refactor soft reset sequential process to be more clear and concise.
--- 2.3      15/06/2026  Timothee Charrier   Update UART interface to AXI4-Lite and update the protocol accordingly.
+-- 2.3      24/05/2026  Timothee Charrier   Update UART interface to AXI4-Lite and update the protocol accordingly.
 -- =====================================================================================================================
 
 library ieee;
