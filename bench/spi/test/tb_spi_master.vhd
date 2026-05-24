@@ -33,6 +33,8 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+-- 2.1      24/05/2026  Timothee Charrier   Update testbench to reflect removal of o_rx_data_valid signal in DUT and
+--                                          pulse register for i_tx_data_valid.
 -- =====================================================================================================================
 
 library ieee;
@@ -426,8 +428,10 @@ begin
                 wait for C_CLK_PERIOD;
 
                 -- Pulse valid signal
+                wait until rising_edge(tb_clk);
                 tb_i_tx_data_valid <= '1';
-                wait for 2 * C_CLK_PERIOD;
+                wait until rising_edge(tb_clk);
+                tb_i_tx_data_valid <= '0';
 
                 wait for 3 * C_SPI_TRANSACTION_TIME;
 
