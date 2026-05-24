@@ -23,7 +23,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run_synthesis.tcl
-## @version 1.3
+## @version 1.4
 ## @brief   Synthesis script for Vivado
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -36,6 +36,7 @@
 ## 1.2      09/01/2026  Timothee Charrier   Remove deprecated 'resync_slv' module and add open-logic library.
 ##                                          Add report_bus_skew command and report
 ## 1.3      11/04/2026  Timothee Charrier   Add GIT_STATUS generic to the top entity.
+## 1.4      24/05/2026  Timothee Charrier   Update VHDL source list with new regblock files and add FPGA_ID generic.
 ## =====================================================================================================================
 
 
@@ -110,14 +111,15 @@ source $CORES_DIR/open-logic/tools/vivado/import_sources.tcl
 ## =====================================================================================================================
 
 set VHDL_SOURCES [list \
-    [list lib_rtl "$SOURCES_DIR/regfile/regfile_pkg.vhd" 2008] \
-    [list lib_rtl "$SOURCES_DIR/regfile/regfile.vhd"     2008] \
-    [list lib_rtl "$SOURCES_DIR/vga/vga_controller.vhd"  2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/uart_rx.vhd"        2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/uart_tx.vhd"        2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/uart.vhd"           2008] \
-    [list lib_rtl "$SOURCES_DIR/spi/spi_master.vhd"      2008] \
-    [list lib_rtl "$SOURCES_DIR/top_fpga/top_fpga.vhd"   2008] \
+    [list lib_rtl "$SOURCES_DIR/regblock/reg_utils.vhd"    2008] \
+    [list lib_rtl "$SOURCES_DIR/regblock/regblock_pkg.vhd" 2008] \
+    [list lib_rtl "$SOURCES_DIR/regblock/regblock.vhd"     2008] \
+    [list lib_rtl "$SOURCES_DIR/vga/vga_controller.vhd"    2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart_rx.vhd"          2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart_tx.vhd"          2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart.vhd"             2008] \
+    [list lib_rtl "$SOURCES_DIR/spi/spi_master.vhd"        2008] \
+    [list lib_rtl "$SOURCES_DIR/top_fpga/top_fpga.vhd"     2008] \
 ]
 
 foreach source $VHDL_SOURCES {
@@ -156,10 +158,17 @@ set git_hash [exec git log -1 --pretty=%H]
 set GIT_ID   [string range $git_hash 0 7]
 
 ## =====================================================================================================================
+# Getting FPGA ID for internal registers to current timestamp
+## =====================================================================================================================
+
+set fpga_id_timestamp [clock format [clock seconds] -format "%Y%m%d%H%M%S"]
+set FPGA_ID           [string range $fpga_id_timestamp 0 7]
+
+## =====================================================================================================================
 # Set the generics for the top entity
 ## =====================================================================================================================
 
-set_property generic [list G_GIT_ID=32'h$GIT_ID G_GIT_STATUS=1'b$GIT_STATUS] [current_fileset]
+set_property generic [list G_GIT_ID=32'h$GIT_ID G_GIT_STATUS=1'b$GIT_STATUS G_FPGA_ID=32'h$FPGA_ID] [current_fileset]
 
 ## =====================================================================================================================
 # Adding constraint

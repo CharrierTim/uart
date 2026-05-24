@@ -10,7 +10,7 @@ ci:
     skip: []
     submodules: false
 
-exclude: "^(cores|bench/models/spi)/"
+exclude: "^(cores|bench/models/spi|sources/regblock)/"
 
 repos:
     # Simple hooks
@@ -38,10 +38,10 @@ repos:
           - id: vsg
             args:
                 - --jobs=4
-                - --configuration=lint/config/.vsg.yaml
+                - --configuration=tools/vsg/config/.vsg.yaml
 
     - repo: https://github.com/DavidAnson/markdownlint-cli2
       rev: v0.22.1
       hooks:
           - id: markdownlint-cli2
-            args: ["--fix", "--config", "lint/config/.markdownlint.yaml"]
+            args: ["--fix", "--config", "tools/markdownlint-cli2/config/.markdownlint.yaml"]

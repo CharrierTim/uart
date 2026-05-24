@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    uart.vhd
--- @version 2.1
+-- @version 2.3
 -- @brief   Top-level UART module, implementing both TX and RX functionalities with a custom protocol
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -37,6 +37,7 @@
 -- 2.1      22/01/2026  Timothee Charrier   Improve FSM readability by adding a soft reset instead of using a condition
 --                                          in clocked p_fsm_seq process.
 -- 2.2      09/04/2026  Timothee Charrier   Refactor soft reset sequential process to be more clear and concise.
+-- 2.3      24/05/2026  Timothee Charrier   Update UART interface to AXI4-Lite and update the protocol accordingly.
 -- =====================================================================================================================
 
 library ieee;
@@ -57,20 +58,31 @@ entity UART is
     );
     port (
         -- Clock and reset
-        CLK               : in    std_logic;
-        RST_P             : in    std_logic;
+        CLK            : in    std_logic;
+        RST_P          : in    std_logic;
         -- UART interface
-        I_UART_RX         : in    std_logic;
-        O_UART_TX         : out   std_logic;
-        -- Read data interface
-        O_READ_ADDR       : out   std_logic_vector( 8 - 1 downto 0);
-        O_READ_ADDR_VALID : out   std_logic;
-        I_READ_DATA       : in    std_logic_vector(16 - 1 downto 0);
-        I_READ_DATA_VALID : in    std_logic;
-        -- Write data interface
-        O_WRITE_ADDR      : out   std_logic_vector( 8 - 1 downto 0);
-        O_WRITE_DATA      : out   std_logic_vector(16 - 1 downto 0);
-        O_WRITE_VALID     : out   std_logic
+        I_UART_RX      : in    std_logic;
+        O_UART_TX      : out   std_logic;
+        -- AXI4-Lite interface for register access
+        M_AXIL_AWREADY : in    std_logic;
+        M_AXIL_AWVALID : out   std_logic;
+        M_AXIL_AWADDR  : out   std_logic_vector( 8 - 1 downto 0);
+        M_AXIL_AWPROT  : out   std_logic_vector( 2 downto 0);
+        M_AXIL_WREADY  : in    std_logic;
+        M_AXIL_WVALID  : out   std_logic;
+        M_AXIL_WDATA   : out   std_logic_vector(32 - 1 downto 0);
+        M_AXIL_WSTRB   : out   std_logic_vector( 4 - 1 downto 0);
+        M_AXIL_BREADY  : out   std_logic;
+        M_AXIL_BVALID  : in    std_logic;
+        M_AXIL_BRESP   : in    std_logic_vector( 1 downto 0);
+        M_AXIL_ARREADY : in    std_logic;
+        M_AXIL_ARVALID : out   std_logic;
+        M_AXIL_ARADDR  : out   std_logic_vector( 8 - 1 downto 0);
+        M_AXIL_ARPROT  : out   std_logic_vector( 2 downto 0);
+        M_AXIL_RREADY  : out   std_logic;
+        M_AXIL_RVALID  : in    std_logic;
+        M_AXIL_RDATA   : in    std_logic_vector(32 - 1 downto 0);
+        M_AXIL_RRESP   : in    std_logic_vector( 1 downto 0)
     );
 end entity UART;
 
@@ -95,8 +107,9 @@ architecture UART_ARCH of UART is
         STATE_IDLE,
 
         -- Write mode states
-        STATE_WRITE_MODE,     -- Receiving address and data bytes
-        STATE_WRITE_MODE_END, -- Validating write command
+        STATE_WRITE_MODE,           -- Receiving address and data bytes
+        STATE_WRITE_MODE_END,       -- Validating write command
+        STATE_WRITE_MODE_WAIT_RESP, -- Waiting for write response
 
         -- Read mode states
         STATE_READ_MODE,           -- Receiving address bytes
@@ -110,11 +123,11 @@ architecture UART_ARCH of UART is
     -- =================================================================================================================
 
     -- Number of byte to count
-    constant C_READ_MODE_BYTE_COUNT  : positive := 3; -- ADDR        + CR
-    constant C_WRITE_MODE_BYTE_COUNT : positive := 7; -- ADDR + DATA + CR
+    constant C_READ_MODE_BYTE_COUNT  : positive := 3;  -- ADDR        + CR
+    constant C_WRITE_MODE_BYTE_COUNT : positive := 11; -- ADDR + DATA + CR
 
     -- Number of bytes to transmit
-    constant C_TX_DATA_BYTES         : positive := 5; -- Number of hex chars to transmit for data + CR
+    constant C_TX_DATA_BYTES         : positive := 8; -- Number of hex chars to transmit + CR (starting from 0)
 
     -- ASCII to hexadecimal conversion table
 
@@ -156,17 +169,27 @@ architecture UART_ARCH of UART is
     signal next_write_valid          : std_logic;
 
     -- RX module signals
-    signal rx_byte_count             : unsigned(3 - 1 downto 0);
+    signal rx_byte_count             : unsigned(4 - 1 downto 0);
     signal rx_byte                   : std_logic_vector( 8 - 1 downto 0);
     signal rx_byte_decoded           : std_logic_vector( 4 - 1 downto 0);
     signal rx_byte_valid             : std_logic;
 
     -- TX module signals
-    signal tx_byte_count             : unsigned(3 - 1 downto 0);
+    signal tx_byte_count             : unsigned(4 - 1 downto 0);
     signal tx_byte_to_send           : std_logic_vector( 4 - 1 downto 0);
     signal tx_byte_to_send_encoded   : std_logic_vector( 8 - 1 downto 0);
     signal tx_byte_to_send_valid     : std_logic;
     signal tx_byte_send              : std_logic;
+
+    -- Stored data to send via UART after a read transaction
+    signal data_to_send              : std_logic_vector(32 - 1 downto 0);
+
+    -- AXI4-Lite handshake
+    signal read_addr_hs              : std_logic;
+    signal read_data_hs              : std_logic;
+    signal write_addr_hs             : std_logic;
+    signal write_data_hs             : std_logic;
+    signal write_resp_hs             : std_logic;
 
 begin
 
@@ -255,6 +278,18 @@ begin
                        C_CHAR_F.hex when rx_byte = C_CHAR_F.ascii else
                        4x"0";
 
+    -- AXI4-Lite handshake detection
+    read_addr_hs  <= '1' when (M_AXIL_ARVALID = '1' and M_AXIL_ARREADY = '1') else
+                     '0';
+    read_data_hs  <= '1' when (M_AXIL_RVALID = '1' and M_AXIL_RREADY = '1') else
+                     '0';
+    write_addr_hs <= '1' when (M_AXIL_AWVALID = '1' and M_AXIL_AWREADY = '1') else
+                     '0';
+    write_data_hs <= '1' when (M_AXIL_WVALID = '1' and M_AXIL_WREADY = '1') else
+                     '0';
+    write_resp_hs <= '1' when (M_AXIL_BVALID = '1' and M_AXIL_BREADY = '1') else
+                     '0';
+
     -- =================================================================================================================
     -- FSM sequential process for state transitions and byte count
     -- =================================================================================================================
@@ -299,11 +334,10 @@ begin
                 if (current_state = STATE_IDLE) then
                     tx_byte_count         <= (others => '0');
                     tx_byte_to_send_valid <= '0';
-                elsif (
-                       (I_READ_DATA_VALID = '1') -- First byte to send
-                       or
-                       (tx_byte_send = '1')      -- Other bytes to send
-                   ) then
+                elsif (read_data_hs = '1') then
+                    tx_byte_count         <= (others => '0');
+                    tx_byte_to_send_valid <= '1';
+                elsif (tx_byte_send = '1') then
                     tx_byte_count         <= tx_byte_count + 1;
                     tx_byte_to_send_valid <= '1';
                 else
@@ -380,12 +414,12 @@ begin
             -- =========================================================================================================
             -- STATE: READ_MODE_WAIT_DATA
             -- =========================================================================================================
-            -- Wait for the data from the regfile
+            -- Wait for the data from the regblock
             -- =========================================================================================================
 
             when STATE_READ_MODE_WAIT_DATA =>
 
-                if (I_READ_DATA_VALID = '1') then
+                if (read_data_hs = '1') then
                     next_state <= STATE_READ_MODE_SEND_DATA;
                 else
                     next_state <= STATE_READ_MODE_WAIT_DATA;
@@ -409,11 +443,11 @@ begin
             -- STATE: WRITE_MODE
             -- =========================================================================================================
             -- In this mode, we decode the incoming write address and data
-            -- Protocol is: RAB1235\r
-            --       Where:     - A    is the address MSB
-            --                  - B    is the address LSB
-            --                  - 1234 is the data
-            --                  - \r   is the carriage return
+            -- Protocol is: RAB12345678\r
+            --       Where:     - A        is the address MSB
+            --                  - B        is the address LSB
+            --                  - 12345678 is the data
+            --                  - \r       is the carriage return
             -- =========================================================================================================
 
             when STATE_WRITE_MODE =>
@@ -439,7 +473,19 @@ begin
 
             when STATE_WRITE_MODE_END =>
 
-                next_state <= STATE_IDLE;
+                next_state <= STATE_WRITE_MODE_WAIT_RESP;
+
+            -- =========================================================================================================
+            -- STATE: WRITE_MODE_WAIT_RESP
+            -- =========================================================================================================
+
+            when STATE_WRITE_MODE_WAIT_RESP =>
+
+                if (write_resp_hs = '1') then
+                    next_state <= STATE_IDLE;
+                else
+                    next_state <= STATE_WRITE_MODE_WAIT_RESP;
+                end if;
 
         end case;
 
@@ -503,10 +549,14 @@ begin
                 case tx_byte_count is
 
                     -- vsg_off
-                    when "001"  => tx_byte_to_send <= I_READ_DATA(15 downto 12); -- Data (bits 15 - 12)
-                    when "010"  => tx_byte_to_send <= I_READ_DATA(11 downto  8); -- Data (bits 11 -  8)
-                    when "011"  => tx_byte_to_send <= I_READ_DATA( 7 downto  4); -- Data (bits  7 -  4)
-                    when "100"  => tx_byte_to_send <= I_READ_DATA( 3 downto  0); -- Data (bits  3 -  0)
+                    when "0000"  => tx_byte_to_send <= data_to_send(31 downto 28); -- Data (bits 31 - 28)
+                    when "0001"  => tx_byte_to_send <= data_to_send(27 downto 24); -- Data (bits 27 - 24)
+                    when "0010"  => tx_byte_to_send <= data_to_send(23 downto 20); -- Data (bits 23 - 20)
+                    when "0011"  => tx_byte_to_send <= data_to_send(19 downto 16); -- Data (bits 19 - 16)
+                    when "0100"  => tx_byte_to_send <= data_to_send(15 downto 12); -- Data (bits 15 - 12)
+                    when "0101"  => tx_byte_to_send <= data_to_send(11 downto  8); -- Data (bits 11 -  8)
+                    when "0110"  => tx_byte_to_send <= data_to_send( 7 downto  4); -- Data (bits  7 -  4)
+                    when "0111"  => tx_byte_to_send <= data_to_send( 3 downto  0); -- Data (bits  3 -  0)
                     when others => null;
                     -- vsg_on
 
@@ -517,11 +567,11 @@ begin
             -- =========================================================================================================
             -- In this mode, we decode the incoming write address and data.
             -- The rx_byte_count start after receiving a 'W' or 'R'.
-            -- Protocol is: RAB1235\r
-            --       Where:     - A    is the address MSB
-            --                  - B    is the address LSB
-            --                  - 1234 is the data
-            --                  - \r   is the carriage return
+            -- Protocol is: RAB12345678\r
+            --       Where:     - A        is the address MSB
+            --                  - B        is the address LSB
+            --                  - 12345678 is the data
+            --                  - \r       is the carriage return
             -- =========================================================================================================
 
             when STATE_WRITE_MODE =>
@@ -534,67 +584,137 @@ begin
 
                 next_write_valid <= '1';
 
+            when STATE_WRITE_MODE_WAIT_RESP =>
+
         end case;
 
     end process p_next_outputs_comb;
 
     -- =================================================================================================================
-    -- OUTPUT ASSIGNMENTS
+    -- AXI4-Lite signal assignments
     -- =================================================================================================================
 
-    p_outputs_seq : process (CLK, RST_P) is
+    p_axil_signals_seq : process (CLK, RST_P) is
     begin
 
         if (RST_P = '1') then
 
-            O_READ_ADDR       <= (others => '0');
-            O_READ_ADDR_VALID <= '0';
-            O_WRITE_ADDR      <= (others => '0');
-            O_WRITE_DATA      <= (others => '0');
-            O_WRITE_VALID     <= '0';
+            data_to_send   <= (others => '0');
+
+            M_AXIL_AWVALID <= '0';
+            M_AXIL_AWADDR  <= (others => '0');
+            M_AXIL_AWPROT  <= (others => '0');
+            M_AXIL_WVALID  <= '0';
+            M_AXIL_WDATA   <= (others => '0');
+            M_AXIL_WSTRB   <= (others => '0');
+            M_AXIL_BREADY  <= '0';
+            M_AXIL_ARVALID <= '0';
+            M_AXIL_ARADDR  <= (others => '0');
+            M_AXIL_ARPROT  <= (others => '0');
+            M_AXIL_RREADY  <= '0';
 
         elsif rising_edge(CLK) then
 
-            -- Update the read address and valid signal
-            if (rx_byte_valid = '1') then
+            -- Tied off signals
+            M_AXIL_AWPROT <= (others => '0');
+            M_AXIL_ARPROT <= (others => '0');
 
-                case rx_byte_count is
+            -- Synchronous soft reset
+            if (rst_soft_p = '1') then
 
-                    -- vsg_off
-                    when "000"  => O_READ_ADDR(7 downto 4) <= rx_byte_decoded; -- Addr MSB
-                    when "001"  => O_READ_ADDR(3 downto 0) <= rx_byte_decoded; -- Addr LSB
-                    when others => null;
-                    -- vsg_on
+                data_to_send   <= (others => '0');
 
-                end case;
+                M_AXIL_AWVALID <= '0';
+                M_AXIL_WVALID  <= '0';
+                M_AXIL_BREADY  <= '0';
+                M_AXIL_ARVALID <= '0';
+                M_AXIL_RREADY  <= '0';
+                M_AXIL_WSTRB   <= (others => '0');
+
+            else
+
+                -- Read address channel
+                if (next_read_valid = '1') then
+                    M_AXIL_ARVALID <= '1';
+                elsif (read_addr_hs = '1') then
+                    M_AXIL_ARVALID <= '0';
+                end if;
+
+                -- Read data channel
+                if (read_addr_hs = '1') then
+                    M_AXIL_RREADY <= '1';
+                elsif (read_data_hs = '1') then
+                    M_AXIL_RREADY <= '0';
+                end if;
+
+                if (read_data_hs = '1') then
+                    data_to_send <= M_AXIL_RDATA;
+                end if;
+
+                -- Write address channel
+                if (next_write_valid = '1') then
+                    M_AXIL_AWVALID <= '1';
+                elsif (write_addr_hs = '1') then
+                    M_AXIL_AWVALID <= '0';
+                end if;
+
+                -- Write data channel
+                if (next_write_valid = '1') then
+                    M_AXIL_WVALID <= '1';
+                    M_AXIL_WSTRB  <= (others => '1');
+                elsif (write_data_hs = '1') then
+                    M_AXIL_WVALID <= '0';
+                end if;
+
+                -- Write response channel
+                if (next_write_valid = '1') then
+                    M_AXIL_BREADY <= '1';
+                elsif (write_resp_hs = '1') then
+                    M_AXIL_BREADY <= '0';
+                end if;
+
+                -- Update the read address and valid signal
+                if (rx_byte_valid = '1') then
+
+                    case rx_byte_count is
+
+                        -- vsg_off
+                        when "0000" => M_AXIL_ARADDR(7 downto 4) <= rx_byte_decoded; -- Addr MSB
+                        when "0001" => M_AXIL_ARADDR(3 downto 0) <= rx_byte_decoded; -- Addr LSB
+                        when others => null;
+                        -- vsg_on
+
+                    end case;
+
+                end if;
+
+                -- Update the write address, data and valid signal
+                if (rx_byte_valid = '1') then
+
+                    case rx_byte_count is
+
+                        -- vsg_off
+                        when "0000" => M_AXIL_AWADDR(7 downto  4) <= rx_byte_decoded; -- Addr MSB
+                        when "0001" => M_AXIL_AWADDR(3 downto  0) <= rx_byte_decoded; -- Addr LSB
+                        when "0010" => M_AXIL_WDATA(31 downto 28) <= rx_byte_decoded; -- Data (bits 31 - 28)
+                        when "0011" => M_AXIL_WDATA(27 downto 24) <= rx_byte_decoded; -- Data (bits 27 - 24)
+                        when "0100" => M_AXIL_WDATA(23 downto 20) <= rx_byte_decoded; -- Data (bits 23 - 20)
+                        when "0101" => M_AXIL_WDATA(19 downto 16) <= rx_byte_decoded; -- Data (bits 19 - 16)
+                        when "0110" => M_AXIL_WDATA(15 downto 12) <= rx_byte_decoded; -- Data (bits 15 - 12)
+                        when "0111" => M_AXIL_WDATA(11 downto  8) <= rx_byte_decoded; -- Data (bits 11 -  8)
+                        when "1000" => M_AXIL_WDATA( 7 downto  4) <= rx_byte_decoded; -- Data (bits  7 -  4)
+                        when "1001" => M_AXIL_WDATA( 3 downto  0) <= rx_byte_decoded; -- Data (bits  3 -  0)
+                        when others => null;
+                        -- vsg_on
+
+                    end case;
+
+                end if;
 
             end if;
-
-            O_READ_ADDR_VALID <= next_read_valid;
-
-            -- Update the write address, data and valid signal
-            if (rx_byte_valid = '1') then
-
-                case rx_byte_count is
-
-                    -- vsg_off
-                    when "000"  => O_WRITE_ADDR( 7 downto  4) <= rx_byte_decoded; -- Addr MSB
-                    when "001"  => O_WRITE_ADDR( 3 downto  0) <= rx_byte_decoded; -- Addr LSB
-                    when "010"  => O_WRITE_DATA(15 downto 12) <= rx_byte_decoded; -- Data (bits 15 - 12)
-                    when "011"  => O_WRITE_DATA(11 downto  8) <= rx_byte_decoded; -- Data (bits 11 -  8)
-                    when "100"  => O_WRITE_DATA( 7 downto  4) <= rx_byte_decoded; -- Data (bits  7 -  4)
-                    when "101"  => O_WRITE_DATA( 3 downto  0) <= rx_byte_decoded; -- Data (bits  3 -  0)
-                    when others => null;
-                    -- vsg_on
-
-                end case;
-
-            end if;
-
-            O_WRITE_VALID <= next_write_valid;
 
         end if;
 
-    end process p_outputs_seq;
+    end process p_axil_signals_seq;
 
 end architecture UART_ARCH;

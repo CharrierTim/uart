@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
-| Date         : Sat Apr 11 18:50:41 2026
-| Host         : fedora running 64-bit unknown
+| Date         : Sun May 24 14:05:54 2026
+| Host         : fedora.home running 64-bit unknown
 | Command      : report_drc -file /home/tim/projects/uart/synthesis/results/impl/uart_drc.rpt
 | Design       : TOP_FPGA
 | Device       : xc7z020clg484-1

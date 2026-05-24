@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run.py
-## @version 2.4
+## @version 2.5
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
 ##          Top-level module.
 ## @author  Timothee Charrier
@@ -41,6 +41,11 @@
 ## 2.2      06/05/2026  Timothee Charrier   Add Questa or ModelSim support, fix `LIB_SRC` to `LIB_RTL`
 ## 2.3      10/05/2026  Timothee Charrier   Fix missing GHDL parser flag and add custom vhdl_ls.toml generation method
 ## 2.4      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory
+## 2.5      19/05/2026  Timothee Charrier   Improved `Simulator` class removing coverage flags from this file
+##          23/05/2026  Timothee Charrier   Fix `post_run` callback that should be called regardless of coverage being
+##                                          enabled or not for output results merge.
+##          24/05/2026  Timothee Charrier   Add support for a fast PLL model to quickly iterate without needing Vivado
+##                                          PLL simulation files.
 ## =====================================================================================================================
 
 import sys
@@ -67,9 +72,6 @@ CORES_ROOT: Path = PRJ_ROOT / "cores"
 BENCH_ROOT: Path = THIS_DIR
 MODELS_ROOT: Path = PRJ_ROOT / "bench" / "models"
 
-COVERAGE_SPEC_PATH: Path = THIS_DIR / "coverage.spec"
-RESULTS_DIR: Path = THIS_DIR / "results"
-
 ## =====================================================================================================================
 # Parse command line arguments
 ## =====================================================================================================================
@@ -81,6 +83,7 @@ cli.parser.add_argument("--modelsim", dest="questa", action="store_true", help="
 cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
 cli.parser.add_argument("--questa", dest="questa", action="store_true", help="Use Questa/ModelSim as the simulator")
 cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
+cli.parser.add_argument("--fast_pll", action="store_true", help="Use a fast PLL model if Vivado not installed")
 args: Namespace = cli.parse_args()
 
 ## =====================================================================================================================
@@ -90,7 +93,7 @@ args: Namespace = cli.parse_args()
 sim_name: Literal["nvc", "ghdl", "questa/modelsim"] | None = (
     "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if args.questa else None
 )
-simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage, result_dir=RESULTS_DIR)
+simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage, run_file_dir=THIS_DIR)
 
 VU: VUnit = VUnit.from_args(args=args)
 VU.add_vhdl_builtins()
@@ -105,28 +108,17 @@ OLO.add_compile_option(name="nvc.a_flags", value=["--relaxed"])
 # Add the source files to the library
 LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
 LIB_RTL.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
-LIB_RTL.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
+
+if not args.fast_pll:
+    LIB_RTL.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
+else:
+    LIB_RTL.add_source_file(file_name=MODELS_ROOT / "pll" / "pll_fast_sim.vhd")
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
-LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "**" / "*.vhd")
+LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "uart" / "*.vhd")
+LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "spi" / "*.vhd")
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
-
-## =====================================================================================================================
-# Configure simulation
-## =====================================================================================================================
-
-if args.coverage:
-    LIB_BENCH.set_sim_option(name="enable_coverage", value=True)
-
-    if simulator.get_simulator_name() == "nvc":
-        LIB_BENCH.set_sim_option(name="nvc.elab_flags", value=[f"--cover-spec={COVERAGE_SPEC_PATH}"], overwrite=False)
-
-    elif simulator.get_simulator_name() == "modelsim" or simulator.get_simulator_name() == "questa":
-        LIB_RTL.set_compile_option(name="modelsim.vcom_flags", value=["+cover=bcefs"])
-        LIB_RTL.set_compile_option(name="modelsim.vlog_flags", value=["+cover=bcefs"])
-        LIB_BENCH.set_compile_option(name="modelsim.vcom_flags", value=["+cover=bcefs"])
-        LIB_BENCH.set_compile_option(name="modelsim.vlog_flags", value=["+cover=bcefs"])
 
 ## =====================================================================================================================
 # Set up simulator
@@ -134,8 +126,9 @@ if args.coverage:
 
 simulator.attach(VU).configure()
 
-simulator.add_library(library_name="unisim")
-simulator.add_library(library_name="unifast")
+if not args.fast_pll:
+    simulator.add_library(library_name="unisim")
+    simulator.add_library(library_name="unifast")
 
 ## =====================================================================================================================
 # Generate vhdl_ls configuration if requested and exit
@@ -154,8 +147,4 @@ if args.vhdl_ls:
 # Run
 ## =====================================================================================================================
 
-# Only set post_run callback if coverage is enabled
-if args.coverage:
-    VU.main(post_run=simulator.post_run)
-else:
-    VU.main()
+VU.main(post_run=simulator.post_run)

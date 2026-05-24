@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 2.1
+-- @version 2.2
 -- @brief   Top-Level Testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -36,6 +36,11 @@
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high. Add VGA horizontal and
 --                                          vertical timings test.
 -- 2.1      17/04/2026  Timothee Charrier   Add VGA test vectors and procedure to check VGA outputs
+-- 2.2      23/05/2026  Timothee Charrier   Major refactor with:
+--                                              - Update register (now SystemDL-generated) definitions to 32 bits
+--                                              - Update LED functionality to bad address indicator
+--                                              - Fix proc_vga_check_outputs to correctly sample VGA outputs during
+--                                                active video time and avoid sampling during blanking intervals
 -- =====================================================================================================================
 
 library ieee;
@@ -98,10 +103,10 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     signal tb_i_uart_select       : std_logic;
     signal tb_i_read_addr         : std_logic_vector( 8 - 1 downto 0);
     signal tb_i_read_addr_valid   : std_logic;
-    signal tb_o_read_data         : std_logic_vector(16 - 1 downto 0);
+    signal tb_o_read_data         : std_logic_vector(32 - 1 downto 0);
     signal tb_o_read_data_valid   : std_logic;
     signal tb_i_write_address     : std_logic_vector( 8 - 1 downto 0);
-    signal tb_i_write_data        : std_logic_vector(16 - 1 downto 0);
+    signal tb_i_write_data        : std_logic_vector(32 - 1 downto 0);
     signal tb_i_write_valid       : std_logic;
 
     -- UART timing verification
@@ -123,7 +128,8 @@ begin
     dut : entity lib_rtl.top_fpga
         generic map (
             G_GIT_ID     => C_GIT_ID,
-            G_GIT_STATUS => C_GIT_STATUS
+            G_GIT_STATUS => C_GIT_STATUS,
+            G_FPGA_ID    => C_FPGA_ID
         )
         port map (
             PAD_I_CLK       => tb_pad_i_clk,
@@ -214,10 +220,10 @@ begin
 
         wait until rising_edge(tb_check_uart_timings);
 
-        info("Checking UART timings on TX with value 0x5555");
+        info("Checking UART timings on TX with value 0x5555_5555");
 
         -- For each byte
-        for byte in 1 to 4 loop
+        for byte in 1 to 8 loop
 
             -- Wait for the start bit
             wait until falling_edge(tb_pad_o_uart_tx);
@@ -359,7 +365,7 @@ begin
 
         -- =============================================================================================================
         -- proc_reset_dut
-        -- Description: This procedure resets the DUT to a know state.
+        -- Description: This procedure resets the DUT to a known state.
         --
         -- Parameters:
         --   None
@@ -467,7 +473,7 @@ begin
 
         procedure proc_uart_write (
             constant reg   : t_reg;
-            constant value : std_logic_vector(16 - 1 downto 0)
+            constant value : std_logic_vector(32 - 1 downto 0)
         ) is
         begin
 
@@ -553,7 +559,7 @@ begin
 
         procedure proc_uart_check (
             constant reg            : t_reg;
-            constant expected_value : std_logic_vector(16 - 1 downto 0)
+            constant expected_value : std_logic_vector(32 - 1 downto 0)
         ) is
         begin
 
@@ -640,7 +646,7 @@ begin
 
         procedure proc_uart_check_read_write (
             constant reg            : t_reg;
-            constant expected_value : std_logic_vector(16 - 1 downto 0)
+            constant expected_value : std_logic_vector(32 - 1 downto 0)
         ) is
         begin
 
@@ -677,11 +683,8 @@ begin
 
             info("Sending value 0x" & to_hstring(value) & " to SPI master");
 
-            -- Reset C_REG_SPI before for the rising edge detection
-            proc_uart_write(C_REG_SPI_TX, x"0000");
-
             -- Write the data
-            proc_uart_write(C_REG_SPI_TX, x"01" & value);
+            proc_uart_write(C_REG_SPI_TX_CONTROL, x"0000_01" & value);
 
         end procedure proc_spi_write;
 
@@ -719,7 +722,7 @@ begin
                 "MOSI Verification: Slave received correct data from Master");
 
             -- Read MISO register data
-            proc_uart_check(C_REG_SPI_RX, x"00" & value);
+            proc_uart_check(C_REG_SPI_RX_DATA, x"0000_00" & value);
 
         end procedure proc_spi_check;
 
@@ -741,12 +744,24 @@ begin
         begin
 
             info("");
-            info("Writing VGA output signals into register " & C_REG_VGA_CTRL.name &
-                "with value 0x" & to_hstring(value));
+            info("Writing VGA output signals into register " & C_REG_VGA_COLOR_CONTROL.name &
+                " with value 0x" & to_hstring(value));
 
-            proc_uart_write(C_REG_VGA_CTRL, "0000" & value);
+            proc_uart_write(C_REG_VGA_COLOR_CONTROL, x"0000_0" & value);
 
-            wait for 100 ns;
+            --
+            -- Wait for the VGA output to be active
+            --
+
+            -- Wait for start of active frame (after VSYNC pulse + back porch)
+            wait until rising_edge(tb_pad_o_vga_vsync);
+            wait for C_V_BACK_PORCH * C_H_WHOLE_LINE_TIME;
+
+            -- Wait for start of active line (after HSYNC pulse + back porch)
+            wait until rising_edge(tb_pad_o_vga_hsync);
+            wait for C_H_BACK_PORCH * C_H_VGA_PIXEL_BIT_TIME;
+            -- Sample after the pixel edge to avoid reading the previous blanking value
+            wait for C_H_VGA_PIXEL_BIT_TIME / 2;
 
             -- Check the VGA output signals match the expected value
             check_equal(tb_pad_o_vga_red,   value(11 downto 8), "Checking VGA red output");
@@ -763,7 +778,7 @@ begin
         -- Show PASS log messages for checks
         show(get_logger(default_checker), display_handler, pass);
 
-        -- Set time unit to ns for display handler
+        -- Set time unit for display handler
         set_format(display_handler, log_time_unit => ms);
 
         -- Disable stop on errors from my_logger and its children
@@ -782,50 +797,39 @@ begin
                 info(" Checking default register values");
                 info("-----------------------------------------------------------------------------");
 
-                proc_uart_check_default_value(C_REG_GIT_ID_MSB);
-                proc_uart_check_default_value(C_REG_GIT_ID_LSB);
+                proc_uart_check_default_value(C_REG_GIT_HASH);
                 proc_uart_check_default_value(C_REG_GIT_STATUS);
-                proc_uart_check_default_value(C_REG_12);
-                proc_uart_check_default_value(C_REG_34);
-                proc_uart_check_default_value(C_REG_56);
-                proc_uart_check_default_value(C_REG_78);
-                proc_uart_check_default_value(C_REG_9A);
-                proc_uart_check_default_value(C_REG_CD);
-                proc_uart_check_default_value(C_REG_EF);
-                proc_uart_check_default_value(C_REG_16_BITS);
-                proc_uart_check_default_value(C_REG_DEAD);
+                proc_uart_check_default_value(C_REG_FPGA_ID);
+                proc_uart_check_default_value(C_REG_TEST_REGISTER_1);
+                proc_uart_check_default_value(C_REG_TEST_REGISTER_2);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Checking read-only registers");
                 info("-----------------------------------------------------------------------------");
 
-                proc_uart_check_read_only(C_REG_GIT_ID_MSB);
-                proc_uart_check_read_only(C_REG_GIT_ID_LSB);
+                proc_uart_check_read_only(C_REG_GIT_HASH);
                 proc_uart_check_read_only(C_REG_GIT_STATUS);
-                proc_uart_check_read_only(C_REG_12);
-                proc_uart_check_read_only(C_REG_34);
-                proc_uart_check_read_only(C_REG_56);
-                proc_uart_check_read_only(C_REG_78);
-                proc_uart_check_read_only(C_REG_9A);
-                proc_uart_check_read_only(C_REG_CD);
-                proc_uart_check_read_only(C_REG_EF);
-                proc_uart_check_read_only(C_REG_DEAD);
+                proc_uart_check_read_only(C_REG_FPGA_ID);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Checking read-write registers");
                 info("-----------------------------------------------------------------------------");
 
-                proc_uart_check_read_write(C_REG_16_BITS, not C_REG_16_BITS.data);
+                proc_uart_check_read_write(C_REG_TEST_REGISTER_1, not C_REG_TEST_REGISTER_1.data);
+                proc_uart_check_read_write(C_REG_TEST_REGISTER_2, not C_REG_TEST_REGISTER_2.data);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Writing some values to read-write registers");
                 info("-----------------------------------------------------------------------------");
 
-                proc_uart_write(C_REG_16_BITS, x"ABCD");
-                proc_uart_check(C_REG_16_BITS, x"ABCD");
+                proc_uart_write(C_REG_TEST_REGISTER_1, x"1234_ABCD");
+                proc_uart_check(C_REG_TEST_REGISTER_1, x"1234_ABCD");
+
+                proc_uart_write(C_REG_TEST_REGISTER_2, x"6789_EF01");
+                proc_uart_check(C_REG_TEST_REGISTER_2, x"6789_EF01");
 
             elsif (run("test_uart_robustness")) then
 
@@ -937,7 +941,7 @@ begin
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Checking UART timings with value 0x5555");
+                info(" Checking UART timings with value 0x5555_5555");
                 info("-----------------------------------------------------------------------------");
 
                 -- Reset DUT
@@ -947,8 +951,8 @@ begin
                 -- Enable the timings check
                 tb_check_uart_timings <= '1';
 
-                proc_uart_write(C_REG_16_BITS, x"5555");
-                proc_uart_read (C_REG_16_BITS);
+                proc_uart_write(C_REG_TEST_REGISTER_1, x"5555_5555");
+                proc_uart_read (C_REG_TEST_REGISTER_1);
 
                 wait for C_UART_READ_CMD_TIME;
 
@@ -987,14 +991,18 @@ begin
                 wait for 100 us;
 
                 -- Read default value before write attempt
-                proc_uart_check(C_REG_16_BITS, C_REG_16_BITS.data);
+                proc_uart_check(C_REG_TEST_REGISTER_1, C_REG_TEST_REGISTER_1.data);
 
                 info("");
-                info("Sending write command WFFABCD\n -> Missing \r");
+                info("Sending write command WFF1234ABCD\n -> Missing \r");
 
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"57");
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"46");
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"46");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"31");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"32");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"33");
+                proc_uart_send_byte(tb_i_uart_rx_manual, x"34");
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"39");
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"40");
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"41");
@@ -1002,56 +1010,65 @@ begin
                 proc_uart_send_byte(tb_i_uart_rx_manual, x"0A"); -- Missing CR
 
                 -- Read back the register to ensure the data was not written
-                proc_uart_check(C_REG_16_BITS, C_REG_16_BITS.data);
+                proc_uart_check(C_REG_TEST_REGISTER_1, C_REG_TEST_REGISTER_1.data);
 
             elsif (run("test_led_and_switches_toggling")) then
-
-                info("");
-                info("-----------------------------------------------------------------------------");
-                info(" Checking register REG_LED characteristics (read-write)");
-                info("-----------------------------------------------------------------------------");
 
                 -- Reset DUT
                 proc_reset_dut;
                 wait for 100 us;
 
-                -- Check default value
-                proc_uart_check_default_value(C_REG_LED);
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking " & C_REG_BAD_ADDR.name & " register default value");
+                info("-----------------------------------------------------------------------------");
 
-                -- Check register is in read-only
-                proc_uart_check_read_write(C_REG_LED, 15b"0" & not C_REG_LED.data(0));
+                proc_uart_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Toggling led_0 register");
+                info(" Checking " & C_REG_BAD_ADDR.name & " is in read-only mode");
                 info("-----------------------------------------------------------------------------");
 
-                info("");
-                proc_uart_write(C_REG_LED, x"0001");
-                wait for 1 ms;
-
-                check_equal(
-                    tb_pad_o_led_0 = '1' and tb_pad_o_led_0'stable(0.7 ms),
-                    True,
-                    "Ensuring tb_pad_o_led_0 stable at '1' during 0.7 ms");
+                proc_uart_check_read_only(C_REG_BAD_ADDRESS_COUNTER);
 
                 info("");
-                proc_uart_write(C_REG_LED, x"0000");
-                wait for 2.5 ms;
+                info("-----------------------------------------------------------------------------");
+                info(" Reading to a bad address (0x98) and checking LED_0 is indicating error");
+                info("-----------------------------------------------------------------------------");
+                info("");
 
+                proc_uart_read(C_REG_BAD_ADDR);
+                wait for C_UART_READ_CMD_TIME;
+
+                check_equal(tb_pad_o_led_0, '1', "LED_0 should be ON indicating error when reading from bad address");
                 check_equal(
-                    tb_pad_o_led_0 = '0' and tb_pad_o_led_0'stable(2.3 ms),
-                    True,
-                    "Ensuring tb_pad_o_led_0 stable at '0' 2.3 ms");
+                    tb_pad_o_led_0'stable(C_UART_READ_CMD_TIME),
+                    '1',
+                    "LED_0 should remain stable ON for at least " &
+                    time'image(C_UART_READ_CMD_TIME) &
+                    " after reading from bad address");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
 
                 info("");
-                proc_uart_write(C_REG_LED, x"0001");
-                wait for 2 ms;
+                info("-----------------------------------------------------------------------------");
+                info(" Writing to a bad address (0x98) and checking LED_0 is indicating error");
+                info("-----------------------------------------------------------------------------");
+                info("");
 
+                proc_uart_write(C_REG_BAD_ADDR, x"FEDC_BA98");
+                wait for C_UART_WRITE_CMD_TIME;
+
+                check_equal(tb_pad_o_led_0, '1', "LED_0 should be ON indicating error when writing to bad address");
                 check_equal(
-                    tb_pad_o_led_0 = '1' and tb_pad_o_led_0'stable(1.8 ms),
-                    True,
-                    "Ensuring tb_pad_o_led_0 stable at '1' during 1.8 ms");
+                    tb_pad_o_led_0'stable(C_UART_WRITE_CMD_TIME),
+                    '1',
+                    "LED_0 should remain stable ON for at least " &
+                    time'image(C_UART_WRITE_CMD_TIME) &
+                    " after writing to bad address");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1063,10 +1080,10 @@ begin
                 wait for 100 us;
 
                 -- Check default value
-                proc_uart_check_default_value(C_REG_SWITCHES);
+                proc_uart_check_default_value(C_REG_SWITCH_STATUS);
 
                 -- Check register is in read-only
-                proc_uart_check_read_only(C_REG_SWITCHES);
+                proc_uart_check_read_only(C_REG_SWITCH_STATUS);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1087,7 +1104,7 @@ begin
                         " SW1=" & std_logic'image(tb_pad_i_switch_1) &
                         " SW0=" & std_logic'image(tb_pad_i_switch_0));
 
-                    proc_uart_check(C_REG_SWITCHES, std_logic_vector(to_unsigned(i, 16)));
+                    proc_uart_check(C_REG_SWITCH_STATUS, std_logic_vector(to_unsigned(i, 32)));
                 end loop;
 
             elsif (run("test_spi")) then
@@ -1102,16 +1119,30 @@ begin
                 wait for 100 us;
 
                 -- Check default value
-                proc_uart_check_default_value(C_REG_SPI_TX);
-                proc_uart_check_default_value(C_REG_SPI_RX);
+                proc_uart_check_default_value(C_REG_SPI_TX_CONTROL);
+                proc_uart_check_default_value(C_REG_SPI_RX_DATA);
 
-                -- Check RX register is in read-only
-                proc_uart_check_read_only(C_REG_SPI_RX);
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking SPI RX register is in read-only");
+                info("-----------------------------------------------------------------------------");
+
+                -- Check RX register is in read-only. Start with reading, else the write will
+                -- change the value and make the read-only check invalid
+                proc_uart_check_read_only(C_REG_SPI_RX_DATA);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking SPI TX register is in read-write");
+                info("-----------------------------------------------------------------------------");
 
                 -- Check TX register is in read-write and check data is matching
-                proc_uart_check_read_write(C_REG_SPI_TX, x"01FF");
+                -- Bit 8 is a singlepulse bit which will be cleared by hardware after write
+                -- so only check the lower 8 bits are correctly written and read back
+                proc_uart_check_read_write(C_REG_SPI_TX_CONTROL, x"0000_00FF");
+
                 pop_stream(net, C_SLAVE_STREAM, v_spi_slave_data);
-                check_equal(v_spi_slave_data, not(C_REG_SPI_TX.data(8 - 1 downto 0)),
+                check_equal(v_spi_slave_data, not(C_REG_SPI_TX_CONTROL.data(8 - 1 downto 0)),
                     "MOSI Verification: Slave received correct data from Master");
 
                 info("");
@@ -1157,8 +1188,8 @@ begin
                 proc_reset_dut;
                 wait for 100 us;
 
-                proc_uart_check_default_value(C_REG_VGA_CTRL);
-                proc_uart_check_read_write(C_REG_VGA_CTRL, x"0F0F");
+                proc_uart_check_default_value(C_REG_VGA_COLOR_CONTROL);
+                proc_uart_check_read_write(C_REG_VGA_COLOR_CONTROL, x"0000_0F0F");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1169,21 +1200,21 @@ begin
                 proc_reset_dut;
                 wait for 100 us;
 
-                proc_uart_write(C_REG_VGA_CTRL, x"0ABC");
+                proc_uart_write(C_REG_VGA_COLOR_CONTROL, x"0000_0ABC");
                 wait for 10 us;
-                proc_uart_check(C_REG_VGA_CTRL, x"0ABC");
+                proc_uart_check(C_REG_VGA_COLOR_CONTROL, x"0000_0ABC");
 
-                proc_uart_write(C_REG_VGA_CTRL, x"0F00");
+                proc_uart_write(C_REG_VGA_COLOR_CONTROL, x"0000_0F00");
                 wait for 10 us;
-                proc_uart_check(C_REG_VGA_CTRL, x"0F00");
+                proc_uart_check(C_REG_VGA_COLOR_CONTROL, x"0000_0F00");
 
-                proc_uart_write(C_REG_VGA_CTRL, x"00F0");
+                proc_uart_write(C_REG_VGA_COLOR_CONTROL, x"0000_00F0");
                 wait for 10 us;
-                proc_uart_check(C_REG_VGA_CTRL, x"00F0");
+                proc_uart_check(C_REG_VGA_COLOR_CONTROL, x"0000_00F0");
 
-                proc_uart_write(C_REG_VGA_CTRL, x"000F");
+                proc_uart_write(C_REG_VGA_COLOR_CONTROL, x"0000_0F0F");
                 wait for 10 us;
-                proc_uart_check(C_REG_VGA_CTRL, x"000F");
+                proc_uart_check(C_REG_VGA_COLOR_CONTROL, x"0000_0F0F");
 
                 info("");
                 info("-----------------------------------------------------------------------------");

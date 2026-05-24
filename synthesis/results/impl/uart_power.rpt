@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
-| Date             : Sat Apr 11 18:50:42 2026
-| Host             : fedora running 64-bit unknown
+| Date             : Sun May 24 14:05:55 2026
+| Host             : fedora.home running 64-bit unknown
 | Command          : report_power -file /home/tim/projects/uart/synthesis/results/impl/uart_power.rpt
 | Design           : TOP_FPGA
 | Device           : xc7z020clg484-1
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.234        |
+| Total On-Chip Power (W)  | 0.235        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.126        |
+| Dynamic (W)              | 0.127        |
 | Device Static (W)        | 0.108        |
 | Effective TJA (C/W)      | 11.5         |
 | Max Ambient (C)          | 82.3         |
@@ -53,16 +53,16 @@ Table of Contents
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
 | Clocks         |     0.002 |        6 |       --- |             --- |
-| Slice Logic    |    <0.001 |      689 |       --- |             --- |
-|   LUT as Logic |    <0.001 |      249 |     53200 |            0.47 |
-|   Register     |    <0.001 |      351 |    106400 |            0.33 |
-|   Others       |     0.000 |       33 |       --- |             --- |
-|   F7/F8 Muxes  |     0.000 |        1 |     53200 |           <0.01 |
-| Signals        |    <0.001 |      517 |       --- |             --- |
+| Slice Logic    |    <0.001 |     1123 |       --- |             --- |
+|   LUT as Logic |    <0.001 |      396 |     53200 |            0.74 |
+|   Register     |    <0.001 |      580 |    106400 |            0.55 |
+|   CARRY4       |    <0.001 |        8 |     13300 |            0.06 |
+|   Others       |     0.000 |       35 |       --- |             --- |
+| Signals        |    <0.001 |      828 |       --- |             --- |
 | PLL            |     0.123 |        1 |         4 |           25.00 |
 | I/O            |    <0.001 |       26 |       200 |           13.00 |
 | Static Power   |     0.108 |          |           |                 |
-| Total          |     0.234 |          |           |                 |
+| Total          |     0.235 |          |           |                 |
 +----------------+-----------+----------+-----------+-----------------+
 
 
@@ -72,7 +72,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.022 |       0.014 |      0.008 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.023 |       0.015 |      0.008 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.073 |       0.062 |      0.011 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.001 |       0.000 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -151,7 +151,7 @@ Table of Contents
 +------------+-----------+
 | Name       | Power (W) |
 +------------+-----------+
-| TOP_FPGA   |     0.126 |
+| TOP_FPGA   |     0.127 |
 |   inst_pll |     0.124 |
 |     inst   |     0.124 |
 +------------+-----------+

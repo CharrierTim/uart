@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_top_fpga_pck.vhd
--- @version 2.1
+-- @version 2.2
 -- @brief   Package for the Top-Level testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -34,11 +34,15 @@
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 2.0      12/01/2026  Timothee Charrier   Add VGA horizontal and vertical timings constants
 -- 2.1      17/04/2026  Timothee Charrier   Add VGA test vectors and procedure to check VGA outputs
+-- 2.2      23/05/2026  Timothee Charrier   Update register related definitions to 32 bits
 -- =====================================================================================================================
 
 library ieee;
     use ieee.std_logic_1164.all;
     use ieee.math_real.all;
+
+library lib_rtl;
+    use lib_rtl.regblock_pkg.all;
 
 library lib_bench;
     use lib_bench.spi_pkg.all;
@@ -59,9 +63,10 @@ package TB_TOP_FPGA_PKG is
     -- =================================================================================================================
 
     type t_reg is record
-        name : string;                            -- Name
-        addr : std_logic_vector( 8 - 1 downto 0); -- Address
-        data : std_logic_vector(16 - 1 downto 0); -- Value at reset
+        name           : string;                                                 -- Name
+        addr           : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0); -- Address
+        data           : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);     -- Value at reset
+        used_bits_mask : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);     -- Mask of bits that are unused
     end record t_reg;
 
     -- =================================================================================================================
@@ -73,37 +78,106 @@ package TB_TOP_FPGA_PKG is
     constant C_CLK_PERIOD                 : time     := 1 sec / C_FREQ_HZ;
 
     -- DUT generics
-    constant C_GIT_ID                     : std_logic_vector(32 - 1 downto 0) := x"12345678";
+    constant C_GIT_ID                     : std_logic_vector(32 - 1 downto 0) := x"DEAD_BEEF";
     constant C_GIT_STATUS                 : std_logic                         := '1';
+    constant C_FPGA_ID                    : std_logic_vector(32 - 1 downto 0) := x"1234_5678";
 
     -- UART model constants
     constant C_UART_BAUD_RATE_BPS         : positive := 115_200;
     constant C_UART_BIT_TIME              : time     := 1 sec / C_UART_BAUD_RATE_BPS;
     constant C_UART_BIT_TIME_ACCURACY     : time     := 0.01 * C_UART_BIT_TIME;
-    constant C_UART_WRITE_NB_BITS         : positive := 10 * 8; -- 10 bits , 8 chars in total
+    constant C_UART_WRITE_NB_BITS         : positive := 10 * 12; -- 10 bits , 12 chars in total
     constant C_UART_WRITE_CMD_TIME        : time     := C_UART_BIT_TIME * C_UART_WRITE_NB_BITS;
-    constant C_UART_READ_NB_BITS          : positive := 10 * 9; -- 10 bits , 9 chars in total
+    constant C_UART_READ_NB_BITS          : positive := 10 * 13; -- 10 bits , 13 chars in total
     constant C_UART_READ_CMD_TIME         : time     := C_UART_BIT_TIME * C_UART_READ_NB_BITS;
 
-    -- vsg_off
-    constant C_REG_GIT_ID_MSB : t_reg := (addr => 8x"00", data => 16x"1234", name => "REG_GIT_ID_MSB");
-    constant C_REG_GIT_ID_LSB : t_reg := (addr => 8x"01", data => 16x"5678", name => "REG_GIT_ID_LSB");
-    constant C_REG_GIT_STATUS : t_reg := (addr => 8x"02", data => 16x"0001", name => "REG_GIT_STATUS");
-    constant C_REG_12         : t_reg := (addr => 8x"03", data => 16x"1212", name => "REG_12");
-    constant C_REG_34         : t_reg := (addr => 8x"04", data => 16x"3434", name => "REG_34");
-    constant C_REG_56         : t_reg := (addr => 8x"05", data => 16x"5656", name => "REG_56");
-    constant C_REG_78         : t_reg := (addr => 8x"06", data => 16x"7878", name => "REG_78");
-    constant C_REG_SPI_TX     : t_reg := (addr => 8x"07", data => 16x"0000", name => "REG_SPI_TX");
-    constant C_REG_SPI_RX     : t_reg := (addr => 8x"08", data => 16x"0000", name => "REG_SPI_RX");
-    constant C_REG_VGA_CTRL   : t_reg := (addr => 8x"09", data => 16x"00F0", name => "REG_VGA_CTRL");
-    constant C_REG_9A         : t_reg := (addr => 8x"AB", data => 16x"9A9A", name => "REG_9A");
-    constant C_REG_CD         : t_reg := (addr => 8x"AC", data => 16x"CDCD", name => "REG_CD");
-    constant C_REG_EF         : t_reg := (addr => 8x"DC", data => 16x"EFEF", name => "REG_EF");
-    constant C_REG_SWITCHES   : t_reg := (addr => 8x"B1", data => 16x"0000", name => "REG_SWITCHES");
-    constant C_REG_LED        : t_reg := (addr => 8x"EF", data => 16x"0001", name => "REG_LED");
-    constant C_REG_16_BITS    : t_reg := (addr => 8x"FF", data => 16x"0000", name => "REG_16_BITS");
-    constant C_REG_DEAD       : t_reg := (addr => 8x"CC", data => 16x"DEAD", name => "REG_DEAD");
-    -- vsg_on
+    constant C_REG_GIT_HASH               : t_reg :=
+    (
+        name           => "GIT_HASH",
+        addr           => 8x"00",
+        data           => C_GIT_ID,
+        used_bits_mask => 32x"FFFF_FFFF"
+    );
+
+    constant C_REG_GIT_STATUS             : t_reg :=
+    (
+        name           => "GIT_STATUS",
+        addr           => 8x"04",
+        data           => 31x"0" & C_GIT_STATUS,
+        used_bits_mask => 32x"0000_0001"
+    );
+
+    constant C_REG_FPGA_ID                : t_reg :=
+    (
+        name           => "FPGA_ID",
+        addr           => 8x"08",
+        data           => C_FPGA_ID,
+        used_bits_mask => 32x"FFFF_FFFF"
+    );
+
+    constant C_REG_SPI_TX_CONTROL         : t_reg :=
+    (
+        name           => "SPI_TX_CONTROL",
+        addr           => 8x"0C",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"0000_00FF"
+    );
+
+    constant C_REG_SPI_RX_DATA            : t_reg :=
+    (
+        name           => "SPI_RX_DATA",
+        addr           => 8x"10",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"0000_00FF"
+    );
+
+    constant C_REG_VGA_COLOR_CONTROL      : t_reg :=
+    (
+        name           => "VGA_COLOR",
+        addr           => 8x"14",
+        data           => 32x"0000_00F0",
+        used_bits_mask => 32x"0000_0FFF"
+    );
+
+    constant C_REG_SWITCH_STATUS          : t_reg :=
+    (
+        name           => "SWITCH_STATUS",
+        addr           => 8x"18",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"0000_0003"
+    );
+
+    constant C_REG_BAD_ADDRESS_COUNTER    : t_reg :=
+    (
+        name           => "BAD_ADDRESS_COUNTER",
+        addr           => 8x"1C",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"FFFF_FFFF"
+    );
+
+    constant C_REG_TEST_REGISTER_1        : t_reg :=
+    (
+        name           => "TEST_REGISTER_1",
+        addr           => 8x"F8",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"FFFF_FFFF"
+    );
+
+    constant C_REG_TEST_REGISTER_2        : t_reg :=
+    (
+        name           => "TEST_REGISTER_2",
+        addr           => 8x"FC",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"FFFF_FFFF"
+    );
+
+    constant C_REG_BAD_ADDR               : t_reg :=
+    (
+        name           => "REG_BAD_ADDR",
+        addr           => 8x"98",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"FFFF_FFFF"
+    );
 
     -- SPI
     constant C_SPI_FREQ_HZ                : positive  := 1_000_000;

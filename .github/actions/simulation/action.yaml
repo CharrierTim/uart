@@ -5,26 +5,28 @@ description: "Run Simulations for IPs"
 # https://github.com/open-logic/open-logic/blob/main/.github/actions/simulation/action.yml
 
 inputs:
-    os:
-        description: "The runner OS"
-        required: true
-    simulator:
-        description: "ghdl, nvc"
-        required: true
+  os:
+    description: "The runner OS"
+    required: true
+  simulator:
+    description: "ghdl, nvc"
+    required: true
 
 runs:
-    using: "composite"
-    steps:
-        # Run Simulation
-        - name: Run Simulation
-          shell: bash
-          run: |
-              python3 bench/uart/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
-              python3 bench/spi/run.py  --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
+  using: "composite"
+  steps:
+    # Run Simulation
+    - name: Run Simulation
+      shell: bash
+      run: |
+        uv run bench/uart/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
+        uv run bench/spi/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
+        uv run bench/regblock/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
+        uv run bench/top_fpga/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage --fast_pll
 
-        - name: Upload sim results
-          if: always()
-          uses: actions/upload-artifact@v4
-          with:
-              name: simulation-${{ inputs.simulator }}-artifacts
-              path: sim_report_${{ inputs.simulator }}.xml
+    - name: Upload sim results
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: simulation-${{ inputs.simulator }}-artifacts
+        path: sim_report_${{ inputs.simulator }}.xml

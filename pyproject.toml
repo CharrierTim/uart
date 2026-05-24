@@ -1,20 +1,51 @@
 [project]
+name = "uart"
+
+authors = [{ name = "Timothée Charrier" }]
+maintainers = [{ name = "Timothée Charrier" }]
+
 dependencies = [
-    "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
     "rtoml",
+    "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
+]
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
+requires-python = ">=3.10"
+version = "1.0"
+
+## =====================================================================================================================
+# Note on `uv` version:
+#   UV version >= 0.11.15
+#   Without a higher or equal version, you may encounter an error with `VUnit`.
+#   See (https://github.com/astral-sh/uv/issues/9822) for more details.
+## =====================================================================================================================
+
+[tool.uv]
+required-version = ">=0.11.15"
+
+## =====================================================================================================================
+# Dependency groups
+## =====================================================================================================================
+
+[dependency-groups]
+
+dev = [
+    "docstrfmt",
+    "peakrdl-markdown",
+    "peakrdl-regblock-vhdl",
+    "peakrdl",
+    "pre-commit",
+    "pytest",
+    "ruff",
+    "vsg",
 ]
 
-name = "uart"
-version = "1.0"
-license = { file = "LICENSE" }
-requires-python = ">=3.10"
-[project.optional-dependencies]
+docs = ["mkdocs", "mkdocs-drawio", "mkdocs-material", "pymdown-extensions"]
 
-all = ["uart[dev]", "uart[docs]"]
-
-dev = ["docstrfmt", "pre-commit", "pytest", "ruff", "vsg"]
-
-docs = ["mkdocs", "mkdocs-material", "pymdown-extensions", "mkdocs-drawio"]
+## =====================================================================================================================
+# Ruff configuration
+## =====================================================================================================================
 
 [tool.ruff]
 exclude = [
@@ -97,6 +128,11 @@ docstring-code-line-length = 120
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
+
+## =====================================================================================================================
+# Workaround for `error: Multiple top-level packages discovered in a flat-layout:`
+# See https://stackoverflow.com/questions/72294299/multiple-top-level-packages-discovered-in-a-flat-layout
+## =====================================================================================================================
 
 [tool.setuptools]
 py-modules = []

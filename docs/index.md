@@ -44,7 +44,7 @@ Synthesis and implementation are done with Vivado.
 
 | Tool       | Version                                                       |
 | ---------- | ------------------------------------------------------------- |
-| **NVC**    | `nvc 1.20.1 (1.20.1.r0.g8e7f19506) (Using LLVM 22.1.4)`       |
+| **NVC**    | `nvc 1.21.0 (1.21.0.r0.gf3a2a9776) (Using LLVM 22.1.4)`       |
 | **VUnit**  | `5.0.0.dev11 commit 1197afd44175df0695eb0bf8d6dd49a4af88b469` |
 | **VSG**    | `VHDL Style Guide (VSG) version: 3.35.0`                      |
 | **Vivado** | `2025.2`                                                      |

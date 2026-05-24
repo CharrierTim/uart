@@ -1,0 +1,217 @@
+// =====================================================================================================================
+//  MIT License
+//
+//  Copyright (c) 2026 Timothee Charrier
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
+// =====================================================================================================================
+// @project uart
+// @file    regblock.rdl
+// @version 1.0
+// @brief   RDL description of the control and status registers (CSR) accessible on the AXI4 Lite bus.
+// @author  Timothee Charrier
+// =====================================================================================================================
+// REVISION HISTORY
+//
+// Version  Date        Author              Description
+// -------  ----------  ------------------  ----------------------------------------------------------------------------
+// 1.0      16/05/2026  Timothee Charrier   Initial release
+// =====================================================================================================================
+
+addrmap regblock {
+    name = "SOC Control and Status Registers (CSR)";
+    desc = "Registers accessible on the AXI4 Lite bus providing control and status functionality.";
+
+    reg {
+        name = "Git Hash";
+        desc = "Register indicating the git hash of the repository at the time of bitstream generation.";
+
+        default sw = r;
+        default hw = w;
+
+        field {
+            desc = "Hash value";
+        } hash[31:0];
+
+    } git_hash @ 0x00;
+
+    reg {
+        name = "Git Status";
+        desc = "
+        Register indicating the git status of the repository at the time of bitstream generation.
+        If the value is 1, there were uncommitted changes in the repository (dirty), while if the value is 0,
+        there were no uncommitted changes (clean).
+        ";
+
+        default sw = r;
+        default hw = w;
+
+        field {
+            desc = "Status value";
+        } status[0:0];
+
+    } git_status @ 0x04;
+
+    reg {
+        name = "FPGA Identification";
+        desc = "Register indicating the FPGA identification information.";
+
+        default sw = r;
+        default hw = w;
+
+        field {
+            desc = "ID value";
+        } id[31:0];
+
+    } fpga_id @ 0x08;
+
+    reg {
+        name = "SPI TX Control";
+        desc = "Register used to send data over SPI. Writing to this register starts the SPI transaction.";
+
+        default sw = rw;
+        default hw = r;
+
+        field {
+            desc = "TX data to be sent";
+            reset = 0;
+        } tx_data[7:0];
+
+        field{
+            desc  =
+            "SPI transaction valid signal. Asserts for one cycle when written 1
+            and then clears back to 0 on the next cycle";
+            reset = 0;
+            singlepulse;
+        } tx_data_valid[8:8];
+
+    } spi_tx_control @ 0x0C;
+
+    reg {
+        name = "SPI RX Data";
+        desc = "Register used to receive data over SPI.";
+
+        default sw = r;
+        default hw = w;
+
+        field {
+            desc  = "RX data received over SPI";
+            reset = 0;
+        } rx_data[7:0];
+
+    } spi_rx_data @ 0x10;
+
+    reg {
+        name = "VGA Color Control";
+        desc = "
+        Register used to set the VGA output color.
+        The color is specified in RGB format, with 4 bits for each channel (red, green, blue).
+        ";
+
+        default sw = rw;
+        default hw = r;
+
+        field {
+            desc  = "Red channel intensity (0-15)";
+            reset = 0;
+        } red[11:8];
+
+        field {
+            desc  = "Green channel intensity (0-15)";
+            reset = 15;
+        } green[7:4];
+
+        field {
+            desc  = "Blue channel intensity (0-15)";
+            reset = 0;
+        } blue[3:0];
+
+    } vga_color_control @ 0x14;
+
+    reg {
+        name = "Switch Status";
+        desc = "
+        Register used to read the status of the input switches.
+        Each bit corresponds to a different switch, with bit 0 corresponding to switch_0,
+        bit 1 to switch_1, and bit 2 to switch_2.
+        ";
+
+        default sw = r;
+        default hw = w;
+
+        field {
+            desc  = "Status of switch 0";
+            reset = 0;
+        } switch_0[0:0];
+
+        field {
+            desc  = "Status of switch 1";
+            reset = 0;
+        } switch_1[1:1];
+
+        field {
+            desc  = "Status of switch 2";
+            reset = 0;
+        } switch_2[2:2];
+
+    } switch_status @ 0x18;
+
+    reg {
+        name = "Bad address counter";
+        desc = "Register used to count the number of bad address accesses.";
+
+        default sw = r;
+        default hw = rw;
+
+        field {
+            desc  = "Counter value, incremented on each bad address access";
+            reset = 0;
+            counter;
+        } count[31:0];
+
+    } bad_address_counter @ 0x1C;
+
+    reg {
+        name = "Test Register 1";
+        desc = "Register used to test a 32-bit read/write register with all bits used for data.";
+
+        default sw = rw;
+        default hw = na;
+
+        field {
+            desc  = "Test bits";
+            reset = 0;
+        } test_bits[31:0];
+
+    } test_register_1 @ 0xF8;
+
+    reg {
+        name = "Test Register 2";
+        desc = "Register used to test a 32-bit read/write register with all bits used for data.";
+
+        default sw = rw;
+        default hw = na;
+
+        field {
+            desc  = "Test bits";
+            reset = 0;
+        } test_bits[31:0];
+
+    } test_register_2 @ 0xFC;
+};
