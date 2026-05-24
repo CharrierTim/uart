@@ -44,6 +44,8 @@
 ## 2.5      19/05/2026  Timothee Charrier   Improved `Simulator` class removing coverage flags from this file
 ##          23/05/2026  Timothee Charrier   Fix `post_run` callback that should be called regardless of coverage being
 ##                                          enabled or not for output results merge.
+##          24/05/2026  Timothee Charrier   Add support for a fast PLL model to quickly iterate without needing Vivado
+##                                          PLL simulation files.
 ## =====================================================================================================================
 
 import sys
@@ -81,6 +83,7 @@ cli.parser.add_argument("--modelsim", dest="questa", action="store_true", help="
 cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
 cli.parser.add_argument("--questa", dest="questa", action="store_true", help="Use Questa/ModelSim as the simulator")
 cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
+cli.parser.add_argument("--fast_pll", action="store_true", help="Use a fast PLL model if Vivado not installed")
 args: Namespace = cli.parse_args()
 
 ## =====================================================================================================================
@@ -105,11 +108,16 @@ OLO.add_compile_option(name="nvc.a_flags", value=["--relaxed"])
 # Add the source files to the library
 LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
 LIB_RTL.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
-LIB_RTL.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
+
+if not args.fast_pll:
+    LIB_RTL.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
+else:
+    LIB_RTL.add_source_file(file_name=MODELS_ROOT / "pll" / "pll_fast_sim.vhd")
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
-LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "**" / "*.vhd")
+LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "uart" / "*.vhd")
+LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "spi" / "*.vhd")
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
 
 ## =====================================================================================================================
@@ -118,8 +126,9 @@ LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
 
 simulator.attach(VU).configure()
 
-simulator.add_library(library_name="unisim")
-simulator.add_library(library_name="unifast")
+if not args.fast_pll:
+    simulator.add_library(library_name="unisim")
+    simulator.add_library(library_name="unifast")
 
 ## =====================================================================================================================
 # Generate vhdl_ls configuration if requested and exit
