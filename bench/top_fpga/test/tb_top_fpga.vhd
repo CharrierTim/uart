@@ -828,6 +828,9 @@ begin
                 proc_uart_write(C_REG_TEST_REGISTER_1, x"1234_ABCD");
                 proc_uart_check(C_REG_TEST_REGISTER_1, x"1234_ABCD");
 
+                proc_uart_write(C_REG_TEST_REGISTER_2, x"6789_EF01");
+                proc_uart_check(C_REG_TEST_REGISTER_2, x"6789_EF01");
+
             elsif (run("test_uart_robustness")) then
 
                 -- Reset DUT
