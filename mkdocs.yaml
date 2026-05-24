@@ -95,7 +95,7 @@ nav:
   - Usage: usage.md
   - Modules:
       - Top FPGA: modules/top_fpga.md
-      - Internal Registers: modules/regfile/regfile.md
+      - Internal Registers: modules/regblock/regblock.md
       - UART:
           - UART Top: modules/uart/uart.md
           - UART RX: modules/uart/uart_rx.md
