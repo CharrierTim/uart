@@ -22,15 +22,15 @@
 
 <div class="ports-table" markdown="1">
 
-| Port Name           | Type        | Direction | Default Value | Description                          |
-| ------------------- | ----------- | :-------: | ------------- | ------------------------------------ |
-| `CLK`               | std_logic   |    in     | -             | Input clock                          |
-| `RST_P`             | std_logic   |    in     | -             | Input asynchronous reset, active low |
-| `I_UART_RX`         | std_logic   |    in     | -             | Asynchronous input UART RX line      |
-| `O_BYTE`            | vector[7:0] |    out    | 0x00          | Output byte                          |
-| `O_BYTE_VALID`      | std_logic   |    out    | 0b0           | Output byte valid flag               |
-| `O_START_BIT_ERROR` | std_logic   |    out    | 0b0           | Output start bit error flag          |
-| `O_STOP_BIT_ERROR`  | std_logic   |    out    | 0b0           | Output stop bit error flag           |
+| Port Name           | Type        | Direction | Default Value | Description                           |
+| ------------------- | ----------- | :-------: | ------------- | ------------------------------------- |
+| `CLK`               | std_logic   |    in     | -             | Input clock                           |
+| `ARST_P`            | std_logic   |    in     | -             | Input asynchronous reset, active high |
+| `I_UART_RX`         | std_logic   |    in     | -             | Asynchronous input UART RX line       |
+| `O_BYTE`            | vector[7:0] |    out    | 0x00          | Output byte                           |
+| `O_BYTE_VALID`      | std_logic   |    out    | 0b0           | Output byte valid flag                |
+| `O_START_BIT_ERROR` | std_logic   |    out    | 0b0           | Output start bit error flag           |
+| `O_STOP_BIT_ERROR`  | std_logic   |    out    | 0b0           | Output stop bit error flag            |
 
 </div>
 

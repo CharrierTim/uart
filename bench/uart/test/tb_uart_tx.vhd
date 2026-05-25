@@ -34,6 +34,7 @@
 -- 1.0      28/11/2025  Timothee Charrier   Initial release
 -- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+--          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 -- =====================================================================================================================
 
 library ieee;
@@ -85,7 +86,7 @@ architecture TB_UART_TX_ARCH of TB_UART_TX is
 
     -- DUT signals
     signal tb_clk                   : std_logic;
-    signal tb_rst_h                 : std_logic;
+    signal tb_arst_h                : std_logic;
     signal tb_i_tx_data             : std_logic_vector(8 - 1 downto 0);
     signal tb_i_tx_data_valid       : std_logic;
     signal tb_o_uart_tx             : std_logic;
@@ -107,7 +108,7 @@ begin
         )
         port map (
             CLK             => tb_clk,
-            RST_P           => tb_rst_h,
+            ARST_P          => tb_arst_h,
             I_TX_DATA       => tb_i_tx_data,
             I_TX_DATA_VALID => tb_i_tx_data_valid,
             O_UART_TX       => tb_o_uart_tx,
@@ -224,7 +225,7 @@ begin
         begin
 
             -- Reset the DUT by setting the input state to all zeros
-            tb_rst_h                 <= '1';
+            tb_arst_h                <= '1';
             tb_i_tx_data             <= (others => '0');
             tb_i_tx_data_valid       <= '0';
             tb_check_uart_tx_timings <= '0';
@@ -232,7 +233,7 @@ begin
             wait for c_clock_cycles * C_CLK_PERIOD;
 
             -- Reassert reset
-            tb_rst_h                 <= '0';
+            tb_arst_h                <= '0';
 
             -- Wait for the DUT to step over
             wait for 5 ns;

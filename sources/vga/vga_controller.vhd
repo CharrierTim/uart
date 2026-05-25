@@ -34,7 +34,8 @@
 -- 1.0      16/12/2025  Timothee Charrier   Initial release
 -- 1.1      05/01/2026  Timothee Charrier   Minor style updates
 -- 1.2      09/01/2026  Timothee Charrier   The module now handle clock domain crossing of manual color inputs.
--- 2.0      14/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+-- 2.0      14/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high.
+--          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 -- =====================================================================================================================
 
 library ieee;
@@ -67,12 +68,12 @@ entity VGA_CONTROLLER is
     port (
         -- System clock domain
         CLK_SYS         : in    std_logic;
-        RST_SYS_P       : in    std_logic;
+        ARST_SYS_P      : in    std_logic;
         I_MANUAL_COLORS : in    std_logic_vector(12 - 1 downto 0);
 
         -- VGA clock domain
         CLK_VGA         : in    std_logic;
-        RST_VGA_P       : in    std_logic;
+        ARST_VGA_P      : in    std_logic;
         O_HSYNC         : out   std_logic;
         O_VSYNC         : out   std_logic;
         O_RED           : out   std_logic_vector( 4 - 1 downto 0);
@@ -175,11 +176,11 @@ begin
         )
         port map (
             In_Clk     => CLK_SYS,
-            In_RstIn   => RST_SYS_P,
+            In_RstIn   => ARST_SYS_P,
             In_RstOut  => open,
             In_Data    => I_MANUAL_COLORS,
             Out_Clk    => CLK_VGA,
-            Out_RstIn  => RST_VGA_P,
+            Out_RstIn  => ARST_VGA_P,
             Out_RstOut => open,
             Out_Data   => manual_colors_resync
         );
@@ -188,10 +189,10 @@ begin
     -- HORIZONTAL AND VERTICAL COUNTERS
     -- =================================================================================================================
 
-    p_counters : process (CLK_VGA, RST_VGA_P) is
+    p_counters : process (CLK_VGA, ARST_VGA_P) is
     begin
 
-        if (RST_VGA_P = '1') then
+        if (ARST_VGA_P = '1') then
 
             horizontal_count <= (others => '0');
             vertical_count   <= (others => '0');
@@ -240,10 +241,10 @@ begin
     -- OUTPUTS
     -- =================================================================================================================
 
-    p_outputs : process (CLK_VGA, RST_VGA_P) is
+    p_outputs : process (CLK_VGA, ARST_VGA_P) is
     begin
 
-        if (RST_VGA_P = '1') then
+        if (ARST_VGA_P = '1') then
 
             O_HSYNC      <= '0';
             O_VSYNC      <= '0';

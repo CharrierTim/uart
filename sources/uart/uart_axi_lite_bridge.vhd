@@ -38,6 +38,7 @@
 --                                          in clocked p_fsm_seq process.
 -- 2.2      09/04/2026  Timothee Charrier   Refactor soft reset sequential process to be more clear and concise.
 -- 2.3      24/05/2026  Timothee Charrier   Update UART interface to AXI4-Lite and update the protocol accordingly.
+--          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 -- =====================================================================================================================
 
 library ieee;
@@ -59,7 +60,7 @@ entity UART_AXI_LITE_BRIDGE is
     port (
         -- Clock and reset
         CLK            : in    std_logic;
-        RST_P          : in    std_logic;
+        ARST_P         : in    std_logic;
         -- UART interface
         I_UART_RX      : in    std_logic;
         O_UART_TX      : out   std_logic;
@@ -204,7 +205,7 @@ begin
         )
         port map (
             CLK             => CLK,
-            RST_P           => RST_P,
+            ARST_P          => ARST_P,
             I_TX_DATA       => tx_byte_to_send_encoded,
             I_TX_DATA_VALID => tx_byte_to_send_valid,
             O_UART_TX       => O_UART_TX,
@@ -247,7 +248,7 @@ begin
         )
         port map (
             CLK               => CLK,
-            RST_P             => RST_P,
+            ARST_P            => ARST_P,
             I_UART_RX         => I_UART_RX,
             O_BYTE            => rx_byte,
             O_BYTE_VALID      => rx_byte_valid,
@@ -299,10 +300,10 @@ begin
                   '1' when (rx_byte_valid = '1' and rx_byte = C_CHAR_W) else -- 'W'
                   '0';
 
-    p_fsm_seq : process (CLK, RST_P) is
+    p_fsm_seq : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             current_state         <= STATE_IDLE;
             rx_byte_count         <= (others => '0');
@@ -594,10 +595,10 @@ begin
     -- AXI4-Lite signal assignments
     -- =================================================================================================================
 
-    p_axil_signals_seq : process (CLK, RST_P) is
+    p_axil_signals_seq : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             data_to_send   <= (others => '0');
 
