@@ -18,9 +18,11 @@ The following figure depicts the Top-Level:
 
 <div class="generics-table" markdown="1">
 
-| Generic Name | Type         | Default Value | Description                                                                                                       |
-| ------------ | ------------ | ------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `G_GIT_ID`   | vector[31:0] | 0x0000        | Git ID containing the sources for the bitstream generation. Automatically set by the `run_synthesis. tcl` script. |
+| Generic Name   | Type         | Default Value | Description                                                                                                             |
+| -------------- | ------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `G_GIT_HASH`   | vector[31:0] | 0x0000        | Git hash of the repository at the time of bitstream generation. Automatically set by the `run_synthesis. tcl` script.   |
+| `G_GIT_STATUS` | std_logic    | 0b0           | Git status of the repository at the time of bitstream generation. Automatically set by the `run_synthesis. tcl` script. |
+| `G_FPGA_ID`    | vector[31:0] | 0x0000        | FPGA identification information. User defined in the `run_synthesis. tcl` script.                                       |
 
 </div>
 
@@ -69,7 +71,7 @@ PLL is unlocked.
 Then, the FPGA resynchronize the asynchronous reset signal to both clock domain to ensure synchronous de-assertion
 of the reset.
 
-The FPGA instantiates the [olo_base_reset_gen](https://github.com/open-logic/open-logic/blob/main/doc/base/olo_base_reset_gen.md)
+The FPGA instantiates the [`olo_base_reset_gen`](https://github.com/open-logic/open-logic/blob/main/doc/base/olo_base_reset_gen.md)
 module with the following generics for the system clock domain reset:
 
 <div class="generics-table" markdown="1">
@@ -83,7 +85,7 @@ module with the following generics for the system clock domain reset:
 
 </div>
 
-The FPGA instantiates the [olo_base_reset_gen](https://github.com/open-logic/open-logic/blob/main/doc/base/olo_base_reset_gen.md)
+The FPGA instantiates the [`olo_base_reset_gen`](https://github.com/open-logic/open-logic/blob/main/doc/base/olo_base_reset_gen.md)
 module with the following generics for the VGA clock domain reset:
 
 <div class="generics-table" markdown="1">
@@ -99,7 +101,7 @@ module with the following generics for the VGA clock domain reset:
 
 ### olo_intf_sync
 
-The FPGA instantiates the [olo_intf_sync](https://github.com/open-logic/open-logic/blob/main/doc/intf/olo_intf_sync.md)
+The FPGA instantiates the [`olo_intf_sync`](https://github.com/open-logic/open-logic/blob/main/doc/intf/olo_intf_sync.md)
 module with the following generics:
 
 <div class="generics-table" markdown="1">
@@ -112,9 +114,9 @@ module with the following generics:
 
 </div>
 
-### UART
+### UART AXI Lite Bridge
 
-The FPGA instantiates the [uart](uart/uart.md) module with the following generics:
+The FPGA instantiates the [`uart`](uart/uart_axi_lite_bridge.md) module with the following generics:
 
 <div class="generics-table" markdown="1">
 
@@ -126,22 +128,30 @@ The FPGA instantiates the [uart](uart/uart.md) module with the following generic
 
 </div>
 
+The UART module is connected as master to the [`regblock`](regblock/regblock.md) module,
+allowing it to access the registers defined in the [`regblock`](regblock/regblock.md) through an AXI Lite interface.
+
 ### Regblock
 
-The FPGA instantiates the [regblock](regblock/regblock.md) module with the following generics:
+The FPGA instantiates the [`regblock`](regblock/regblock.md) module. The hardware input interface is wired as follows:
 
-<div class="generics-table" markdown="1">
+| Regblock input field                       | Source signal/value                          | Notes                                                                |
+| ------------------------------------------ | -------------------------------------------- | -------------------------------------------------------------------- |
+| `hwif_in.git_hash.hash.next_q`             | [`G_GIT_HASH`](#generics)                    | Git hash at bitstream generation time.                               |
+| `hwif_in.git_status.status.next_q`         | [`G_GIT_STATUS`](#generics)                  | Git status at bitstream generation time.                             |
+| `hwif_in.fpga_id.id.next_q`                | [`G_FPGA_ID`](#generics)                     | FPGA identification value.                                           |
+| `hwif_in.switch_status.switch_2.next_q`    | Resynchronized `PAD_I_SWITCH_2`              | Switch 2 input after resynchronizer.                                 |
+| `hwif_in.switch_status.switch_1.next_q`    | Resynchronized `PAD_I_SWITCH_1`              | Switch 1 input after resynchronizer.                                 |
+| `hwif_in.switch_status.switch_0.next_q`    | Resynchronized `PAD_I_SWITCH_0`              | Switch 0 input after resynchronizer.                                 |
+| `hwif_in.bad_address_counter.count.incr`   | `'1'` on bad address access, otherwise `'0'` | Increment pulse generated by the [`regblock`](regblock/regblock.md). |
+| `hwif_in.bad_address_counter.count.next_q` | `hwif_out.bad_address_counter.count.value`   | Counter feedback from [`regblock`](regblock/regblock.md) output.     |
 
-| Generic Name   | Type         | Default Value     | Description                                                              |
-| -------------- | ------------ | ----------------- | ------------------------------------------------------------------------ |
-| `G_GIT_ID_MSB` | vector[15:0] | `G_GIT_ID[31:16]` | 16 MSB of the git ID containing the sources for the bitstream generation |
-| `G_GIT_ID_LSB` | vector[15:0] | `G_GIT_ID[15:0]`  | 16 LSB of the git ID containing the sources for the bitstream generation |
-
-</div>
+The [`regblock`](regblock/regblock.md) module is connected as slave to the [`uart`](uart/uart_axi_lite_bridge.md) module,
+allowing the UART to access the registers defined in the [`regblock`](regblock/regblock.md) through an AXI Lite interface.
 
 ### SPI Master
 
-The FPGA instantiates the [spi_master](spi/spi_master.md) module with the following generics:
+The FPGA instantiates the [`spi_master`](spi/spi_master.md) module with the following generics:
 
 <div class="generics-table" markdown="1">
 
@@ -157,7 +167,7 @@ The FPGA instantiates the [spi_master](spi/spi_master.md) module with the follow
 
 ### VGA
 
-The FPGA instantiates the [vga_controller](vga/vga_controller.md) module with the following generics:
+The FPGA instantiates the [`vga_controller`](vga/vga_controller.md) module with the following generics:
 
 <div class="generics-table" markdown="1">
 
