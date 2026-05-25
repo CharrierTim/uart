@@ -22,9 +22,9 @@
 --  SOFTWARE.
 -- =====================================================================================================================
 -- @project uart
--- @file    uart.vhd
+-- @file    uart_axi_lite_bridge.vhd
 -- @version 2.3
--- @brief   Top-level UART module, implementing both TX and RX functionalities with a custom protocol
+-- @brief   AXI4-Lite UART bridge providing a command-based interface to read and write registers over UART.
 -- @author  Timothee Charrier
 -- =====================================================================================================================
 -- REVISION HISTORY
@@ -50,7 +50,7 @@ library lib_rtl;
 -- ENTITY
 -- =====================================================================================================================
 
-entity UART is
+entity UART_AXI_LITE_BRIDGE is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
         G_BAUD_RATE_BPS : positive := 115_200;    -- Baud rate
@@ -84,13 +84,13 @@ entity UART is
         M_AXIL_RDATA   : in    std_logic_vector(32 - 1 downto 0);
         M_AXIL_RRESP   : in    std_logic_vector( 1 downto 0)
     );
-end entity UART;
+end entity UART_AXI_LITE_BRIDGE;
 
 -- =====================================================================================================================
 -- ARCHITECTURE
 -- =====================================================================================================================
 
-architecture UART_ARCH of UART is
+architecture UART_AXI_LITE_BRIDGE_ARCH of UART_AXI_LITE_BRIDGE is
 
     -- =================================================================================================================
     -- TYPES
@@ -717,4 +717,4 @@ begin
 
     end process p_axil_signals_seq;
 
-end architecture UART_ARCH;
+end architecture UART_AXI_LITE_BRIDGE_ARCH;

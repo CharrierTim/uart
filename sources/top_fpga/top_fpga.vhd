@@ -262,10 +262,10 @@ begin
         );
 
     -- =================================================================================================================
-    -- UART MODULE
+    -- UART to AXI4-LITE BRIDGE MODULE
     -- =================================================================================================================
 
-    inst_uart : entity lib_rtl.uart
+    inst_uart_axi_lite_bridge : entity lib_rtl.uart_axi_lite_bridge
         generic map (
             G_CLK_FREQ_HZ   => C_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => C_BAUD_RATE_BPS,
