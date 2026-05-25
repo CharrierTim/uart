@@ -1,6 +1,9 @@
-# UART
+# UART AXI Lite Bridge
 
 ## Description
+
+The UART AXI Lite Bridge module implements a UART controller that interfaces with an AXI Lite bus.
+It allows reading and writing 32-bit values to/from the AXI Lite bus through a simple ASCII-based UART protocol.
 
 ---
 
@@ -22,19 +25,31 @@
 
 <div class="ports-table" markdown="1">
 
-| Port Name                | Type         | Direction | Default Value | Description                          |
-| ------------------------ | ------------ | :-------: | ------------- | ------------------------------------ |
-| `CLK`                    | std_logic    |    in     | -             | Input clock                          |
-| `RST_P`                  | std_logic    |    in     | -             | Input asynchronous reset, active low |
-| `I_UART_RX`              | std_logic    |    in     | -             | Asynchronous input UART RX line      |
-| `O_UART_TX`              | std_logic    |    out    | 0b1           | Output UART TX line                  |
-| `O_READ_ADDR`            | vector[7:0]  |    out    | 0x00          | Output read address                  |
-| `O_READ_ADDR_VALID`      | std_logic    |    out    | 0b0           | Output read address valid flag       |
-| `I_READ_DATA`            | vector[15:0] |    in     | -             | Input read data                      |
-| `I_READ_DATA_ADDR_VALID` | std_logic    |    in     | -             | Input read data valid                |
-| `O_WRITE_ADDR`           | vector[7:0]  |    out    | 0x00          | Output write address                 |
-| `O_WRITE_DATA`           | vector[15:0] |    out    | 0x0000        | Output write data                    |
-| `O_WRITE_VALID`          | std_logic    |    out    | 0b0           | Output write valid flag              |
+| Port Name        | Type                          | Direction | Default Value | Description                                |
+| ---------------- | ----------------------------- | :-------: | ------------- | ------------------------------------------ |
+| `CLK`            | std_logic                     |    in     | -             | Input clock                                |
+| `ARST_P`         | std_logic                     |    in     | -             | Input asynchronous reset, active high      |
+| `I_UART_RX`      | std_logic                     |    in     | -             | Asynchronous input UART RX line            |
+| `O_UART_TX`      | std_logic                     |    out    | 0b1           | Output UART TX line                        |
+| `M_AXIL_AWREADY` | std_logic                     |    in     | -             | AXI Lite write address ready (from slave)  |
+| `M_AXIL_AWVALID` | std_logic                     |    out    | 0b0           | AXI Lite master write address valid        |
+| `M_AXIL_AWADDR`  | std_logic_vector(7 downto 0)  |    out    | 0x00          | AXI Lite master write address              |
+| `M_AXIL_AWPROT`  | std_logic_vector(2 downto 0)  |    out    | 0b000         | AXI Lite master write protection           |
+| `M_AXIL_WREADY`  | std_logic                     |    in     | -             | AXI Lite write data ready (from slave)     |
+| `M_AXIL_WVALID`  | std_logic                     |    out    | 0b0           | AXI Lite master write data valid           |
+| `M_AXIL_WDATA`   | std_logic_vector(31 downto 0) |    out    | 0x00000000    | AXI Lite master write data                 |
+| `M_AXIL_WSTRB`   | std_logic_vector(3 downto 0)  |    out    | 0b0000        | AXI Lite master write strobe               |
+| `M_AXIL_BREADY`  | std_logic                     |    out    | 0b0           | AXI Lite master write response ready       |
+| `M_AXIL_BVALID`  | std_logic                     |    in     | -             | AXI Lite write response valid (from slave) |
+| `M_AXIL_BRESP`   | std_logic_vector(1 downto 0)  |    in     | -             | AXI Lite master write response             |
+| `M_AXIL_ARREADY` | std_logic                     |    in     | -             | AXI Lite read address ready (from slave)   |
+| `M_AXIL_ARVALID` | std_logic                     |    out    | 0b0           | AXI Lite master read address valid         |
+| `M_AXIL_ARADDR`  | std_logic_vector(7 downto 0)  |    out    | 0x00          | AXI Lite master read address               |
+| `M_AXIL_ARPROT`  | std_logic_vector(2 downto 0)  |    out    | 0b000         | AXI Lite master read protection            |
+| `M_AXIL_RREADY`  | std_logic                     |    out    | 0b0           | AXI Lite master read data ready            |
+| `M_AXIL_RVALID`  | std_logic                     |    in     | -             | AXI Lite read data valid (from slave)      |
+| `M_AXIL_RDATA`   | std_logic_vector(31 downto 0) |    in     | -             | AXI Lite master read data                  |
+| `M_AXIL_RRESP`   | std_logic_vector(1 downto 0)  |    in     | -             | AXI Lite master read response              |
 
 </div>
 
