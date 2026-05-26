@@ -469,7 +469,8 @@ begin
             -- =========================================================================================================
             -- STATE: WRITE_MODE_END
             -- =========================================================================================================
-            -- After receiving the line feed character, go back to idle state and raise the data valid signal
+            -- After receiving the line feed character, raise the write valid signal and wait for the write response
+            -- before going back to idle state
             -- =========================================================================================================
 
             when STATE_WRITE_MODE_END =>
@@ -478,6 +479,10 @@ begin
 
             -- =========================================================================================================
             -- STATE: WRITE_MODE_WAIT_RESP
+            -- =========================================================================================================
+            -- Wait for the write response from the regblock before going back to idle state
+            -- Note: Not blocking because any `R` or `W` command received during this state will reset the FSM and start
+            --       a new transaction
             -- =========================================================================================================
 
             when STATE_WRITE_MODE_WAIT_RESP =>
