@@ -229,12 +229,13 @@ Where the following transitions are defined:
 | T2         | `rx_byte /= CR (\r) character` **AND** `rx_byte_count >= 3` |
 | T3         | `rx_byte = CR (\r) character` **AND** `rx_byte_count >= 3`  |
 | T4         | Automatic                                                   |
+| T5         | `M_AXIL_BVALID = 1` **AND** `M_AXIL_BREADY = '1'`           |
 | T5         | `rx_byte = R character`                                     |
 | T6         | `rx_byte /= CR (\r) character` **AND** `rx_byte_count >= 7` |
 | T7         | `rx_byte = CR (\r) character` **AND** `rx_byte_count >= 7`  |
 | T8         | Automatic                                                   |
-| T9         | `I_READ_DATA_VALID = 1`                                     |
-| T10        | `tx_byte_count >= 5`                                        |
+| T9         | `M_AXIL_RVALID = 1` **AND** `M_AXIL_RREADY = '1'`           |
+| T11        | `tx_byte_count >= 5`                                        |
 
 ---
 
