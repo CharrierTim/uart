@@ -1,0 +1,235 @@
+/* Tables */
+
+th,
+td {
+    border: 1px solid var(--md-typeset-table-color);
+    border-spacing: 0;
+    border-bottom: none;
+    border-left: none;
+    border-top: none;
+    word-wrap: break-word;
+    word-break: break-word;
+    vertical-align: middle;
+}
+
+.md-typeset__table {
+    line-height: 1;
+    width: 100%;
+}
+
+.md-typeset__scrollwrap {
+    width: 100%;
+    margin: 0;
+}
+
+.md-typeset__table table:not([class]) {
+    font-size: 0.74rem;
+    border-right: none;
+    width: 100%;
+    table-layout: auto;
+    display: table;
+}
+
+.md-typeset__table table:not([class]) td,
+.md-typeset__table table:not([class]) th {
+    padding: 9px;
+    word-wrap: break-word;
+    word-break: break-word;
+    vertical-align: middle;
+}
+
+/*
+ Register bit description tables
+*/
+.register-bits-table table {
+    table-layout: fixed ! important;
+    width: 100%;
+}
+
+/* Bits */
+.register-bits-table table th:nth-child(1),
+.register-bits-table table td:nth-child(1) {
+    width: 15%;
+}
+
+/* Reset */
+.register-bits-table table th:nth-child(2),
+.register-bits-table table td:nth-child(2) {
+    width: 15%;
+}
+
+/* Name */
+.register-bits-table table th:nth-child(3),
+.register-bits-table table td:nth-child(3) {
+    width: 25%;
+}
+
+/* Description */
+.register-bits-table table th:nth-child(4),
+.register-bits-table table td:nth-child(4) {
+    width: 45%;
+}
+
+/*
+ Generics table
+*/
+.generics-table table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Generic Name */
+.generics-table table th:nth-child(1),
+.generics-table table td:nth-child(1) {
+    width: 20%;
+}
+
+/* Type */
+.generics-table table th:nth-child(2),
+.generics-table table td:nth-child(2) {
+    width: 15%;
+}
+
+/* Default Value */
+.generics-table table th:nth-child(3),
+.generics-table table td:nth-child(3) {
+    width: 20%;
+}
+
+/* Description */
+.generics-table table th:nth-child(4),
+.generics-table table td:nth-child(4) {
+    width: 45%;
+}
+
+/*
+ Ports table
+*/
+.ports-table table {
+    table-layout: fixed ! important;
+    width: 100%;
+}
+
+/* Port Name */
+.ports-table table th:nth-child(1),
+.ports-table table td:nth-child(1) {
+    width: 20%;
+}
+
+/* Type */
+.ports-table table th:nth-child(2),
+.ports-table table td:nth-child(2) {
+    width: 15%;
+}
+
+/* Direction */
+.ports-table table th:nth-child(3),
+.ports-table table td:nth-child(3) {
+    width: 10%;
+    text-align: center;
+}
+
+/* Default Value */
+.ports-table table th:nth-child(4),
+.ports-table table td:nth-child(4) {
+    width: 13%;
+}
+
+/* Description */
+.ports-table table th:nth-child(5),
+.ports-table table td:nth-child(5) {
+    width: 42%;
+}
+
+/* light mode alternating table bg colors */
+.md-typeset__table tr:nth-child(2n) {
+    background-color: #f6f8fa;
+}
+
+/* dark mode alternating table bg colors */
+[data-md-color-scheme="slate"] .md-typeset__table tr:nth-child(2n) {
+    background-color: #161b22;
+}
+
+/* Navigation */
+.md-nav__title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Tables */
+.md-typeset table:not([class]) {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: table;
+    overflow: hidden;
+    table-layout: auto;
+    width: 100% ! important;
+}
+
+/* Code blocks */
+.md-typeset pre {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs */
+.md-typeset .tabbed-labels {
+    border-bottom: 2px solid var(--md-primary-fg-color);
+}
+
+/* Page transitions */
+.md-content__inner {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover effects */
+.md-nav__link {
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.md-nav__link:hover {
+    background-color: var(--md-primary-fg-color--transparent);
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Two-column grid layout */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.grid-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-item img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Wavedrom */
+
+div[id^="WaveDrom_Display"]>svg {
+    width: 100%;
+}
