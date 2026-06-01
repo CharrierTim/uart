@@ -6,8 +6,9 @@
 - [**NVC**](https://github.com/nickg/nvc/releases/tag/r1.21.0): `Version r1.21.0`
 - **Vivado**: `Version 2025.2`
 
-Also be tested with:
+Also tested with:
 
+- **NVC**: `Version r1.18.2`, `Version r1.19.3` and `Version r1.20.1`
 - [**GHDL**](https://github.com/ghdl/ghdl/releases/tag/v6.0.0-rc2): `GHDL 6.0.0-rc2 (6.0.0.rc2.r0.gb981f25f3) [Dunoon edition]`
 - **QuestaSim**: `Questa Altera Starter FPGA Edition-64 vsim 2025.2 Simulator 2025.05 May 31 2025`
 
@@ -207,6 +208,7 @@ the simulator to use:
 - `--nvc`: Use `nvc` as the simulator.
 - `--ghdl`: Use `GHDL` as the simulator.
 - `--questa` or `--modelsim`: Use `QuestaSim`/`ModelSim` as the simulator.
+- `--without_unisim`: Use a custom behavioral PLL model (faster simulation without needing Vivado pre-compiled libraries)
 
 Run the following command to get more help with `VUnit` options:
 
@@ -221,3 +223,28 @@ Run the following command to get more help with `VUnit` options:
     ```bash
     python bench/top_fpga/run.py --help
     ```
+
+## Control and Status Register (CSR) Automation
+
+The project uses [SystemRDL](https://github.com/systemrdl) standard to generate the AXI-Lite register block
+using [PeakRDL-regblock-vhdl](https://peakrdl-regblock-vhdl.readthedocs.io/) for VHDL code generation.
+
+The register description file is defined in `tools/peakrdl/config/regblock.rdl`.
+
+To generate the register block, run the following command in the `root` folder:
+
+=== "Linux/macOS"
+
+    ```bash
+    python3 tools/peakrdl/scripts/generate_regblock.py
+    ```
+
+=== "Windows"
+
+    ```bash
+    python tools/peakrdl/scripts/generate_regblock.py
+    ```
+
+VHDL source files for the register block are generated under the `sources/regblock` folder.
+
+An HTML and markdown documentation is generated under the `tools/peakrdl/report` folder.
