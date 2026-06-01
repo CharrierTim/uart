@@ -43,6 +43,7 @@
 -- 2.2      23/05/2026  Timothee Charrier   Use SystemRDL-generated registers and update the UART interface to AXI4-Lite
 --                                          LED now indicates AXI bad address transactions.
 --                                          Add FPGA_ID generic and register.
+--          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 -- =====================================================================================================================
 
 library ieee;
@@ -142,8 +143,8 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal vga_clk                  : std_logic;
     signal pll_locked               : std_logic;
     signal intermediate_rst_p       : std_logic;
-    signal internal_sys_rst_p       : std_logic;
-    signal internal_vga_rst_p       : std_logic;
+    signal internal_sys_arst_p      : std_logic;
+    signal internal_vga_arst_p      : std_logic;
 
     -- Resynchronization
     signal async_inputs_slv         : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
@@ -219,7 +220,7 @@ begin
         )
         port map (
             Clk    => internal_clk,
-            RstOut => internal_sys_rst_p,
+            RstOut => internal_sys_arst_p,
             RstIn  => intermediate_rst_p
         );
 
@@ -233,7 +234,7 @@ begin
         )
         port map (
             Clk    => vga_clk,
-            RstOut => internal_vga_rst_p,
+            RstOut => internal_vga_arst_p,
             RstIn  => intermediate_rst_p
         );
 
@@ -256,16 +257,16 @@ begin
         )
         port map (
             Clk       => internal_clk,
-            Rst       => internal_sys_rst_p,
+            Rst       => internal_sys_arst_p,
             DataAsync => async_inputs_slv,
             DataSync  => sync_inputs_slv
         );
 
     -- =================================================================================================================
-    -- UART MODULE
+    -- UART to AXI4-LITE BRIDGE MODULE
     -- =================================================================================================================
 
-    inst_uart : entity lib_rtl.uart
+    inst_uart_axi_lite_bridge : entity lib_rtl.uart_axi_lite_bridge
         generic map (
             G_CLK_FREQ_HZ   => C_CLK_FREQ_HZ,
             G_BAUD_RATE_BPS => C_BAUD_RATE_BPS,
@@ -273,7 +274,7 @@ begin
         )
         port map (
             CLK            => internal_clk,
-            RST_P          => internal_sys_rst_p,
+            ARST_P         => internal_sys_arst_p,
             I_UART_RX      => PAD_I_UART_RX,
             O_UART_TX      => PAD_O_UART_TX,
             M_AXIL_AWREADY => axil_awready,
@@ -314,7 +315,7 @@ begin
     inst_reglock : entity lib_rtl.regblock
         port map (
             clk            => internal_clk,
-            arst           => internal_sys_rst_p,
+            arst           => internal_sys_arst_p,
             s_axil_awready => axil_awready,
             s_axil_awvalid => axil_awvalid,
             s_axil_awaddr  => axil_awaddr,
@@ -361,7 +362,7 @@ begin
         )
         port map (
             CLK             => internal_clk,
-            RST_P           => internal_sys_rst_p,
+            ARST_P          => internal_sys_arst_p,
             O_SCLK          => PAD_O_SCLK,
             O_MOSI          => PAD_O_MOSI,
             I_MISO          => PAD_I_MISO,
@@ -393,11 +394,11 @@ begin
         port map (
             -- System clock domain
             CLK_SYS         => internal_clk,
-            RST_SYS_P       => internal_sys_rst_p,
+            ARST_SYS_P      => internal_sys_arst_p,
             I_MANUAL_COLORS => manual_colors,
             -- VGA clock domain
             CLK_VGA         => vga_clk,
-            RST_VGA_P       => internal_vga_rst_p,
+            ARST_VGA_P      => internal_vga_arst_p,
             O_HSYNC         => PAD_O_VGA_HSYNC,
             O_VSYNC         => PAD_O_VGA_VSYNC,
             O_RED           => PAD_O_VGA_RED,
@@ -409,10 +410,10 @@ begin
     -- LED CONTROL: LED_0 is ON when the value of the counter 'bad_address_counter' is greater than 0
     -- =================================================================================================================
 
-    p_led : process (internal_clk, internal_sys_rst_p) is
+    p_led : process (internal_clk, internal_sys_arst_p) is
     begin
 
-        if (internal_sys_rst_p = '1') then
+        if (internal_sys_arst_p = '1') then
 
             PAD_O_LED_0 <= '0';
 

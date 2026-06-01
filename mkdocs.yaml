@@ -36,7 +36,6 @@ theme:
     - content.code.copy
     - content.tabs.link
     - header.autohide
-    - navigation.instant
     - navigation.instant.prefetch
     - navigation.instant.preview
     - navigation.instant.progress
@@ -71,7 +70,7 @@ markdown_extensions:
       alternate_style: true
   - toc:
       permalink: true
-      toc_depth: 3
+      toc_depth: 2
   # Mathjax
   - pymdownx.arithmatex:
       generic: true
@@ -97,7 +96,7 @@ nav:
       - Top FPGA: modules/top_fpga.md
       - Internal Registers: modules/regblock/regblock.md
       - UART:
-          - UART Top: modules/uart/uart.md
+          - UART Top: modules/uart/uart_axi_lite_bridge.md
           - UART RX: modules/uart/uart_rx.md
           - UART TX: modules/uart/uart_tx.md
       - SPI:

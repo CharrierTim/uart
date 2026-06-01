@@ -3499,7 +3499,18 @@ rule:
     exceptions: ["CLK", "SCL_", "SDA_"]
     fixable: false
     prefixes:
-      ["I_", "O_", "IO_", "PAD_", "CLK_", "RST_", "REG_", "M_AXIL", S_AXISL"]
+      [
+        "I_",
+        "O_",
+        "IO_",
+        "PAD_",
+        "CLK_",
+        "RST_",
+        "ARST_",
+        "REG_",
+        "M_AXIL",
+        S_AXISL",
+      ]
     severity: Warning
 
   port_012:

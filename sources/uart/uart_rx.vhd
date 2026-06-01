@@ -34,6 +34,7 @@
 -- 1.0      17/10/2025  Timothee Charrier   Initial release
 -- 1.1      07/01/2026  Timothee Charrier   Naming conventions update and remove generic and code comments update
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+--          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 -- =====================================================================================================================
 
 library ieee;
@@ -54,7 +55,7 @@ entity UART_RX is
     port (
         -- Clock and reset
         CLK               : in    std_logic;
-        RST_P             : in    std_logic;
+        ARST_P            : in    std_logic;
         -- UART interface
         I_UART_RX         : in    std_logic;
         -- Output data interface
@@ -149,10 +150,10 @@ begin
     -- FSM sequential process for state transitions
     -- =================================================================================================================
 
-    p_fsm_seq : process (CLK, RST_P) is
+    p_fsm_seq : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             current_state <= STATE_IDLE;
 
@@ -309,10 +310,10 @@ begin
     -- Resynchronize UART RX input into input clock domain and apply digital filtering
     -- =================================================================================================================
 
-    p_rx_filtering_and_sampling : process (CLK, RST_P) is
+    p_rx_filtering_and_sampling : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             i_uart_rx_sr          <= (others => '1');
             i_uart_rx_filtered    <= '1';
@@ -378,10 +379,10 @@ begin
     -- Generate the RX baud rate tick, which is 16 times the baud rate.
     -- =================================================================================================================
 
-    p_baud_generator : process (CLK, RST_P) is
+    p_baud_generator : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             rx_baud_counter    <= (others => '0');
             rx_baud_tick       <= '0';
@@ -549,10 +550,10 @@ begin
     -- Output process
     -- =================================================================================================================
 
-    p_outputs_seq : process (CLK, RST_P) is
+    p_outputs_seq : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             next_o_byte       <= (others => '0');
             O_BYTE            <= (others => '0');

@@ -1823,21 +1823,23 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
-dev = [
-    { name = "docstrfmt" },
-    { name = "peakrdl" },
-    { name = "peakrdl-markdown" },
-    { name = "peakrdl-regblock-vhdl" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "ruff" },
-    { name = "vsg" },
-]
 docs = [
     { name = "mkdocs" },
     { name = "mkdocs-drawio" },
     { name = "mkdocs-material" },
     { name = "pymdown-extensions" },
+]
+hdl-dev = [
+    { name = "peakrdl" },
+    { name = "peakrdl-markdown" },
+    { name = "peakrdl-regblock-vhdl" },
+]
+lint = [
+    { name = "docstrfmt" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "ruff" },
+    { name = "vsg" },
 ]
 
 [package.metadata]
@@ -1847,21 +1849,23 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-dev = [
-    { name = "docstrfmt" },
-    { name = "peakrdl" },
-    { name = "peakrdl-markdown" },
-    { name = "peakrdl-regblock-vhdl" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "ruff" },
-    { name = "vsg" },
-]
 docs = [
     { name = "mkdocs" },
     { name = "mkdocs-drawio" },
     { name = "mkdocs-material" },
     { name = "pymdown-extensions" },
+]
+hdl-dev = [
+    { name = "peakrdl" },
+    { name = "peakrdl-markdown" },
+    { name = "peakrdl-regblock-vhdl" },
+]
+lint = [
+    { name = "docstrfmt" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "ruff" },
+    { name = "vsg" },
 ]
 
 [[package]]

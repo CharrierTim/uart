@@ -6,8 +6,10 @@ For full documentation and usage, visit:  **<https://charriertim.github.io/uart>
 
 ## Summary
 
-FPGA project built for the Zedboard device around an UART peripheral, designed to control various IPs and peripherals
-(SPI, VGA, etc.).
+FPGA project for the Zedboard centered on a UART peripheral and an AXI-Lite register block to
+control IPs/peripherals (SPI, VGA, etc.)
+
+Control & status register (CSR) automation is done with [SystemRDL](https://github.com/systemrdl) and [PeakRDL-regblock-vhdl](https://peakrdl-regblock-vhdl.readthedocs.io/).
 
 Most of the design is built from scratch, but some IPs are taken from the [Open Logic FPGA Standard Library](https://github.com/open-logic/open-logic).
 

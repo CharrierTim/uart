@@ -30,16 +30,9 @@ required-version = ">=0.11.15"
 
 [dependency-groups]
 
-dev = [
-    "docstrfmt",
-    "peakrdl-markdown",
-    "peakrdl-regblock-vhdl",
-    "peakrdl",
-    "pre-commit",
-    "pytest",
-    "ruff",
-    "vsg",
-]
+hdl_dev = ["peakrdl-markdown", "peakrdl-regblock-vhdl", "peakrdl"]
+
+lint = ["docstrfmt", "pre-commit", "pytest", "ruff", "vsg"]
 
 docs = ["mkdocs", "mkdocs-drawio", "mkdocs-material", "pymdown-extensions"]
 

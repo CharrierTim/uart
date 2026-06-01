@@ -34,6 +34,7 @@
 -- 1.0      17/10/2025  Timothee Charrier   Initial release
 -- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+--          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 -- =====================================================================================================================
 
 library ieee;
@@ -53,7 +54,7 @@ entity UART_TX is
     port (
         -- Clock and reset
         CLK             : in    std_logic;
-        RST_P           : in    std_logic;
+        ARST_P          : in    std_logic;
         -- Input data interface
         I_TX_DATA       : in    std_logic_vector(8 - 1 downto 0);
         I_TX_DATA_VALID : in    std_logic;
@@ -115,10 +116,10 @@ begin
     -- FSM sequential process for state transitions
     -- =================================================================================================================
 
-    p_fsm_seq : process (CLK, RST_P) is
+    p_fsm_seq : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             current_state <= STATE_IDLE;
 
@@ -192,10 +193,10 @@ begin
     -- Transmission Order: Start bit first (0), then data LSB to MSB, then stop bit (1)
     -- =================================================================================================================
 
-    p_tx_clock_gen : process (CLK, RST_P) is
+    p_tx_clock_gen : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             tx_baud_counter <= (others => '0');
             reg_tx_data     <= (others => '1');
@@ -283,10 +284,10 @@ begin
     -- Output registers
     -- =================================================================================================================
 
-    p_outputs_seq : process (CLK, RST_P) is
+    p_outputs_seq : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             O_UART_TX <= '1';
             O_DONE    <= '0';

@@ -10,536 +10,230 @@ Documentation partially generated from the RDL file using the
 
 ## Summary
 
-- Absolute Address: `0x0`
-- Base Offset: `0x0`
-- Size: `0x100`
+| Name                                                          | Offset | Length | Description                                                                               |
+| :------------------------------------------------------------ | :----: | :----: | :---------------------------------------------------------------------------------------- |
+| regblock.[git_hash](#git_hash-register)                       | `0x00` |   4    | Register indicating the git hash of the repository at the time of bitstream generation.   |
+| regblock.[git_status](#git_status-register)                   | `0x04` |   4    | Register indicating the git status of the repository at the time of bitstream generation. |
+| regblock.[fpga_id](#fpga_id-register)                         | `0x08` |   4    | Register indicating the FPGA identification information.                                  |
+| regblock.[spi_tx_control](#spi_tx_control-register)           | `0x0C` |   4    | Register used to send data over SPI. Writing to this register starts the SPI transaction. |
+| regblock.[spi_rx_data](#spi_rx_data-register)                 | `0x10` |   4    | Register used to receive data over SPI.                                                   |
+| regblock.[vga_color_control](#vga_color_control-register)     | `0x14` |   4    | Register used to set the VGA output color.                                                |
+| regblock.[switch_status](#switch_status-register)             | `0x18` |   4    | Register used to read the status of the input switches.                                   |
+| regblock.[bad_address_counter](#bad_address_counter-register) | `0x1C` |   4    | Register used to count the number of bad address accesses.                                |
+| regblock.[test_register_1](#test_register_1-register)         | `0xF8` |   4    | Register used to test a 32-bit read/write register with all bits used for data.           |
+| regblock.[test_register_2](#test_register_2-register)         | `0xFC` |   4    | Register used to test a 32-bit read/write register with all bits used for data.           |
 
-<p>Registers accessible on the AXI4 Lite bus providing control and status functionality.</p>
+## git_hash register
 
-| Name                                                 | Offset | Mode |
-| ---------------------------------------------------- | ------ | ---- |
-| [git_hash](#git_hash-register)                       | 0x00   | R    |
-| [git_status](#git_status-register)                   | 0x04   | R    |
-| [fpga_id](#fpga_id-register)                         | 0x08   | R    |
-| [spi_tx_control](#spi_tx_control-register)           | 0x0C   | RW   |
-| [spi_rx_data](#spi_rx_data-register)                 | 0x10   | R    |
-| [vga_color_control](#vga_color_control-register)     | 0x14   | RW   |
-| [switch_status](#switch_status-register)             | 0x18   | R    |
-| [bad_address_counter](#bad_address_counter-register) | 0x1C   | R    |
-| [test_register_1](#test_register_1-register)         | 0xF8   | RW   |
-| [test_register_2](#test_register_2-register)         | 0xFC   | RW   |
+Register indicating the git hash of the repository at the time of bitstream generation.
 
-Where:
+- Offset: `0x0`
+- Reset default: `0x0`
+- Reset mask: `0xffffffff`
 
-| Mode   | Description                                                                  |
-| ------ | ---------------------------------------------------------------------------- |
-| **R**  | Read-only: Register value can be read but not modified via write operations  |
-| **W**  | Write-only: Register value can be modified via write operations but not read |
-| **RW** | Read-Write: Register value can be both read and written                      |
+### Fields
 
----
-
-## Detailed register descriptions
-
----
-
-### git_hash register
-
-- Absolute Address: `0x0`
-- Base Offset: `0x0`
-- Size: `0x4`
-
-<p>Register indicating the git hash of the repository at the time of bitstream generation.</p>
-
+<!-- markdownlint-disable -->
 <script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "git_hash",
-            "bits": 32,
-            "attr": [
-                "r"
-            ],
-            "rotate": 0,
-            "type": 3
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 80
-    }
-}</script>
+{"reg": [{"name": "hash", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+<!-- markdownlint-enable -->
 
-| Bits | Identifier | Access | Reset | Name |
-| ---- | ---------- | ------ | ----- | ---- |
-| 31:0 | hash       | r      | —     | —    |
+| Bits  | Type  | Reset | Name | Description |
+| :---: | :---: | :---: | :--- | :---------- |
+| 31:0  |  ro   |  0x0  | hash | Hash value  |
 
-#### hash field
+## git_status register
 
-<p>Hash value</p>
+Register indicating the git status of the repository at the time of bitstream generation.
+If the value is 1, there were uncommitted changes in the repository (dirty), while if the
+value is 0, there were no uncommitted changes (clean).
 
----
+- Offset: `0x4`
+- Reset default: `0x0`
+- Reset mask: `0x1`
 
-### git_status register
+### Fields
 
-- Absolute Address: `0x4`
-- Base Offset: `0x4`
-- Size: `0x4`
-
-<p>Register indicating the git status of the repository at the time of bitstream generation.
-If the value is 1, there were uncommitted changes in the repository (dirty), while if the value is 0,
-there were no uncommitted changes (clean).</p>
-
+<!-- markdownlint-disable -->
 <script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "status",
-            "bits": 1,
-            "attr": [
-                "r"
-            ],
-            "rotate": -90,
-            "type": 3
-        },
-        {
-            "name": "Reserved",
-            "bits": 30,
-            "attr": [
-                "r"
-            ],
-            "rotate": 0,
-            "type": 2
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 80
-    }
-}</script>
+{"reg": [{"name": "status", "bits": 1, "attr": ["ro"], "rotate": -90}, {"bits": 31}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+<!-- markdownlint-enable -->
 
-| Bits | Identifier | Access | Reset | Name |
-| ---- | ---------- | ------ | ----- | ---- |
-| 0    | status     | r      | —     | —    |
+| Bits  | Type  | Reset | Name   | Description  |
+| :---: | :---: | :---: | :----- | :----------- |
+| 31:1  |       |       |        | Reserved     |
+|   0   |  ro   |  0x0  | status | Status value |
 
-#### status field
+## fpga_id register
 
-<p>Status value</p>
+Register indicating the FPGA identification information.
 
----
+- Offset: `0x8`
+- Reset default: `0x0`
+- Reset mask: `0xffffffff`
 
-### fpga_id register
+### Fields
 
-- Absolute Address: `0x8`
-- Base Offset: `0x8`
-- Size: `0x4`
-
-<p>Register indicating the FPGA identification information.</p>
-
+<!-- markdownlint-disable -->
 <script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "id",
-            "bits": 32,
-            "attr": [
-                "r"
-            ],
-            "rotate": 0,
-            "type": 3
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 80
-    }
-}</script>
+{"reg": [{"name": "id", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+<!-- markdownlint-enable -->
 
-| Bits | Identifier | Access | Reset | Name |
-| ---- | ---------- | ------ | ----- | ---- |
-| 31:0 | id         | r      | —     | —    |
+| Bits  | Type  | Reset | Name | Description |
+| :---: | :---: | :---: | :--- | :---------- |
+| 31:0  |  ro   |  0x0  | id   | ID value    |
 
-#### id field
+## spi_tx_control register
 
-<p>ID value</p>
+Register used to send data over SPI. Writing to this register starts the SPI transaction.
 
----
+- Offset: `0xc`
+- Reset default: `0x0`
+- Reset mask: `0x1ff`
 
-### spi_tx_control register
+### Fields
 
-- Absolute Address: `0xC`
-- Base Offset: `0xC`
-- Size: `0x4`
-
-<p>Register used to send data over SPI. Writing to this register starts the SPI transaction.</p>
-
+<!-- markdownlint-disable -->
 <script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "tx_data",
-            "bits": 8,
-            "attr": [
-                "rw"
-            ],
-            "rotate": 0,
-            "type": 3
-        },
-        {
-            "name": "tx_data_valid",
-            "bits": 1,
-            "attr": [
-                "rw"
-            ],
-            "rotate": -90,
-            "type": 3
-        },
-        {
-            "name": "Reserved",
-            "bits": 23,
-            "attr": [
-                "r"
-            ],
-            "rotate": 0,
-            "type": 2
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 120
-    }
-}</script>
+{"reg": [{"name": "tx_data", "bits": 8, "attr": ["rw"], "rotate": 0}, {"name": "tx_data_valid", "bits": 1, "attr": ["rw"], "rotate": -90}, {"bits": 23}], "config": {"lanes": 1, "fontsize": 10, "vspace": 150}}
+</script>
+<!-- markdownlint-enable -->
 
-| Bits | Identifier    | Access | Reset | Name |
-| ---- | ------------- | ------ | ----- | ---- |
-| 7:0  | tx_data       | rw     | 0x0   | —    |
-| 8    | tx_data_valid | rw     | 0x0   | —    |
+| Bits  | Type  | Reset | Name          | Description                                                                                                     |
+| :---: | :---: | :---: | :------------ | :-------------------------------------------------------------------------------------------------------------- |
+| 31:9  |       |       |               | Reserved                                                                                                        |
+|   8   |  rw   |  0x0  | tx_data_valid | SPI transaction valid signal. Asserts for one cycle when written 1 and then clears back to 0 on the next cycle. |
+|  7:0  |  rw   |  0x0  | tx_data       | TX data to be sent                                                                                              |
 
-#### tx_data field
+## spi_rx_data register
 
-<p>TX data to be sent</p>
+Register used to receive data over SPI.
 
-#### tx_data_valid field
+- Offset: `0x10`
+- Reset default: `0x0`
+- Reset mask: `0xff`
 
-<p>SPI transaction valid signal. Asserts for one cycle when written 1
-and then clears back to 0 on the next cycle</p>
+### Fields
 
----
-
-### spi_rx_data register
-
-- Absolute Address: `0x10`
-- Base Offset: `0x10`
-- Size: `0x4`
-
-<p>Register used to receive data over SPI.</p>
-
+<!-- markdownlint-disable -->
 <script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "rx_data",
-            "bits": 8,
-            "attr": [
-                "r"
-            ],
-            "rotate": 0,
-            "type": 3
-        },
-        {
-            "name": "Reserved",
-            "bits": 24,
-            "attr": [
-                "r"
-            ],
-            "rotate": 0,
-            "type": 2
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 80
-    }
-}</script>
+{"reg": [{"name": "rx_data", "bits": 8, "attr": ["ro"], "rotate": 0}, {"bits": 24}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+<!-- markdownlint-enable -->
 
-| Bits | Identifier | Access | Reset | Name |
-| ---- | ---------- | ------ | ----- | ---- |
-| 7:0  | rx_data    | r      | 0x0   | —    |
+| Bits  | Type  | Reset | Name    | Description               |
+| :---: | :---: | :---: | :------ | :------------------------ |
+| 31:8  |       |       |         | Reserved                  |
+|  7:0  |  ro   |  0x0  | rx_data | RX data received over SPI |
 
-#### rx_data field
+## vga_color_control register
 
-<p>RX data received over SPI</p>
+Register used to set the VGA output color.
+The color is specified in RGB format, with 4 bits for each channel (red, green, blue).
 
----
+- Offset: `0x14`
+- Reset default: `0xf0`
+- Reset mask: `0xfff`
 
-### vga_color_control register
+### Fields
 
-- Absolute Address: `0x14`
-- Base Offset: `0x14`
-- Size: `0x4`
-
-<p>Register used to set the VGA output color.
-The color is specified in RGB format, with 4 bits for each channel (red, green, blue).</p>
-
+<!-- markdownlint-disable -->
 <script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "blue",
-            "bits": 4,
-            "attr": [
-                "rw"
-            ],
-            "rotate": 0,
-            "type": 3
-        },
-        {
-            "name": "green",
-            "bits": 4,
-            "attr": [
-                "rw"
-            ],
-            "rotate": 0,
-            "type": 3
-        },
-        {
-            "name": "red",
-            "bits": 4,
-            "attr": [
-                "rw"
-            ],
-            "rotate": 0,
-            "type": 3
-        },
-        {
-            "name": "Reserved",
-            "bits": 20,
-            "attr": [
-                "r"
-            ],
-            "rotate": 0,
-            "type": 2
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 80
-    }
-}</script>
+{"reg": [{"name": "blue", "bits": 4, "attr": ["rw"], "rotate": 0}, {"name": "green", "bits": 4, "attr": ["rw"], "rotate": 0}, {"name": "red", "bits": 4, "attr": ["rw"], "rotate": 0}, {"bits": 20}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+<!-- markdownlint-enable -->
 
-| Bits | Identifier | Access | Reset | Name |
-| ---- | ---------- | ------ | ----- | ---- |
-| 3:0  | blue       | rw     | 0x0   | —    |
-| 7:4  | green      | rw     | 0xF   | —    |
-| 11:8 | red        | rw     | 0x0   | —    |
+| Bits  | Type  | Reset | Name  | Description                    |
+| :---: | :---: | :---: | :---- | :----------------------------- |
+| 31:12 |       |       |       | Reserved                       |
+| 11:8  |  rw   |  0x0  | red   | Red channel intensity (0-15)   |
+|  7:4  |  rw   |  0xf  | green | Green channel intensity (0-15) |
+|  3:0  |  rw   |  0x0  | blue  | Blue channel intensity (0-15)  |
 
-#### blue field
+## switch_status register
 
-<p>Blue channel intensity (0-15)</p>
-
-#### green field
-
-<p>Green channel intensity (0-15)</p>
-
-#### red field
-
-<p>Red channel intensity (0-15)</p>
-
----
-
-### switch_status register
-
-- Absolute Address: `0x18`
-- Base Offset: `0x18`
-- Size: `0x4`
-
-<p>Register used to read the status of the input switches.
+Register used to read the status of the input switches.
 Each bit corresponds to a different switch, with bit 0 corresponding to switch_0,
-bit 1 to switch_1, and bit 2 to switch_2.</p>
+bit 1 to switch_1, and bit 2 to switch_2.
 
+- Offset: `0x18`
+- Reset default: `0x0`
+- Reset mask: `0x7`
+
+### Fields
+
+<!-- markdownlint-disable -->
 <script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "switch_2",
-            "bits": 1,
-            "attr": [
-                "r"
-            ],
-            "rotate": -90,
-            "type": 3
-        },
-        {
-            "name": "switch_1",
-            "bits": 1,
-            "attr": [
-                "r"
-            ],
-            "rotate": -90,
-            "type": 3
-        },
-        {
-            "name": "switch_0",
-            "bits": 1,
-            "attr": [
-                "r"
-            ],
-            "rotate": -90,
-            "type": 3
-        },
-        {
-            "name": "Reserved",
-            "bits": 29,
-            "attr": [
-                "r"
-            ],
-            "rotate": 0,
-            "type": 2
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 100
-    }
-}</script>
+{"reg": [{"name": "switch_0", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_1", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_2", "bits": 1, "attr": ["ro"], "rotate": -90}, {"bits": 29}], "config": {"lanes": 1, "fontsize": 10, "vspace": 100}}
+</script>
+<!-- markdownlint-enable -->
 
-| Bits | Identifier | Access | Reset | Name |
-| ---- | ---------- | ------ | ----- | ---- |
-| 0    | switch_0   | r      | 0x0   | —    |
-| 1    | switch_1   | r      | 0x0   | —    |
-| 2    | switch_2   | r      | 0x0   | —    |
+| Bits  | Type  | Reset | Name     | Description        |
+| :---: | :---: | :---: | :------- | :----------------- |
+| 31:3  |       |       |          | Reserved           |
+|   2   |  ro   |  0x0  | switch_2 | Status of switch 2 |
+|   1   |  ro   |  0x0  | switch_1 | Status of switch 1 |
+|   0   |  ro   |  0x0  | switch_0 | Status of switch 0 |
 
-#### switch_0 field
+## bad_address_counter register
 
-<p>Status of switch 0</p>
+Register used to count the number of bad address accesses.
 
-#### switch_1 field
+- Offset: `0x1c`
+- Reset default: `0x0`
+- Reset mask: `0xffffffff`
 
-<p>Status of switch 1</p>
+### Fields
 
-#### switch_2 field
-
-<p>Status of switch 2</p>
-
----
-
-### bad_address_counter register
-
-- Absolute Address: `0x1C`
-- Base Offset: `0x1C`
-- Size: `0x4`
-
-<p>Register used to count the number of bad address accesses.</p>
-
+<!-- markdownlint-disable -->
 <script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "count",
-            "bits": 32,
-            "attr": [
-                "r"
-            ],
-            "rotate": 0,
-            "type": 3
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 80
-    }
-}</script>
+{"reg": [{"name": "count", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+<!-- markdownlint-enable -->
 
-| Bits | Identifier | Access | Reset | Name |
-| ---- | ---------- | ------ | ----- | ---- |
-| 31:0 | count      | r      | 0x0   | —    |
+| Bits  | Type  | Reset | Name  | Description                                           |
+| :---: | :---: | :---: | :---- | :---------------------------------------------------- |
+| 31:0  |  ro   |  0x0  | count | Counter value, incremented on each bad address access |
 
-#### count field
+## test_register_1 register
 
-<p>Counter value, incremented on each bad address access</p>
+Register used to test a 32-bit read/write register with all bits used for data.
 
----
+- Offset: `0xf8`
+- Reset default: `0x0`
+- Reset mask: `0xffffffff`
 
-### test_register_1 register
+### Fields
 
-- Absolute Address: `0xF8`
-- Base Offset: `0xF8`
-- Size: `0x4`
-
-<p>Register used to test a 32-bit read/write register with all bits used for data.</p>
-
+<!-- markdownlint-disable -->
 <script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "test_bits",
-            "bits": 32,
-            "attr": [
-                "rw"
-            ],
-            "rotate": 0,
-            "type": 3
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 80
-    }
-}</script>
+{"reg": [{"name": "test_bits", "bits": 32, "attr": ["rw"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+<!-- markdownlint-enable -->
 
-| Bits | Identifier | Access | Reset | Name |
-| ---- | ---------- | ------ | ----- | ---- |
-| 31:0 | test_bits  | rw     | 0x0   | —    |
+| Bits  | Type  | Reset | Name      | Description |
+| :---: | :---: | :---: | :-------- | :---------- |
+| 31:0  |  rw   |  0x0  | test_bits | Test bits   |
 
-#### test_bits field
+## test_register_2 register
 
-<p>Test bits</p>
+Register used to test a 32-bit read/write register with all bits used for data.
 
----
+- Offset: `0xfc`
+- Reset default: `0x0`
+- Reset mask: `0xffffffff`
 
-### test_register_2 register
+### Fields
 
-- Absolute Address: `0xFC`
-- Base Offset: `0xFC`
-- Size: `0x4`
-
-<p>Register used to test a 32-bit read/write register with all bits used for data.</p>
-
+<!-- markdownlint-disable -->
 <script type="WaveDrom">
-{
-    "reg": [
-        {
-            "name": "test_bits",
-            "bits": 32,
-            "attr": [
-                "rw"
-            ],
-            "rotate": 0,
-            "type": 3
-        }
-    ],
-    "config": {
-        "lanes": 1,
-        "fontsize": 10,
-        "vspace": 80
-    }
-}</script>
+{"reg": [{"name": "test_bits", "bits": 32, "attr": ["rw"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+<!-- markdownlint-enable -->
 
-| Bits | Identifier | Access | Reset | Name |
-| ---- | ---------- | ------ | ----- | ---- |
-| 31:0 | test_bits  | rw     | 0x0   | —    |
-
-#### test_bits field
-
-<p>Test bits</p>
-
----
+| Bits  | Type  | Reset | Name      | Description |
+| :---: | :---: | :---: | :-------- | :---------- |
+| 31:0  |  rw   |  0x0  | test_bits | Test bits   |

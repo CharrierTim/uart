@@ -46,6 +46,7 @@
 ##                                          enabled or not for output results merge.
 ##          24/05/2026  Timothee Charrier   Add support for a fast PLL model to quickly iterate without needing Vivado
 ##                                          PLL simulation files.
+##          01/06/2026  Timothee Charrier   Rename `--fast_pll` flag to `--without_unisim`.
 ## =====================================================================================================================
 
 import sys
@@ -83,7 +84,11 @@ cli.parser.add_argument("--modelsim", dest="questa", action="store_true", help="
 cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
 cli.parser.add_argument("--questa", dest="questa", action="store_true", help="Use Questa/ModelSim as the simulator")
 cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
-cli.parser.add_argument("--fast_pll", action="store_true", help="Use a fast PLL model if Vivado not installed")
+cli.parser.add_argument(
+    "--without_unisim",
+    action="store_true",
+    help="Use a custom behavioral PLL model (faster simulation without needing Vivado pre-compiled libraries)",
+)
 args: Namespace = cli.parse_args()
 
 ## =====================================================================================================================
@@ -109,7 +114,7 @@ OLO.add_compile_option(name="nvc.a_flags", value=["--relaxed"])
 LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
 LIB_RTL.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
 
-if not args.fast_pll:
+if not args.without_unisim:
     LIB_RTL.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
 else:
     LIB_RTL.add_source_file(file_name=MODELS_ROOT / "pll" / "pll_fast_sim.vhd")
@@ -126,7 +131,7 @@ LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
 
 simulator.attach(VU).configure()
 
-if not args.fast_pll:
+if not args.without_unisim:
     simulator.add_library(library_name="unisim")
     simulator.add_library(library_name="unifast")
 

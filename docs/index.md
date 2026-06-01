@@ -1,16 +1,28 @@
 # UART PROJECT
 
-Documentation of the UART Project for the Zedboard device.
+Documentation for the UART Project targeting the Zedboard device.
 
 ## Overview
 
-An UART-based FPGA peripheral control system featuring some basic IPs from scratch (UART, SPI, VGA, etc.) and IPs from
+A UART-based FPGA peripheral control system featuring custom IP (UART, SPI, VGA, etc.) and IP from
 [Open Logic FPGA Standard Library](https://github.com/open-logic/open-logic).
 
-Verification with [`VUnit` framework](https://github.com/VUnit/vunit) and [`nvc` simulator](https://github.com/nickg/nvc)
-with code coverage.
+Verification uses the [`VUnit` framework](https://github.com/VUnit/vunit) with code coverage across open-source and
+commercial simulators:
+
+- [`nvc` simulator](https://github.com/nickg/nvc)
+- [`GHDL` simulator](https://github.com/ghdl/ghdl)
+- `QuestaSim`/`ModelSim` simulator
 
 Synthesis and implementation are done with Vivado.
+
+## FPGA Overview
+
+The FPGA design consists of the following main components:
+
+![UART Top FPGA](./assets/uart.drawio){ page="TOP-FPGA" }
+
+See the [top_fpga module documentation](modules/top_fpga.md) for design details and instantiated modules.
 
 ## List of Abbreviations
 

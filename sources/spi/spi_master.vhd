@@ -58,6 +58,7 @@
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 -- 2.1      24/05/2026  Timothee Charrier   Remove o_rx_data_valid signal and associated logic
 --                                          Update i_tx_data_valid behavior now that it is connected to a pulse register
+--          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 -- =====================================================================================================================
 
 library ieee;
@@ -80,7 +81,7 @@ entity SPI_MASTER is
     port (
         -- Clock and reset
         CLK             : in    std_logic;
-        RST_P           : in    std_logic;
+        ARST_P          : in    std_logic;
         -- SPI interface
         O_SCLK          : out   std_logic; -- Serial Clock
         O_MOSI          : out   std_logic; -- Master Out Slave In
@@ -166,10 +167,10 @@ begin
     -- The enable pulses are used to synchronize sampling and shifting operations across the FSM.
     -- =================================================================================================================
 
-    p_core_clock_gen : process (CLK, RST_P) is
+    p_core_clock_gen : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             spi_half_period_counter <= (others => '0');
             half_period_tick        <= '0';
@@ -234,10 +235,10 @@ begin
     -- SPI output clock when active
     -- =================================================================================================================
 
-    p_sclk : process (CLK, RST_P) is
+    p_sclk : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             reg_o_sclk <= G_CLK_POLARITY;
             O_SCLK     <= G_CLK_POLARITY;
@@ -260,10 +261,10 @@ begin
     -- Bit counter, increments on leading edge
     -- =================================================================================================================
 
-    p_bit_count : process (CLK, RST_P) is
+    p_bit_count : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             bit_counter <= (others => '0');
 
@@ -287,10 +288,10 @@ begin
     -- Register the input data when valid and I_MISO resynchronization to input clock domain
     -- =================================================================================================================
 
-    p_internal_reg : process (CLK, RST_P) is
+    p_internal_reg : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             reg_i_tx_data     <= (others => '0');
             reg_resync_i_miso <= (others => '0');
@@ -312,10 +313,10 @@ begin
     -- FSM sequential process for state transitions
     -- =================================================================================================================
 
-    p_fsm_seq : process (CLK, RST_P) is
+    p_fsm_seq : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             current_state <= STATE_IDLE;
 
@@ -491,10 +492,10 @@ begin
     -- Registered outputs
     -- =================================================================================================================
 
-    p_outputs_seq : process (CLK, RST_P) is
+    p_outputs_seq : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             O_MOSI           <= '0';
             O_CS_N           <= '1';

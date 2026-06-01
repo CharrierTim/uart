@@ -22,9 +22,9 @@
 --  SOFTWARE.
 -- =====================================================================================================================
 -- @project uart
--- @file    uart.vhd
+-- @file    uart_axi_lite_bridge.vhd
 -- @version 2.3
--- @brief   Top-level UART module, implementing both TX and RX functionalities with a custom protocol
+-- @brief   AXI4-Lite UART bridge providing a command-based interface to read and write registers over UART.
 -- @author  Timothee Charrier
 -- =====================================================================================================================
 -- REVISION HISTORY
@@ -38,6 +38,7 @@
 --                                          in clocked p_fsm_seq process.
 -- 2.2      09/04/2026  Timothee Charrier   Refactor soft reset sequential process to be more clear and concise.
 -- 2.3      24/05/2026  Timothee Charrier   Update UART interface to AXI4-Lite and update the protocol accordingly.
+--          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 -- =====================================================================================================================
 
 library ieee;
@@ -50,7 +51,7 @@ library lib_rtl;
 -- ENTITY
 -- =====================================================================================================================
 
-entity UART is
+entity UART_AXI_LITE_BRIDGE is
     generic (
         G_CLK_FREQ_HZ   : positive := 50_000_000; -- Clock frequency in Hz
         G_BAUD_RATE_BPS : positive := 115_200;    -- Baud rate
@@ -59,7 +60,7 @@ entity UART is
     port (
         -- Clock and reset
         CLK            : in    std_logic;
-        RST_P          : in    std_logic;
+        ARST_P         : in    std_logic;
         -- UART interface
         I_UART_RX      : in    std_logic;
         O_UART_TX      : out   std_logic;
@@ -84,13 +85,13 @@ entity UART is
         M_AXIL_RDATA   : in    std_logic_vector(32 - 1 downto 0);
         M_AXIL_RRESP   : in    std_logic_vector( 1 downto 0)
     );
-end entity UART;
+end entity UART_AXI_LITE_BRIDGE;
 
 -- =====================================================================================================================
 -- ARCHITECTURE
 -- =====================================================================================================================
 
-architecture UART_ARCH of UART is
+architecture UART_AXI_LITE_BRIDGE_ARCH of UART_AXI_LITE_BRIDGE is
 
     -- =================================================================================================================
     -- TYPES
@@ -204,7 +205,7 @@ begin
         )
         port map (
             CLK             => CLK,
-            RST_P           => RST_P,
+            ARST_P          => ARST_P,
             I_TX_DATA       => tx_byte_to_send_encoded,
             I_TX_DATA_VALID => tx_byte_to_send_valid,
             O_UART_TX       => O_UART_TX,
@@ -247,7 +248,7 @@ begin
         )
         port map (
             CLK               => CLK,
-            RST_P             => RST_P,
+            ARST_P            => ARST_P,
             I_UART_RX         => I_UART_RX,
             O_BYTE            => rx_byte,
             O_BYTE_VALID      => rx_byte_valid,
@@ -299,10 +300,10 @@ begin
                   '1' when (rx_byte_valid = '1' and rx_byte = C_CHAR_W) else -- 'W'
                   '0';
 
-    p_fsm_seq : process (CLK, RST_P) is
+    p_fsm_seq : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             current_state         <= STATE_IDLE;
             rx_byte_count         <= (others => '0');
@@ -468,7 +469,8 @@ begin
             -- =========================================================================================================
             -- STATE: WRITE_MODE_END
             -- =========================================================================================================
-            -- After receiving the line feed character, go back to idle state and raise the data valid signal
+            -- After receiving the line feed character, raise the write valid signal and wait for the write response
+            -- before going back to idle state
             -- =========================================================================================================
 
             when STATE_WRITE_MODE_END =>
@@ -477,6 +479,10 @@ begin
 
             -- =========================================================================================================
             -- STATE: WRITE_MODE_WAIT_RESP
+            -- =========================================================================================================
+            -- Wait for the write response from the regblock before going back to idle state
+            -- Note: Not blocking because any `R` or `W` command received during this state will reset the FSM and start
+            --       a new transaction
             -- =========================================================================================================
 
             when STATE_WRITE_MODE_WAIT_RESP =>
@@ -594,10 +600,10 @@ begin
     -- AXI4-Lite signal assignments
     -- =================================================================================================================
 
-    p_axil_signals_seq : process (CLK, RST_P) is
+    p_axil_signals_seq : process (CLK, ARST_P) is
     begin
 
-        if (RST_P = '1') then
+        if (ARST_P = '1') then
 
             data_to_send   <= (others => '0');
 
@@ -717,4 +723,4 @@ begin
 
     end process p_axil_signals_seq;
 
-end architecture UART_ARCH;
+end architecture UART_AXI_LITE_BRIDGE_ARCH;

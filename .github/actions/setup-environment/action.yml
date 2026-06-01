@@ -22,7 +22,7 @@ runs:
 
     - name: Install Python requirements
       shell: bash
-      run: uv sync --group dev
+      run: uv sync
 
     - name: Install APT packages
       shell: bash
