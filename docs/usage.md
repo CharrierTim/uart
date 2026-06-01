@@ -245,5 +245,6 @@ To generate the register block, run the following command in the `root` folder:
     python tools/peakrdl/scripts/generate_regblock.py
     ```
 
-An HTML and markdown documentation is generated under the `tools/peakrdl/report` folder.
 VHDL source files for the register block are generated under the `sources/regblock` folder.
+
+An HTML and markdown documentation is generated under the `tools/peakrdl/report` folder.
