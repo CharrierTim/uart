@@ -37,11 +37,15 @@ Register indicating the git hash of the repository at the time of bitstream gene
 <script type="WaveDrom">
 {"reg": [{"name": "hash", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
 </script>
-<!-- markdownlint-enable -->
+
+<div class="register-bits-table" markdown="1">
 
 | Bits  | Type  | Reset | Name | Description |
 | :---: | :---: | :---: | :--- | :---------- |
 | 31:0  |  ro   |  0x0  | hash | Hash value  |
+
+</div>
+<!-- markdownlint-enable -->
 
 ## git_status register
 
@@ -59,12 +63,16 @@ value is 0, there were no uncommitted changes (clean).
 <script type="WaveDrom">
 {"reg": [{"name": "status", "bits": 1, "attr": ["ro"], "rotate": -90}, {"bits": 31}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
 </script>
-<!-- markdownlint-enable -->
+
+<div class="register-bits-table" markdown="1">
 
 | Bits  | Type  | Reset | Name   | Description  |
 | :---: | :---: | :---: | :----- | :----------- |
 | 31:1  |       |       |        | Reserved     |
 |   0   |  ro   |  0x0  | status | Status value |
+
+</div>
+<!-- markdownlint-enable -->
 
 ## fpga_id register
 
@@ -80,11 +88,15 @@ Register indicating the FPGA identification information.
 <script type="WaveDrom">
 {"reg": [{"name": "id", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
 </script>
-<!-- markdownlint-enable -->
+
+<div class="register-bits-table" markdown="1">
 
 | Bits  | Type  | Reset | Name | Description |
 | :---: | :---: | :---: | :--- | :---------- |
 | 31:0  |  ro   |  0x0  | id   | ID value    |
+
+</div>
+<!-- markdownlint-enable -->
 
 ## spi_tx_control register
 
@@ -100,13 +112,17 @@ Register used to send data over SPI. Writing to this register starts the SPI tra
 <script type="WaveDrom">
 {"reg": [{"name": "tx_data", "bits": 8, "attr": ["rw"], "rotate": 0}, {"name": "tx_data_valid", "bits": 1, "attr": ["rw"], "rotate": -90}, {"bits": 23}], "config": {"lanes": 1, "fontsize": 10, "vspace": 150}}
 </script>
-<!-- markdownlint-enable -->
+
+<div class="register-bits-table" markdown="1">
 
 | Bits  | Type  | Reset | Name          | Description                                                                                                     |
 | :---: | :---: | :---: | :------------ | :-------------------------------------------------------------------------------------------------------------- |
 | 31:9  |       |       |               | Reserved                                                                                                        |
 |   8   |  rw   |  0x0  | tx_data_valid | SPI transaction valid signal. Asserts for one cycle when written 1 and then clears back to 0 on the next cycle. |
 |  7:0  |  rw   |  0x0  | tx_data       | TX data to be sent                                                                                              |
+
+</div>
+<!-- markdownlint-enable -->
 
 ## spi_rx_data register
 
@@ -122,12 +138,16 @@ Register used to receive data over SPI.
 <script type="WaveDrom">
 {"reg": [{"name": "rx_data", "bits": 8, "attr": ["ro"], "rotate": 0}, {"bits": 24}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
 </script>
-<!-- markdownlint-enable -->
+
+<div class="register-bits-table" markdown="1">
 
 | Bits  | Type  | Reset | Name    | Description               |
 | :---: | :---: | :---: | :------ | :------------------------ |
 | 31:8  |       |       |         | Reserved                  |
 |  7:0  |  ro   |  0x0  | rx_data | RX data received over SPI |
+
+</div>
+<!-- markdownlint-enable -->
 
 ## vga_color_control register
 
@@ -144,7 +164,8 @@ The color is specified in RGB format, with 4 bits for each channel (red, green, 
 <script type="WaveDrom">
 {"reg": [{"name": "blue", "bits": 4, "attr": ["rw"], "rotate": 0}, {"name": "green", "bits": 4, "attr": ["rw"], "rotate": 0}, {"name": "red", "bits": 4, "attr": ["rw"], "rotate": 0}, {"bits": 20}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
 </script>
-<!-- markdownlint-enable -->
+
+<div class="register-bits-table" markdown="1">
 
 | Bits  | Type  | Reset | Name  | Description                    |
 | :---: | :---: | :---: | :---- | :----------------------------- |
@@ -152,6 +173,9 @@ The color is specified in RGB format, with 4 bits for each channel (red, green, 
 | 11:8  |  rw   |  0x0  | red   | Red channel intensity (0-15)   |
 |  7:4  |  rw   |  0xf  | green | Green channel intensity (0-15) |
 |  3:0  |  rw   |  0x0  | blue  | Blue channel intensity (0-15)  |
+
+</div>
+<!-- markdownlint-enable -->
 
 ## switch_status register
 
@@ -169,7 +193,8 @@ bit 1 to switch_1, and bit 2 to switch_2.
 <script type="WaveDrom">
 {"reg": [{"name": "switch_0", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_1", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_2", "bits": 1, "attr": ["ro"], "rotate": -90}, {"bits": 29}], "config": {"lanes": 1, "fontsize": 10, "vspace": 100}}
 </script>
-<!-- markdownlint-enable -->
+
+<div class="register-bits-table" markdown="1">
 
 | Bits  | Type  | Reset | Name     | Description        |
 | :---: | :---: | :---: | :------- | :----------------- |
@@ -177,6 +202,9 @@ bit 1 to switch_1, and bit 2 to switch_2.
 |   2   |  ro   |  0x0  | switch_2 | Status of switch 2 |
 |   1   |  ro   |  0x0  | switch_1 | Status of switch 1 |
 |   0   |  ro   |  0x0  | switch_0 | Status of switch 0 |
+
+</div>
+<!-- markdownlint-enable -->
 
 ## bad_address_counter register
 
@@ -192,11 +220,15 @@ Register used to count the number of bad address accesses.
 <script type="WaveDrom">
 {"reg": [{"name": "count", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
 </script>
-<!-- markdownlint-enable -->
+
+<div class="register-bits-table" markdown="1">
 
 | Bits  | Type  | Reset | Name  | Description                                           |
 | :---: | :---: | :---: | :---- | :---------------------------------------------------- |
 | 31:0  |  ro   |  0x0  | count | Counter value, incremented on each bad address access |
+
+</div>
+<!-- markdownlint-enable -->
 
 ## test_register_1 register
 
@@ -212,11 +244,15 @@ Register used to test a 32-bit read/write register with all bits used for data.
 <script type="WaveDrom">
 {"reg": [{"name": "test_bits", "bits": 32, "attr": ["rw"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
 </script>
-<!-- markdownlint-enable -->
+
+<div class="register-bits-table" markdown="1">
 
 | Bits  | Type  | Reset | Name      | Description |
 | :---: | :---: | :---: | :-------- | :---------- |
 | 31:0  |  rw   |  0x0  | test_bits | Test bits   |
+
+</div>
+<!-- markdownlint-enable -->
 
 ## test_register_2 register
 
@@ -232,8 +268,12 @@ Register used to test a 32-bit read/write register with all bits used for data.
 <script type="WaveDrom">
 {"reg": [{"name": "test_bits", "bits": 32, "attr": ["rw"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
 </script>
-<!-- markdownlint-enable -->
+
+<div class="register-bits-table" markdown="1">
 
 | Bits  | Type  | Reset | Name      | Description |
 | :---: | :---: | :---: | :-------- | :---------- |
 | 31:0  |  rw   |  0x0  | test_bits | Test bits   |
+
+</div>
+<!-- markdownlint-enable -->

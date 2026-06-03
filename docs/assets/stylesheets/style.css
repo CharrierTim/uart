@@ -49,25 +49,31 @@ td {
 /* Bits */
 .register-bits-table table th:nth-child(1),
 .register-bits-table table td:nth-child(1) {
-    width: 15%;
+    width: 10%;
+}
+
+/* Type */
+.register-bits-table table th:nth-child(2),
+.register-bits-table table td:nth-child(2) {
+    width: 10%;
 }
 
 /* Reset */
-.register-bits-table table th:nth-child(2),
-.register-bits-table table td:nth-child(2) {
-    width: 15%;
+.register-bits-table table th:nth-child(3),
+.register-bits-table table td:nth-child(3) {
+    width: 10%;
 }
 
 /* Name */
-.register-bits-table table th:nth-child(3),
-.register-bits-table table td:nth-child(3) {
-    width: 25%;
+.register-bits-table table th:nth-child(4),
+.register-bits-table table td:nth-child(4) {
+    width: 20%;
 }
 
 /* Description */
-.register-bits-table table th:nth-child(4),
-.register-bits-table table td:nth-child(4) {
-    width: 45%;
+.register-bits-table table th:nth-child(5),
+.register-bits-table table td:nth-child(5) {
+    width: 50%;
 }
 
 /*
