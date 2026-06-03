@@ -96,7 +96,7 @@ nav:
       - Top FPGA: modules/top_fpga.md
       - Internal Registers: modules/regblock/regblock.md
       - UART:
-          - UART Top: modules/uart/uart_axi_lite_bridge.md
+          - UART AXI-Lite Bridge: modules/uart/uart_axi_lite_bridge.md
           - UART RX: modules/uart/uart_rx.md
           - UART TX: modules/uart/uart_tx.md
       - SPI:
