@@ -4,8 +4,12 @@ Documentation for the UART Project targeting the Zedboard device.
 
 ## Overview
 
-A UART-based FPGA peripheral control system featuring custom IP (UART, SPI, VGA, etc.) and IP from
-[Open Logic FPGA Standard Library](https://github.com/open-logic/open-logic).
+FPGA project for the Zedboard centered on a UART peripheral and an AXI-Lite register block to
+control IPs/peripherals (SPI, VGA, etc.)
+
+Control & status register (CSR) automation is done with [SystemRDL](https://github.com/systemrdl) and [PeakRDL-regblock-vhdl](https://peakrdl-regblock-vhdl.readthedocs.io/).
+
+Most of the design is built from scratch, but some IPs are taken from the [Open Logic FPGA Standard Library](https://github.com/open-logic/open-logic).
 
 Verification uses the [`VUnit` framework](https://github.com/VUnit/vunit) with code coverage across open-source and
 commercial simulators:
