@@ -2,6 +2,11 @@
 
 ## Description
 
+The UART TX module implements a UART transmitter that serializes and sends data bytes over a output line (`O_UART_TX`).
+Data is transmitted with a start bit, followed by 8 data bits (LSB first), and a stop bit.
+
+It supports configurable baud rates.
+
 ---
 
 ## Generics
