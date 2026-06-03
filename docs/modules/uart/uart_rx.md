@@ -2,6 +2,12 @@
 
 ## Description
 
+The UART RX module implements a asynchronous UART receiver that samples and deserializes incoming data bits
+from a input line (`I_UART_RX`).
+The receiver uses oversampling, digital filtering, and majority voting to reduce noise and improve reliability.
+
+It supports configurable baud rates and sampling rates.
+
 ---
 
 ## Generics
