@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - **Python**:  Version 3.14 or higher
-- [**NVC**](https://github.com/nickg/nvc/releases/tag/r1.21.0): `Version r1.21.0`
+- [**NVC**](https://github.com/nickg/nvc/releases/tag/r1.21.1): `Version r1.21.1`
 - **Vivado**: `Version 2025.2`
 
 Also tested with:
