@@ -1,0 +1,1821 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the UART Project">
+      
+      
+        <meta name="author" content="Timothée Charrier">
+      
+      
+        <link rel="canonical" href="https://charriertim.github.io/uart/modules/regblock/regblock/">
+      
+      
+        <link rel="prev" href="../../top_fpga/">
+      
+      
+        <link rel="next" href="../../uart/uart_axi_lite_bridge/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Internal Registers - UART Project</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/style.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#registers" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="UART Project" class="md-header__button md-logo" aria-label="UART Project" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            UART Project
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Internal Registers
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/CharrierTim/uart" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    CharrierTim/uart
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../usage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usage
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../top_fpga/" class="md-tabs__link">
+          
+  
+  
+  Modules
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../testbench/tb_top_fpga/" class="md-tabs__link">
+          
+  
+  
+  Testbench
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="UART Project" class="md-nav__button md-logo" aria-label="UART Project" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    UART Project
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/CharrierTim/uart" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    CharrierTim/uart
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modules
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Modules
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../top_fpga/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Top FPGA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Internal Registers
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Internal Registers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#git_hash-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        git_hash register
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#git_status-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        git_status register
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fpga_id-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpga_id register
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spi_tx_control-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spi_tx_control register
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spi_rx_data-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spi_rx_data register
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vga_color_control-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vga_color_control register
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#switch_status-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_status register
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bad_address_counter-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bad_address_counter register
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test_register_1-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        test_register_1 register
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test_register_2-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        test_register_2 register
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UART
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UART
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../uart/uart_axi_lite_bridge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UART AXI-Lite Bridge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../uart/uart_rx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UART RX
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../uart/uart_tx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UART TX
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    SPI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spi/spi_master/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPI Master
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VGA
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    VGA
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../vga/vga_controller/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VGA Controller
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testbench
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Testbench
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testbench/tb_top_fpga/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Top FPGA TB
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testbench/testcases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testcases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../top_fpga/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Modules
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="registers">Registers<a class="headerlink" href="#registers" title="Permanent link">&para;</a></h1>
+<h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
+<p>Internal FPGA registers with read/write registers accessible via the UART.
+An UART-AXI4 Lite bridge is used to access these registers.</p>
+<p>Documentation partially generated from the RDL file using the
+<a href="https://github.com/CharrierTim/uart/blob/main/tools/peakrdl/script/generate_regblock.py"><code>generate_regblock.py</code></a> script.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: center;">Offset</th>
+<th style="text-align: center;">Length</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">regblock.<a href="#git_hash-register">git_hash</a></td>
+<td style="text-align: center;"><code>0x00</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Register indicating the git hash of the repository at the time of bitstream generation.</td>
+</tr>
+<tr>
+<td style="text-align: left;">regblock.<a href="#git_status-register">git_status</a></td>
+<td style="text-align: center;"><code>0x04</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Register indicating the git status of the repository at the time of bitstream generation.</td>
+</tr>
+<tr>
+<td style="text-align: left;">regblock.<a href="#fpga_id-register">fpga_id</a></td>
+<td style="text-align: center;"><code>0x08</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Register indicating the FPGA identification information.</td>
+</tr>
+<tr>
+<td style="text-align: left;">regblock.<a href="#spi_tx_control-register">spi_tx_control</a></td>
+<td style="text-align: center;"><code>0x0C</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Register used to send data over SPI. Writing to this register starts the SPI transaction.</td>
+</tr>
+<tr>
+<td style="text-align: left;">regblock.<a href="#spi_rx_data-register">spi_rx_data</a></td>
+<td style="text-align: center;"><code>0x10</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Register used to receive data over SPI.</td>
+</tr>
+<tr>
+<td style="text-align: left;">regblock.<a href="#vga_color_control-register">vga_color_control</a></td>
+<td style="text-align: center;"><code>0x14</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Register used to set the VGA output color.</td>
+</tr>
+<tr>
+<td style="text-align: left;">regblock.<a href="#switch_status-register">switch_status</a></td>
+<td style="text-align: center;"><code>0x18</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Register used to read the status of the input switches.</td>
+</tr>
+<tr>
+<td style="text-align: left;">regblock.<a href="#bad_address_counter-register">bad_address_counter</a></td>
+<td style="text-align: center;"><code>0x1C</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Register used to count the number of bad address accesses.</td>
+</tr>
+<tr>
+<td style="text-align: left;">regblock.<a href="#test_register_1-register">test_register_1</a></td>
+<td style="text-align: center;"><code>0xF8</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Register used to test a 32-bit read/write register with all bits used for data.</td>
+</tr>
+<tr>
+<td style="text-align: left;">regblock.<a href="#test_register_2-register">test_register_2</a></td>
+<td style="text-align: center;"><code>0xFC</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Register used to test a 32-bit read/write register with all bits used for data.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="git_hash-register">git_hash register<a class="headerlink" href="#git_hash-register" title="Permanent link">&para;</a></h2>
+<p>Register indicating the git hash of the repository at the time of bitstream generation.</p>
+<ul>
+<li>Offset: <code>0x0</code></li>
+<li>Reset default: <code>0x0</code></li>
+<li>Reset mask: <code>0xffffffff</code></li>
+</ul>
+<h3 id="fields">Fields<a class="headerlink" href="#fields" title="Permanent link">&para;</a></h3>
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "hash", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Reset</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">31:0</td>
+<td style="text-align: center;">ro</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">hash</td>
+<td style="text-align: left;">Hash value</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- markdownlint-enable -->
+
+<h2 id="git_status-register">git_status register<a class="headerlink" href="#git_status-register" title="Permanent link">&para;</a></h2>
+<p>Register indicating the git status of the repository at the time of bitstream generation.
+If the value is 1, there were uncommitted changes in the repository (dirty), while if the
+value is 0, there were no uncommitted changes (clean).</p>
+<ul>
+<li>Offset: <code>0x4</code></li>
+<li>Reset default: <code>0x0</code></li>
+<li>Reset mask: <code>0x1</code></li>
+</ul>
+<h3 id="fields_1">Fields<a class="headerlink" href="#fields_1" title="Permanent link">&para;</a></h3>
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "status", "bits": 1, "attr": ["ro"], "rotate": -90}, {"bits": 31}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Reset</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">31:1</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">ro</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">status</td>
+<td style="text-align: left;">Status value</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- markdownlint-enable -->
+
+<h2 id="fpga_id-register">fpga_id register<a class="headerlink" href="#fpga_id-register" title="Permanent link">&para;</a></h2>
+<p>Register indicating the FPGA identification information.</p>
+<ul>
+<li>Offset: <code>0x8</code></li>
+<li>Reset default: <code>0x0</code></li>
+<li>Reset mask: <code>0xffffffff</code></li>
+</ul>
+<h3 id="fields_2">Fields<a class="headerlink" href="#fields_2" title="Permanent link">&para;</a></h3>
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "id", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Reset</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">31:0</td>
+<td style="text-align: center;">ro</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">ID value</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- markdownlint-enable -->
+
+<h2 id="spi_tx_control-register">spi_tx_control register<a class="headerlink" href="#spi_tx_control-register" title="Permanent link">&para;</a></h2>
+<p>Register used to send data over SPI. Writing to this register starts the SPI transaction.</p>
+<ul>
+<li>Offset: <code>0xc</code></li>
+<li>Reset default: <code>0x0</code></li>
+<li>Reset mask: <code>0x1ff</code></li>
+</ul>
+<h3 id="fields_3">Fields<a class="headerlink" href="#fields_3" title="Permanent link">&para;</a></h3>
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "tx_data", "bits": 8, "attr": ["rw"], "rotate": 0}, {"name": "tx_data_valid", "bits": 1, "attr": ["rw"], "rotate": -90}, {"bits": 23}], "config": {"lanes": 1, "fontsize": 10, "vspace": 150}}
+</script>
+
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Reset</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">31:9</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">rw</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">tx_data_valid</td>
+<td style="text-align: left;">SPI transaction valid signal. Asserts for one cycle when written 1 and then clears back to 0 on the next cycle.</td>
+</tr>
+<tr>
+<td style="text-align: center;">7:0</td>
+<td style="text-align: center;">rw</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">tx_data</td>
+<td style="text-align: left;">TX data to be sent</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- markdownlint-enable -->
+
+<h2 id="spi_rx_data-register">spi_rx_data register<a class="headerlink" href="#spi_rx_data-register" title="Permanent link">&para;</a></h2>
+<p>Register used to receive data over SPI.</p>
+<ul>
+<li>Offset: <code>0x10</code></li>
+<li>Reset default: <code>0x0</code></li>
+<li>Reset mask: <code>0xff</code></li>
+</ul>
+<h3 id="fields_4">Fields<a class="headerlink" href="#fields_4" title="Permanent link">&para;</a></h3>
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "rx_data", "bits": 8, "attr": ["ro"], "rotate": 0}, {"bits": 24}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Reset</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">31:8</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">7:0</td>
+<td style="text-align: center;">ro</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">rx_data</td>
+<td style="text-align: left;">RX data received over SPI</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- markdownlint-enable -->
+
+<h2 id="vga_color_control-register">vga_color_control register<a class="headerlink" href="#vga_color_control-register" title="Permanent link">&para;</a></h2>
+<p>Register used to set the VGA output color.
+The color is specified in RGB format, with 4 bits for each channel (red, green, blue).</p>
+<ul>
+<li>Offset: <code>0x14</code></li>
+<li>Reset default: <code>0xf0</code></li>
+<li>Reset mask: <code>0xfff</code></li>
+</ul>
+<h3 id="fields_5">Fields<a class="headerlink" href="#fields_5" title="Permanent link">&para;</a></h3>
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "blue", "bits": 4, "attr": ["rw"], "rotate": 0}, {"name": "green", "bits": 4, "attr": ["rw"], "rotate": 0}, {"name": "red", "bits": 4, "attr": ["rw"], "rotate": 0}, {"bits": 20}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Reset</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">31:12</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">11:8</td>
+<td style="text-align: center;">rw</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">red</td>
+<td style="text-align: left;">Red channel intensity (0-15)</td>
+</tr>
+<tr>
+<td style="text-align: center;">7:4</td>
+<td style="text-align: center;">rw</td>
+<td style="text-align: center;">0xf</td>
+<td style="text-align: left;">green</td>
+<td style="text-align: left;">Green channel intensity (0-15)</td>
+</tr>
+<tr>
+<td style="text-align: center;">3:0</td>
+<td style="text-align: center;">rw</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">blue</td>
+<td style="text-align: left;">Blue channel intensity (0-15)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- markdownlint-enable -->
+
+<h2 id="switch_status-register">switch_status register<a class="headerlink" href="#switch_status-register" title="Permanent link">&para;</a></h2>
+<p>Register used to read the status of the input switches.
+Each bit corresponds to a different switch, with bit 0 corresponding to switch_0,
+bit 1 to switch_1, and bit 2 to switch_2.</p>
+<ul>
+<li>Offset: <code>0x18</code></li>
+<li>Reset default: <code>0x0</code></li>
+<li>Reset mask: <code>0x7</code></li>
+</ul>
+<h3 id="fields_6">Fields<a class="headerlink" href="#fields_6" title="Permanent link">&para;</a></h3>
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "switch_0", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_1", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_2", "bits": 1, "attr": ["ro"], "rotate": -90}, {"bits": 29}], "config": {"lanes": 1, "fontsize": 10, "vspace": 100}}
+</script>
+
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Reset</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">31:3</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">ro</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">switch_2</td>
+<td style="text-align: left;">Status of switch 2</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">ro</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">switch_1</td>
+<td style="text-align: left;">Status of switch 1</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">ro</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">switch_0</td>
+<td style="text-align: left;">Status of switch 0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- markdownlint-enable -->
+
+<h2 id="bad_address_counter-register">bad_address_counter register<a class="headerlink" href="#bad_address_counter-register" title="Permanent link">&para;</a></h2>
+<p>Register used to count the number of bad address accesses.</p>
+<ul>
+<li>Offset: <code>0x1c</code></li>
+<li>Reset default: <code>0x0</code></li>
+<li>Reset mask: <code>0xffffffff</code></li>
+</ul>
+<h3 id="fields_7">Fields<a class="headerlink" href="#fields_7" title="Permanent link">&para;</a></h3>
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "count", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Reset</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">31:0</td>
+<td style="text-align: center;">ro</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">count</td>
+<td style="text-align: left;">Counter value, incremented on each bad address access</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- markdownlint-enable -->
+
+<h2 id="test_register_1-register">test_register_1 register<a class="headerlink" href="#test_register_1-register" title="Permanent link">&para;</a></h2>
+<p>Register used to test a 32-bit read/write register with all bits used for data.</p>
+<ul>
+<li>Offset: <code>0xf8</code></li>
+<li>Reset default: <code>0x0</code></li>
+<li>Reset mask: <code>0xffffffff</code></li>
+</ul>
+<h3 id="fields_8">Fields<a class="headerlink" href="#fields_8" title="Permanent link">&para;</a></h3>
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "test_bits", "bits": 32, "attr": ["rw"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Reset</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">31:0</td>
+<td style="text-align: center;">rw</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">test_bits</td>
+<td style="text-align: left;">Test bits</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- markdownlint-enable -->
+
+<h2 id="test_register_2-register">test_register_2 register<a class="headerlink" href="#test_register_2-register" title="Permanent link">&para;</a></h2>
+<p>Register used to test a 32-bit read/write register with all bits used for data.</p>
+<ul>
+<li>Offset: <code>0xfc</code></li>
+<li>Reset default: <code>0x0</code></li>
+<li>Reset mask: <code>0xffffffff</code></li>
+</ul>
+<h3 id="fields_9">Fields<a class="headerlink" href="#fields_9" title="Permanent link">&para;</a></h3>
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "test_bits", "bits": 32, "attr": ["rw"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+
+<div class="register-bits-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Reset</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">31:0</td>
+<td style="text-align: center;">rw</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: left;">test_bits</td>
+<td style="text-align: left;">Test bits</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- markdownlint-enable -->
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Timothée Charrier
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["announce.dismiss", "content.code.annotate", "content.code.copy", "content.tabs.link", "header.autohide", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.suggest", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js"></script>
+      
+        <script src="../../../assets/javascripts/onload-events.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-chtml.min.js"></script>
+      
+    
+  </body>
+</html>
