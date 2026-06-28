@@ -58,12 +58,14 @@ See the [top_fpga module documentation](modules/top_fpga.md) for design details 
 
 ## Tools Versions
 
-| Tool       | Version                                                       |
-| ---------- | ------------------------------------------------------------- |
-| **NVC**    | `nvc 1.21.1 (1.21.1.r0.gf6df45f75) (Using LLVM 22.1.6)`       |
-| **VUnit**  | `5.0.0.dev11 commit 1197afd44175df0695eb0bf8d6dd49a4af88b469` |
-| **VSG**    | `VHDL Style Guide (VSG) version: 3.35.0`                      |
-| **Vivado** | `2025.2`                                                      |
+| Tool                      | Version                                                       |
+| ------------------------- | ------------------------------------------------------------- |
+| **NVC**                   | `nvc 1.21.1 (1.21.1.r0.gf6df45f75) (Using LLVM 22.1.6)`       |
+| **PeakRDL**               | `1.5.0`                                                       |
+| **PeakRDL-regblock-vhdl** | `v1.3.1.1`                                                    |
+| **Vivado**                | `2025.2`                                                      |
+| **VSG**                   | `VHDL Style Guide (VSG) version: 3.35.0`                      |
+| **VUnit**                 | `5.0.0.dev11 commit 1197afd44175df0695eb0bf8d6dd49a4af88b469` |
 
 ## Clocking Configuration
 
