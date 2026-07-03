@@ -67,7 +67,7 @@ entity TOP_FPGA is
     port (
         -- Clock and reset
         PAD_I_CLK       : in    std_logic;
-        PAD_I_RST_P     : in    std_logic;
+        PAD_I_ARST_P    : in    std_logic;
 
         -- UART
         PAD_I_UART_RX   : in    std_logic;
@@ -142,7 +142,7 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal internal_clk             : std_logic;
     signal vga_clk                  : std_logic;
     signal pll_locked               : std_logic;
-    signal intermediate_rst_p       : std_logic;
+    signal intermediate_arst_p      : std_logic;
     signal internal_sys_arst_p      : std_logic;
     signal internal_vga_arst_p      : std_logic;
 
@@ -202,13 +202,13 @@ begin
         port map (
             clk_out1 => internal_clk,
             clk_out2 => vga_clk,
-            reset    => PAD_I_RST_P,
+            reset    => PAD_I_ARST_P,
             locked   => pll_locked,
             clk_in1  => PAD_I_CLK
         );
 
     -- Toggle reset from BTN or when PLL is unlocked
-    intermediate_rst_p <= PAD_I_RST_P or (not pll_locked);
+    intermediate_arst_p <= PAD_I_ARST_P or (not pll_locked);
 
     -- System clock domain positive reset generation
     inst_olo_base_sys_reset_gen : entity olo.olo_base_reset_gen
@@ -221,7 +221,7 @@ begin
         port map (
             Clk    => internal_clk,
             RstOut => internal_sys_arst_p,
-            RstIn  => intermediate_rst_p
+            RstIn  => intermediate_arst_p
         );
 
     -- VGA clock domain positive reset generation
@@ -235,7 +235,7 @@ begin
         port map (
             Clk    => vga_clk,
             RstOut => internal_vga_arst_p,
-            RstIn  => intermediate_rst_p
+            RstIn  => intermediate_arst_p
         );
 
     -- =================================================================================================================
