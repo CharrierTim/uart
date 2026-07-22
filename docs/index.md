@@ -60,7 +60,7 @@ See the [top_fpga module documentation](modules/top_fpga.md) for design details 
 
 | Tool                      | Version                                                       |
 | ------------------------- | ------------------------------------------------------------- |
-| **NVC**                   | `nvc 1.21.1 (1.21.1.r0.gf6df45f75) (Using LLVM 22.1.6)`       |
+| **NVC**                   | `nvc 1.22.0 (1.22.0.r0.g56b67ebc4) (Using LLVM 22.1.8)`       |
 | **PeakRDL**               | `1.5.0`                                                       |
 | **PeakRDL-regblock-vhdl** | `v1.3.1.1`                                                    |
 | **Vivado**                | `2025.2`                                                      |

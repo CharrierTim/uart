@@ -3,12 +3,12 @@
 ## Prerequisites
 
 - **Python**:  Version 3.10 or higher
-- [**NVC**](https://github.com/nickg/nvc/releases/tag/r1.21.1): `Version r1.21.1`
+- [**NVC**](https://github.com/nickg/nvc/releases/tag/r1.22.0): `Version r1.22.0`
 - **Vivado**: `Version 2025.2`
 
 Also tested with:
 
-- [**NVC**](https://github.com/nickg/nvc/releases): `Version r1.18.2`, `Version r1.19.3` and `Version r1.20.1`
+- [**NVC**](https://github.com/nickg/nvc/releases): `Version r1.18.2`, `Version r1.19.3` and `Version r1.20.1`, `r1.21.1`
 - [**GHDL**](https://github.com/ghdl/ghdl/releases/tag/v6.0.0-rc2): `GHDL 6.0.0-rc2 (6.0.0.rc2.r0.gb981f25f3) [Dunoon edition]`
 - **QuestaSim**: `Questa Altera Starter FPGA Edition-64 vsim 2025.2 Simulator 2025.05 May 31 2025`
 
