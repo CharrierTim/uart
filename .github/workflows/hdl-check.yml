@@ -23,7 +23,7 @@ jobs:
     steps:
       # General Setup
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # Setup Python
       - name: Setup Python
