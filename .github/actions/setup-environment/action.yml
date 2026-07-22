@@ -43,4 +43,4 @@ runs:
 
     - uses: nickg/setup-nvc@v1
       with:
-        version: r1.21.1
+        version: r1.22.0

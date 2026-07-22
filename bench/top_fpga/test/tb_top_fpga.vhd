@@ -79,7 +79,7 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
 
     -- DUT signals
     signal tb_pad_i_clk           : std_logic;
-    signal tb_pad_i_rst_p         : std_logic;
+    signal tb_pad_i_arst_p        : std_logic;
     signal tb_pad_i_uart_rx       : std_logic;
     signal tb_pad_o_uart_tx       : std_logic;
     signal tb_pad_o_sclk          : std_logic;
@@ -133,7 +133,7 @@ begin
         )
         port map (
             PAD_I_CLK       => tb_pad_i_clk,
-            PAD_I_RST_P     => tb_pad_i_rst_p,
+            PAD_I_ARST_P    => tb_pad_i_arst_p,
             PAD_I_UART_RX   => tb_i_uart_rx,
             PAD_O_UART_TX   => tb_pad_o_uart_tx,
             PAD_O_SCLK      => tb_pad_o_sclk,
@@ -383,7 +383,7 @@ begin
         begin
 
             -- Reset the DUT by setting the input state to all zeros
-            tb_pad_i_rst_p         <= '1';
+            tb_pad_i_arst_p        <= '1';
 
             tb_i_uart_select       <= '0';
             tb_i_uart_rx_manual    <= '0';
@@ -407,7 +407,7 @@ begin
             wait for c_clock_cycles * C_CLK_PERIOD;
 
             -- Reassert reset
-            tb_pad_i_rst_p         <= '0';
+            tb_pad_i_arst_p        <= '0';
 
             -- Wait for the DUT to step over
             wait for 5 ns;
