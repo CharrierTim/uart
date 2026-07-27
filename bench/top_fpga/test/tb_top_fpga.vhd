@@ -406,7 +406,7 @@ begin
 
             wait for c_clock_cycles * C_CLK_PERIOD;
 
-            -- Reassert reset
+            -- De-assert reset
             tb_pad_i_arst_p        <= '0';
 
             -- Wait for the DUT to step over
@@ -937,7 +937,7 @@ begin
                 check_equal(
                     tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_UART_READ_CMD_TIME),
                     True,
-                    "Ensuring UART not responding when sending read command with invalid start bit in char 'R'");
+                    "Ensuring UART not responding when sending read command with invalid stop bit in char 'R'");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1058,6 +1058,10 @@ begin
                 info(" Writing to a bad address (0x98) and checking LED_0 is indicating error");
                 info("-----------------------------------------------------------------------------");
                 info("");
+
+                -- Reset DUT to clear LED_0
+                proc_reset_dut;
+                wait for 100 us;
 
                 proc_uart_write(C_REG_BAD_ADDR, x"FEDC_BA98");
                 wait for C_UART_WRITE_CMD_TIME;
