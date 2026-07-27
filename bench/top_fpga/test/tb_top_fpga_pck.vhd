@@ -74,24 +74,24 @@ package TB_TOP_FPGA_PKG is
     -- =================================================================================================================
 
     -- Clock period for the testbench
-    constant C_FREQ_HZ                    : positive := 100_000_000;
-    constant C_CLK_PERIOD                 : time     := 1 sec / C_FREQ_HZ;
+    constant C_FREQ_HZ                            : positive := 100_000_000;
+    constant C_CLK_PERIOD                         : time     := 1 sec / C_FREQ_HZ;
 
     -- DUT generics
-    constant C_GIT_ID                     : std_logic_vector(32 - 1 downto 0) := x"DEAD_BEEF";
-    constant C_GIT_STATUS                 : std_logic                         := '1';
-    constant C_FPGA_ID                    : std_logic_vector(32 - 1 downto 0) := x"1234_5678";
+    constant C_GIT_ID                             : std_logic_vector(32 - 1 downto 0) := x"DEAD_BEEF";
+    constant C_GIT_STATUS                         : std_logic                         := '1';
+    constant C_FPGA_ID                            : std_logic_vector(32 - 1 downto 0) := x"1234_5678";
 
     -- UART model constants
-    constant C_UART_BAUD_RATE_BPS         : positive := 115_200;
-    constant C_UART_BIT_TIME              : time     := 1 sec / C_UART_BAUD_RATE_BPS;
-    constant C_UART_BIT_TIME_ACCURACY     : time     := 0.01 * C_UART_BIT_TIME;
-    constant C_UART_WRITE_NB_BITS         : positive := 10 * 12; -- 10 bits , 12 chars in total
-    constant C_UART_WRITE_CMD_TIME        : time     := C_UART_BIT_TIME * C_UART_WRITE_NB_BITS;
-    constant C_UART_READ_NB_BITS          : positive := 10 * 13; -- 10 bits , 13 chars in total
-    constant C_UART_READ_CMD_TIME         : time     := C_UART_BIT_TIME * C_UART_READ_NB_BITS;
+    constant C_UART_BAUD_RATE_BPS                 : positive := 115_200;
+    constant C_UART_BIT_TIME                      : time     := 1 sec / C_UART_BAUD_RATE_BPS;
+    constant C_UART_BIT_TIME_ACCURACY             : time     := 0.01 * C_UART_BIT_TIME;
+    constant C_UART_WRITE_NB_BITS                 : positive := 10 * 12; -- 10 bits , 12 chars in total
+    constant C_UART_WRITE_CMD_TIME                : time     := C_UART_BIT_TIME * C_UART_WRITE_NB_BITS;
+    constant C_UART_READ_NB_BITS                  : positive := 10 * 13; -- 10 bits , 13 chars in total
+    constant C_UART_READ_CMD_TIME                 : time     := C_UART_BIT_TIME * C_UART_READ_NB_BITS;
 
-    constant C_REG_GIT_HASH               : t_reg :=
+    constant C_REG_GIT_HASH                       : t_reg :=
     (
         name           => "GIT_HASH",
         addr           => 8x"00",
@@ -99,7 +99,7 @@ package TB_TOP_FPGA_PKG is
         used_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_GIT_STATUS             : t_reg :=
+    constant C_REG_GIT_STATUS                     : t_reg :=
     (
         name           => "GIT_STATUS",
         addr           => 8x"04",
@@ -107,7 +107,7 @@ package TB_TOP_FPGA_PKG is
         used_bits_mask => 32x"0000_0001"
     );
 
-    constant C_REG_FPGA_ID                : t_reg :=
+    constant C_REG_FPGA_ID                        : t_reg :=
     (
         name           => "FPGA_ID",
         addr           => 8x"08",
@@ -115,7 +115,7 @@ package TB_TOP_FPGA_PKG is
         used_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_SPI_TX_CONTROL         : t_reg :=
+    constant C_REG_SPI_TX_CONTROL                 : t_reg :=
     (
         name           => "SPI_TX_CONTROL",
         addr           => 8x"0C",
@@ -123,7 +123,7 @@ package TB_TOP_FPGA_PKG is
         used_bits_mask => 32x"0000_00FF"
     );
 
-    constant C_REG_SPI_RX_DATA            : t_reg :=
+    constant C_REG_SPI_RX_DATA                    : t_reg :=
     (
         name           => "SPI_RX_DATA",
         addr           => 8x"10",
@@ -131,7 +131,7 @@ package TB_TOP_FPGA_PKG is
         used_bits_mask => 32x"0000_00FF"
     );
 
-    constant C_REG_VGA_COLOR_CONTROL      : t_reg :=
+    constant C_REG_VGA_COLOR_CONTROL              : t_reg :=
     (
         name           => "VGA_COLOR",
         addr           => 8x"14",
@@ -139,7 +139,7 @@ package TB_TOP_FPGA_PKG is
         used_bits_mask => 32x"0000_0FFF"
     );
 
-    constant C_REG_SWITCH_STATUS          : t_reg :=
+    constant C_REG_SWITCH_STATUS                  : t_reg :=
     (
         name           => "SWITCH_STATUS",
         addr           => 8x"18",
@@ -147,7 +147,7 @@ package TB_TOP_FPGA_PKG is
         used_bits_mask => 32x"0000_0003"
     );
 
-    constant C_REG_BAD_ADDRESS_COUNTER    : t_reg :=
+    constant C_REG_BAD_ADDRESS_COUNTER            : t_reg :=
     (
         name           => "BAD_ADDRESS_COUNTER",
         addr           => 8x"1C",
@@ -155,7 +155,23 @@ package TB_TOP_FPGA_PKG is
         used_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_TEST_REGISTER_1        : t_reg :=
+    constant C_REG_START_BIT_PARITY_ERROR_COUNTER : t_reg :=
+    (
+        name           => "START_BIT_PARITY_ERROR_COUNTER",
+        addr           => 8x"20",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"FFFF_FFFF"
+    );
+
+    constant C_REG_STOP_BIT_PARITY_ERROR_COUNTER  : t_reg :=
+    (
+        name           => "STOP_BIT_PARITY_ERROR_COUNTER",
+        addr           => 8x"24",
+        data           => 32x"0000_0000",
+        used_bits_mask => 32x"FFFF_FFFF"
+    );
+
+    constant C_REG_TEST_REGISTER_1                : t_reg :=
     (
         name           => "TEST_REGISTER_1",
         addr           => 8x"F8",
@@ -163,7 +179,7 @@ package TB_TOP_FPGA_PKG is
         used_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_TEST_REGISTER_2        : t_reg :=
+    constant C_REG_TEST_REGISTER_2                : t_reg :=
     (
         name           => "TEST_REGISTER_2",
         addr           => 8x"FC",
@@ -171,7 +187,7 @@ package TB_TOP_FPGA_PKG is
         used_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_BAD_ADDR               : t_reg :=
+    constant C_REG_BAD_ADDR                       : t_reg :=
     (
         name           => "REG_BAD_ADDR",
         addr           => 8x"98",
@@ -180,63 +196,63 @@ package TB_TOP_FPGA_PKG is
     );
 
     -- SPI
-    constant C_SPI_FREQ_HZ                : positive  := 1_000_000;
-    constant C_SPI_BIT_TIME               : time      := 1 sec / C_SPI_FREQ_HZ;
-    constant C_SPI_BIT_TIME_ACCURACY      : time      := 0.01 * C_SPI_BIT_TIME;
-    constant C_SPI_NB_DATA_BITS           : positive  := 8;
-    constant C_SPI_TRANSACTION_TIME       : time      := (C_SPI_NB_DATA_BITS + 2) * C_SPI_BIT_TIME;
-    constant C_SPI_CLK_POLARITY           : std_logic := '0';
-    constant C_SPI_CLK_PHASE              : std_logic := '0';
+    constant C_SPI_FREQ_HZ                        : positive  := 1_000_000;
+    constant C_SPI_BIT_TIME                       : time      := 1 sec / C_SPI_FREQ_HZ;
+    constant C_SPI_BIT_TIME_ACCURACY              : time      := 0.01 * C_SPI_BIT_TIME;
+    constant C_SPI_NB_DATA_BITS                   : positive  := 8;
+    constant C_SPI_TRANSACTION_TIME               : time      := (C_SPI_NB_DATA_BITS + 2) * C_SPI_BIT_TIME;
+    constant C_SPI_CLK_POLARITY                   : std_logic := '0';
+    constant C_SPI_CLK_PHASE                      : std_logic := '0';
 
-    constant C_SLAVE_SPI                  : spi_slave_t    := new_spi_slave(
+    constant C_SLAVE_SPI                          : spi_slave_t    := new_spi_slave(
             cpol_mode => C_SPI_CLK_POLARITY,
             cpha_mode => C_SPI_CLK_PHASE
         );
-    constant C_SLAVE_STREAM               : stream_slave_t := as_stream(C_SLAVE_SPI);
+    constant C_SLAVE_STREAM                       : stream_slave_t := as_stream(C_SLAVE_SPI);
 
     --
     -- VGA
     --
 
     -- Horizontal characteristics
-    constant C_H_VGA_PIXEL_FREQUENCY      : integer := 65_000_000;
-    constant C_H_VGA_PIXEL_BIT_TIME       : time    := 1 sec / C_H_VGA_PIXEL_FREQUENCY;
+    constant C_H_VGA_PIXEL_FREQUENCY              : integer := 65_000_000;
+    constant C_H_VGA_PIXEL_BIT_TIME               : time    := 1 sec / C_H_VGA_PIXEL_FREQUENCY;
 
-    constant C_H_PIXELS                   : integer := 1024;
-    constant C_H_FRONT_PORCH              : integer := 24;
-    constant C_H_SYNC_PULSE               : integer := 136;
-    constant C_H_BACK_PORCH               : integer := 160;
-    constant C_H_HSYNC_HIGH               : integer := C_H_PIXELS + C_H_FRONT_PORCH + C_H_BACK_PORCH;
-    constant C_H_WHOLE_LINE               : integer := C_H_SYNC_PULSE + C_H_HSYNC_HIGH;
+    constant C_H_PIXELS                           : integer := 1024;
+    constant C_H_FRONT_PORCH                      : integer := 24;
+    constant C_H_SYNC_PULSE                       : integer := 136;
+    constant C_H_BACK_PORCH                       : integer := 160;
+    constant C_H_HSYNC_HIGH                       : integer := C_H_PIXELS + C_H_FRONT_PORCH + C_H_BACK_PORCH;
+    constant C_H_WHOLE_LINE                       : integer := C_H_SYNC_PULSE + C_H_HSYNC_HIGH;
 
-    constant C_H_SYNC_PULSE_TIME          : time := C_H_SYNC_PULSE * C_H_VGA_PIXEL_BIT_TIME;
-    constant C_H_SYNC_PULSE_TIME_ACCURACY : time := C_H_SYNC_PULSE * C_H_VGA_PIXEL_BIT_TIME * 0.01;
-    constant C_H_HSYNC_HIGH_TIME          : time := C_H_HSYNC_HIGH * C_H_VGA_PIXEL_BIT_TIME;
-    constant C_H_HSYNC_HIGH_TIME_ACCURACY : time := C_H_HSYNC_HIGH * C_H_VGA_PIXEL_BIT_TIME * 0.01;
-    constant C_H_WHOLE_LINE_TIME          : time := C_H_SYNC_PULSE_TIME + C_H_HSYNC_HIGH_TIME;
-    constant C_H_WHOLE_LINE_TIME_ACCURACY : time := C_H_SYNC_PULSE_TIME_ACCURACY + C_H_HSYNC_HIGH_TIME_ACCURACY;
+    constant C_H_SYNC_PULSE_TIME                  : time := C_H_SYNC_PULSE * C_H_VGA_PIXEL_BIT_TIME;
+    constant C_H_SYNC_PULSE_TIME_ACCURACY         : time := C_H_SYNC_PULSE * C_H_VGA_PIXEL_BIT_TIME * 0.01;
+    constant C_H_HSYNC_HIGH_TIME                  : time := C_H_HSYNC_HIGH * C_H_VGA_PIXEL_BIT_TIME;
+    constant C_H_HSYNC_HIGH_TIME_ACCURACY         : time := C_H_HSYNC_HIGH * C_H_VGA_PIXEL_BIT_TIME * 0.01;
+    constant C_H_WHOLE_LINE_TIME                  : time := C_H_SYNC_PULSE_TIME + C_H_HSYNC_HIGH_TIME;
+    constant C_H_WHOLE_LINE_TIME_ACCURACY         : time := C_H_SYNC_PULSE_TIME_ACCURACY + C_H_HSYNC_HIGH_TIME_ACCURACY;
 
     -- Vertical characteristics
-    constant C_V_VGA_PIXEL_FREQUENCY      : integer := C_H_VGA_PIXEL_FREQUENCY / C_H_WHOLE_LINE;
-    constant C_V_VGA_PIXEL_BIT_TIME       : time    := 1 sec / C_V_VGA_PIXEL_FREQUENCY;
+    constant C_V_VGA_PIXEL_FREQUENCY              : integer := C_H_VGA_PIXEL_FREQUENCY / C_H_WHOLE_LINE;
+    constant C_V_VGA_PIXEL_BIT_TIME               : time    := 1 sec / C_V_VGA_PIXEL_FREQUENCY;
 
-    constant C_V_PIXELS                   : integer := 768;
-    constant C_V_FRONT_PORCH              : integer := 3;
-    constant C_V_SYNC_PULSE               : integer := 6;
-    constant C_V_BACK_PORCH               : integer := 29;
-    constant C_V_HSYNC_HIGH               : integer := C_V_PIXELS + C_V_FRONT_PORCH + C_V_BACK_PORCH;
-    constant C_V_WHOLE_LINE               : integer := C_V_SYNC_PULSE + C_V_HSYNC_HIGH;
+    constant C_V_PIXELS                           : integer := 768;
+    constant C_V_FRONT_PORCH                      : integer := 3;
+    constant C_V_SYNC_PULSE                       : integer := 6;
+    constant C_V_BACK_PORCH                       : integer := 29;
+    constant C_V_HSYNC_HIGH                       : integer := C_V_PIXELS + C_V_FRONT_PORCH + C_V_BACK_PORCH;
+    constant C_V_WHOLE_LINE                       : integer := C_V_SYNC_PULSE + C_V_HSYNC_HIGH;
 
-    constant C_V_SYNC_PULSE_TIME          : time := C_V_SYNC_PULSE * C_V_VGA_PIXEL_BIT_TIME;
-    constant C_V_SYNC_PULSE_TIME_ACCURACY : time := C_V_SYNC_PULSE * C_V_VGA_PIXEL_BIT_TIME * 0.01;
-    constant C_V_HSYNC_HIGH_TIME          : time := C_V_HSYNC_HIGH * C_V_VGA_PIXEL_BIT_TIME;
-    constant C_V_HSYNC_HIGH_TIME_ACCURACY : time := C_V_HSYNC_HIGH * C_V_VGA_PIXEL_BIT_TIME * 0.01;
-    constant C_V_WHOLE_LINE_TIME          : time := C_V_SYNC_PULSE_TIME + C_V_HSYNC_HIGH_TIME;
-    constant C_V_WHOLE_LINE_TIME_ACCURACY : time := C_V_SYNC_PULSE_TIME_ACCURACY + C_V_HSYNC_HIGH_TIME_ACCURACY;
+    constant C_V_SYNC_PULSE_TIME                  : time := C_V_SYNC_PULSE * C_V_VGA_PIXEL_BIT_TIME;
+    constant C_V_SYNC_PULSE_TIME_ACCURACY         : time := C_V_SYNC_PULSE * C_V_VGA_PIXEL_BIT_TIME * 0.01;
+    constant C_V_HSYNC_HIGH_TIME                  : time := C_V_HSYNC_HIGH * C_V_VGA_PIXEL_BIT_TIME;
+    constant C_V_HSYNC_HIGH_TIME_ACCURACY         : time := C_V_HSYNC_HIGH * C_V_VGA_PIXEL_BIT_TIME * 0.01;
+    constant C_V_WHOLE_LINE_TIME                  : time := C_V_SYNC_PULSE_TIME + C_V_HSYNC_HIGH_TIME;
+    constant C_V_WHOLE_LINE_TIME_ACCURACY         : time := C_V_SYNC_PULSE_TIME_ACCURACY + C_V_HSYNC_HIGH_TIME_ACCURACY;
 
-    constant C_VGA_VECTOR_TEST_1          : std_logic_vector(12 - 1 downto 0) := x"ABC";
-    constant C_VGA_VECTOR_TEST_2          : std_logic_vector(12 - 1 downto 0) := x"123";
-    constant C_VGA_VECTOR_TEST_3          : std_logic_vector(12 - 1 downto 0) := x"F0F";
+    constant C_VGA_VECTOR_TEST_1                  : std_logic_vector(12 - 1 downto 0) := x"ABC";
+    constant C_VGA_VECTOR_TEST_2                  : std_logic_vector(12 - 1 downto 0) := x"123";
+    constant C_VGA_VECTOR_TEST_3                  : std_logic_vector(12 - 1 downto 0) := x"F0F";
 
     -- =================================================================================================================
     -- PROCEDURES

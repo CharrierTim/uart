@@ -804,6 +804,8 @@ begin
                 proc_uart_check_default_value(C_REG_GIT_HASH);
                 proc_uart_check_default_value(C_REG_GIT_STATUS);
                 proc_uart_check_default_value(C_REG_FPGA_ID);
+                proc_uart_check_default_value(C_REG_START_BIT_PARITY_ERROR_COUNTER);
+                proc_uart_check_default_value(C_REG_STOP_BIT_PARITY_ERROR_COUNTER);
                 proc_uart_check_default_value(C_REG_TEST_REGISTER_1);
                 proc_uart_check_default_value(C_REG_TEST_REGISTER_2);
 
@@ -815,6 +817,8 @@ begin
                 proc_uart_check_read_only(C_REG_GIT_HASH);
                 proc_uart_check_read_only(C_REG_GIT_STATUS);
                 proc_uart_check_read_only(C_REG_FPGA_ID);
+                proc_uart_check_read_only(C_REG_START_BIT_PARITY_ERROR_COUNTER);
+                proc_uart_check_read_only(C_REG_STOP_BIT_PARITY_ERROR_COUNTER);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -891,6 +895,9 @@ begin
                     True,
                     "Ensuring UART not responding when sending read command with invalid start bit in char 'R'");
 
+                -- Check that the start bit error counter has incremented
+                proc_uart_check(C_REG_START_BIT_PARITY_ERROR_COUNTER, x"0000_0001");
+
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Sending read command with invalid stop bit in char 'R'");
@@ -924,8 +931,10 @@ begin
                 wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '0'; -- Bit 7
                 wait for C_UART_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Stop bit
+                tb_i_uart_rx_manual <= '0'; -- Stop bit too long
                 wait for 2 * C_UART_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- End of stop bit
+                wait for 1.1 * C_UART_BIT_TIME;
 
                 -- Send valid 2 bytes 0x30
                 proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
@@ -942,6 +951,8 @@ begin
                     tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_UART_READ_CMD_TIME),
                     True,
                     "Ensuring UART not responding when sending read command with invalid stop bit in char 'R'");
+
+                proc_uart_check(C_REG_STOP_BIT_PARITY_ERROR_COUNTER, x"0000_0001");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1015,6 +1026,78 @@ begin
 
                 -- Read back the register to ensure the data was not written
                 proc_uart_check(C_REG_TEST_REGISTER_1, C_REG_TEST_REGISTER_1.data);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Sending 8 bytes with invalid start bits in a row");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Check value is 0 before sending invalid start bits
+                proc_uart_check(C_REG_START_BIT_PARITY_ERROR_COUNTER, x"0000_0000");
+
+                -- Select the manual UART
+                tb_i_uart_select <= '1';
+
+                for i in 1 to 8 loop
+                    tb_i_uart_rx_manual <= '0';
+                    wait for 0.25 * C_UART_BIT_TIME; -- Invalid start bit (too short)
+                    tb_i_uart_rx_manual <= '1';      -- Sudden change to high
+                    wait for 0.75 * C_UART_BIT_TIME; -- Complete the rest of the start bit duration
+                    tb_i_uart_rx_manual <= '0';      -- Bit 0
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1';      -- Skipping the rest of the bits for brevity
+                    wait for C_UART_WRITE_CMD_TIME;  -- Wait > time than entire command to not catch invalid stop bits
+                end loop;
+
+                -- Check that the start bit error counter has incremented by 8
+                proc_uart_check(C_REG_START_BIT_PARITY_ERROR_COUNTER, x"0000_0008");
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Sending 3 bytes with invalid stop bits in a row");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Check value is 0 before sending invalid stop bits
+                proc_uart_check(C_REG_STOP_BIT_PARITY_ERROR_COUNTER, x"0000_0000");
+
+                -- Select the manual UART
+                tb_i_uart_select <= '1';
+
+                for i in 1 to 3 loop
+                    tb_i_uart_rx_manual <= '0';
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 0
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 1
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 2
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 3
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 4
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 5
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 6
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 7
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Stop bit too long
+                    wait for 2 * C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- End of stop bit
+                    wait for 1.1 * C_UART_BIT_TIME;
+                end loop;
+
+                -- Check that the stop bit error counter has incremented by 3
+                proc_uart_check(C_REG_STOP_BIT_PARITY_ERROR_COUNTER, x"0000_0003");
 
             elsif (run("test_led_and_switches_toggling")) then
 
