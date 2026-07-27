@@ -637,27 +637,31 @@ begin
         --              verifying that the value is correctly updated.
         --
         -- Parameters:
-        --   reg            : t_reg            - The register to check.
-        --   expected_value : std_logic_vector - The expected value to compare against after writing.
+        --   reg : t_reg - The register to check.
         --
         -- Example:
-        --   proc_uart_check_read_write(C_REG_16_BITS, x"0001");
+        --   proc_uart_check_read_write(C_REG_16_BITS);
         -- =============================================================================================================
 
         procedure proc_uart_check_read_write (
-            constant reg            : t_reg;
-            constant expected_value : std_logic_vector(32 - 1 downto 0)
+            constant reg : t_reg
         ) is
+            variable v_write_value    : std_logic_vector(32 - 1 downto 0);
+            variable v_expected_value : std_logic_vector(32 - 1 downto 0);
         begin
 
             info("");
             info("Checking register " & reg.name & " is in read-write");
 
-            -- Write the expected value to the register
-            proc_uart_write(reg, not reg.data);
+            -- Toggle all bits then derive expected value from used bits mask
+            v_write_value    := not reg.data;
+            v_expected_value := (reg.data and not reg.used_bits_mask) or (v_write_value and reg.used_bits_mask);
+
+            -- Write the toggled value to the register
+            proc_uart_write(reg, v_write_value);
 
             -- Check if the register value is updated correctly
-            proc_uart_check(reg, expected_value);
+            proc_uart_check(reg, v_expected_value);
 
         end procedure proc_uart_check_read_write;
 
@@ -817,8 +821,8 @@ begin
                 info(" Checking read-write registers");
                 info("-----------------------------------------------------------------------------");
 
-                proc_uart_check_read_write(C_REG_TEST_REGISTER_1, not C_REG_TEST_REGISTER_1.data);
-                proc_uart_check_read_write(C_REG_TEST_REGISTER_2, not C_REG_TEST_REGISTER_2.data);
+                proc_uart_check_read_write(C_REG_TEST_REGISTER_1);
+                proc_uart_check_read_write(C_REG_TEST_REGISTER_2);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1020,14 +1024,14 @@ begin
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Checking " & C_REG_BAD_ADDR.name & " register default value");
+                info(" Checking " & C_REG_BAD_ADDRESS_COUNTER.name & " register default value");
                 info("-----------------------------------------------------------------------------");
 
                 proc_uart_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Checking " & C_REG_BAD_ADDR.name & " is in read-only mode");
+                info(" Checking " & C_REG_BAD_ADDRESS_COUNTER.name & " is in read-only mode");
                 info("-----------------------------------------------------------------------------");
 
                 proc_uart_check_read_only(C_REG_BAD_ADDRESS_COUNTER);
@@ -1048,10 +1052,6 @@ begin
                     "LED_0 should remain stable ON for at least " &
                     time'image(C_UART_READ_CMD_TIME) &
                     " after reading from bad address");
-
-                -- Reset DUT
-                proc_reset_dut;
-                wait for 100 us;
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1143,7 +1143,7 @@ begin
                 -- Check TX register is in read-write and check data is matching
                 -- Bit 8 is a singlepulse bit which will be cleared by hardware after write
                 -- so only check the lower 8 bits are correctly written and read back
-                proc_uart_check_read_write(C_REG_SPI_TX_CONTROL, x"0000_00FF");
+                proc_uart_check_read_write(C_REG_SPI_TX_CONTROL);
 
                 pop_stream(net, C_SLAVE_STREAM, v_spi_slave_data);
                 check_equal(v_spi_slave_data, not(C_REG_SPI_TX_CONTROL.data(8 - 1 downto 0)),
@@ -1193,7 +1193,7 @@ begin
                 wait for 100 us;
 
                 proc_uart_check_default_value(C_REG_VGA_COLOR_CONTROL);
-                proc_uart_check_read_write(C_REG_VGA_COLOR_CONTROL, x"0000_0F0F");
+                proc_uart_check_read_write(C_REG_VGA_COLOR_CONTROL);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
