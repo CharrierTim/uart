@@ -173,6 +173,9 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     signal hwif_in                  : regblock_in_t;
     signal hwif_out                 : regblock_out_t;
 
+    signal axil_bad_rresp           : std_logic;
+    signal axil_bad_bresp           : std_logic;
+
     -- VGA registers
     signal manual_colors            : std_logic_vector(11 downto 0);
 
@@ -273,34 +276,50 @@ begin
             G_SAMPLING_RATE => C_SAMPLING_RATE
         )
         port map (
-            CLK            => internal_clk,
-            ARST_P         => internal_sys_arst_p,
-            I_UART_RX      => PAD_I_UART_RX,
-            O_UART_TX      => PAD_O_UART_TX,
-            M_AXIL_AWREADY => axil_awready,
-            M_AXIL_AWVALID => axil_awvalid,
-            M_AXIL_AWADDR  => axil_awaddr,
-            M_AXIL_AWPROT  => axil_awprot,
-            M_AXIL_WREADY  => axil_wready,
-            M_AXIL_WVALID  => axil_wvalid,
-            M_AXIL_WDATA   => axil_wdata,
-            M_AXIL_WSTRB   => axil_wstrb,
-            M_AXIL_BREADY  => axil_bready,
-            M_AXIL_BVALID  => axil_bvalid,
-            M_AXIL_BRESP   => axil_bresp,
-            M_AXIL_ARREADY => axil_arready,
-            M_AXIL_ARVALID => axil_arvalid,
-            M_AXIL_ARADDR  => axil_araddr,
-            M_AXIL_ARPROT  => axil_arprot,
-            M_AXIL_RREADY  => axil_rready,
-            M_AXIL_RVALID  => axil_rvalid,
-            M_AXIL_RDATA   => axil_rdata,
-            M_AXIL_RRESP   => axil_rresp
+            CLK               => internal_clk,
+            ARST_P            => internal_sys_arst_p,
+            I_UART_RX         => PAD_I_UART_RX,
+            O_UART_TX         => PAD_O_UART_TX,
+            O_START_BIT_ERROR => hwif_in.uart_start_bit_parity_error_counter.count.incr,
+            O_STOP_BIT_ERROR  => hwif_in.uart_stop_bit_parity_error_counter.count.incr,
+            M_AXIL_AWREADY    => axil_awready,
+            M_AXIL_AWVALID    => axil_awvalid,
+            M_AXIL_AWADDR     => axil_awaddr,
+            M_AXIL_AWPROT     => axil_awprot,
+            M_AXIL_WREADY     => axil_wready,
+            M_AXIL_WVALID     => axil_wvalid,
+            M_AXIL_WDATA      => axil_wdata,
+            M_AXIL_WSTRB      => axil_wstrb,
+            M_AXIL_BREADY     => axil_bready,
+            M_AXIL_BVALID     => axil_bvalid,
+            M_AXIL_BRESP      => axil_bresp,
+            M_AXIL_ARREADY    => axil_arready,
+            M_AXIL_ARVALID    => axil_arvalid,
+            M_AXIL_ARADDR     => axil_araddr,
+            M_AXIL_ARPROT     => axil_arprot,
+            M_AXIL_RREADY     => axil_rready,
+            M_AXIL_RVALID     => axil_rvalid,
+            M_AXIL_RDATA      => axil_rdata,
+            M_AXIL_RRESP      => axil_rresp
         );
+
+    -- =================================================================================================================
+    -- AXI4-LITE INTERFACE BAD RESPONSE DETECTION
+    -- =================================================================================================================
+
+    axil_bad_rresp <= '1' when (axil_rvalid = '1' and axil_rready = '1' and axil_rresp = "10") else
+                      '0';
+
+    axil_bad_bresp <= '1' when (axil_bvalid = '1' and axil_bready = '1' and axil_bresp = "10") else
+                      '0';
 
     -- =================================================================================================================
     -- REGBLOCK MODULE
     -- =================================================================================================================
+
+    --
+    -- Input hardware interface
+    --
 
     -- FPGA information registers
     hwif_in.git_hash.hash.next_q     <= G_GIT_ID;
@@ -311,6 +330,15 @@ begin
     hwif_in.switch_status.switch_2.next_q <= sync_inputs_slv(2);
     hwif_in.switch_status.switch_1.next_q <= sync_inputs_slv(1);
     hwif_in.switch_status.switch_0.next_q <= sync_inputs_slv(0);
+
+    -- Counters registers
+    hwif_in.bad_address_counter.count.next_q                 <= hwif_out.bad_address_counter.count.value;
+    hwif_in.uart_start_bit_parity_error_counter.count.next_q <= hwif_out.uart_start_bit_parity_error_counter.count.value;
+    hwif_in.uart_stop_bit_parity_error_counter.count.next_q  <= hwif_out.uart_stop_bit_parity_error_counter.count.value;
+    hwif_in.bad_address_counter.count.incr                   <= '1' when (
+                                                                             axil_bad_rresp = '1' or axil_bad_bresp = '1'
+                                                                         ) else
+                                                                '0';
 
     inst_reglock : entity lib_rtl.regblock
         port map (
@@ -338,15 +366,6 @@ begin
             hwif_in        => hwif_in,
             hwif_out       => hwif_out
         );
-
-    -- vsg_off: increment bad_address_counter on AXI error responses
-    hwif_in.bad_address_counter.count.incr   <= '1' when ((axil_bvalid = '1' and axil_bready = '1' and axil_bresp = "10")
-                                                        or
-                                                          (axil_rvalid = '1' and axil_rready = '1' and axil_rresp = "10")) else
-                                                '0';
-
-    hwif_in.bad_address_counter.count.next_q <= hwif_out.bad_address_counter.count.value;
-    -- vsg_on
 
     -- =================================================================================================================
     -- SPI MODULE
