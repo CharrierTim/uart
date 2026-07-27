@@ -280,8 +280,8 @@ begin
             ARST_P            => internal_sys_arst_p,
             I_UART_RX         => PAD_I_UART_RX,
             O_UART_TX         => PAD_O_UART_TX,
-            O_START_BIT_ERROR => hwif_in.uart_start_bit_parity_error_counter.count.incr,
-            O_STOP_BIT_ERROR  => hwif_in.uart_stop_bit_parity_error_counter.count.incr,
+            O_START_BIT_ERROR => hwif_in.uart_start_bit_error_counter.count.incr,
+            O_STOP_BIT_ERROR  => hwif_in.uart_stop_bit_error_counter.count.incr,
             M_AXIL_AWREADY    => axil_awready,
             M_AXIL_AWVALID    => axil_awvalid,
             M_AXIL_AWADDR     => axil_awaddr,
@@ -332,13 +332,13 @@ begin
     hwif_in.switch_status.switch_0.next_q <= sync_inputs_slv(0);
 
     -- Counters registers
-    hwif_in.bad_address_counter.count.next_q                 <= hwif_out.bad_address_counter.count.value;
-    hwif_in.uart_start_bit_parity_error_counter.count.next_q <= hwif_out.uart_start_bit_parity_error_counter.count.value;
-    hwif_in.uart_stop_bit_parity_error_counter.count.next_q  <= hwif_out.uart_stop_bit_parity_error_counter.count.value;
-    hwif_in.bad_address_counter.count.incr                   <= '1' when (
-                                                                             axil_bad_rresp = '1' or axil_bad_bresp = '1'
-                                                                         ) else
-                                                                '0';
+    hwif_in.bad_address_counter.count.next_q          <= hwif_out.bad_address_counter.count.value;
+    hwif_in.uart_start_bit_error_counter.count.next_q <= hwif_out.uart_start_bit_error_counter.count.value;
+    hwif_in.uart_stop_bit_error_counter.count.next_q  <= hwif_out.uart_stop_bit_error_counter.count.value;
+    hwif_in.bad_address_counter.count.incr            <= '1' when (
+                                                                      axil_bad_rresp = '1' or axil_bad_bresp = '1'
+                                                                  ) else
+                                                         '0';
 
     inst_reglock : entity lib_rtl.regblock
         port map (

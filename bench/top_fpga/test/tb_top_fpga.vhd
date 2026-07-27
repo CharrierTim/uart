@@ -804,8 +804,8 @@ begin
                 proc_uart_check_default_value(C_REG_GIT_HASH);
                 proc_uart_check_default_value(C_REG_GIT_STATUS);
                 proc_uart_check_default_value(C_REG_FPGA_ID);
-                proc_uart_check_default_value(C_REG_START_BIT_PARITY_ERROR_COUNTER);
-                proc_uart_check_default_value(C_REG_STOP_BIT_PARITY_ERROR_COUNTER);
+                proc_uart_check_default_value(C_REG_START_BIT_ERROR_COUNTER);
+                proc_uart_check_default_value(C_REG_STOP_BIT_ERROR_COUNTER);
                 proc_uart_check_default_value(C_REG_TEST_REGISTER_1);
                 proc_uart_check_default_value(C_REG_TEST_REGISTER_2);
 
@@ -817,8 +817,8 @@ begin
                 proc_uart_check_read_only(C_REG_GIT_HASH);
                 proc_uart_check_read_only(C_REG_GIT_STATUS);
                 proc_uart_check_read_only(C_REG_FPGA_ID);
-                proc_uart_check_read_only(C_REG_START_BIT_PARITY_ERROR_COUNTER);
-                proc_uart_check_read_only(C_REG_STOP_BIT_PARITY_ERROR_COUNTER);
+                proc_uart_check_read_only(C_REG_START_BIT_ERROR_COUNTER);
+                proc_uart_check_read_only(C_REG_STOP_BIT_ERROR_COUNTER);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -896,7 +896,7 @@ begin
                     "Ensuring UART not responding when sending read command with invalid start bit in char 'R'");
 
                 -- Check that the start bit error counter has incremented
-                proc_uart_check(C_REG_START_BIT_PARITY_ERROR_COUNTER, x"0000_0001");
+                proc_uart_check(C_REG_START_BIT_ERROR_COUNTER, x"0000_0001");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -952,7 +952,7 @@ begin
                     True,
                     "Ensuring UART not responding when sending read command with invalid stop bit in char 'R'");
 
-                proc_uart_check(C_REG_STOP_BIT_PARITY_ERROR_COUNTER, x"0000_0001");
+                proc_uart_check(C_REG_STOP_BIT_ERROR_COUNTER, x"0000_0001");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1037,7 +1037,7 @@ begin
                 wait for 100 us;
 
                 -- Check value is 0 before sending invalid start bits
-                proc_uart_check(C_REG_START_BIT_PARITY_ERROR_COUNTER, x"0000_0000");
+                proc_uart_check(C_REG_START_BIT_ERROR_COUNTER, x"0000_0000");
 
                 -- Select the manual UART
                 tb_i_uart_select <= '1';
@@ -1054,7 +1054,7 @@ begin
                 end loop;
 
                 -- Check that the start bit error counter has incremented by 8
-                proc_uart_check(C_REG_START_BIT_PARITY_ERROR_COUNTER, x"0000_0008");
+                proc_uart_check(C_REG_START_BIT_ERROR_COUNTER, x"0000_0008");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1066,7 +1066,7 @@ begin
                 wait for 100 us;
 
                 -- Check value is 0 before sending invalid stop bits
-                proc_uart_check(C_REG_STOP_BIT_PARITY_ERROR_COUNTER, x"0000_0000");
+                proc_uart_check(C_REG_STOP_BIT_ERROR_COUNTER, x"0000_0000");
 
                 -- Select the manual UART
                 tb_i_uart_select <= '1';
@@ -1097,7 +1097,7 @@ begin
                 end loop;
 
                 -- Check that the stop bit error counter has incremented by 3
-                proc_uart_check(C_REG_STOP_BIT_PARITY_ERROR_COUNTER, x"0000_0003");
+                proc_uart_check(C_REG_STOP_BIT_ERROR_COUNTER, x"0000_0003");
 
             elsif (run("test_led_and_switches_toggling")) then
 
