@@ -386,7 +386,7 @@ begin
             tb_pad_i_arst_p        <= '1';
 
             tb_i_uart_select       <= '0';
-            tb_i_uart_rx_manual    <= '0';
+            tb_i_uart_rx_manual    <= '1';
             tb_pad_i_switch_0      <= '0';
             tb_pad_i_switch_1      <= '0';
             tb_pad_i_switch_2      <= '0';
