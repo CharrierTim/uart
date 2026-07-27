@@ -92,6 +92,8 @@ architecture rtl of regblock is
         vga_color_control : std_logic;
         switch_status : std_logic;
         bad_address_counter : std_logic;
+        uart_start_bit_error_counter : std_logic;
+        uart_stop_bit_error_counter : std_logic;
         test_register_1 : std_logic;
         test_register_2 : std_logic;
     end record;
@@ -154,6 +156,28 @@ architecture rtl of regblock is
         count : \regblock.bad_address_counter.count_combo_t\;
     end record;
 
+    type \regblock.uart_start_bit_error_counter.count_combo_t\ is record
+        next_q : std_logic_vector(31 downto 0);
+        load_next : std_logic;
+        incrthreshold : std_logic;
+        overflow : std_logic;
+    end record;
+
+    type \regblock.uart_start_bit_error_counter_combo_t\ is record
+        count : \regblock.uart_start_bit_error_counter.count_combo_t\;
+    end record;
+
+    type \regblock.uart_stop_bit_error_counter.count_combo_t\ is record
+        next_q : std_logic_vector(31 downto 0);
+        load_next : std_logic;
+        incrthreshold : std_logic;
+        overflow : std_logic;
+    end record;
+
+    type \regblock.uart_stop_bit_error_counter_combo_t\ is record
+        count : \regblock.uart_stop_bit_error_counter.count_combo_t\;
+    end record;
+
     type \regblock.test_register_1.test_bits_combo_t\ is record
         next_q : std_logic_vector(31 downto 0);
         load_next : std_logic;
@@ -176,6 +200,8 @@ architecture rtl of regblock is
         spi_tx_control : \regblock.spi_tx_control_combo_t\;
         vga_color_control : \regblock.vga_color_control_combo_t\;
         bad_address_counter : \regblock.bad_address_counter_combo_t\;
+        uart_start_bit_error_counter : \regblock.uart_start_bit_error_counter_combo_t\;
+        uart_stop_bit_error_counter : \regblock.uart_stop_bit_error_counter_combo_t\;
         test_register_1 : \regblock.test_register_1_combo_t\;
         test_register_2 : \regblock.test_register_2_combo_t\;
     end record;
@@ -221,6 +247,22 @@ architecture rtl of regblock is
         count : \regblock.bad_address_counter.count_storage_t\;
     end record;
 
+    type \regblock.uart_start_bit_error_counter.count_storage_t\ is record
+        value : std_logic_vector(31 downto 0);
+    end record;
+
+    type \regblock.uart_start_bit_error_counter_storage_t\ is record
+        count : \regblock.uart_start_bit_error_counter.count_storage_t\;
+    end record;
+
+    type \regblock.uart_stop_bit_error_counter.count_storage_t\ is record
+        value : std_logic_vector(31 downto 0);
+    end record;
+
+    type \regblock.uart_stop_bit_error_counter_storage_t\ is record
+        count : \regblock.uart_stop_bit_error_counter.count_storage_t\;
+    end record;
+
     type \regblock.test_register_1.test_bits_storage_t\ is record
         value : std_logic_vector(31 downto 0);
     end record;
@@ -241,6 +283,8 @@ architecture rtl of regblock is
         spi_tx_control : \regblock.spi_tx_control_storage_t\;
         vga_color_control : \regblock.vga_color_control_storage_t\;
         bad_address_counter : \regblock.bad_address_counter_storage_t\;
+        uart_start_bit_error_counter : \regblock.uart_start_bit_error_counter_storage_t\;
+        uart_stop_bit_error_counter : \regblock.uart_stop_bit_error_counter_storage_t\;
         test_register_1 : \regblock.test_register_1_storage_t\;
         test_register_2 : \regblock.test_register_2_storage_t\;
     end record;
@@ -475,6 +519,10 @@ begin
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#18#));
         decoded_reg_strb.bad_address_counter <= cpuif_req_masked and (cpuif_addr = 16#1C#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#1C#));
+        decoded_reg_strb.uart_start_bit_error_counter <= cpuif_req_masked and (cpuif_addr = 16#20#) and not cpuif_req_is_wr;
+        is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#20#));
+        decoded_reg_strb.uart_stop_bit_error_counter <= cpuif_req_masked and (cpuif_addr = 16#24#) and not cpuif_req_is_wr;
+        is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#24#));
         decoded_reg_strb.test_register_1 <= cpuif_req_masked and (cpuif_addr = 16#F8#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#F8#));
         decoded_reg_strb.test_register_2 <= cpuif_req_masked and (cpuif_addr = 16#FC#);
@@ -680,6 +728,80 @@ begin
     end process;
     hwif_out.bad_address_counter.count.value <= field_storage.bad_address_counter.count.value;
 
+    -- Field: regblock.uart_start_bit_error_counter.count
+    process(all)
+        variable next_c: std_logic_vector(31 downto 0);
+        variable load_next_c: std_logic;
+    begin
+        next_c := field_storage.uart_start_bit_error_counter.count.value;
+        load_next_c := '0';
+        
+        -- HW Write
+        next_c := hwif_in.uart_start_bit_error_counter.count.next_q;
+        load_next_c := '1';
+        if hwif_in.uart_start_bit_error_counter.count.incr then -- increment
+            field_combo.uart_start_bit_error_counter.count.overflow <= to_std_logic((to_unsigned("0" & next_c) + to_unsigned(33x"1")) > to_unsigned(34x"FFFFFFFF"));
+            next_c := to_std_logic_vector(to_unsigned(next_c) + to_unsigned(32x"1"));
+            load_next_c := '1';
+        else
+            field_combo.uart_start_bit_error_counter.count.overflow <= '0';
+        end if;
+        field_combo.uart_start_bit_error_counter.count.incrthreshold <= to_std_logic(unsigned(field_storage.uart_start_bit_error_counter.count.value) >= to_unsigned(32x"FFFFFFFF"));
+        field_combo.uart_start_bit_error_counter.count.next_q <= next_c;
+        field_combo.uart_start_bit_error_counter.count.load_next <= load_next_c;
+    end process;
+    process(clk, arst) begin
+        if arst then -- async reset
+            field_storage.uart_start_bit_error_counter.count.value <= 32x"0";
+        elsif rising_edge(clk) then
+            if false then -- sync reset
+                field_storage.uart_start_bit_error_counter.count.value <= 32x"0";
+            else
+                if field_combo.uart_start_bit_error_counter.count.load_next then
+                    field_storage.uart_start_bit_error_counter.count.value <= field_combo.uart_start_bit_error_counter.count.next_q;
+                end if;
+            end if;
+        end if;
+    end process;
+    hwif_out.uart_start_bit_error_counter.count.value <= field_storage.uart_start_bit_error_counter.count.value;
+
+    -- Field: regblock.uart_stop_bit_error_counter.count
+    process(all)
+        variable next_c: std_logic_vector(31 downto 0);
+        variable load_next_c: std_logic;
+    begin
+        next_c := field_storage.uart_stop_bit_error_counter.count.value;
+        load_next_c := '0';
+        
+        -- HW Write
+        next_c := hwif_in.uart_stop_bit_error_counter.count.next_q;
+        load_next_c := '1';
+        if hwif_in.uart_stop_bit_error_counter.count.incr then -- increment
+            field_combo.uart_stop_bit_error_counter.count.overflow <= to_std_logic((to_unsigned("0" & next_c) + to_unsigned(33x"1")) > to_unsigned(34x"FFFFFFFF"));
+            next_c := to_std_logic_vector(to_unsigned(next_c) + to_unsigned(32x"1"));
+            load_next_c := '1';
+        else
+            field_combo.uart_stop_bit_error_counter.count.overflow <= '0';
+        end if;
+        field_combo.uart_stop_bit_error_counter.count.incrthreshold <= to_std_logic(unsigned(field_storage.uart_stop_bit_error_counter.count.value) >= to_unsigned(32x"FFFFFFFF"));
+        field_combo.uart_stop_bit_error_counter.count.next_q <= next_c;
+        field_combo.uart_stop_bit_error_counter.count.load_next <= load_next_c;
+    end process;
+    process(clk, arst) begin
+        if arst then -- async reset
+            field_storage.uart_stop_bit_error_counter.count.value <= 32x"0";
+        elsif rising_edge(clk) then
+            if false then -- sync reset
+                field_storage.uart_stop_bit_error_counter.count.value <= 32x"0";
+            else
+                if field_combo.uart_stop_bit_error_counter.count.load_next then
+                    field_storage.uart_stop_bit_error_counter.count.value <= field_combo.uart_stop_bit_error_counter.count.next_q;
+                end if;
+            end if;
+        end if;
+    end process;
+    hwif_out.uart_stop_bit_error_counter.count.value <= field_storage.uart_stop_bit_error_counter.count.value;
+
     -- Field: regblock.test_register_1.test_bits
     process(all)
         variable next_c: std_logic_vector(31 downto 0);
@@ -779,6 +901,12 @@ begin
         end if;
         if rd_mux_addr = 16#1C# then
             readback_data_var(31 downto 0) := field_storage.bad_address_counter.count.value;
+        end if;
+        if rd_mux_addr = 16#20# then
+            readback_data_var(31 downto 0) := field_storage.uart_start_bit_error_counter.count.value;
+        end if;
+        if rd_mux_addr = 16#24# then
+            readback_data_var(31 downto 0) := field_storage.uart_stop_bit_error_counter.count.value;
         end if;
         if rd_mux_addr = 16#F8# then
             readback_data_var(31 downto 0) := field_storage.test_register_1.test_bits.value;

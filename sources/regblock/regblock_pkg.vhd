@@ -70,6 +70,24 @@ package regblock_pkg is
         count : \regblock.bad_address_counter.count_in_t\;
     end record;
 
+    type \regblock.uart_start_bit_error_counter.count_in_t\ is record
+        next_q : std_logic_vector(31 downto 0);
+        incr : std_logic;
+    end record;
+
+    type \regblock.uart_start_bit_error_counter_in_t\ is record
+        count : \regblock.uart_start_bit_error_counter.count_in_t\;
+    end record;
+
+    type \regblock.uart_stop_bit_error_counter.count_in_t\ is record
+        next_q : std_logic_vector(31 downto 0);
+        incr : std_logic;
+    end record;
+
+    type \regblock.uart_stop_bit_error_counter_in_t\ is record
+        count : \regblock.uart_stop_bit_error_counter.count_in_t\;
+    end record;
+
     type regblock_in_t is record
         git_hash : \regblock.git_hash_in_t\;
         git_status : \regblock.git_status_in_t\;
@@ -77,6 +95,8 @@ package regblock_pkg is
         spi_rx_data : \regblock.spi_rx_data_in_t\;
         switch_status : \regblock.switch_status_in_t\;
         bad_address_counter : \regblock.bad_address_counter_in_t\;
+        uart_start_bit_error_counter : \regblock.uart_start_bit_error_counter_in_t\;
+        uart_stop_bit_error_counter : \regblock.uart_stop_bit_error_counter_in_t\;
     end record;
 
     type \regblock.spi_tx_control.tx_data_out_t\ is record
@@ -118,9 +138,27 @@ package regblock_pkg is
         count : \regblock.bad_address_counter.count_out_t\;
     end record;
 
+    type \regblock.uart_start_bit_error_counter.count_out_t\ is record
+        value : std_logic_vector(31 downto 0);
+    end record;
+
+    type \regblock.uart_start_bit_error_counter_out_t\ is record
+        count : \regblock.uart_start_bit_error_counter.count_out_t\;
+    end record;
+
+    type \regblock.uart_stop_bit_error_counter.count_out_t\ is record
+        value : std_logic_vector(31 downto 0);
+    end record;
+
+    type \regblock.uart_stop_bit_error_counter_out_t\ is record
+        count : \regblock.uart_stop_bit_error_counter.count_out_t\;
+    end record;
+
     type regblock_out_t is record
         spi_tx_control : \regblock.spi_tx_control_out_t\;
         vga_color_control : \regblock.vga_color_control_out_t\;
         bad_address_counter : \regblock.bad_address_counter_out_t\;
+        uart_start_bit_error_counter : \regblock.uart_start_bit_error_counter_out_t\;
+        uart_stop_bit_error_counter : \regblock.uart_stop_bit_error_counter_out_t\;
     end record;
 end package;
