@@ -43,7 +43,7 @@ from pathlib import Path
 
 from vunit.ui.library import Library
 
-sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
+sys.path.insert(0, str((Path(__file__).parent.parent.parent).resolve()))
 
 from setup_vunit import create_vunit, create_vunit_cli
 
@@ -52,11 +52,11 @@ from setup_vunit import create_vunit, create_vunit_cli
 ## =====================================================================================================================
 
 THIS_DIR: Path = Path(__file__).resolve().parent
-PRJ_ROOT: Path = THIS_DIR.parent.parent
+PRJ_ROOT: Path = THIS_DIR.parent.parent.parent
 SRC_ROOT: Path = PRJ_ROOT / "sources"
 CORES_ROOT: Path = PRJ_ROOT / "cores"
-BENCH_ROOT: Path = THIS_DIR
-COMMON_ROOT: Path = THIS_DIR.parent / "common"
+BENCH_ROOT: Path = PRJ_ROOT / "bench"
+COMMON_ROOT: Path = BENCH_ROOT / "common"
 
 ## =====================================================================================================================
 # Parse command line arguments
@@ -79,7 +79,7 @@ LIB_RTL.add_source_files(pattern=SRC_ROOT / "regblock" / "*.vhd")
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
 LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_common_pkg.vhd")
 LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_reg_map_pkg.vhd")
-LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
+LIB_BENCH.add_source_files(pattern=THIS_DIR / "**" / "*.vhd")
 
 ## =====================================================================================================================
 # Set up simulator
