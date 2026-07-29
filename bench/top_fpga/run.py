@@ -69,9 +69,9 @@ THIS_DIR: Path = Path(__file__).resolve().parent
 PRJ_ROOT: Path = THIS_DIR.parent.parent
 SRC_ROOT: Path = PRJ_ROOT / "sources"
 CORES_ROOT: Path = PRJ_ROOT / "cores"
-BENCH_ROOT: Path = THIS_DIR
-COMMON_ROOT: Path = THIS_DIR.parent / "common"
-MODELS_ROOT: Path = PRJ_ROOT / "bench" / "models"
+BENCH_ROOT: Path = THIS_DIR.parent
+COMMON_ROOT: Path = BENCH_ROOT / "common"
+MODELS_ROOT: Path = BENCH_ROOT / "models"
 
 ## =====================================================================================================================
 # Parse command line arguments
@@ -113,7 +113,7 @@ LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_common_pkg.vhd")
 LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_reg_map_pkg.vhd")
 LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "uart" / "*.vhd")
 LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "spi" / "*.vhd")
-LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
+LIB_BENCH.add_source_files(pattern=THIS_DIR / "**" / "*.vhd")
 
 ## =====================================================================================================================
 # Set up simulator
@@ -131,9 +131,10 @@ if not args.without_unisim:
 
 if args.vhdl_ls:
     optional_files: list[tuple[Path | None, str]] = [
-        (simulator.get_unisim_vpkg_library_path(), "unisim"),
-        (simulator.get_unisim_vcomp_library_path(), "unisim"),
+        (BENCH_ROOT / "ip_tb" / "**" / "*.vhd", "lib_bench"),
         (simulator.get_unifast_library_path(), "unifast"),
+        (simulator.get_unisim_vcomp_library_path(), "unisim"),
+        (simulator.get_unisim_vpkg_library_path(), "unisim"),
     ]
     files: list[tuple[Path, str]] = [(path, library) for path, library in optional_files if path is not None]
     simulator.generate_vhdl_ls_toml(external_libraries=files, output_path=PRJ_ROOT)
