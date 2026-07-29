@@ -57,7 +57,7 @@ import re
 import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, override
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 import rtoml
 from vunit import VUnit
@@ -678,7 +678,6 @@ class QuestaModelSim(Simulator):
         """Get the name of the simulator."""
         return self.SIMULATOR_NAME
 
-    @override
     def add_library(self, library_name: str, library_path: str | None = None) -> "Simulator":
         """Add an external library to VUnit for Questa/ModelSim.
 
