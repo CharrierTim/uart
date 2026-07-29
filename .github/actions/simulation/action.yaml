@@ -19,9 +19,9 @@ runs:
     - name: Run Simulation
       shell: bash
       run: |
-        uv run bench/uart/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
-        uv run bench/spi/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
-        uv run bench/regblock/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
+        uv run bench/ip_tb/uart/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
+        uv run bench/ip_tb/spi/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
+        uv run bench/ip_tb/regblock/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
         uv run bench/top_fpga/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage --without_unisim
 
     - name: Upload sim results
