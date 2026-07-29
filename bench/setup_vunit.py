@@ -49,6 +49,7 @@
 ##          22/05/2026                      Add unisim and unifast workarounds for Questa/ModelSim support, which is
 ##                                          currently very slow due to issues with pre-compilation of these libraries.
 ## 2.7      29/07/2026  Timothee Charrier   Improve output return from `get_..._path` methods.
+##                                          Improve library path handling and error reporting
 ## =====================================================================================================================
 
 import logging
@@ -233,9 +234,9 @@ class Simulator(ABC):
 
         path: str | None = library_path or self.DEFAULT_LIBRARIES.get(library_name)
         if not path:
-            LOGGER.error("No default path for library '%s'", library_name)
+            raise SystemExit(f"ERROR: No path configured for library '{library_name}'")
 
-        expanded_path: str = os.path.expanduser(path)
+        expanded_path: str = str(Path(path).expanduser())
         self.vu.add_external_library(library_name=library_name, path=expanded_path)
         return self
 
@@ -247,7 +248,7 @@ class Simulator(ABC):
         list[Library]
             The library objects to cover.
         """
-        libs_by_name: dict["Library"] = {lib.name: lib for lib in self.vu.get_libraries()}  # noqa: UP037
+        libs_by_name: dict[str, "Library"] = {lib.name: lib for lib in self.vu.get_libraries()}  # noqa: UP037
         return [libs_by_name[name] for name in self.DEFAULT_LIBRARIES_TO_COVER if name in libs_by_name]
 
     def configure(self) -> "Simulator":
@@ -708,15 +709,24 @@ class QuestaModelSim(Simulator):
         )
 
         if library_name == "unisim":
+            unisim_vpkg_path: Path | None = self.get_unisim_vpkg_library_path()
+            unisim_vcomp_path: Path | None = self.get_unisim_vcomp_library_path()
+            if unisim_vpkg_path is None or unisim_vcomp_path is None:
+                raise SystemExit("ERROR: Vivado Unisim source files are unavailable")
+
             UNISIM: Library = self.vu.add_library(library_name="unisim")
             unisim_dir: Path = self.get_vivado_path() / "data" / "vhdl" / "src" / "unisims"
-            UNISIM.add_source_file(file_name=self.get_unisim_vpkg_library_path())
-            UNISIM.add_source_file(file_name=self.get_unisim_vcomp_library_path())
+            UNISIM.add_source_file(file_name=unisim_vpkg_path)
+            UNISIM.add_source_file(file_name=unisim_vcomp_path)
             UNISIM.add_source_files(pattern=str(unisim_dir / "primitive" / "*.vhd"))
 
         elif library_name == "unifast":
+            unifast_path: Path | None = self.get_unifast_library_path()
+            if unifast_path is None:
+                raise SystemExit("ERROR: Vivado Unifast source files are unavailable")
+
             UNIFAST: Library = self.vu.add_library(library_name="unifast")
-            UNIFAST.add_source_files(pattern=self.get_unifast_library_path())
+            UNIFAST.add_source_files(pattern=unifast_path)
 
         return self
 
