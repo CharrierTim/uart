@@ -438,8 +438,8 @@ begin
 
                 wait for 3 * C_SPI_TRANSACTION_TIME;
 
-                -- Verify o_mosi, rx_data and rx_data_valid remain stable
-                check_equal(tb_o_mosi'stable(2 * C_SPI_TRANSACTION_TIME),    True, "O_MISO must remain stable");
+                -- Verify transaction outputs remain stable
+                check_equal(tb_o_mosi'stable(2 * C_SPI_TRANSACTION_TIME),    True, "O_MOSI must remain stable");
                 check_equal(tb_o_rx_data'stable(2 * C_SPI_TRANSACTION_TIME), True, "O_RX_DATA must remain stable");
                 check_equal(
                     tb_o_rx_data_valid'stable(2 * C_SPI_TRANSACTION_TIME),
