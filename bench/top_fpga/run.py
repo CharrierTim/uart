@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run.py
-## @version 2.5
+## @version 2.6
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
 ##          Top-level module.
 ## @author  Timothee Charrier
@@ -47,20 +47,19 @@
 ##          24/05/2026  Timothee Charrier   Add support for a fast PLL model to quickly iterate without needing Vivado
 ##                                          PLL simulation files.
 ##          01/06/2026  Timothee Charrier   Rename `--fast_pll` flag to `--without_unisim`.
+## 2.6      29/07/2026  Timothee Charrier   Apply changes from `setup_vunit.py` to improve portability.
+##                                          Add new common library `common`.
 ## =====================================================================================================================
 
 import sys
-from argparse import Namespace
 from pathlib import Path
-from typing import Literal
 
-from vunit import VUnit, VUnitCLI
 from vunit.ui.library import Library
 
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 sys.path.insert(0, str((Path(__file__).parent.parent.parent / "cores" / "open-logic" / "sim").resolve()))
 
-from setup_vunit import Simulator, select_simulator
+from setup_vunit import create_vunit, create_vunit_cli
 
 ## =====================================================================================================================
 # Define paths
@@ -71,38 +70,27 @@ PRJ_ROOT: Path = THIS_DIR.parent.parent
 SRC_ROOT: Path = PRJ_ROOT / "sources"
 CORES_ROOT: Path = PRJ_ROOT / "cores"
 BENCH_ROOT: Path = THIS_DIR
+COMMON_ROOT: Path = THIS_DIR.parent / "common"
 MODELS_ROOT: Path = PRJ_ROOT / "bench" / "models"
 
 ## =====================================================================================================================
 # Parse command line arguments
 ## =====================================================================================================================
 
-cli = VUnitCLI()
-cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
-cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
-cli.parser.add_argument("--modelsim", dest="questa", action="store_true", help="Use ModelSim/Questa as the simulator")
-cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
-cli.parser.add_argument("--questa", dest="questa", action="store_true", help="Use Questa/ModelSim as the simulator")
+cli = create_vunit_cli()
 cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
 cli.parser.add_argument(
     "--without_unisim",
     action="store_true",
     help="Use a custom behavioral PLL model (faster simulation without needing Vivado pre-compiled libraries)",
 )
-args: Namespace = cli.parse_args()
+args = cli.parse_args()
 
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
 
-sim_name: Literal["nvc", "ghdl", "questa/modelsim"] | None = (
-    "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if args.questa else None
-)
-simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage, run_file_dir=THIS_DIR)
-
-VU: VUnit = VUnit.from_args(args=args)
-VU.add_vhdl_builtins()
-VU.add_verification_components()
+VU, simulator = create_vunit(args=args, run_file_dir=THIS_DIR, add_random=False)
 
 # Open-logic libraries
 OLO: Library = VU.add_library(library_name="olo")
@@ -121,6 +109,8 @@ else:
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
+LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_common_pkg.vhd")
+LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_reg_map_pkg.vhd")
 LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "uart" / "*.vhd")
 LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "spi" / "*.vhd")
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
@@ -140,11 +130,12 @@ if not args.without_unisim:
 ## =====================================================================================================================
 
 if args.vhdl_ls:
-    files = [
-        [simulator.get_unisim_vpkg_library_path(), "unisim"],
-        [simulator.get_unisim_vcomp_library_path(), "unisim"],
-        [simulator.get_unifast_library_path(), "unifast"],
+    optional_files: list[tuple[Path | None, str]] = [
+        (simulator.get_unisim_vpkg_library_path(), "unisim"),
+        (simulator.get_unisim_vcomp_library_path(), "unisim"),
+        (simulator.get_unifast_library_path(), "unifast"),
     ]
+    files: list[tuple[Path, str]] = [(path, library) for path, library in optional_files if path is not None]
     simulator.generate_vhdl_ls_toml(external_libraries=files, output_path=PRJ_ROOT)
     sys.exit(0)
 

@@ -50,6 +50,8 @@
 ##                                          currently very slow due to issues with pre-compilation of these libraries.
 ## 2.7      29/07/2026  Timothee Charrier   Improve output return from `get_..._path` methods.
 ##                                          Improve library path handling and error reporting
+##                                          Create a `create_vunit_cli` and `create_vunit` functions to simplify VUnit
+##                                          setup and CLI handling.
 ## =====================================================================================================================
 
 import logging
@@ -57,11 +59,12 @@ import os
 import re
 import shutil
 from abc import ABC, abstractmethod
+from argparse import Namespace
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 import rtoml
-from vunit import VUnit
+from vunit import VUnit, VUnitCLI
 from vunit.ostools import Process
 from vunit.ui.results import Results
 
@@ -808,7 +811,7 @@ class QuestaModelSim(Simulator):
             "-output",
             str(coverage_dir),
         ]
-        process: Process[list[str]] = Process(cmd)
+        process: Process[list[str]] = Process(args=cmd)
         process.consume_output()
         LOGGER.info("Coverage report generated at %s", coverage_dir)
 
@@ -837,14 +840,20 @@ def select_simulator(
     SystemExit
         If the specified simulator is unknown or if no suitable simulator is found during auto-detection.
     """
-    simulators: dict[str, type[Simulator]] = {"nvc": NVC, "ghdl": GHDL, "questa/modelsim": QuestaModelSim}
+    simulators: dict[str, type[Simulator]] = {
+        "nvc": NVC,
+        "ghdl": GHDL,
+        "questa": QuestaModelSim,
+        "modelsim": QuestaModelSim,
+        "questa/modelsim": QuestaModelSim,
+    }
 
     # Auto-detect if not specified
     if not name:
         name = os.environ.get("VUNIT_SIMULATOR")
         if not name:
-            for sim_name in simulators:
-                if shutil.which(cmd=sim_name):
+            for sim_name, simulator_class in simulators.items():
+                if shutil.which(cmd=simulator_class.EXECUTABLE):
                     name = sim_name
                     break
 
@@ -863,3 +872,36 @@ def select_simulator(
         raise SystemExit(1)
 
     return simulator_class(enable_coverage=enable_coverage, run_file_dir=run_file_dir)
+
+
+def create_vunit_cli() -> VUnitCLI:
+    """Create a VUnit CLI with the simulator options shared by all benches."""
+    cli = VUnitCLI()
+    cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
+    cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
+    cli.parser.add_argument(
+        "--modelsim", dest="questa", action="store_true", help="Use ModelSim/Questa as the simulator"
+    )
+    cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
+    cli.parser.add_argument("--questa", dest="questa", action="store_true", help="Use Questa/ModelSim as the simulator")
+    return cli
+
+
+def create_vunit(args: Namespace, run_file_dir: Path, add_random: bool = True) -> tuple[VUnit, Simulator]:
+    """Create the VUnit project and simulator selected by common CLI options."""
+    simulator_name: str | None = (
+        "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if args.questa else None
+    )
+    simulator = select_simulator(
+        name=simulator_name,
+        enable_coverage=args.coverage,
+        run_file_dir=run_file_dir,
+    )
+
+    vu = VUnit.from_args(args=args)
+    vu.add_vhdl_builtins()
+    vu.add_verification_components()
+    if add_random:
+        vu.add_random()
+
+    return vu, simulator

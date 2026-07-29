@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run.py
-## @version 1.0
+## @version 2.0
 ## @brief   This module sets up the VUnit test environment, adds necessary source files, and runs the tests for the
 ##          CSR regblock module.
 ## @author  Timothee Charrier
@@ -34,19 +34,18 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      17/10/2025  Timothee Charrier   Initial release
+## 2.0      29/07/2026  Timothee Charrier   Apply changes from `setup_vunit.py` to improve portability.
+##                                          Add new common library `common`.
 ## =====================================================================================================================
 
 import sys
-from argparse import Namespace
 from pathlib import Path
-from typing import Literal
 
-from vunit import VUnit, VUnitCLI
 from vunit.ui.library import Library
 
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 
-from setup_vunit import Simulator, select_simulator
+from setup_vunit import create_vunit, create_vunit_cli
 
 ## =====================================================================================================================
 # Define paths
@@ -57,32 +56,20 @@ PRJ_ROOT: Path = THIS_DIR.parent.parent
 SRC_ROOT: Path = PRJ_ROOT / "sources"
 CORES_ROOT: Path = PRJ_ROOT / "cores"
 BENCH_ROOT: Path = THIS_DIR
+COMMON_ROOT: Path = THIS_DIR.parent / "common"
 
 ## =====================================================================================================================
 # Parse command line arguments
 ## =====================================================================================================================
 
-cli = VUnitCLI()
-cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
-cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
-cli.parser.add_argument("--modelsim", dest="questa", action="store_true", help="Use ModelSim/Questa as the simulator")
-cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
-cli.parser.add_argument("--questa", dest="questa", action="store_true", help="Use Questa/ModelSim as the simulator")
-args: Namespace = cli.parse_args()
+cli = create_vunit_cli()
+args = cli.parse_args()
 
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
 
-sim_name: Literal["nvc", "ghdl", "questa/modelsim"] | None = (
-    "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if args.questa else None
-)
-simulator: Simulator = select_simulator(name=sim_name, enable_coverage=args.coverage, run_file_dir=THIS_DIR)
-
-VU: VUnit = VUnit.from_args(args=args)
-VU.add_vhdl_builtins()
-VU.add_verification_components()
-VU.add_random()
+VU, simulator = create_vunit(args=args, run_file_dir=THIS_DIR)
 
 # Add the source files to the library
 LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
@@ -90,6 +77,8 @@ LIB_RTL.add_source_files(pattern=SRC_ROOT / "regblock" / "*.vhd")
 
 # Add the test library
 LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
+LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_common_pkg.vhd")
+LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_reg_map_pkg.vhd")
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "**" / "*.vhd")
 
 ## =====================================================================================================================
