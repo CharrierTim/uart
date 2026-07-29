@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    setup_vunit.py
-## @version 2.6
+## @version 2.7
 ## @brief   This module provides simulator classes for VUnit.
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -48,6 +48,10 @@
 ##                                          as coverage can significantly reduce performance.
 ##          22/05/2026                      Add unisim and unifast workarounds for Questa/ModelSim support, which is
 ##                                          currently very slow due to issues with pre-compilation of these libraries.
+## 2.7      29/07/2026  Timothee Charrier   Improve output return from `get_..._path` methods.
+##                                          Improve library path handling and error reporting
+##                                          Create a `create_vunit_cli` and `create_vunit` functions to simplify VUnit
+##                                          setup and CLI handling.
 ## =====================================================================================================================
 
 import logging
@@ -55,11 +59,12 @@ import os
 import re
 import shutil
 from abc import ABC, abstractmethod
+from argparse import Namespace
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeAlias, override
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 import rtoml
-from vunit import VUnit
+from vunit import VUnit, VUnitCLI
 from vunit.ostools import Process
 from vunit.ui.results import Results
 
@@ -75,9 +80,9 @@ class Simulator(ABC):
 
     SIMULATOR_NAME: str = ""
     EXECUTABLE: str = ""
-    DEFAULT_LIBRARIES: dict[str, str] = {}
-    THIRD_PARTY_LIBRARIES: set[str] = {"vunit_lib", "osvvm", "unisim", "unifast", "xil_defaultlib"}
-    DEFAULT_LIBRARIES_TO_COVER: set[str] = {"lib_bench"}
+    DEFAULT_LIBRARIES: ClassVar[dict[str, str]] = {}
+    THIRD_PARTY_LIBRARIES: ClassVar[set[str]] = {"vunit_lib", "osvvm", "unisim", "unifast", "xil_defaultlib"}
+    DEFAULT_LIBRARIES_TO_COVER: ClassVar[set[str]] = {"lib_bench"}
 
     def __init__(self, enable_coverage: bool = False, run_file_dir: Path | None = None) -> None:
         """Initialize the simulator.
@@ -90,8 +95,8 @@ class Simulator(ABC):
             Directory containing the run file.
         """
         self.enable_coverage: bool = enable_coverage
-        self.run_file_dir: Path | None = run_file_dir
-        self.results_dir: Path | None = (self.run_file_dir / "results") if self.run_file_dir else None
+        self.run_file_dir: Path = run_file_dir or Path.cwd()
+        self.results_dir: Path = self.run_file_dir / "results"
 
         self.vu: VUnit | None = None
 
@@ -154,60 +159,60 @@ class Simulator(ABC):
 
         return Path(vivado_path).parent.parent.parent
 
-    def get_unisim_vcomp_library_path(self) -> Path:
+    def get_unisim_vcomp_library_path(self) -> Path | None:
         """Get the path for the unisim VCOMP file compiled in unisim library.
 
         Usually located under `vivado_path/data/vhdl/src/unisims/unisim_VCOMP.vhd`.
 
         Returns
         -------
-        Path
-            The path to the library file.
+        Path | None
+            The path to the library file, or None when it is unavailable.
         """
         vivado_path: Path = self.get_vivado_path()
         unisim_vcomp_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VCOMP.vhd"
 
         if not unisim_vcomp_path.exists():
             LOGGER.warning("Unisim VCOMP file not found at %s", unisim_vcomp_path)
-            return Path()
+            return None
 
         return unisim_vcomp_path
 
-    def get_unisim_vpkg_library_path(self) -> Path:
+    def get_unisim_vpkg_library_path(self) -> Path | None:
         """Get the path for the unisim VPKG file compiled in unisim library.
 
         Usually located under `vivado_path/data/vhdl/src/unisims/unisim_VPKG.vhd`.
 
         Returns
         -------
-        Path
-            The path to the library file.
+        Path | None
+            The path to the library file, or None when it is unavailable.
         """
         vivado_path: Path = self.get_vivado_path()
         unisim_vpkg_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VPKG.vhd"
 
         if not unisim_vpkg_path.exists():
             LOGGER.warning("Unisim VPKG file not found at %s", unisim_vpkg_path)
-            return Path()
+            return None
 
         return unisim_vpkg_path
 
-    def get_unifast_library_path(self) -> Path:
+    def get_unifast_library_path(self) -> Path | None:
         """Get the path for the unifast library files compiled in the unifast library.
 
         Usually located under `vivado_path/data/vhdl/src/unifast/primitive/*.vhd`.
 
         Returns
         -------
-        Path
-            The path to the library.
+        Path | None
+            The path to the library glob, or None when it is unavailable.
         """
         vivado_path: Path = self.get_vivado_path()
         unifast_path: Path = vivado_path / "data" / "vhdl" / "src" / "unifast" / "primitive"
 
         if not unifast_path.exists():
             LOGGER.warning("Unifast primitive directory not found at %s", unifast_path)
-            return Path()
+            return None
 
         return unifast_path / "*.vhd"
 
@@ -232,9 +237,9 @@ class Simulator(ABC):
 
         path: str | None = library_path or self.DEFAULT_LIBRARIES.get(library_name)
         if not path:
-            LOGGER.error("No default path for library '%s'", library_name)
+            raise SystemExit(f"ERROR: No path configured for library '{library_name}'")
 
-        expanded_path: str = os.path.expanduser(path)
+        expanded_path: str = str(Path(path).expanduser())
         self.vu.add_external_library(library_name=library_name, path=expanded_path)
         return self
 
@@ -246,7 +251,7 @@ class Simulator(ABC):
         list[Library]
             The library objects to cover.
         """
-        libs_by_name: dict["Library"] = {lib.name: lib for lib in self.vu.get_libraries()}  # noqa: UP037
+        libs_by_name: dict[str, "Library"] = {lib.name: lib for lib in self.vu.get_libraries()}  # noqa: UP037
         return [libs_by_name[name] for name in self.DEFAULT_LIBRARIES_TO_COVER if name in libs_by_name]
 
     def configure(self) -> "Simulator":
@@ -427,7 +432,7 @@ class NVC(Simulator):
 
     SIMULATOR_NAME: str = "nvc"
     EXECUTABLE: str = "nvc"
-    DEFAULT_LIBRARIES: dict[str, str] = {
+    DEFAULT_LIBRARIES: ClassVar[dict[str, str]] = {
         "unisim": "~/.nvc/lib/unisim.08",
         "unifast": "~/.nvc/lib/unifast.08",
     }
@@ -517,7 +522,7 @@ class GHDL(Simulator):
 
     SIMULATOR_NAME: str = "ghdl"
     EXECUTABLE: str = "ghdl"
-    DEFAULT_LIBRARIES: dict[str, str] = {
+    DEFAULT_LIBRARIES: ClassVar[dict[str, str]] = {
         "unisim": "~/.ghdl/xilinx-vivado/unisim/v08",
         "unifast": "~/.ghdl/xilinx-vivado/unifast/v08",
     }
@@ -671,13 +676,12 @@ class QuestaModelSim(Simulator):
 
     SIMULATOR_NAME: str = "modelsim"
     EXECUTABLE: str = "vsim"
-    DEFAULT_LIBRARIES_TO_COVER: set[str] = {"lib_bench", "lib_rtl"}
+    DEFAULT_LIBRARIES_TO_COVER: ClassVar[set[str]] = {"lib_bench", "lib_rtl"}
 
     def get_simulator_name(self) -> str:
         """Get the name of the simulator."""
         return self.SIMULATOR_NAME
 
-    @override
     def add_library(self, library_name: str, library_path: str | None = None) -> "Simulator":
         """Add an external library to VUnit for Questa/ModelSim.
 
@@ -708,15 +712,24 @@ class QuestaModelSim(Simulator):
         )
 
         if library_name == "unisim":
+            unisim_vpkg_path: Path | None = self.get_unisim_vpkg_library_path()
+            unisim_vcomp_path: Path | None = self.get_unisim_vcomp_library_path()
+            if unisim_vpkg_path is None or unisim_vcomp_path is None:
+                raise SystemExit("ERROR: Vivado Unisim source files are unavailable")
+
             UNISIM: Library = self.vu.add_library(library_name="unisim")
             unisim_dir: Path = self.get_vivado_path() / "data" / "vhdl" / "src" / "unisims"
-            UNISIM.add_source_file(file_name=self.get_unisim_vpkg_library_path())
-            UNISIM.add_source_file(file_name=self.get_unisim_vcomp_library_path())
+            UNISIM.add_source_file(file_name=unisim_vpkg_path)
+            UNISIM.add_source_file(file_name=unisim_vcomp_path)
             UNISIM.add_source_files(pattern=str(unisim_dir / "primitive" / "*.vhd"))
 
         elif library_name == "unifast":
+            unifast_path: Path | None = self.get_unifast_library_path()
+            if unifast_path is None:
+                raise SystemExit("ERROR: Vivado Unifast source files are unavailable")
+
             UNIFAST: Library = self.vu.add_library(library_name="unifast")
-            UNIFAST.add_source_files(pattern=self.get_unifast_library_path())
+            UNIFAST.add_source_files(pattern=unifast_path)
 
         return self
 
@@ -798,7 +811,7 @@ class QuestaModelSim(Simulator):
             "-output",
             str(coverage_dir),
         ]
-        process: Process[list[str]] = Process(cmd)
+        process: Process[list[str]] = Process(args=cmd)
         process.consume_output()
         LOGGER.info("Coverage report generated at %s", coverage_dir)
 
@@ -827,14 +840,20 @@ def select_simulator(
     SystemExit
         If the specified simulator is unknown or if no suitable simulator is found during auto-detection.
     """
-    simulators: dict[str, type[Simulator]] = {"nvc": NVC, "ghdl": GHDL, "questa/modelsim": QuestaModelSim}
+    simulators: dict[str, type[Simulator]] = {
+        "nvc": NVC,
+        "ghdl": GHDL,
+        "questa": QuestaModelSim,
+        "modelsim": QuestaModelSim,
+        "questa/modelsim": QuestaModelSim,
+    }
 
     # Auto-detect if not specified
     if not name:
         name = os.environ.get("VUNIT_SIMULATOR")
         if not name:
-            for sim_name in simulators:
-                if shutil.which(cmd=sim_name):
+            for sim_name, simulator_class in simulators.items():
+                if shutil.which(cmd=simulator_class.EXECUTABLE):
                     name = sim_name
                     break
 
@@ -853,3 +872,36 @@ def select_simulator(
         raise SystemExit(1)
 
     return simulator_class(enable_coverage=enable_coverage, run_file_dir=run_file_dir)
+
+
+def create_vunit_cli() -> VUnitCLI:
+    """Create a VUnit CLI with the simulator options shared by all benches."""
+    cli = VUnitCLI()
+    cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
+    cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
+    cli.parser.add_argument(
+        "--modelsim", dest="questa", action="store_true", help="Use ModelSim/Questa as the simulator"
+    )
+    cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
+    cli.parser.add_argument("--questa", dest="questa", action="store_true", help="Use Questa/ModelSim as the simulator")
+    return cli
+
+
+def create_vunit(args: Namespace, run_file_dir: Path, add_random: bool = True) -> tuple[VUnit, Simulator]:
+    """Create the VUnit project and simulator selected by common CLI options."""
+    simulator_name: str | None = (
+        "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if args.questa else None
+    )
+    simulator = select_simulator(
+        name=simulator_name,
+        enable_coverage=args.coverage,
+        run_file_dir=run_file_dir,
+    )
+
+    vu = VUnit.from_args(args=args)
+    vu.add_vhdl_builtins()
+    vu.add_verification_components()
+    if add_random:
+        vu.add_random()
+
+    return vu, simulator

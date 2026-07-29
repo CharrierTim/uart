@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_regblock.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Regblock testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -32,6 +32,7 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      16/05/2026  Timothee Charrier   Initial release
+-- 1.1      29/07/2026  Timothee Charrier   Move register map to a common package
 -- =====================================================================================================================
 
 library ieee;
@@ -51,6 +52,7 @@ library osvvm;
     use osvvm.randompkg.randomptype;
 
 library lib_bench;
+    use lib_bench.tb_reg_map_pkg.all;
     use lib_bench.tb_regblock_pkg.all;
 
 -- =====================================================================================================================
@@ -98,6 +100,10 @@ architecture TB_REGBLOCK_ARCH of TB_REGBLOCK is
     signal tb_hwif_in        : regblock_in_t;
     signal tb_hwif_out       : regblock_out_t;
 
+    -- AXI-Lite bad response detection signals
+    signal tb_axil_bad_rresp : std_logic;
+    signal tb_axil_bad_bresp : std_logic;
+
     -- =================================================================================================================
     -- CONSTANTS for verification components
     -- =================================================================================================================
@@ -139,16 +145,31 @@ begin
             hwif_out       => tb_hwif_out
         );
 
-    -- Increment on error responses (valid + ready handshake)
+    -- Counters registers
 
-    -- vsg_off
-    tb_hwif_in.bad_address_counter.count.incr   <= '1' when (
-                                                              (tb_s_axil_bvalid = '1' and tb_s_axil_bready = '1' and tb_s_axil_bresp = axi_resp_slverr) or
-                                                              (tb_s_axil_rvalid = '1' and tb_s_axil_rready = '1' and tb_s_axil_rresp = axi_resp_slverr)
-                                                          ) else
-                                                   '0';
-    tb_hwif_in.bad_address_counter.count.next_q <= tb_hwif_out.bad_address_counter.count.value;
-    -- vsg_on
+    tb_hwif_in.bad_address_counter.count.next_q          <= tb_hwif_out.bad_address_counter.count.value;
+    tb_hwif_in.uart_start_bit_error_counter.count.next_q <= tb_hwif_out.uart_start_bit_error_counter.count.value;
+    tb_hwif_in.uart_stop_bit_error_counter.count.next_q  <= tb_hwif_out.uart_stop_bit_error_counter.count.value;
+    tb_hwif_in.bad_address_counter.count.incr            <= '1' when (
+                                                                         tb_axil_bad_rresp = '1' or
+                                                                         tb_axil_bad_bresp = '1'
+                                                                     ) else
+                                                            '0';
+
+    --- AXI-Lite bad response detection
+    tb_axil_bad_rresp <= '1' when (
+                                      tb_s_axil_rvalid = '1' and
+                                      tb_s_axil_rready = '1' and
+                                      tb_s_axil_rresp = axi_resp_slverr
+                                  ) else
+                         '0';
+
+    tb_axil_bad_bresp <= '1' when (
+                                      tb_s_axil_bvalid = '1' and
+                                      tb_s_axil_bready = '1' and
+                                      tb_s_axil_bresp = axi_resp_slverr
+                                  ) else
+                         '0';
 
     -- =================================================================================================================
     -- AXI-LITE VERIFICATION COMPONENT
@@ -230,22 +251,24 @@ begin
         begin
 
             -- Reset the DUT by setting the input state to all zeros
-            tb_arst_h                                <= '1';
-            tb_s_axil_awprot                         <= (others => '0');
-            tb_s_axil_arprot                         <= (others => '0');
+            tb_arst_h                                          <= '1';
+            tb_s_axil_awprot                                   <= (others => '0');
+            tb_s_axil_arprot                                   <= (others => '0');
 
-            tb_hwif_in.GIT_HASH.hash.next_q          <= C_REG_GIT_HASH.data;
-            tb_hwif_in.GIT_STATUS.status.next_q      <= C_REG_GIT_STATUS.data(0);
-            tb_hwif_in.FPGA_ID.id.next_q             <= C_REG_FPGA_ID.data;
-            tb_hwif_in.SPI_RX_DATA.rx_data.next_q    <= C_REG_SPI_RX_DATA.data(15 downto 8);
-            tb_hwif_in.SWITCH_STATUS.switch_0.next_q <= C_REG_SWITCH_STATUS.data(0);
-            tb_hwif_in.SWITCH_STATUS.switch_1.next_q <= C_REG_SWITCH_STATUS.data(1);
-            tb_hwif_in.SWITCH_STATUS.switch_2.next_q <= C_REG_SWITCH_STATUS.data(2);
+            tb_hwif_in.GIT_HASH.hash.next_q                    <= C_REG_GIT_HASH.data;
+            tb_hwif_in.GIT_STATUS.status.next_q                <= C_REG_GIT_STATUS.data(0);
+            tb_hwif_in.FPGA_ID.id.next_q                       <= C_REG_FPGA_ID.data;
+            tb_hwif_in.SPI_RX_DATA.rx_data.next_q              <= C_REG_SPI_RX_DATA.data(15 downto 8);
+            tb_hwif_in.SWITCH_STATUS.switch_0.next_q           <= C_REG_SWITCH_STATUS.data(0);
+            tb_hwif_in.SWITCH_STATUS.switch_1.next_q           <= C_REG_SWITCH_STATUS.data(1);
+            tb_hwif_in.SWITCH_STATUS.switch_2.next_q           <= C_REG_SWITCH_STATUS.data(2);
+            tb_hwif_in.uart_start_bit_error_counter.count.incr <= '0';
+            tb_hwif_in.uart_stop_bit_error_counter.count.incr  <= '0';
 
             wait for c_clock_cycles * C_CLK_PERIOD;
 
             -- Reassert reset
-            tb_arst_h                                <= '0';
+            tb_arst_h                                          <= '0';
 
             -- Wait for the DUT to step over
             wait for 5 ns;
@@ -447,12 +470,12 @@ begin
             wait until rising_edge(tb_clk);
 
             -- Write the opposite of the reset value to ensure a change is made to the register
-            proc_axi_lite_write(reg, (not reg.data) and reg.used_bits_mask);
+            proc_axi_lite_write(reg, (not reg.data) and reg.writable_bits_mask);
 
             -- Check if the register value is updated correctly
             proc_axi_lite_check(
                 reg,
-                (not reg.data) and reg.used_bits_mask,
+                (not reg.data) and reg.writable_bits_mask,
                 axi_resp_okay,
                 "Read-write register " & reg.name & " value mismatch after write");
 
@@ -579,6 +602,8 @@ begin
                 proc_axi_lite_check_default_value(C_REG_SPI_RX_DATA);
                 proc_axi_lite_check_default_value(C_REG_VGA_COLOR_CONTROL);
                 proc_axi_lite_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
+                proc_axi_lite_check_default_value(C_REG_START_BIT_ERROR_COUNTER);
+                proc_axi_lite_check_default_value(C_REG_STOP_BIT_ERROR_COUNTER);
                 proc_axi_lite_check_default_value(C_REG_TEST_REGISTER_1);
                 proc_axi_lite_check_default_value(C_REG_TEST_REGISTER_2);
 
@@ -593,6 +618,8 @@ begin
                 proc_axi_lite_check_read_only(C_REG_SPI_RX_DATA);
                 proc_axi_lite_check_read_only(C_REG_SWITCH_STATUS);
                 proc_axi_lite_check_read_only(C_REG_BAD_ADDRESS_COUNTER);
+                proc_axi_lite_check_read_only(C_REG_START_BIT_ERROR_COUNTER);
+                proc_axi_lite_check_read_only(C_REG_STOP_BIT_ERROR_COUNTER);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -709,7 +736,8 @@ begin
                     reg            => C_REG_BAD_ADDRESS_COUNTER,
                     expected_data  => std_logic_vector(to_unsigned(42, tb_s_axil_rdata'length)),
                     expected_rresp => axi_resp_okay,
-                    msg            => "BAD_ADDRESS_COUNTER should be 42 after 42 additional invalid read/write attempts");
+                    msg            => "BAD_ADDRESS_COUNTER should be 42 after 42 additional " &
+                    "invalid read/write attempts");
 
             elsif run("test_regblock_random_rw") then
 
@@ -796,6 +824,60 @@ begin
                     ),
                     expected_rresp => axi_resp_okay,
                     msg            => "Only the MSB and the third byte of TEST_REGISTER_1 should be updated");
+
+            elsif (run("test_regblock_uart_counter_registers")) then
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 10 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking UART parity error counter registers");
+                info("-----------------------------------------------------------------------------");
+
+                proc_axi_lite_check_default_value(C_REG_START_BIT_ERROR_COUNTER);
+                proc_axi_lite_check_default_value(C_REG_STOP_BIT_ERROR_COUNTER);
+
+                info("");
+                info("Incrementing UART start bit parity error counter 5 times");
+
+                wait until rising_edge(tb_clk);
+                tb_hwif_in.uart_start_bit_error_counter.count.incr <= '1';
+
+                for i in 1 to 5 loop
+                    wait until rising_edge(tb_clk);
+                end loop;
+
+                tb_hwif_in.uart_start_bit_error_counter.count.incr <= '0';
+                wait until rising_edge(tb_clk);
+                wait for C_CLK_PERIOD * 15.2;
+
+                proc_axi_lite_check(
+                    reg            => C_REG_START_BIT_ERROR_COUNTER,
+                    expected_data  => x"0000_0005",
+                    expected_rresp => axi_resp_okay,
+                    msg            => "UART_START_BIT_ERROR_COUNTER should be 5 after 5 increments");
+
+                info("");
+                info("Incrementing UART stop bit parity error counter 34 times");
+
+                wait until rising_edge(tb_clk);
+                tb_hwif_in.uart_stop_bit_error_counter.count.incr  <= '1';
+
+                for i in 1 to 34 loop
+                    wait until rising_edge(tb_clk);
+                end loop;
+
+                tb_hwif_in.uart_stop_bit_error_counter.count.incr <= '0';
+                wait until rising_edge(tb_clk);
+                wait for C_CLK_PERIOD * 15.3;
+
+                proc_axi_lite_check(
+                    reg            => C_REG_STOP_BIT_ERROR_COUNTER,
+                    expected_data  => x"0000_0022",
+                    expected_rresp => axi_resp_okay,
+                    msg            => "UART_STOP_BIT_PARITY_ERROR_COUNTER should be 34 after 34 increments");
 
             end if;
 

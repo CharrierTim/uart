@@ -22,51 +22,25 @@
 --  SOFTWARE.
 -- =====================================================================================================================
 -- @project uart
--- @file    tb_spi_master_pkg.vhd
+-- @file    tb_common_pkg.vhd
 -- @version 1.0
--- @brief   Package for the SPI master testbench
+-- @brief   Common testbench utilities with reusable procedures and functions
 -- @author  Timothee Charrier
 -- =====================================================================================================================
 -- REVISION HISTORY
 --
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
--- 1.0      27/11/2025  Timothee Charrier   Initial release
+-- 1.0      28/11/2025  Timothee Charrier   Initial version, create a package for common testbench utilities
 -- =====================================================================================================================
 
 library ieee;
-    use ieee.std_logic_1164.all;
     use ieee.math_real.all;
 
 library vunit_lib;
     context vunit_lib.vunit_context;
 
--- =====================================================================================================================
--- PACKAGE
--- =====================================================================================================================
-
-package TB_SPI_MASTER_PKG is
-
-    -- =================================================================================================================
-    -- CONSTANTS
-    -- =================================================================================================================
-
-    -- Clock configuration
-    constant C_CLK_FREQ_HZ          : positive := 50_000_000;
-    constant C_CLK_PERIOD           : time     := 1 sec / C_CLK_FREQ_HZ;
-
-    -- DUT generics
-    constant C_SPI_FREQ_HZ          : positive := 1_000_000;
-    constant C_NB_DATA_BITS         : positive := 8;
-
-    -- SPI constants
-    constant C_BIT_TIME             : time := 1 sec / C_SPI_FREQ_HZ;
-    constant C_BIT_TIME_ACCURACY    : time := 0.01 * C_BIT_TIME;
-    constant C_SPI_TRANSACTION_TIME : time := (C_NB_DATA_BITS + 2) * C_BIT_TIME;
-
-    -- =================================================================================================================
-    -- PROCEDURES
-    -- =================================================================================================================
+package TB_COMMON_PKG is
 
     procedure proc_check_time_in_range (
         time_to_check : time;
@@ -75,13 +49,9 @@ package TB_SPI_MASTER_PKG is
         message       : string := ""
     );
 
-end package TB_SPI_MASTER_PKG;
+end package TB_COMMON_PKG;
 
-package body TB_SPI_MASTER_PKG is
-
-    -- =================================================================================================================
-    -- FUNCTIONS
-    -- =================================================================================================================
+package body TB_COMMON_PKG is
 
     function func_format_time (
         time_to_format : time
@@ -90,69 +60,47 @@ package body TB_SPI_MASTER_PKG is
         variable v_rounded    : real;
     begin
 
-        -- Choose unit based on magnitude (show sec/ms/us/ns/ps/fs)
-
-        -- Seconds
         if (time_to_format >= 1 sec) then
             v_time_value := real(time_to_format / 1 fs) / 1.0e15;
-            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
+            v_rounded    := round(v_time_value * 100.0) / 100.0;
             return real'image(v_rounded) & " sec";
-
-        -- Milliseconds
         elsif (time_to_format >= 1 ms) then
             v_time_value := real(time_to_format / 1 fs) / 1.0e12;
-            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
+            v_rounded    := round(v_time_value * 100.0) / 100.0;
             return real'image(v_rounded) & " ms";
-
-        -- Microseconds
         elsif (time_to_format >= 1 us) then
             v_time_value := real(time_to_format / 1 fs) / 1.0e9;
-            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
+            v_rounded    := round(v_time_value * 100.0) / 100.0;
             return real'image(v_rounded) & " us";
-
-        -- Nanoseconds
         elsif (time_to_format >= 1 ns) then
             v_time_value := real(time_to_format / 1 fs) / 1.0e6;
-            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
+            v_rounded    := round(v_time_value * 100.0) / 100.0;
             return real'image(v_rounded) & " ns";
-
-        -- Picoseconds
         elsif (time_to_format >= 1 ps) then
             v_time_value := real(time_to_format / 1 fs) / 1.0e3;
-            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
+            v_rounded    := round(v_time_value * 100.0) / 100.0;
             return real'image(v_rounded) & " ps";
-
-        -- Femtoseconds
         else
             return time'image(time_to_format);
         end if;
 
     end function func_format_time;
 
-    -- Simple padding function
-
     function func_pad_left (
         str   : string;
         width : integer
     ) return string is
-        variable v_result     : string(1 to width) := (others => ' ');
-        variable v_actual_len : integer            := str'length;
-        variable v_padding    : integer;
+        variable v_result : string(1 to width) := (others => ' ');
     begin
 
-        if (v_actual_len >= width) then
+        if (str'length >= width) then
             return str;
-        else
-            v_padding                        := width - v_actual_len;
-            v_result(v_padding + 1 to width) := str;
-            return v_result;
         end if;
 
-    end function func_pad_left;
+        v_result(width - str'length + 1 to width) := str;
+        return v_result;
 
-    -- =================================================================================================================
-    -- PROCEDURE
-    -- =================================================================================================================
+    end function func_pad_left;
 
     procedure proc_check_time_in_range (
         time_to_check : time;

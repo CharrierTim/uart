@@ -93,7 +93,7 @@ addrmap regblock {
             reset = 0;
         } tx_data[7:0];
 
-        field{
+        field {
             desc  =
             "SPI transaction valid signal. Asserts for one cycle when written 1
             and then clears back to 0 on the next cycle";
@@ -186,6 +186,36 @@ addrmap regblock {
         } count[31:0];
 
     } bad_address_counter @ 0x1C;
+
+    reg {
+        name = "UART start bit error counter";
+        desc = "Register used to count the number of UART start bit errors.";
+
+        default sw = r;
+        default hw = rw;
+
+        field {
+            desc  = "Counter value, incremented on each UART start bit error";
+            reset = 0;
+            counter;
+        } count[31:0];
+
+    } uart_start_bit_error_counter @ 0x20;
+
+    reg {
+        name = "UART stop bit error counter";
+        desc = "Register used to count the number of UART stop bit errors.";
+
+        default sw = r;
+        default hw = rw;
+
+        field {
+            desc  = "Counter value, incremented on each UART stop bit error";
+            reset = 0;
+            counter;
+        } count[31:0];
+
+    } uart_stop_bit_error_counter @ 0x24;
 
     reg {
         name = "Test Register 1";

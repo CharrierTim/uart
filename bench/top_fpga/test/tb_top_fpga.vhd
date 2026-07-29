@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 2.2
+-- @version 2.3
 -- @brief   Top-Level Testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -41,6 +41,7 @@
 --                                              - Update LED functionality to bad address indicator
 --                                              - Fix proc_vga_check_outputs to correctly sample VGA outputs during
 --                                                active video time and avoid sampling during blanking intervals
+-- 2.3      29/07/2026  Timothee Charrier   Add common package for register map
 -- =====================================================================================================================
 
 library ieee;
@@ -50,6 +51,8 @@ library ieee;
 library lib_rtl;
 library lib_bench;
     use lib_bench.spi_pkg.all;
+    use lib_bench.tb_common_pkg.all;
+    use lib_bench.tb_reg_map_pkg.all;
     use lib_bench.tb_top_fpga_pkg.all;
 
 library vunit_lib;
@@ -386,7 +389,7 @@ begin
             tb_pad_i_arst_p        <= '1';
 
             tb_i_uart_select       <= '0';
-            tb_i_uart_rx_manual    <= '0';
+            tb_i_uart_rx_manual    <= '1';
             tb_pad_i_switch_0      <= '0';
             tb_pad_i_switch_1      <= '0';
             tb_pad_i_switch_2      <= '0';
@@ -406,7 +409,7 @@ begin
 
             wait for c_clock_cycles * C_CLK_PERIOD;
 
-            -- Reassert reset
+            -- De-assert reset
             tb_pad_i_arst_p        <= '0';
 
             -- Wait for the DUT to step over
@@ -637,27 +640,31 @@ begin
         --              verifying that the value is correctly updated.
         --
         -- Parameters:
-        --   reg            : t_reg            - The register to check.
-        --   expected_value : std_logic_vector - The expected value to compare against after writing.
+        --   reg : t_reg - The register to check.
         --
         -- Example:
-        --   proc_uart_check_read_write(C_REG_16_BITS, x"0001");
+        --   proc_uart_check_read_write(C_REG_16_BITS);
         -- =============================================================================================================
 
         procedure proc_uart_check_read_write (
-            constant reg            : t_reg;
-            constant expected_value : std_logic_vector(32 - 1 downto 0)
+            constant reg : t_reg
         ) is
+            variable v_write_value    : std_logic_vector(32 - 1 downto 0);
+            variable v_expected_value : std_logic_vector(32 - 1 downto 0);
         begin
 
             info("");
             info("Checking register " & reg.name & " is in read-write");
 
-            -- Write the expected value to the register
-            proc_uart_write(reg, not reg.data);
+            -- Toggle all bits then derive the expected value from stable register bits
+            v_write_value    := not reg.data;
+            v_expected_value := (reg.data and not reg.writable_bits_mask) or (v_write_value and reg.writable_bits_mask);
+
+            -- Write the toggled value to the register
+            proc_uart_write(reg, v_write_value);
 
             -- Check if the register value is updated correctly
-            proc_uart_check(reg, expected_value);
+            proc_uart_check(reg, v_expected_value);
 
         end procedure proc_uart_check_read_write;
 
@@ -800,6 +807,8 @@ begin
                 proc_uart_check_default_value(C_REG_GIT_HASH);
                 proc_uart_check_default_value(C_REG_GIT_STATUS);
                 proc_uart_check_default_value(C_REG_FPGA_ID);
+                proc_uart_check_default_value(C_REG_START_BIT_ERROR_COUNTER);
+                proc_uart_check_default_value(C_REG_STOP_BIT_ERROR_COUNTER);
                 proc_uart_check_default_value(C_REG_TEST_REGISTER_1);
                 proc_uart_check_default_value(C_REG_TEST_REGISTER_2);
 
@@ -811,14 +820,16 @@ begin
                 proc_uart_check_read_only(C_REG_GIT_HASH);
                 proc_uart_check_read_only(C_REG_GIT_STATUS);
                 proc_uart_check_read_only(C_REG_FPGA_ID);
+                proc_uart_check_read_only(C_REG_START_BIT_ERROR_COUNTER);
+                proc_uart_check_read_only(C_REG_STOP_BIT_ERROR_COUNTER);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Checking read-write registers");
                 info("-----------------------------------------------------------------------------");
 
-                proc_uart_check_read_write(C_REG_TEST_REGISTER_1, not C_REG_TEST_REGISTER_1.data);
-                proc_uart_check_read_write(C_REG_TEST_REGISTER_2, not C_REG_TEST_REGISTER_2.data);
+                proc_uart_check_read_write(C_REG_TEST_REGISTER_1);
+                proc_uart_check_read_write(C_REG_TEST_REGISTER_2);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -887,6 +898,9 @@ begin
                     True,
                     "Ensuring UART not responding when sending read command with invalid start bit in char 'R'");
 
+                -- Check that the start bit error counter has incremented
+                proc_uart_check(C_REG_START_BIT_ERROR_COUNTER, x"0000_0001");
+
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Sending read command with invalid stop bit in char 'R'");
@@ -920,8 +934,10 @@ begin
                 wait for C_UART_BIT_TIME;
                 tb_i_uart_rx_manual <= '0'; -- Bit 7
                 wait for C_UART_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Stop bit
+                tb_i_uart_rx_manual <= '0'; -- Stop bit too long
                 wait for 2 * C_UART_BIT_TIME;
+                tb_i_uart_rx_manual <= '1'; -- End of stop bit
+                wait for 1.1 * C_UART_BIT_TIME;
 
                 -- Send valid 2 bytes 0x30
                 proc_uart_send_byte(tb_i_uart_rx_manual, 8x"30");
@@ -937,7 +953,9 @@ begin
                 check_equal(
                     tb_pad_o_uart_tx = '1' and tb_pad_o_uart_tx'stable(C_UART_READ_CMD_TIME),
                     True,
-                    "Ensuring UART not responding when sending read command with invalid start bit in char 'R'");
+                    "Ensuring UART not responding when sending read command with invalid stop bit in char 'R'");
+
+                proc_uart_check(C_REG_STOP_BIT_ERROR_COUNTER, x"0000_0001");
 
                 info("");
                 info("-----------------------------------------------------------------------------");
@@ -1012,6 +1030,78 @@ begin
                 -- Read back the register to ensure the data was not written
                 proc_uart_check(C_REG_TEST_REGISTER_1, C_REG_TEST_REGISTER_1.data);
 
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Sending 8 bytes with invalid start bits in a row");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Check value is 0 before sending invalid start bits
+                proc_uart_check(C_REG_START_BIT_ERROR_COUNTER, x"0000_0000");
+
+                -- Select the manual UART
+                tb_i_uart_select <= '1';
+
+                for i in 1 to 8 loop
+                    tb_i_uart_rx_manual <= '0';
+                    wait for 0.25 * C_UART_BIT_TIME; -- Invalid start bit (too short)
+                    tb_i_uart_rx_manual <= '1';      -- Sudden change to high
+                    wait for 0.75 * C_UART_BIT_TIME; -- Complete the rest of the start bit duration
+                    tb_i_uart_rx_manual <= '0';      -- Bit 0
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1';      -- Skipping the rest of the bits for brevity
+                    wait for C_UART_WRITE_CMD_TIME;  -- Wait > time than entire command to not catch invalid stop bits
+                end loop;
+
+                -- Check that the start bit error counter has incremented by 8
+                proc_uart_check(C_REG_START_BIT_ERROR_COUNTER, x"0000_0008");
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Sending 3 bytes with invalid stop bits in a row");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Check value is 0 before sending invalid stop bits
+                proc_uart_check(C_REG_STOP_BIT_ERROR_COUNTER, x"0000_0000");
+
+                -- Select the manual UART
+                tb_i_uart_select <= '1';
+
+                for i in 1 to 3 loop
+                    tb_i_uart_rx_manual <= '0';
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 0
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 1
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 2
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 3
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 4
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 5
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- Bit 6
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Bit 7
+                    wait for C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '0'; -- Stop bit too long
+                    wait for 2 * C_UART_BIT_TIME;
+                    tb_i_uart_rx_manual <= '1'; -- End of stop bit
+                    wait for 1.1 * C_UART_BIT_TIME;
+                end loop;
+
+                -- Check that the stop bit error counter has incremented by 3
+                proc_uart_check(C_REG_STOP_BIT_ERROR_COUNTER, x"0000_0003");
+
             elsif (run("test_led_and_switches_toggling")) then
 
                 -- Reset DUT
@@ -1020,14 +1110,14 @@ begin
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Checking " & C_REG_BAD_ADDR.name & " register default value");
+                info(" Checking " & C_REG_BAD_ADDRESS_COUNTER.name & " register default value");
                 info("-----------------------------------------------------------------------------");
 
                 proc_uart_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Checking " & C_REG_BAD_ADDR.name & " is in read-only mode");
+                info(" Checking " & C_REG_BAD_ADDRESS_COUNTER.name & " is in read-only mode");
                 info("-----------------------------------------------------------------------------");
 
                 proc_uart_check_read_only(C_REG_BAD_ADDRESS_COUNTER);
@@ -1049,15 +1139,15 @@ begin
                     time'image(C_UART_READ_CMD_TIME) &
                     " after reading from bad address");
 
-                -- Reset DUT
-                proc_reset_dut;
-                wait for 100 us;
-
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Writing to a bad address (0x98) and checking LED_0 is indicating error");
                 info("-----------------------------------------------------------------------------");
                 info("");
+
+                -- Reset DUT to clear LED_0
+                proc_reset_dut;
+                wait for 100 us;
 
                 proc_uart_write(C_REG_BAD_ADDR, x"FEDC_BA98");
                 wait for C_UART_WRITE_CMD_TIME;
@@ -1139,7 +1229,7 @@ begin
                 -- Check TX register is in read-write and check data is matching
                 -- Bit 8 is a singlepulse bit which will be cleared by hardware after write
                 -- so only check the lower 8 bits are correctly written and read back
-                proc_uart_check_read_write(C_REG_SPI_TX_CONTROL, x"0000_00FF");
+                proc_uart_check_read_write(C_REG_SPI_TX_CONTROL);
 
                 pop_stream(net, C_SLAVE_STREAM, v_spi_slave_data);
                 check_equal(v_spi_slave_data, not(C_REG_SPI_TX_CONTROL.data(8 - 1 downto 0)),
@@ -1189,7 +1279,7 @@ begin
                 wait for 100 us;
 
                 proc_uart_check_default_value(C_REG_VGA_COLOR_CONTROL);
-                proc_uart_check_read_write(C_REG_VGA_COLOR_CONTROL, x"0000_0F0F");
+                proc_uart_check_read_write(C_REG_VGA_COLOR_CONTROL);
 
                 info("");
                 info("-----------------------------------------------------------------------------");

@@ -59,31 +59,33 @@ entity UART_AXI_LITE_BRIDGE is
     );
     port (
         -- Clock and reset
-        CLK            : in    std_logic;
-        ARST_P         : in    std_logic;
+        CLK               : in    std_logic;
+        ARST_P            : in    std_logic;
         -- UART interface
-        I_UART_RX      : in    std_logic;
-        O_UART_TX      : out   std_logic;
+        I_UART_RX         : in    std_logic;
+        O_UART_TX         : out   std_logic;
+        O_START_BIT_ERROR : out   std_logic;
+        O_STOP_BIT_ERROR  : out   std_logic;
         -- AXI4-Lite interface for register access
-        M_AXIL_AWREADY : in    std_logic;
-        M_AXIL_AWVALID : out   std_logic;
-        M_AXIL_AWADDR  : out   std_logic_vector( 8 - 1 downto 0);
-        M_AXIL_AWPROT  : out   std_logic_vector( 2 downto 0);
-        M_AXIL_WREADY  : in    std_logic;
-        M_AXIL_WVALID  : out   std_logic;
-        M_AXIL_WDATA   : out   std_logic_vector(32 - 1 downto 0);
-        M_AXIL_WSTRB   : out   std_logic_vector( 4 - 1 downto 0);
-        M_AXIL_BREADY  : out   std_logic;
-        M_AXIL_BVALID  : in    std_logic;
-        M_AXIL_BRESP   : in    std_logic_vector( 1 downto 0);
-        M_AXIL_ARREADY : in    std_logic;
-        M_AXIL_ARVALID : out   std_logic;
-        M_AXIL_ARADDR  : out   std_logic_vector( 8 - 1 downto 0);
-        M_AXIL_ARPROT  : out   std_logic_vector( 2 downto 0);
-        M_AXIL_RREADY  : out   std_logic;
-        M_AXIL_RVALID  : in    std_logic;
-        M_AXIL_RDATA   : in    std_logic_vector(32 - 1 downto 0);
-        M_AXIL_RRESP   : in    std_logic_vector( 1 downto 0)
+        M_AXIL_AWREADY    : in    std_logic;
+        M_AXIL_AWVALID    : out   std_logic;
+        M_AXIL_AWADDR     : out   std_logic_vector( 8 - 1 downto 0);
+        M_AXIL_AWPROT     : out   std_logic_vector( 2 downto 0);
+        M_AXIL_WREADY     : in    std_logic;
+        M_AXIL_WVALID     : out   std_logic;
+        M_AXIL_WDATA      : out   std_logic_vector(32 - 1 downto 0);
+        M_AXIL_WSTRB      : out   std_logic_vector( 4 - 1 downto 0);
+        M_AXIL_BREADY     : out   std_logic;
+        M_AXIL_BVALID     : in    std_logic;
+        M_AXIL_BRESP      : in    std_logic_vector( 1 downto 0);
+        M_AXIL_ARREADY    : in    std_logic;
+        M_AXIL_ARVALID    : out   std_logic;
+        M_AXIL_ARADDR     : out   std_logic_vector( 8 - 1 downto 0);
+        M_AXIL_ARPROT     : out   std_logic_vector( 2 downto 0);
+        M_AXIL_RREADY     : out   std_logic;
+        M_AXIL_RVALID     : in    std_logic;
+        M_AXIL_RDATA      : in    std_logic_vector(32 - 1 downto 0);
+        M_AXIL_RRESP      : in    std_logic_vector( 1 downto 0)
     );
 end entity UART_AXI_LITE_BRIDGE;
 
@@ -252,8 +254,8 @@ begin
             I_UART_RX         => I_UART_RX,
             O_BYTE            => rx_byte,
             O_BYTE_VALID      => rx_byte_valid,
-            O_START_BIT_ERROR => open,
-            O_STOP_BIT_ERROR  => open
+            O_START_BIT_ERROR => O_START_BIT_ERROR,
+            O_STOP_BIT_ERROR  => O_STOP_BIT_ERROR
         );
 
     -- =================================================================================================================
