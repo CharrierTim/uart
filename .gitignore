@@ -25,7 +25,9 @@ synthesis/uart
 **/*.bit
 
 # IPs testbench
-**/results
+bench/**/results
 
 # Generated files
+tools/vsg/report/vsg_vhdl.xml
 tools/peakrdl/report/html/*
+tools/peakrdl/report/markdown/*

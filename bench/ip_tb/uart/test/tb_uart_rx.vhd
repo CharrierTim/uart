@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_uart_rx.vhd
--- @version 2.0
+-- @version 2.1
 -- @brief   UART RX Testbench.
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -35,6 +35,7 @@
 -- 1.1      10/12/2025  Timothee Charrier   Naming conventions update and remove generic
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 --          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
+-- 2.1      29/07/2026  Timothee Charrier   Add common package for `proc_check_time_in_range` procedure
 -- =====================================================================================================================
 
 library ieee;
@@ -59,7 +60,9 @@ library lib_bench;
 
 entity TB_UART_RX is
     generic (
-        RUNNER_CFG : string
+        RUNNER_CFG          : string;
+        G_RANDOM_ITERATIONS : positive := 256;
+        G_RANDOM_SEED       : positive := 1
     );
 end entity TB_UART_RX;
 
@@ -273,6 +276,7 @@ begin
 
         -- Set up the test runner
         test_runner_setup(runner, RUNNER_CFG);
+        v_random_data.InitSeed(G_RANDOM_SEED);
 
         -- Show PASS log messages for checks
         show(get_logger(default_checker), display_handler, pass);
@@ -305,7 +309,7 @@ begin
                 info(" Testing random data for UART RX");
                 info("-----------------------------------------------------------------------------");
 
-                for value in 0 to 2 ** tb_o_byte'length - 1 loop
+                for value in 1 to G_RANDOM_ITERATIONS loop
                     tb_random_data <= v_random_data.RandSlv(tb_o_byte'length);
                     wait for C_BIT_TIME;
                     proc_uart_send_and_check(tb_random_data);
@@ -316,7 +320,7 @@ begin
                 info(" Manually sending byte");
                 info("-----------------------------------------------------------------------------");
 
-                for value in 0 to 2 ** tb_o_byte'length - 1 loop
+                for value in 1 to G_RANDOM_ITERATIONS loop
                     tb_random_data <= v_random_data.RandSlv(tb_o_byte'length);
                     wait for C_BIT_TIME;
                     proc_uart_send_byte(tb_i_uart_rx_manual, tb_random_data);

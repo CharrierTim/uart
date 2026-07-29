@@ -10,18 +10,20 @@ Documentation partially generated from the RDL file using the
 
 ## Summary
 
-| Name                                                          | Offset | Length | Description                                                                               |
-| :------------------------------------------------------------ | :----: | :----: | :---------------------------------------------------------------------------------------- |
-| regblock.[git_hash](#git_hash-register)                       | `0x00` |   4    | Register indicating the git hash of the repository at the time of bitstream generation.   |
-| regblock.[git_status](#git_status-register)                   | `0x04` |   4    | Register indicating the git status of the repository at the time of bitstream generation. |
-| regblock.[fpga_id](#fpga_id-register)                         | `0x08` |   4    | Register indicating the FPGA identification information.                                  |
-| regblock.[spi_tx_control](#spi_tx_control-register)           | `0x0C` |   4    | Register used to send data over SPI. Writing to this register starts the SPI transaction. |
-| regblock.[spi_rx_data](#spi_rx_data-register)                 | `0x10` |   4    | Register used to receive data over SPI.                                                   |
-| regblock.[vga_color_control](#vga_color_control-register)     | `0x14` |   4    | Register used to set the VGA output color.                                                |
-| regblock.[switch_status](#switch_status-register)             | `0x18` |   4    | Register used to read the status of the input switches.                                   |
-| regblock.[bad_address_counter](#bad_address_counter-register) | `0x1C` |   4    | Register used to count the number of bad address accesses.                                |
-| regblock.[test_register_1](#test_register_1-register)         | `0xF8` |   4    | Register used to test a 32-bit read/write register with all bits used for data.           |
-| regblock.[test_register_2](#test_register_2-register)         | `0xFC` |   4    | Register used to test a 32-bit read/write register with all bits used for data.           |
+| Name                                                                            | Offset | Length | Description                                                                               |
+| :------------------------------------------------------------------------------ | :----: | :----: | :---------------------------------------------------------------------------------------- |
+| regblock.[git_hash](#git_hash-register)                                         | `0x00` |   4    | Register indicating the git hash of the repository at the time of bitstream generation.   |
+| regblock.[git_status](#git_status-register)                                     | `0x04` |   4    | Register indicating the git status of the repository at the time of bitstream generation. |
+| regblock.[fpga_id](#fpga_id-register)                                           | `0x08` |   4    | Register indicating the FPGA identification information.                                  |
+| regblock.[spi_tx_control](#spi_tx_control-register)                             | `0x0C` |   4    | Register used to send data over SPI. Writing to this register starts the SPI transaction. |
+| regblock.[spi_rx_data](#spi_rx_data-register)                                   | `0x10` |   4    | Register used to receive data over SPI.                                                   |
+| regblock.[vga_color_control](#vga_color_control-register)                       | `0x14` |   4    | Register used to set the VGA output color.                                                |
+| regblock.[switch_status](#switch_status-register)                               | `0x18` |   4    | Register used to read the status of the input switches.                                   |
+| regblock.[bad_address_counter](#bad_address_counter-register)                   | `0x1C` |   4    | Register used to count the number of bad address accesses.                                |
+| regblock.[uart_start_bit_error_counter](#uart_start_bit_error_counter-register) | `0x20` |   4    | Register used to count the number of UART start bit errors.                               |
+| regblock.[uart_stop_bit_error_counter](#uart_stop_bit_error_counter-register)   | `0x24` |   4    | Register used to count the number of UART stop bit errors.                                |
+| regblock.[test_register_1](#test_register_1-register)                           | `0xF8` |   4    | Register used to test a 32-bit read/write register with all bits used for data.           |
+| regblock.[test_register_2](#test_register_2-register)                           | `0xFC` |   4    | Register used to test a 32-bit read/write register with all bits used for data.           |
 
 ## git_hash register
 
@@ -226,6 +228,54 @@ Register used to count the number of bad address accesses.
 | Bits  | Type  | Reset | Name  | Description                                           |
 | :---: | :---: | :---: | :---- | :---------------------------------------------------- |
 | 31:0  |  ro   |  0x0  | count | Counter value, incremented on each bad address access |
+
+</div>
+<!-- markdownlint-enable -->
+
+## uart_start_bit_error_counter register
+
+Register used to count the number of UART start bit errors.
+
+- Offset: `0x20`
+- Reset default: `0x0`
+- Reset mask: `0xffffffff`
+
+### Fields
+
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "count", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+
+<div class="register-bits-table" markdown="1">
+
+| Bits  | Type  | Reset | Name  | Description                                             |
+| :---: | :---: | :---: | :---- | :------------------------------------------------------ |
+| 31:0  |  ro   |  0x0  | count | Counter value, incremented on each UART start bit error |
+
+</div>
+<!-- markdownlint-enable -->
+
+## uart_stop_bit_error_counter register
+
+Register used to count the number of UART stop bit errors.
+
+- Offset: `0x24`
+- Reset default: `0x0`
+- Reset mask: `0xffffffff`
+
+### Fields
+
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "count", "bits": 32, "attr": ["ro"], "rotate": 0}], "config": {"lanes": 1, "fontsize": 10, "vspace": 80}}
+</script>
+
+<div class="register-bits-table" markdown="1">
+
+| Bits  | Type  | Reset | Name  | Description                                            |
+| :---: | :---: | :---: | :---- | :----------------------------------------------------- |
+| 31:0  |  ro   |  0x0  | count | Counter value, incremented on each UART stop bit error |
 
 </div>
 <!-- markdownlint-enable -->

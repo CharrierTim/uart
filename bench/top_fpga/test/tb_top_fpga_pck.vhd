@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_top_fpga_pck.vhd
--- @version 2.2
+-- @version 2.3
 -- @brief   Package for the Top-Level testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -35,6 +35,7 @@
 -- 2.0      12/01/2026  Timothee Charrier   Add VGA horizontal and vertical timings constants
 -- 2.1      17/04/2026  Timothee Charrier   Add VGA test vectors and procedure to check VGA outputs
 -- 2.2      23/05/2026  Timothee Charrier   Update register related definitions to 32 bits
+-- 2.3      29/07/2026  Timothee Charrier   Add common package for register map
 -- =====================================================================================================================
 
 library ieee;
@@ -46,6 +47,7 @@ library lib_rtl;
 
 library lib_bench;
     use lib_bench.spi_pkg.all;
+    use lib_bench.tb_reg_map_pkg.all;
 
 library vunit_lib;
     context vunit_lib.vunit_context;
@@ -59,17 +61,6 @@ library vunit_lib;
 package TB_TOP_FPGA_PKG is
 
     -- =================================================================================================================
-    -- TYPES
-    -- =================================================================================================================
-
-    type t_reg is record
-        name           : string;                                                 -- Name
-        addr           : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0); -- Address
-        data           : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);     -- Value at reset
-        used_bits_mask : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);     -- Mask of bits that are unused
-    end record t_reg;
-
-    -- =================================================================================================================
     -- CONSTANTS
     -- =================================================================================================================
 
@@ -78,9 +69,9 @@ package TB_TOP_FPGA_PKG is
     constant C_CLK_PERIOD                 : time     := 1 sec / C_FREQ_HZ;
 
     -- DUT generics
-    constant C_GIT_ID                     : std_logic_vector(32 - 1 downto 0) := x"DEAD_BEEF";
-    constant C_GIT_STATUS                 : std_logic                         := '1';
-    constant C_FPGA_ID                    : std_logic_vector(32 - 1 downto 0) := x"1234_5678";
+    constant C_GIT_ID                     : std_logic_vector(32 - 1 downto 0) := C_REG_GIT_HASH.data;
+    constant C_GIT_STATUS                 : std_logic                         := C_REG_GIT_STATUS.data(0);
+    constant C_FPGA_ID                    : std_logic_vector(32 - 1 downto 0) := C_REG_FPGA_ID.data;
 
     -- UART model constants
     constant C_UART_BAUD_RATE_BPS         : positive := 115_200;
@@ -90,94 +81,6 @@ package TB_TOP_FPGA_PKG is
     constant C_UART_WRITE_CMD_TIME        : time     := C_UART_BIT_TIME * C_UART_WRITE_NB_BITS;
     constant C_UART_READ_NB_BITS          : positive := 10 * 13; -- 10 bits , 13 chars in total
     constant C_UART_READ_CMD_TIME         : time     := C_UART_BIT_TIME * C_UART_READ_NB_BITS;
-
-    constant C_REG_GIT_HASH               : t_reg :=
-    (
-        name           => "GIT_HASH",
-        addr           => 8x"00",
-        data           => C_GIT_ID,
-        used_bits_mask => 32x"FFFF_FFFF"
-    );
-
-    constant C_REG_GIT_STATUS             : t_reg :=
-    (
-        name           => "GIT_STATUS",
-        addr           => 8x"04",
-        data           => 31x"0" & C_GIT_STATUS,
-        used_bits_mask => 32x"0000_0001"
-    );
-
-    constant C_REG_FPGA_ID                : t_reg :=
-    (
-        name           => "FPGA_ID",
-        addr           => 8x"08",
-        data           => C_FPGA_ID,
-        used_bits_mask => 32x"FFFF_FFFF"
-    );
-
-    constant C_REG_SPI_TX_CONTROL         : t_reg :=
-    (
-        name           => "SPI_TX_CONTROL",
-        addr           => 8x"0C",
-        data           => 32x"0000_0000",
-        used_bits_mask => 32x"0000_00FF"
-    );
-
-    constant C_REG_SPI_RX_DATA            : t_reg :=
-    (
-        name           => "SPI_RX_DATA",
-        addr           => 8x"10",
-        data           => 32x"0000_0000",
-        used_bits_mask => 32x"0000_00FF"
-    );
-
-    constant C_REG_VGA_COLOR_CONTROL      : t_reg :=
-    (
-        name           => "VGA_COLOR",
-        addr           => 8x"14",
-        data           => 32x"0000_00F0",
-        used_bits_mask => 32x"0000_0FFF"
-    );
-
-    constant C_REG_SWITCH_STATUS          : t_reg :=
-    (
-        name           => "SWITCH_STATUS",
-        addr           => 8x"18",
-        data           => 32x"0000_0000",
-        used_bits_mask => 32x"0000_0003"
-    );
-
-    constant C_REG_BAD_ADDRESS_COUNTER    : t_reg :=
-    (
-        name           => "BAD_ADDRESS_COUNTER",
-        addr           => 8x"1C",
-        data           => 32x"0000_0000",
-        used_bits_mask => 32x"FFFF_FFFF"
-    );
-
-    constant C_REG_TEST_REGISTER_1        : t_reg :=
-    (
-        name           => "TEST_REGISTER_1",
-        addr           => 8x"F8",
-        data           => 32x"0000_0000",
-        used_bits_mask => 32x"FFFF_FFFF"
-    );
-
-    constant C_REG_TEST_REGISTER_2        : t_reg :=
-    (
-        name           => "TEST_REGISTER_2",
-        addr           => 8x"FC",
-        data           => 32x"0000_0000",
-        used_bits_mask => 32x"FFFF_FFFF"
-    );
-
-    constant C_REG_BAD_ADDR               : t_reg :=
-    (
-        name           => "REG_BAD_ADDR",
-        addr           => 8x"98",
-        data           => 32x"0000_0000",
-        used_bits_mask => 32x"FFFF_FFFF"
-    );
 
     -- SPI
     constant C_SPI_FREQ_HZ                : positive  := 1_000_000;
@@ -238,111 +141,4 @@ package TB_TOP_FPGA_PKG is
     constant C_VGA_VECTOR_TEST_2          : std_logic_vector(12 - 1 downto 0) := x"123";
     constant C_VGA_VECTOR_TEST_3          : std_logic_vector(12 - 1 downto 0) := x"F0F";
 
-    -- =================================================================================================================
-    -- PROCEDURES
-    -- =================================================================================================================
-
-    procedure proc_check_time_in_range (
-        time_to_check : time;
-        expected_time : time;
-        accuracy      : time;
-        message       : string := ""
-    );
-
 end package TB_TOP_FPGA_PKG;
-
-package body TB_TOP_FPGA_PKG is
-
-    -- =================================================================================================================
-    -- FUNCTIONS
-    -- =================================================================================================================
-
-    function func_format_time (
-        time_to_format : time
-    ) return string is
-        variable v_time_value : real;
-        variable v_rounded    : real;
-    begin
-
-        -- Choose unit based on magnitude (show sec/ms/us/ns/ps/fs)
-
-        -- Seconds
-        if (time_to_format >= 1 sec) then
-            v_time_value := real(time_to_format / 1 fs) / 1.0e15;
-            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
-            return real'image(v_rounded) & " sec";
-
-        -- Milliseconds
-        elsif (time_to_format >= 1 ms) then
-            v_time_value := real(time_to_format / 1 fs) / 1.0e12;
-            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
-            return real'image(v_rounded) & " ms";
-
-        -- Microseconds
-        elsif (time_to_format >= 1 us) then
-            v_time_value := real(time_to_format / 1 fs) / 1.0e9;
-            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
-            return real'image(v_rounded) & " us";
-
-        -- Nanoseconds
-        elsif (time_to_format >= 1 ns) then
-            v_time_value := real(time_to_format / 1 fs) / 1.0e6;
-            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
-            return real'image(v_rounded) & " ns";
-
-        -- Picoseconds
-        elsif (time_to_format >= 1 ps) then
-            v_time_value := real(time_to_format / 1 fs) / 1.0e3;
-            v_rounded    := round(v_time_value * 100.0) / 100.0;  -- Round to 2 decimal places
-            return real'image(v_rounded) & " ps";
-
-        -- Femtoseconds
-        else
-            return time'image(time_to_format);
-        end if;
-
-    end function func_format_time;
-
-    -- Simple padding function
-
-    function func_pad_left (
-        str   : string;
-        width : integer
-    ) return string is
-        variable v_result     : string(1 to width) := (others => ' ');
-        variable v_actual_len : integer            := str'length;
-        variable v_padding    : integer;
-    begin
-
-        if (v_actual_len >= width) then
-            return str;
-        else
-            v_padding                        := width - v_actual_len;
-            v_result(v_padding + 1 to width) := str;
-            return v_result;
-        end if;
-
-    end function func_pad_left;
-
-    -- =================================================================================================================
-    -- PROCEDURE
-    -- =================================================================================================================
-
-    procedure proc_check_time_in_range (
-        time_to_check : time;
-        expected_time : time;
-        accuracy      : time;
-        message       : string := ""
-    ) is
-    begin
-
-        check(
-            abs(time_to_check - expected_time) <= accuracy,
-            message &
-            "Time: "       & func_pad_left(func_format_time(time_to_check), 12) &
-            "  |  Range: " & func_pad_left(func_format_time(expected_time), 12) &
-            " +/- "        & func_pad_left(func_format_time(accuracy), 10));
-
-    end procedure proc_check_time_in_range;
-
-end package body;

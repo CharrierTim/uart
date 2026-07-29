@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
-| Date         : Sun May 24 14:05:26 2026
+| Date         : Wed Jul 29 19:32:02 2026
 | Host         : fedora.home running 64-bit unknown
 | Command      : report_timing_summary -file /home/tim/projects/uart/synthesis/results/synth/uart_timing_synth.rpt
 | Design       : TOP_FPGA
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------
-     11.474        0.000                      0                 1454        0.045        0.000                      0                 1411        3.000        0.000                       0                   588
+     11.474        0.000                      0                 1584        0.045        0.000                      0                 1541        3.000        0.000                       0                   653
 
 
 All user specified timing constraints are met.
@@ -165,7 +165,7 @@ PAD_I_CLK             {0.000 5.000}      10.000          100.000
 Clock                     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints
 -----                     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------
 PAD_I_CLK                                                                                                                                                               3.000        0.000                       0                     1
-  clk_out1_clk_wiz_0       14.651        0.000                      0                  847        0.045        0.000                      0                  842        9.500        0.000                       0                   509
+  clk_out1_clk_wiz_0       14.149        0.000                      0                  912        0.045        0.000                      0                  907        9.500        0.000                       0                   574
   clk_out2_clk_wiz_0       11.474        0.000                      0                   80        0.045        0.000                      0                   75        7.192        0.000                       0                    75
   clkfbout_clk_wiz_0                                                                                                                                                    7.845        0.000                       0                     3
 
@@ -189,7 +189,7 @@ clk_out1_clk_wiz_0  clk_out2_clk_wiz_0       13.971        0.000                
 
 Path Group          From Clock          To Clock                WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints
 ----------          ----------          --------                -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------
-**async_default**   clk_out1_clk_wiz_0  clk_out1_clk_wiz_0       18.259        0.000                      0                  459        0.346        0.000                      0                  459
+**async_default**   clk_out1_clk_wiz_0  clk_out1_clk_wiz_0       18.257        0.000                      0                  524        0.347        0.000                      0                  524
 **async_default**   clk_out2_clk_wiz_0  clk_out2_clk_wiz_0       13.753        0.000                      0                   35        0.319        0.000                      0                   35
 
 
@@ -228,7 +228,7 @@ High Pulse Width  Slow    PLLE2_ADV/CLKIN1  n/a            2.000         5.000  
 From Clock:  clk_out1_clk_wiz_0
   To Clock:  clk_out1_clk_wiz_0
 
-Setup :            0  Failing Endpoints,  Worst Slack       14.651ns,  Total Violation        0.000ns
+Setup :            0  Failing Endpoints,  Worst Slack       14.149ns,  Total Violation        0.000ns
 Hold  :            0  Failing Endpoints,  Worst Slack        0.045ns,  Total Violation        0.000ns
 PW    :            0  Failing Endpoints,  Worst Slack        9.500ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
@@ -236,33 +236,75 @@ PW    :            0  Failing Endpoints,  Worst Slack        9.500ns,  Total Vio
 
 Max Delay Paths
 --------------------------------------------------------------------------------------
-Slack (MET) :             14.651ns  (required time - arrival time)
-  Source:                 inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[0]/C
-                            (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
-  Destination:            inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[1]/D
-                            (rising edge-triggered cell FDPE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+Slack (MET) :             14.149ns  (required time - arrival time)
+  Source:                 inst_reglock/axil_arvalid_reg/C
+                            (rising edge-triggered cell FDCE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            inst_reglock/axil_resp_buffer_reg[0][rdata][3]/D
+                            (rising edge-triggered cell FDCE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
-  Requirement:            15.385ns  (MaxDelay Path 15.385ns)
-  Data Path Delay:        0.670ns  (logic 0.478ns (71.343%)  route 0.192ns (28.657%))
-  Logic Levels:           0
-  Timing Exception:       MaxDelay Path 15.385ns -datapath_only
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        5.678ns  (logic 1.295ns (22.807%)  route 4.383ns (77.193%))
+  Logic Levels:           5  (LUT4=1 LUT5=3 LUT6=1)
+  Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -2.744ns = ( 17.256 - 20.000 )
+    Source Clock Delay      (SCD):    -3.058ns
+    Clock Pessimism Removal (CPR):    -0.458ns
+  Clock Uncertainty:      0.072ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.125ns
+    Phase Error              (PE):    0.000ns
 
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
-                                                      0.000     0.000 r  inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[0]/C
-                         FDPE (Prop_fdpe_C_Q)         0.478     0.478 r  inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[0]/Q
-                         net (fo=1, unplaced)         0.192     0.670    inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B[0]
-                         FDPE                                         r  inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[1]/D
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    Y9                                                0.000     0.000 r  PAD_I_CLK (IN)
+                         net (fo=0)                   0.000     0.000    inst_pll/inst/clk_in1
+    Y9                   IBUF (Prop_ibuf_I_O)         1.490     1.490 r  inst_pll/inst/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.584     2.074    inst_pll/inst/clk_in1_clk_wiz_0
+                         PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT0)
+                                                     -6.617    -4.542 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.800    -3.743    inst_pll/inst/clk_out1_clk_wiz_0
+                         BUFG (Prop_bufg_I_O)         0.101    -3.642 r  inst_pll/inst/clkout1_buf/O
+                         net (fo=572, unplaced)       0.584    -3.058    inst_reglock/CLK
+                         FDCE                                         r  inst_reglock/axil_arvalid_reg/C
+  -------------------------------------------------------------------    -------------------
+                         FDCE (Prop_fdce_C_Q)         0.478    -2.580 f  inst_reglock/axil_arvalid_reg/Q
+                         net (fo=16, unplaced)        0.860    -1.720    inst_reglock/axil_arvalid_2
+                         LUT5 (Prop_lut5_I0_O)        0.321    -1.399 f  inst_reglock/axil_n_in_flight[1]_i_3/O
+                         net (fo=14, unplaced)        0.500    -0.899    inst_reglock/axil_ar_accept3_out
+                         LUT4 (Prop_lut4_I3_O)        0.124    -0.775 f  inst_reglock/field_storage_reg[testister_2][test_bits][value][31]_i_7/O
+                         net (fo=20, unplaced)        1.171     0.396    inst_reglock/cpuif_addr__17[4]
+                         LUT5 (Prop_lut5_I0_O)        0.124     0.520 r  inst_reglock/axil_resp_buffer[0][rdata][11]_i_4/O
+                         net (fo=12, unplaced)        0.950     1.470    inst_reglock/axil_resp_buffer[0][rdata][11]_i_4_n_0
+                         LUT6 (Prop_lut6_I2_O)        0.124     1.594 r  inst_reglock/axil_resp_buffer[0][rdata][3]_i_2/O
+                         net (fo=1, unplaced)         0.902     2.496    inst_reglock/axil_resp_buffer[0][rdata][3]_i_2_n_0
+                         LUT5 (Prop_lut5_I0_O)        0.124     2.620 r  inst_reglock/axil_resp_buffer[0][rdata][3]_i_1/O
+                         net (fo=2, unplaced)         0.000     2.620    inst_reglock/p_0_out[3]
+                         FDCE                                         r  inst_reglock/axil_resp_buffer_reg[0][rdata][3]/D
   -------------------------------------------------------------------    -------------------
 
-                         max delay                   15.385    15.385
-                         FDPE (Setup_fdpe_C_D)       -0.064    15.321    inst_vga/inst_olo_base_cc_status/i_bcc/i_rst/RstRqstA2B_reg[1]
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    Y9                                                0.000    20.000 r  PAD_I_CLK (IN)
+                         net (fo=0)                   0.000    20.000    inst_pll/inst/clk_in1
+    Y9                   IBUF (Prop_ibuf_I_O)         1.420    21.420 r  inst_pll/inst/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.439    21.859    inst_pll/inst/clk_in1_clk_wiz_0
+                         PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT0)
+                                                     -5.893    15.966 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.760    16.726    inst_pll/inst/clk_out1_clk_wiz_0
+                         BUFG (Prop_bufg_I_O)         0.091    16.817 r  inst_pll/inst/clkout1_buf/O
+                         net (fo=572, unplaced)       0.439    17.256    inst_reglock/CLK
+                         FDCE                                         r  inst_reglock/axil_resp_buffer_reg[0][rdata][3]/C
+                         clock pessimism             -0.458    16.797
+                         clock uncertainty           -0.072    16.726
+                         FDCE (Setup_fdce_C_D)        0.044    16.770    inst_reglock/axil_resp_buffer_reg[0][rdata][3]
   -------------------------------------------------------------------
-                         required time                         15.321
-                         arrival time                          -0.670
+                         required time                         16.770
+                         arrival time                          -2.620
   -------------------------------------------------------------------
-                         slack                                 14.651
+                         slack                                 14.149
 
 
 
@@ -297,7 +339,7 @@ Slack (MET) :             0.045ns  (arrival time - required time)
                                                      -1.719    -1.347 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.337    -1.010    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.026    -0.984 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=507, unplaced)       0.114    -0.870    inst_olo_base_sys_reset_gen/Clk
+                         net (fo=572, unplaced)       0.114    -0.870    inst_olo_base_sys_reset_gen/Clk
                          FDRE                                         r  inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[0]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.147    -0.723 r  inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[0]/Q
@@ -315,7 +357,7 @@ Slack (MET) :             0.045ns  (arrival time - required time)
                                                      -1.885    -1.180 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.355    -0.825    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.029    -0.796 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=507, unplaced)       0.259    -0.537    inst_olo_base_sys_reset_gen/Clk
+                         net (fo=572, unplaced)       0.259    -0.537    inst_olo_base_sys_reset_gen/Clk
                          FDRE                                         r  inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[1]/C
                          clock pessimism             -0.188    -0.725
                          FDRE (Hold_fdre_C_D)         0.038    -0.687    inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[1]
@@ -660,14 +702,14 @@ Path Group:  **async_default**
 From Clock:  clk_out1_clk_wiz_0
   To Clock:  clk_out1_clk_wiz_0
 
-Setup :            0  Failing Endpoints,  Worst Slack       18.259ns,  Total Violation        0.000ns
-Hold  :            0  Failing Endpoints,  Worst Slack        0.346ns,  Total Violation        0.000ns
+Setup :            0  Failing Endpoints,  Worst Slack       18.257ns,  Total Violation        0.000ns
+Hold  :            0  Failing Endpoints,  Worst Slack        0.347ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
 
 
 Max Delay Paths
 --------------------------------------------------------------------------------------
-Slack (MET) :             18.259ns  (required time - arrival time)
+Slack (MET) :             18.257ns  (required time - arrival time)
   Source:                 inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[2]/C
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Destination:            inst_reglock/field_storage_reg[vga_color_control][green][value][0]/PRE
@@ -675,7 +717,7 @@ Slack (MET) :             18.259ns  (required time - arrival time)
   Path Group:             **async_default**
   Path Type:              Recovery (Max at Slow Process Corner)
   Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
-  Data Path Delay:        0.959ns  (logic 0.478ns (49.844%)  route 0.481ns (50.156%))
+  Data Path Delay:        0.961ns  (logic 0.478ns (49.740%)  route 0.483ns (50.260%))
   Logic Levels:           0
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    -2.744ns = ( 17.256 - 20.000 )
@@ -698,11 +740,11 @@ Slack (MET) :             18.259ns  (required time - arrival time)
                                                      -6.617    -4.542 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.800    -3.743    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.101    -3.642 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=507, unplaced)       0.584    -3.058    inst_olo_base_sys_reset_gen/Clk
+                         net (fo=572, unplaced)       0.584    -3.058    inst_olo_base_sys_reset_gen/Clk
                          FDRE                                         r  inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[2]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.478    -2.580 f  inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[2]/Q
-                         net (fo=469, unplaced)       0.481    -2.099    inst_reglock/AR[0]
+                         net (fo=534, unplaced)       0.483    -2.097    inst_reglock/AR[0]
                          FDPE                                         f  inst_reglock/field_storage_reg[vga_color_control][green][value][0]/PRE
   -------------------------------------------------------------------    -------------------
 
@@ -716,16 +758,16 @@ Slack (MET) :             18.259ns  (required time - arrival time)
                                                      -5.893    15.966 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.760    16.726    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.091    16.817 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=507, unplaced)       0.439    17.256    inst_reglock/CLK
+                         net (fo=572, unplaced)       0.439    17.256    inst_reglock/CLK
                          FDPE                                         r  inst_reglock/field_storage_reg[vga_color_control][green][value][0]/C
                          clock pessimism             -0.458    16.797
                          clock uncertainty           -0.072    16.726
                          FDPE (Recov_fdpe_C_PRE)     -0.565    16.161    inst_reglock/field_storage_reg[vga_color_control][green][value][0]
   -------------------------------------------------------------------
                          required time                         16.161
-                         arrival time                           2.099
+                         arrival time                           2.097
   -------------------------------------------------------------------
-                         slack                                 18.259
+                         slack                                 18.257
 
 
 
@@ -733,7 +775,7 @@ Slack (MET) :             18.259ns  (required time - arrival time)
 
 Min Delay Paths
 --------------------------------------------------------------------------------------
-Slack (MET) :             0.346ns  (arrival time - required time)
+Slack (MET) :             0.347ns  (arrival time - required time)
   Source:                 inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[2]/C
                             (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
   Destination:            PAD_O_LED_0_reg/CLR
@@ -741,7 +783,7 @@ Slack (MET) :             0.346ns  (arrival time - required time)
   Path Group:             **async_default**
   Path Type:              Removal (Min at Fast Process Corner)
   Requirement:            0.000ns  (clk_out1_clk_wiz_0 rise@0.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
-  Data Path Delay:        0.350ns  (logic 0.147ns (42.030%)  route 0.203ns (57.970%))
+  Data Path Delay:        0.351ns  (logic 0.147ns (41.929%)  route 0.204ns (58.071%))
   Logic Levels:           0
   Clock Path Skew:        0.145ns (DCD - SCD - CPR)
     Destination Clock Delay (DCD):    -0.537ns
@@ -760,11 +802,11 @@ Slack (MET) :             0.346ns  (arrival time - required time)
                                                      -1.719    -1.347 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.337    -1.010    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.026    -0.984 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=507, unplaced)       0.114    -0.870    inst_olo_base_sys_reset_gen/Clk
+                         net (fo=572, unplaced)       0.114    -0.870    inst_olo_base_sys_reset_gen/Clk
                          FDRE                                         r  inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[2]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.147    -0.723 f  inst_olo_base_sys_reset_gen/g_sync.DsSync_reg[2]/Q
-                         net (fo=469, unplaced)       0.203    -0.520    internal_sys_rst_p
+                         net (fo=534, unplaced)       0.204    -0.519    internal_sys_arst_p
                          FDCE                                         f  PAD_O_LED_0_reg/CLR
   -------------------------------------------------------------------    -------------------
 
@@ -778,15 +820,15 @@ Slack (MET) :             0.346ns  (arrival time - required time)
                                                      -1.885    -1.180 r  inst_pll/inst/plle2_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.355    -0.825    inst_pll/inst/clk_out1_clk_wiz_0
                          BUFG (Prop_bufg_I_O)         0.029    -0.796 r  inst_pll/inst/clkout1_buf/O
-                         net (fo=507, unplaced)       0.259    -0.537    internal_clk
+                         net (fo=572, unplaced)       0.259    -0.537    internal_clk
                          FDCE                                         r  PAD_O_LED_0_reg/C
                          clock pessimism             -0.188    -0.725
                          FDCE (Remov_fdce_C_CLR)     -0.141    -0.866    PAD_O_LED_0_reg
   -------------------------------------------------------------------
                          required time                          0.866
-                         arrival time                          -0.520
+                         arrival time                          -0.519
   -------------------------------------------------------------------
-                         slack                                  0.346
+                         slack                                  0.347
 
 
 
