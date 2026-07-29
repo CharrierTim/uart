@@ -57,7 +57,7 @@ import re
 import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeAlias, override
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, override
 
 import rtoml
 from vunit import VUnit
@@ -76,9 +76,9 @@ class Simulator(ABC):
 
     SIMULATOR_NAME: str = ""
     EXECUTABLE: str = ""
-    DEFAULT_LIBRARIES: dict[str, str] = {}
-    THIRD_PARTY_LIBRARIES: set[str] = {"vunit_lib", "osvvm", "unisim", "unifast", "xil_defaultlib"}
-    DEFAULT_LIBRARIES_TO_COVER: set[str] = {"lib_bench"}
+    DEFAULT_LIBRARIES: ClassVar[dict[str, str]] = {}
+    THIRD_PARTY_LIBRARIES: ClassVar[set[str]] = {"vunit_lib", "osvvm", "unisim", "unifast", "xil_defaultlib"}
+    DEFAULT_LIBRARIES_TO_COVER: ClassVar[set[str]] = {"lib_bench"}
 
     def __init__(self, enable_coverage: bool = False, run_file_dir: Path | None = None) -> None:
         """Initialize the simulator.
@@ -428,7 +428,7 @@ class NVC(Simulator):
 
     SIMULATOR_NAME: str = "nvc"
     EXECUTABLE: str = "nvc"
-    DEFAULT_LIBRARIES: dict[str, str] = {
+    DEFAULT_LIBRARIES: ClassVar[dict[str, str]] = {
         "unisim": "~/.nvc/lib/unisim.08",
         "unifast": "~/.nvc/lib/unifast.08",
     }
@@ -518,7 +518,7 @@ class GHDL(Simulator):
 
     SIMULATOR_NAME: str = "ghdl"
     EXECUTABLE: str = "ghdl"
-    DEFAULT_LIBRARIES: dict[str, str] = {
+    DEFAULT_LIBRARIES: ClassVar[dict[str, str]] = {
         "unisim": "~/.ghdl/xilinx-vivado/unisim/v08",
         "unifast": "~/.ghdl/xilinx-vivado/unifast/v08",
     }
@@ -672,7 +672,7 @@ class QuestaModelSim(Simulator):
 
     SIMULATOR_NAME: str = "modelsim"
     EXECUTABLE: str = "vsim"
-    DEFAULT_LIBRARIES_TO_COVER: set[str] = {"lib_bench", "lib_rtl"}
+    DEFAULT_LIBRARIES_TO_COVER: ClassVar[set[str]] = {"lib_bench", "lib_rtl"}
 
     def get_simulator_name(self) -> str:
         """Get the name of the simulator."""
