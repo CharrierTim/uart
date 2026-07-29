@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    setup_vunit.py
-## @version 2.6
+## @version 2.7
 ## @brief   This module provides simulator classes for VUnit.
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -48,6 +48,7 @@
 ##                                          as coverage can significantly reduce performance.
 ##          22/05/2026                      Add unisim and unifast workarounds for Questa/ModelSim support, which is
 ##                                          currently very slow due to issues with pre-compilation of these libraries.
+## 2.7      29/07/2026  Timothee Charrier   Improve output return from `get_..._path` methods.
 ## =====================================================================================================================
 
 import logging
@@ -90,8 +91,8 @@ class Simulator(ABC):
             Directory containing the run file.
         """
         self.enable_coverage: bool = enable_coverage
-        self.run_file_dir: Path | None = run_file_dir
-        self.results_dir: Path | None = (self.run_file_dir / "results") if self.run_file_dir else None
+        self.run_file_dir: Path = run_file_dir or Path.cwd()
+        self.results_dir: Path = self.run_file_dir / "results"
 
         self.vu: VUnit | None = None
 
@@ -154,60 +155,60 @@ class Simulator(ABC):
 
         return Path(vivado_path).parent.parent.parent
 
-    def get_unisim_vcomp_library_path(self) -> Path:
+    def get_unisim_vcomp_library_path(self) -> Path | None:
         """Get the path for the unisim VCOMP file compiled in unisim library.
 
         Usually located under `vivado_path/data/vhdl/src/unisims/unisim_VCOMP.vhd`.
 
         Returns
         -------
-        Path
-            The path to the library file.
+        Path | None
+            The path to the library file, or None when it is unavailable.
         """
         vivado_path: Path = self.get_vivado_path()
         unisim_vcomp_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VCOMP.vhd"
 
         if not unisim_vcomp_path.exists():
             LOGGER.warning("Unisim VCOMP file not found at %s", unisim_vcomp_path)
-            return Path()
+            return None
 
         return unisim_vcomp_path
 
-    def get_unisim_vpkg_library_path(self) -> Path:
+    def get_unisim_vpkg_library_path(self) -> Path | None:
         """Get the path for the unisim VPKG file compiled in unisim library.
 
         Usually located under `vivado_path/data/vhdl/src/unisims/unisim_VPKG.vhd`.
 
         Returns
         -------
-        Path
-            The path to the library file.
+        Path | None
+            The path to the library file, or None when it is unavailable.
         """
         vivado_path: Path = self.get_vivado_path()
         unisim_vpkg_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VPKG.vhd"
 
         if not unisim_vpkg_path.exists():
             LOGGER.warning("Unisim VPKG file not found at %s", unisim_vpkg_path)
-            return Path()
+            return None
 
         return unisim_vpkg_path
 
-    def get_unifast_library_path(self) -> Path:
+    def get_unifast_library_path(self) -> Path | None:
         """Get the path for the unifast library files compiled in the unifast library.
 
         Usually located under `vivado_path/data/vhdl/src/unifast/primitive/*.vhd`.
 
         Returns
         -------
-        Path
-            The path to the library.
+        Path | None
+            The path to the library glob, or None when it is unavailable.
         """
         vivado_path: Path = self.get_vivado_path()
         unifast_path: Path = vivado_path / "data" / "vhdl" / "src" / "unifast" / "primitive"
 
         if not unifast_path.exists():
             LOGGER.warning("Unifast primitive directory not found at %s", unifast_path)
-            return Path()
+            return None
 
         return unifast_path / "*.vhd"
 
