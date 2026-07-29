@@ -43,13 +43,17 @@
 ##                                          enabled or not for output results merge
 ## 2.5      29/07/2026  Timothee Charrier   Apply changes from `setup_vunit.py` to improve portability.
 ##                                          Add new common library `common`.
+##                                          Add two generics controlling the number of random iterations and the
+##                                          random seed for deterministic OSVVM randomization.
 ## =====================================================================================================================
 
 import sys
+from collections.abc import Iterable
 from itertools import product
 from pathlib import Path
 
 from vunit.ui.library import Library
+from vunit.ui.test import Test
 from vunit.ui.testbench import TestBench
 
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
@@ -103,7 +107,7 @@ simulator.attach(VU).configure()
 ## =====================================================================================================================
 
 
-def generate_spi_tests(obj, cpol_values, cpha_values):
+def generate_spi_tests(obj: Test | TestBench, cpol_values: Iterable[int], cpha_values: Iterable[int]) -> None:
     """
     Generate test by varying the SPI clock polarity and phase generics.
 
@@ -118,7 +122,15 @@ def generate_spi_tests(obj, cpol_values, cpha_values):
         spi_mode = cpol * 2 + cpha
         config_name = f"SPI_Mode_{spi_mode}_CPOL={cpol}_CPHA={cpha}"
 
-        obj.add_config(name=config_name, generics={"G_CLK_POLARITY": f"'{cpol}'", "G_CLK_PHASE": f"'{cpha}'"})
+        obj.add_config(
+            name=config_name,
+            generics={
+                "G_CLK_POLARITY": f"'{cpol}'",
+                "G_CLK_PHASE": f"'{cpha}'",
+                "G_RANDOM_ITERATIONS": args.random_iterations,
+                "G_RANDOM_SEED": args.random_seed,
+            },
+        )
 
 
 TB_SPI: TestBench = LIB_BENCH.test_bench("tb_spi_master")

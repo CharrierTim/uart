@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_spi_master.vhd
--- @version 2.1
+-- @version 2.2
 -- @brief   SPI master testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -37,6 +37,8 @@
 --                                          pulse register for i_tx_data_valid.
 --          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 -- 2.1      29/07/2026  Timothee Charrier   Move `proc_check_time_in_range` to a common package
+-- 2.2      29/07/2026  Timothee Charrier   Add two generics controlling the number of random iterations and the
+--                                          random seed for deterministic OSVVM randomization.
 -- =====================================================================================================================
 
 library ieee;
@@ -64,9 +66,11 @@ library lib_bench;
 
 entity TB_SPI_MASTER is
     generic (
-        RUNNER_CFG     : string;
-        G_CLK_POLARITY : std_logic;
-        G_CLK_PHASE    : std_logic
+        RUNNER_CFG          : string;
+        G_CLK_POLARITY      : std_logic;
+        G_CLK_PHASE         : std_logic;
+        G_RANDOM_ITERATIONS : positive := 256;
+        G_RANDOM_SEED       : positive := 1
     );
 end entity TB_SPI_MASTER;
 
@@ -100,7 +104,6 @@ architecture TB_SPI_MASTER_ARCH of TB_SPI_MASTER is
     signal tb_i_tx_data         : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
     signal tb_i_tx_data_valid   : std_logic;
     signal tb_o_rx_data         : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
-    signal tb_o_rx_data_valid   : std_logic;
 
     signal tb_random_data       : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
 
@@ -336,6 +339,7 @@ begin
 
         -- Set up the test runner
         test_runner_setup(runner, RUNNER_CFG);
+        v_random_data.InitSeed(G_RANDOM_SEED);
 
         -- Show PASS log messages for checks
         show(get_logger(default_checker), display_handler, pass);
@@ -368,7 +372,7 @@ begin
                 info(" Testing random data for SPI");
                 info("-----------------------------------------------------------------------------");
 
-                for nb_loop in 0 to 2 ** C_NB_DATA_BITS - 1 loop
+                for nb_loop in 1 to G_RANDOM_ITERATIONS loop
                     tb_random_data <= v_random_data.RandSlv(tb_random_data'length);
                     proc_spi_check(tb_random_data);
                 end loop;
@@ -441,10 +445,6 @@ begin
                 -- Verify transaction outputs remain stable
                 check_equal(tb_o_mosi'stable(2 * C_SPI_TRANSACTION_TIME),    True, "O_MOSI must remain stable");
                 check_equal(tb_o_rx_data'stable(2 * C_SPI_TRANSACTION_TIME), True, "O_RX_DATA must remain stable");
-                check_equal(
-                    tb_o_rx_data_valid'stable(2 * C_SPI_TRANSACTION_TIME),
-                    True,
-                    "O_RX_DATA_VALID must remain stable");
 
             end if;
 
