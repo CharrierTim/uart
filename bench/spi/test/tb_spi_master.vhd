@@ -413,7 +413,7 @@ begin
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Ensure data remains stable if rx_data_valid is not de-asserted");
+                info(" Ensure outputs remain stable after a completed transaction");
                 info("-----------------------------------------------------------------------------");
 
                 -- Reset values
