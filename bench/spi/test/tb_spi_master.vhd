@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_spi_master.vhd
--- @version 2.0
+-- @version 2.1
 -- @brief   SPI master testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -36,6 +36,7 @@
 -- 2.1      24/05/2026  Timothee Charrier   Update testbench to reflect removal of o_rx_data_valid signal in DUT and
 --                                          pulse register for i_tx_data_valid.
 --          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
+-- 2.1      29/07/2026  Timothee Charrier   Move `proc_check_time_in_range` to a common package
 -- =====================================================================================================================
 
 library ieee;
@@ -54,6 +55,7 @@ library osvvm;
 
 library lib_bench;
     use lib_bench.spi_pkg.all;
+    use lib_bench.tb_common_pkg.all;
     use lib_bench.tb_spi_master_pkg.all;
 
 -- =====================================================================================================================

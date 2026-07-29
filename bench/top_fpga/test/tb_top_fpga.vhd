@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    top_fpga.vhd
--- @version 2.2
+-- @version 2.3
 -- @brief   Top-Level Testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -41,6 +41,7 @@
 --                                              - Update LED functionality to bad address indicator
 --                                              - Fix proc_vga_check_outputs to correctly sample VGA outputs during
 --                                                active video time and avoid sampling during blanking intervals
+-- 2.3      29/07/2026  Timothee Charrier   Add common package for register map
 -- =====================================================================================================================
 
 library ieee;
@@ -50,6 +51,8 @@ library ieee;
 library lib_rtl;
 library lib_bench;
     use lib_bench.spi_pkg.all;
+    use lib_bench.tb_common_pkg.all;
+    use lib_bench.tb_reg_map_pkg.all;
     use lib_bench.tb_top_fpga_pkg.all;
 
 library vunit_lib;
@@ -653,9 +656,9 @@ begin
             info("");
             info("Checking register " & reg.name & " is in read-write");
 
-            -- Toggle all bits then derive expected value from used bits mask
+            -- Toggle all bits then derive the expected value from stable register bits
             v_write_value    := not reg.data;
-            v_expected_value := (reg.data and not reg.used_bits_mask) or (v_write_value and reg.used_bits_mask);
+            v_expected_value := (reg.data and not reg.writable_bits_mask) or (v_write_value and reg.writable_bits_mask);
 
             -- Write the toggled value to the register
             proc_uart_write(reg, v_write_value);

@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_uart_tx.vhd
--- @version 2.0
+-- @version 2.1
 -- @brief   UART TX Testbench.
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -35,6 +35,7 @@
 -- 1.1      10/12/2025  Timothee Charrier   Naming conventions update
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 --          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
+-- 2.1      29/07/2026  Timothee Charrier   Add common package for `proc_check_time_in_range` procedure
 -- =====================================================================================================================
 
 library ieee;
@@ -51,6 +52,7 @@ library osvvm;
     use osvvm.randompkg.randomptype;
 
 library lib_bench;
+    use lib_bench.tb_common_pkg.all;
     use lib_bench.tb_uart_pkg.all;
 
 -- =====================================================================================================================
@@ -59,7 +61,9 @@ library lib_bench;
 
 entity TB_UART_TX is
     generic (
-        RUNNER_CFG : string
+        RUNNER_CFG          : string;
+        G_RANDOM_ITERATIONS : positive := 256;
+        G_RANDOM_SEED       : positive := 1
     );
 end entity TB_UART_TX;
 
@@ -316,6 +320,7 @@ begin
 
         -- Set up the test runner
         test_runner_setup(runner, RUNNER_CFG);
+        v_random_data.InitSeed(G_RANDOM_SEED);
 
         -- Show PASS log messages for checks
         show(get_logger(default_checker), display_handler, pass);
@@ -348,7 +353,7 @@ begin
                 info(" Testing random data for UART TX");
                 info("-----------------------------------------------------------------------------");
 
-                for nb_loop in 0 to 2 ** tb_i_tx_data'length - 1 loop
+                for nb_loop in 1 to G_RANDOM_ITERATIONS loop
                     tb_random_data <= v_random_data.RandSlv(tb_random_data'length);
                     proc_uart_check(tb_random_data);
                 end loop;

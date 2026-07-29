@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    tb_regblock.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Regblock testbench
 -- @author  Timothee Charrier
 -- =====================================================================================================================
@@ -32,6 +32,7 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      16/05/2026  Timothee Charrier   Initial release
+-- 1.1      29/07/2026  Timothee Charrier   Move register map to a common package
 -- =====================================================================================================================
 
 library ieee;
@@ -51,6 +52,7 @@ library osvvm;
     use osvvm.randompkg.randomptype;
 
 library lib_bench;
+    use lib_bench.tb_reg_map_pkg.all;
     use lib_bench.tb_regblock_pkg.all;
 
 -- =====================================================================================================================
@@ -149,7 +151,8 @@ begin
     tb_hwif_in.uart_start_bit_error_counter.count.next_q <= tb_hwif_out.uart_start_bit_error_counter.count.value;
     tb_hwif_in.uart_stop_bit_error_counter.count.next_q  <= tb_hwif_out.uart_stop_bit_error_counter.count.value;
     tb_hwif_in.bad_address_counter.count.incr            <= '1' when (
-                                                                         tb_axil_bad_rresp = '1' or tb_axil_bad_bresp = '1'
+                                                                         tb_axil_bad_rresp = '1' or
+                                                                         tb_axil_bad_bresp = '1'
                                                                      ) else
                                                             '0';
 
@@ -467,12 +470,12 @@ begin
             wait until rising_edge(tb_clk);
 
             -- Write the opposite of the reset value to ensure a change is made to the register
-            proc_axi_lite_write(reg, (not reg.data) and reg.used_bits_mask);
+            proc_axi_lite_write(reg, (not reg.data) and reg.writable_bits_mask);
 
             -- Check if the register value is updated correctly
             proc_axi_lite_check(
                 reg,
-                (not reg.data) and reg.used_bits_mask,
+                (not reg.data) and reg.writable_bits_mask,
                 axi_resp_okay,
                 "Read-write register " & reg.name & " value mismatch after write");
 
@@ -733,7 +736,8 @@ begin
                     reg            => C_REG_BAD_ADDRESS_COUNTER,
                     expected_data  => std_logic_vector(to_unsigned(42, tb_s_axil_rdata'length)),
                     expected_rresp => axi_resp_okay,
-                    msg            => "BAD_ADDRESS_COUNTER should be 42 after 42 additional invalid read/write attempts");
+                    msg            => "BAD_ADDRESS_COUNTER should be 42 after 42 additional " &
+                    "invalid read/write attempts");
 
             elsif run("test_regblock_random_rw") then
 
