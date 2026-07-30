@@ -31,7 +31,7 @@
 --
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
--- 1.0      28/11/2025  Timothee Charrier   Initial version, create a package for common testbench utilities
+-- 1.0      30/07/2026  Timothee Charrier   Initial version, create a package for common testbench utilities
 -- =====================================================================================================================
 
 library ieee;
