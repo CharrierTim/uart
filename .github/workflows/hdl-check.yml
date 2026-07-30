@@ -48,4 +48,4 @@ jobs:
         with:
           name: linting-artifacts
           path: |
-            /tools/vsg/report/vsg_vhdl.xml
+            tools/vsg/report/vsg_vhdl.xml
