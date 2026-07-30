@@ -19,14 +19,14 @@ runs:
     - name: Run Simulation
       shell: bash
       run: |
-        uv run bench/ip_tb/uart/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
-        uv run bench/ip_tb/spi/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
-        uv run bench/ip_tb/regblock/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage
-        uv run bench/top_fpga/run.py --${{ inputs.simulator }} --xunit-xml sim_report_${{ inputs.simulator }}.xml -p0 --coverage --without_unisim
+        uv run bench/ip_tb/uart/run.py --${{ inputs.simulator }} --xunit-xml sim_report_uart_${{ inputs.simulator }}.xml -p0 --coverage
+        uv run bench/ip_tb/spi/run.py --${{ inputs.simulator }} --xunit-xml sim_report_spi_${{ inputs.simulator }}.xml -p0 --coverage
+        uv run bench/ip_tb/regblock/run.py --${{ inputs.simulator }} --xunit-xml sim_report_regblock_${{ inputs.simulator }}.xml -p0 --coverage
+        uv run bench/top_fpga/run.py --${{ inputs.simulator }} --xunit-xml sim_report_top_fpga_${{ inputs.simulator }}.xml -p0 --coverage --without_unisim
 
     - name: Upload sim results
       if: always()
       uses: actions/upload-artifact@v7
       with:
         name: simulation-${{ inputs.simulator }}-artifacts
-        path: sim_report_${{ inputs.simulator }}.xml
+        path: sim_report_*_${{ inputs.simulator }}.xml
