@@ -298,38 +298,31 @@ class Simulator(ABC):
         results : Results
             The simulation results from VUnit.
         """
-        self._merge_output_files()
+        self._merge_output_files(results=results)
 
         if self.enable_coverage:
             self._generate_coverage(results=results)
         else:
             LOGGER.info("Coverage generation skipped (not enabled)")
 
-    def _merge_output_files(self) -> None:
-        """Merge all output.txt files from subdirectories into a single file."""
-        vunit_dir: Path = Path(self.vu._output_path)
+    def _merge_output_files(self, results: Results) -> None:
+        """Merge output files from tests in the current run into a single file."""
         output_file: Path = self.results_dir / "output.txt"
+        test_results = results.get_report().tests
 
-        # Check if test_output directory exists
-        if not vunit_dir.exists():
-            LOGGER.warning("Test output directory not found: %s", vunit_dir)
-            return
-
-        # Find all output.txt files
-        output_files: list[Path] = list(vunit_dir.rglob("output.txt"))
-
-        if not output_files:
-            LOGGER.warning("No output.txt files found in %s", vunit_dir)
+        if not test_results:
+            LOGGER.warning("No test results found for output merge")
             return
 
         with open(file=output_file, mode="w", encoding="utf-8") as outfile:
-            LOGGER.info("Merging %d output.txt files...", len(output_files))
+            LOGGER.info("Merging output from %d tests...", len(test_results))
 
-            for txt_file in sorted(output_files):
+            for test_name, test_result in sorted(test_results.items()):
+                txt_file: Path = test_result.path / "output.txt"
                 # Write a header with the test name
                 outfile.write(f"\n{'=' * 80}\n")
-                outfile.write(f"Test: {txt_file.parent.name}\n")
-                outfile.write(f"Path: {txt_file.relative_to(vunit_dir)}\n")
+                outfile.write(f"Test: {test_name}\n")
+                outfile.write(f"Path: {test_result.relpath}\n")
                 outfile.write(f"{'=' * 80}\n\n")
 
                 # Write the contents of the file
