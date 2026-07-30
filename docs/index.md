@@ -121,7 +121,7 @@ The FPGA defines the following inputs/outputs:
 | Pin Name             | Pin Number | Direction | Resistor | Slew | IOSTANDARD |
 | -------------------- | ---------- | --------- | -------- | ---- | ---------- |
 | `PAD_I_CLK`          | Y9         | in        | -        | -    | LVCMOS33   |
-| `PAD_RST_H`          | BTN6       | in        | -        | -    | LVCMOS18   |
+| `PAD_I_ARST_P`       | BTN6       | in        | -        | -    | LVCMOS18   |
 | `PAD_I_UART_RX`      | Y11        | in        | PULL-UP  | -    | LVCMOS33   |
 | `PAD_O_UART_TX`      | AA11       | out       | PULL-UP  | -    | LVCMOS33   |
 | `PAD_O_SCLK`         | W12        | out       | -        | -    | LVCMOS33   |
