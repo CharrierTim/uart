@@ -202,3 +202,19 @@ Tests SPI master TX and RX registers, including SPI transfer correctness and MOS
     - Wait for 2 × `C_SPI_TRANSACTION_TIME` (time longer than the response)
 
 ---
+
+## Testcase 05: `test_vga`
+
+### Description
+
+Tests the VGA color-control register, RGB output mapping, and horizontal and vertical synchronization timings.
+
+### Steps
+
+1. Reset the DUT and verify that `C_REG_VGA_COLOR_CONTROL` has its default value and supports read-write access.
+2. Write and read back `0xABC`, `0xF00`, `0x0F0`, and `0xF0F` through the UART register interface.
+3. Verify RGB outputs with `C_VGA_VECTOR_TEST_1`, `C_VGA_VECTOR_TEST_2`, and `C_VGA_VECTOR_TEST_3`.
+4. Enable horizontal timing checks for at least two complete lines.
+5. Enable vertical timing checks for at least two complete frames.
+
+---
