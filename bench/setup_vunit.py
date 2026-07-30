@@ -140,7 +140,7 @@ class Simulator(ABC):
         self.vu = vu
         return self
 
-    def get_vivado_path(self) -> Path:
+    def get_vivado_path(self) -> Path | None:
         """Get the path to the Vivado installation.
 
         Which command returns the path to the Vivado executable.
@@ -149,15 +149,20 @@ class Simulator(ABC):
 
         Returns
         -------
-        Path
-            The path to the Vivado installation.
+        Path | None
+            The path to the Vivado installation, or None when Vivado is unavailable.
         """
         vivado_path: str | None = shutil.which(cmd="vivado")
         if not vivado_path:
             LOGGER.warning("Vivado executable not found in PATH!")
-            return Path()
+            return None
 
-        return Path(vivado_path).parent.parent.parent
+        installation_path: Path = Path(vivado_path).resolve().parent.parent
+        if not (installation_path / "data" / "vhdl").is_dir():
+            LOGGER.warning("Vivado VHDL data directory not found under %s", installation_path)
+            return None
+
+        return installation_path
 
     def get_unisim_vcomp_library_path(self) -> Path | None:
         """Get the path for the unisim VCOMP file compiled in unisim library.
@@ -169,7 +174,9 @@ class Simulator(ABC):
         Path | None
             The path to the library file, or None when it is unavailable.
         """
-        vivado_path: Path = self.get_vivado_path()
+        vivado_path: Path | None = self.get_vivado_path()
+        if vivado_path is None:
+            return None
         unisim_vcomp_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VCOMP.vhd"
 
         if not unisim_vcomp_path.exists():
@@ -188,7 +195,9 @@ class Simulator(ABC):
         Path | None
             The path to the library file, or None when it is unavailable.
         """
-        vivado_path: Path = self.get_vivado_path()
+        vivado_path: Path | None = self.get_vivado_path()
+        if vivado_path is None:
+            return None
         unisim_vpkg_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VPKG.vhd"
 
         if not unisim_vpkg_path.exists():
@@ -207,7 +216,9 @@ class Simulator(ABC):
         Path | None
             The path to the library glob, or None when it is unavailable.
         """
-        vivado_path: Path = self.get_vivado_path()
+        vivado_path: Path | None = self.get_vivado_path()
+        if vivado_path is None:
+            return None
         unifast_path: Path = vivado_path / "data" / "vhdl" / "src" / "unifast" / "primitive"
 
         if not unifast_path.exists():
@@ -287,38 +298,31 @@ class Simulator(ABC):
         results : Results
             The simulation results from VUnit.
         """
-        self._merge_output_files()
+        self._merge_output_files(results=results)
 
         if self.enable_coverage:
             self._generate_coverage(results=results)
         else:
             LOGGER.info("Coverage generation skipped (not enabled)")
 
-    def _merge_output_files(self) -> None:
-        """Merge all output.txt files from subdirectories into a single file."""
-        vunit_dir: Path = Path(self.vu._output_path)
+    def _merge_output_files(self, results: Results) -> None:
+        """Merge output files from tests in the current run into a single file."""
         output_file: Path = self.results_dir / "output.txt"
+        test_results = results.get_report().tests
 
-        # Check if test_output directory exists
-        if not vunit_dir.exists():
-            LOGGER.warning("Test output directory not found: %s", vunit_dir)
-            return
-
-        # Find all output.txt files
-        output_files: list[Path] = list(vunit_dir.rglob("output.txt"))
-
-        if not output_files:
-            LOGGER.warning("No output.txt files found in %s", vunit_dir)
+        if not test_results:
+            LOGGER.warning("No test results found for output merge")
             return
 
         with open(file=output_file, mode="w", encoding="utf-8") as outfile:
-            LOGGER.info("Merging %d output.txt files...", len(output_files))
+            LOGGER.info("Merging output from %d tests...", len(test_results))
 
-            for txt_file in sorted(output_files):
+            for test_name, test_result in sorted(test_results.items()):
+                txt_file: Path = test_result.path / "output.txt"
                 # Write a header with the test name
                 outfile.write(f"\n{'=' * 80}\n")
-                outfile.write(f"Test: {txt_file.parent.name}\n")
-                outfile.write(f"Path: {txt_file.relative_to(vunit_dir)}\n")
+                outfile.write(f"Test: {test_name}\n")
+                outfile.write(f"Path: {test_result.relpath}\n")
                 outfile.write(f"{'=' * 80}\n\n")
 
                 # Write the contents of the file
@@ -712,13 +716,14 @@ class QuestaModelSim(Simulator):
         )
 
         if library_name == "unisim":
+            vivado_path: Path | None = self.get_vivado_path()
             unisim_vpkg_path: Path | None = self.get_unisim_vpkg_library_path()
             unisim_vcomp_path: Path | None = self.get_unisim_vcomp_library_path()
-            if unisim_vpkg_path is None or unisim_vcomp_path is None:
+            if vivado_path is None or unisim_vpkg_path is None or unisim_vcomp_path is None:
                 raise SystemExit("ERROR: Vivado Unisim source files are unavailable")
 
             UNISIM: Library = self.vu.add_library(library_name="unisim")
-            unisim_dir: Path = self.get_vivado_path() / "data" / "vhdl" / "src" / "unisims"
+            unisim_dir: Path = vivado_path / "data" / "vhdl" / "src" / "unisims"
             UNISIM.add_source_file(file_name=unisim_vpkg_path)
             UNISIM.add_source_file(file_name=unisim_vcomp_path)
             UNISIM.add_source_files(pattern=str(unisim_dir / "primitive" / "*.vhd"))

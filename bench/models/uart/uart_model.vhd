@@ -32,15 +32,15 @@
 --                  * 'R'        : ASCII 'R' (0x52)
 --                  * AA         : two ASCII hex characters representing an 8-bit register address (MSB first)
 --                  * '\r'       : carriage return (0x0D)
---                Response: DDDD "\r"
---                  * DDDD       : four ASCII hex characters for the 16-bit register value (MSB first)
+--                Response: DDDDDDDD "\r"
+--                  * DDDDDDDD   : eight ASCII hex characters for the 32-bit register value (MSB first)
 --                  * '\r'       : carriage return
 --
 --            - Write register:
---                Send:  "W" AA DDDD "\r"
+--                Send:  "W" AA DDDDDDDD "\r"
 --                  * 'W'        : ASCII 'W' (0x57)
 --                  * AA         : 2 ASCII hex chars (8-bit address)
---                  * DDDD       : 4 ASCII hex chars (16-bit data)
+--                  * DDDDDDDD   : 8 ASCII hex chars (32-bit data)
 --                  * '\r'       : carriage return
 --                No response
 --

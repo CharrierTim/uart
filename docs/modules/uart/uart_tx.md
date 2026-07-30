@@ -26,14 +26,14 @@ It supports configurable baud rates.
 
 <div class="ports-table" markdown="1">
 
-| Port Name      | Type        | Direction | Default Value | Description                           |
-| -------------- | ----------- | :-------: | ------------- | ------------------------------------- |
-| `CLK`          | std_logic   |    in     | -             | Input clock                           |
-| `ARST_P`       | std_logic   |    in     | -             | Input asynchronous reset, active high |
-| `I_BYTE`       | vector[7:0] |    in     | -             | Input byte to send                    |
-| `I_BYTE_VALID` | std_logic   |    in     | -             | Input byte to send valid flag         |
-| `O_UART_TX`    | std_logic   |    out    | 0b1           | Output UART TX line                   |
-| `O_DONE`       | std_logic   |    out    | 0b0           | Byte send flag                        |
+| Port Name         | Type        | Direction | Default Value | Description                           |
+| ----------------- | ----------- | :-------: | ------------- | ------------------------------------- |
+| `CLK`             | std_logic   |    in     | -             | Input clock                           |
+| `ARST_P`          | std_logic   |    in     | -             | Input asynchronous reset, active high |
+| `I_TX_DATA`       | vector[7:0] |    in     | -             | Input byte to send                    |
+| `I_TX_DATA_VALID` | std_logic   |    in     | -             | Input byte to send valid flag         |
+| `O_UART_TX`       | std_logic   |    out    | 0b1           | Output UART TX line                   |
+| `O_DONE`          | std_logic   |    out    | 0b0           | Byte send flag                        |
 
 </div>
 
@@ -49,7 +49,7 @@ configured baud rate.
 ### Clock Divider
 
 A clock operating at the baud rate is generated internally to control the bit timing. This clock is activated when the
-transmitter enters the `STATE_SEND_BYTE` state.
+transmitter enters the `STATE_SEND_TX_DATA` state.
 
 The clock divider process increment the bit count and shift the data every time it reaches one baud tick.
 
@@ -92,9 +92,9 @@ The frame is constructed as follows:
 - **Bits 1-8**: Data byte (D0 to D7)
 - **Bit 9** (MSB): Stop bit (logic '1')
 
-#### STATE_SEND_BYTE Mode
+#### STATE_SEND_TX_DATA Mode
 
-In the `STATE_SEND_BYTE` state, the shift register is shifted right by one position at each baud tick overflow. A logic
+In the `STATE_SEND_TX_DATA` state, the shift register is shifted right by one position at each baud tick overflow. A logic
 '1' is shifted in from the left (MSB) side.
 
 This right-shift operation ensures that:
@@ -127,8 +127,8 @@ The UART FSM handling is defined as:
 
 Where the following transitions are defined:
 
-| Transition | Condition(s)       |
-| ---------- | ------------------ |
-| T0         | `I_BYTE_VALID = 1` |
-| T1         | `bit_counter >= 9` |
-| T2         | Automatic          |
+| Transition | Condition(s)          |
+| ---------- | --------------------- |
+| T0         | `I_TX_DATA_VALID = 1` |
+| T1         | `bit_counter >= 9`    |
+| T2         | Automatic             |

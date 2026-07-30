@@ -87,14 +87,14 @@ To run the top-level FPGA testbench:
     === "`uv`"
 
         ```bash
-        uv run bench/top_fpga/run.py
+        uv run bench/top_fpga/run.py --without_unisim
         ```
 
     === "`pip`"
 
         ```bash
         source .venv/bin/activate
-        python3 bench/top_fpga/run.py
+        python3 bench/top_fpga/run.py --without_unisim
         ```
 
 === "Windows"
@@ -102,14 +102,14 @@ To run the top-level FPGA testbench:
     === "`uv`"
 
         ```bash
-        uv run bench/top_fpga/run.py
+        uv run bench/top_fpga/run.py --without_unisim
         ```
 
     === "`pip`"
 
         ```bash
         .venv\Scripts\activate
-        python bench/top_fpga/run.py
+        python bench/top_fpga/run.py --without_unisim
         ```
 
 ### Parallel Execution
@@ -121,14 +121,14 @@ Run testcases in parallel using multiple threads for faster execution:
     === "`uv`"
 
         ```bash
-        uv run bench/top_fpga/run.py -- -p0
+        uv run bench/top_fpga/run.py -p0 --without_unisim
         ```
 
     === "`pip`"
 
         ```bash
         source .venv/bin/activate
-        python3 bench/top_fpga/run.py -p0
+        python3 bench/top_fpga/run.py -p0 --without_unisim
         ```
 
 === "Windows"
@@ -136,14 +136,14 @@ Run testcases in parallel using multiple threads for faster execution:
     === "`uv`"
 
         ```bash
-        uv run bench/top_fpga/run.py -- -p0
+        uv run bench/top_fpga/run.py -p0 --without_unisim
         ```
 
     === "`pip`"
 
         ```bash
         .venv\Scripts\activate
-        python bench/top_fpga/run.py -p0
+        python bench/top_fpga/run.py -p0 --without_unisim
         ```
 
 Where:
@@ -160,14 +160,14 @@ Enable code coverage collection and generate an HTML coverage report:
     === "`uv`"
 
         ```bash
-        uv run bench/top_fpga/run.py --coverage
+        uv run bench/top_fpga/run.py --coverage --without_unisim
         ```
 
     === "`pip`"
 
         ```bash
         source .venv/bin/activate
-        python3 bench/top_fpga/run.py --coverage
+        python3 bench/top_fpga/run.py --coverage --without_unisim
         ```
 
 === "Windows"
@@ -175,14 +175,14 @@ Enable code coverage collection and generate an HTML coverage report:
     === "`uv`"
 
         ```bash
-        uv run bench/top_fpga/run.py --coverage
+        uv run bench/top_fpga/run.py --coverage --without_unisim
         ```
 
     === "`pip`"
 
         ```bash
         .venv\Scripts\activate
-        python bench/top_fpga/run.py --coverage
+        python bench/top_fpga/run.py --coverage --without_unisim
         ```
 
 The coverage report will be generated in the `vunit_out/coverage_report` folder.
@@ -193,7 +193,7 @@ Open `vunit_out/coverage_report/index.html` in your browser to view the results.
 Run the following command in the `synthesis` folder:
 
 ```bash
-vivado -mode batch -nojournal -script run_synthesis.tcl
+vivado -mode batch -nojournal -source run_synthesis.tcl
 ```
 
 ## Additional Options
@@ -214,15 +214,32 @@ Run the following command to get more help with `VUnit` options:
 
 === "Linux/macOS"
 
-    ```bash
-    python3 bench/top_fpga/run.py --help
-    ```
+    === "`uv`"
+
+        ```bash
+        uv run bench/top_fpga/run.py --help
+        ```
+
+    === "`pip`"
+
+        ```bash
+        python3 bench/top_fpga/run.py --help
+        ```
 
 === "Windows"
 
-    ```bash
-    python bench/top_fpga/run.py --help
-    ```
+    === "`uv`"
+
+        ```bash
+        uv run bench/top_fpga/run.py --help
+        ```
+
+    === "`pip`"
+
+        ```bash
+        .venv\Scripts\activate
+        python bench/top_fpga/run.py --help
+        ```
 
 ## Control and Status Register (CSR) Automation
 
@@ -235,14 +252,34 @@ To generate the register block, run the following command in the `root` folder:
 
 === "Linux/macOS"
 
-    ```bash
-    python3 tools/peakrdl/scripts/generate_regblock.py
-    ```
+    === "`uv`"
+
+        ```bash
+        uv run tools/peakrdl/script/generate_regblock.py
+        ```
+
+    === "`pip`"
+
+        ```bash
+        source .venv/bin/activate
+        python3 tools/peakrdl/script/generate_regblock.py
+        ```
 
 === "Windows"
 
-    ```bash
-    python tools/peakrdl/scripts/generate_regblock.py
+    === "`uv`"
+
+        ```bash
+    uv run tools/peakrdl/script/generate_regblock.py
+    ```
+
+    === "`pip`"
+
+        ```bash
+        .venv\Scripts\activate
+        python tools/peakrdl/script/generate_regblock.py
+        ```
+    uv run tools/peakrdl/script/generate_regblock.py
     ```
 
 VHDL source files for the register block are generated under the `sources/regblock` folder.

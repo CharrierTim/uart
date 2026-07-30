@@ -18,11 +18,11 @@ The following figure depicts the Top-Level:
 
 <div class="generics-table" markdown="1">
 
-| Generic Name   | Type         | Default Value | Description                                                                                                             |
-| -------------- | ------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `G_GIT_HASH`   | vector[31:0] | 0x0000        | Git hash of the repository at the time of bitstream generation. Automatically set by the `run_synthesis. tcl` script.   |
-| `G_GIT_STATUS` | std_logic    | 0b0           | Git status of the repository at the time of bitstream generation. Automatically set by the `run_synthesis. tcl` script. |
-| `G_FPGA_ID`    | vector[31:0] | 0x0000        | FPGA identification information. User defined in the `run_synthesis. tcl` script.                                       |
+| Generic Name   | Type         | Default Value | Description                                                                                       |
+| -------------- | ------------ | ------------- | ------------------------------------------------------------------------------------------------- |
+| `G_GIT_ID`     | vector[31:0] | 0x00000000    | Git identifier at bitstream generation time. Automatically set by the `run_synthesis.tcl` script. |
+| `G_GIT_STATUS` | std_logic    | 0b0           | Git status at bitstream generation time. Automatically set by the `run_synthesis.tcl` script.     |
+| `G_FPGA_ID`    | vector[31:0] | 0x00000000    | FPGA identification information. Set by the `run_synthesis.tcl` script.                           |
 
 </div>
 
@@ -32,25 +32,25 @@ The following figure depicts the Top-Level:
 
 <div class="ports-table" markdown="1">
 
-| Port Name        | Type        | Direction | Default Value | Description                                                  |
-| ---------------- | ----------- | :-------: | ------------- | ------------------------------------------------------------ |
-| `PAD_I_CLK`      | std_logic   |    in     | -             | Input clock                                                  |
-| `PAD_I_ARST_P`   | std_logic   |    in     | -             | Input asynchronous reset, active high                        |
-| `PAD_I_UART_RX`  | std_logic   |    in     | -             | Input UART RX line                                           |
-| `PAD_O_UART_TX`  | std_logic   |    out    | 0b1           | Output UART TX line                                          |
-| `PAD_O_SCLK`     | std_logic   |    out    | 0b0           | Output SPI serial clock                                      |
-| `PAD_O_MOSI`     | std_logic   |    out    | 0b0           | Output SPI Master Output Slave Input                         |
-| `PAD_I_MISO`     | std_logic   |    in     | -             | Output SPI Master Input Slave Input                          |
-| `PAD_O_CS_N`     | std_logic   |    out    | 0b1           | Output SPI Chip Select                                       |
-| `O_HSYNC`        | std_logic   |    out    | 0b0           | Horizontal sync signal output                                |
-| `O_VSYNC`        | std_logic   |    out    | 0b0           | Vertical sync signal output                                  |
-| `O_RED`          | vector[3:0] |    out    | 0x00          | Red color channel output (blanked during inactive regions)   |
-| `O_GREEN`        | vector[3:0] |    out    | 0x00          | Green color channel output (blanked during inactive regions) |
-| `O_BLUE`         | vector[3:0] |    out    | 0x00          | Blue color channel output (blanked during inactive regions)  |
-| `PAD_I_SWITCH_0` | std_logic   |    in     | -             | Input switch 0                                               |
-| `PAD_I_SWITCH_1` | std_logic   |    in     | -             | Input switch 1                                               |
-| `PAD_I_SWITCH_2` | std_logic   |    in     | -             | Input switch 2                                               |
-| `PAD_O_LED_0`    | std_logic   |    out    | 0b1           | Output LED 0                                                 |
+| Port Name         | Type        | Direction | Default Value | Description                                                  |
+| ----------------- | ----------- | :-------: | ------------- | ------------------------------------------------------------ |
+| `PAD_I_CLK`       | std_logic   |    in     | -             | Input clock                                                  |
+| `PAD_I_ARST_P`    | std_logic   |    in     | -             | Input asynchronous reset, active high                        |
+| `PAD_I_UART_RX`   | std_logic   |    in     | -             | Input UART RX line                                           |
+| `PAD_O_UART_TX`   | std_logic   |    out    | 0b1           | Output UART TX line                                          |
+| `PAD_O_SCLK`      | std_logic   |    out    | 0b0           | Output SPI serial clock                                      |
+| `PAD_O_MOSI`      | std_logic   |    out    | 0b0           | Output SPI Master Output Slave Input                         |
+| `PAD_I_MISO`      | std_logic   |    in     | -             | Input SPI Master In Slave Out                                |
+| `PAD_O_CS_N`      | std_logic   |    out    | 0b1           | Output SPI Chip Select                                       |
+| `PAD_O_VGA_HSYNC` | std_logic   |    out    | 0b0           | Horizontal sync signal output                                |
+| `PAD_O_VGA_VSYNC` | std_logic   |    out    | 0b0           | Vertical sync signal output                                  |
+| `PAD_O_VGA_RED`   | vector[3:0] |    out    | 0x0           | Red color channel output (blanked during inactive regions)   |
+| `PAD_O_VGA_GREEN` | vector[3:0] |    out    | 0x0           | Green color channel output (blanked during inactive regions) |
+| `PAD_O_VGA_BLUE`  | vector[3:0] |    out    | 0x0           | Blue color channel output (blanked during inactive regions)  |
+| `PAD_I_SWITCH_0`  | std_logic   |    in     | -             | Input switch 0                                               |
+| `PAD_I_SWITCH_1`  | std_logic   |    in     | -             | Input switch 1                                               |
+| `PAD_I_SWITCH_2`  | std_logic   |    in     | -             | Input switch 2                                               |
+| `PAD_O_LED_0`     | std_logic   |    out    | 0b0           | Asserted when the bad-address counter is nonzero             |
 
 </div>
 
@@ -65,8 +65,7 @@ The FPGA internal reset `internal_rst_n` signal is generated by combining two co
 1. The external reset button `PAD_I_ARST_P` (active-high)
 2. The PLL lock status `pll_locked`
 
-This ensures that the internal logic remains in reset until both the reset button is released **or** the
-PLL is unlocked.
+This ensures that the internal logic remains in reset while the reset button is asserted or the PLL is unlocked.
 
 Then, the FPGA resynchronize the asynchronous reset signal to both clock domain to ensure synchronous de-assertion
 of the reset.
@@ -137,7 +136,7 @@ The FPGA instantiates the [`regblock`](regblock/regblock.md) module. The hardwar
 
 | Regblock input field                       | Source signal/value                          | Notes                                                                |
 | ------------------------------------------ | -------------------------------------------- | -------------------------------------------------------------------- |
-| `hwif_in.git_hash.hash.next_q`             | [`G_GIT_HASH`](#generics)                    | Git hash at bitstream generation time.                               |
+| `hwif_in.git_hash.hash.next_q`             | [`G_GIT_ID`](#generics)                      | Git identifier at bitstream generation time.                         |
 | `hwif_in.git_status.status.next_q`         | [`G_GIT_STATUS`](#generics)                  | Git status at bitstream generation time.                             |
 | `hwif_in.fpga_id.id.next_q`                | [`G_FPGA_ID`](#generics)                     | FPGA identification value.                                           |
 | `hwif_in.switch_status.switch_2.next_q`    | Resynchronized `PAD_I_SWITCH_2`              | Switch 2 input after resynchronizer.                                 |

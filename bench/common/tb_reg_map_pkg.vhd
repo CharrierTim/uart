@@ -31,7 +31,7 @@
 --
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
--- 1.0      28/11/2025  Timothee Charrier   Initial version, create a package for register map for testbench
+-- 1.0      30/07/2026  Timothee Charrier   Initial version, create a package for register map for testbench
 -- =====================================================================================================================
 
 library ieee;
