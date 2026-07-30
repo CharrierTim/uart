@@ -24,18 +24,17 @@
 
 <div class="ports-table" markdown="1">
 
-| Port Name         | Type                       | Direction | Default Value    | Description                                                                         |
-| ----------------- | -------------------------- | :-------: | ---------------- | ----------------------------------------------------------------------------------- |
-| `CLK`             | std_logic                  |    in     | -                | Input clock                                                                         |
-| `ARST_P`          | std_logic                  |    in     | -                | Input asynchronous reset, active high                                               |
-| `O_SCLK`          | std_logic                  |    out    | `G_CLK_POLARITY` | Output SPI serial clock                                                             |
-| `O_MOSI`          | std_logic                  |    out    | 0b0              | Output Master Out Slave In                                                          |
-| `I_MISO`          | std_logic                  |    in     | -                | Input Master In Slave Out                                                           |
-| `O_CS`            | std_logic                  |    out    | 0b1              | Output chip select                                                                  |
-| `I_TX_DATA`       | vector[G_NB_DATA_BITS-1:0] |    in     | -                | Data to be sent                                                                     |
-| `I_TX_DATA_VALID` | std_logic                  |    in     | -                | Data to be sent flag valid. Must be a rising edge to start the transaction (0 -> 1) |
-| `O_TX_DATA`       | vector[G_NB_DATA_BITS-1:0] |    out    | 0x00             | Data received from the slave                                                        |
-| `O_TX_DATA_VALID` | std_logic                  |    out    | 0b0              | Data Data received from the slave flag valid                                        |
+| Port Name         | Type                       | Direction | Default Value    | Description                                                                     |
+| ----------------- | -------------------------- | :-------: | ---------------- | ------------------------------------------------------------------------------- |
+| `CLK`             | std_logic                  |    in     | -                | Input clock                                                                     |
+| `ARST_P`          | std_logic                  |    in     | -                | Input asynchronous reset, active high                                           |
+| `O_SCLK`          | std_logic                  |    out    | `G_CLK_POLARITY` | Output SPI serial clock                                                         |
+| `O_MOSI`          | std_logic                  |    out    | 0b0              | Output Master Out Slave In                                                      |
+| `I_MISO`          | std_logic                  |    in     | -                | Input Master In Slave Out                                                       |
+| `O_CS_N`          | std_logic                  |    out    | 0b1              | Output chip select, active low                                                  |
+| `I_TX_DATA`       | vector[G_NB_DATA_BITS-1:0] |    in     | -                | Data to be sent                                                                 |
+| `I_TX_DATA_VALID` | std_logic                  |    in     | -                | One-cycle pulse indicating that `I_TX_DATA` is valid and starting a transaction |
+| `O_RX_DATA`       | vector[G_NB_DATA_BITS-1:0] |    out    | 0x00             | Data received from the slave                                                    |
 
 </div>
 
@@ -105,7 +104,7 @@ In this mode:
 
 ### FSM
 
-The UART FSM handling is defined as:
+The SPI FSM handling is defined as:
 
 ![SPI Master FSM](../../assets/uart.drawio){ page="SPI-MASTER-FSM" }
 
@@ -113,7 +112,7 @@ Where the following transitions are defined:
 
 | Transition | Condition(s)                                                                          |
 | ---------- | ------------------------------------------------------------------------------------- |
-| T0         | `i_data_valid_d1 = 0` **AND** `I_DATA_VALID = 1` (rising edge)                        |
+| T0         | `I_TX_DATA_VALID = 1`                                                                 |
 | T1         | `spi_enable_sampling = 1` (trailing edge)                                             |
 | T2         | `spi_enable_shifting = 1` (leading edge)                                              |
 | T3         | `bit_counter >= G_NB_DATA_BITS - 1` **AND** `spi_enable_shifting = 1` (all bits sent) |
