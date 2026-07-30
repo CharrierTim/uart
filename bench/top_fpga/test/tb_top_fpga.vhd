@@ -1132,9 +1132,8 @@ begin
                 wait for C_UART_READ_CMD_TIME;
 
                 check_equal(tb_pad_o_led_0, '1', "LED_0 should be ON indicating error when reading from bad address");
-                check_equal(
+                check(
                     tb_pad_o_led_0'stable(C_UART_READ_CMD_TIME),
-                    '1',
                     "LED_0 should remain stable ON for at least " &
                     time'image(C_UART_READ_CMD_TIME) &
                     " after reading from bad address");
@@ -1153,9 +1152,8 @@ begin
                 wait for C_UART_WRITE_CMD_TIME;
 
                 check_equal(tb_pad_o_led_0, '1', "LED_0 should be ON indicating error when writing to bad address");
-                check_equal(
+                check(
                     tb_pad_o_led_0'stable(C_UART_WRITE_CMD_TIME),
-                    '1',
                     "LED_0 should remain stable ON for at least " &
                     time'image(C_UART_WRITE_CMD_TIME) &
                     " after writing to bad address");
