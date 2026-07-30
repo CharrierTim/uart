@@ -23,7 +23,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    run_synthesis.tcl
-## @version 1.4
+## @version 1.5
 ## @brief   Synthesis script for Vivado
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -37,6 +37,7 @@
 ##                                          Add report_bus_skew command and report
 ## 1.3      11/04/2026  Timothee Charrier   Add GIT_STATUS generic to the top entity.
 ## 1.4      24/05/2026  Timothee Charrier   Update VHDL source list with new regblock files and add FPGA_ID generic.
+## 1.5      30/07/2026  Timothee Charrier   Improve error handling for missing files and git commands.
 ## =====================================================================================================================
 
 
@@ -142,20 +143,28 @@ foreach source $VHDL_SOURCES {
 # Getting GIT STATUS and checking for uncommitted changes (1 if dirty, 0 if clean)
 ## =====================================================================================================================
 
-set git_status_porcelain [exec git status --porcelain]
-if {$git_status_porcelain ne ""} {
-    puts "WARNING: Uncommitted changes detected in the repository."
-    puts "Uncommitted changes:\n$git_status_porcelain"
-}
+set GIT_STATUS 1
+if {[catch {exec git status --porcelain} git_status_porcelain]} {
+    puts "WARNING: Git status is unavailable; marking the build status as unknown/dirty."
+} else {
+    if {$git_status_porcelain ne ""} {
+        puts "WARNING: Uncommitted changes detected in the repository."
+        puts "Uncommitted changes:\n$git_status_porcelain"
+    }
 
-set GIT_STATUS [expr {$git_status_porcelain eq "" ? 0 : 1}]
+    set GIT_STATUS [expr {$git_status_porcelain eq "" ? 0 : 1}]
+}
 
 ## =====================================================================================================================
 # Getting GIT ID for internal registers
 ## =====================================================================================================================
 
-set git_hash [exec git log -1 --pretty=%H]
-set GIT_ID   [string range $git_hash 0 7]
+set GIT_ID "00000000"
+if {[catch {exec git log -1 --pretty=%H} git_hash]} {
+    puts "WARNING: Git revision is unavailable; using GIT_ID=$GIT_ID."
+} else {
+    set GIT_ID [string range $git_hash 0 7]
+}
 
 ## =====================================================================================================================
 # Getting FPGA ID for internal registers to current timestamp
@@ -246,8 +255,9 @@ write_bitstream -force "${RESULTS_DIR}/${PROJECT_NAME}.bit"
 ## =====================================================================================================================
 
 # Verify file exists before moving it
-if {![file exists $file]} {
-    puts "ERROR: File does not exist: $file"
+set vivado_log "${CURRENT_DIR}/vivado.log"
+if {![file exists $vivado_log]} {
+    puts "WARNING: Vivado log does not exist: $vivado_log"
 } else {
-    file rename -force "$CURRENT_DIR/vivado.log" "$RESULTS_DIR/${PROJECT_NAME}.log"
+    file rename -force $vivado_log "$RESULTS_DIR/${PROJECT_NAME}.log"
 }
