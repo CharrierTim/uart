@@ -33,6 +33,8 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      16/05/2026  Timothee Charrier   Initial release
 -- 1.1      29/07/2026  Timothee Charrier   Move register map to a common package
+--                                          Add two generics controlling the number of random iterations and the
+--                                          random seed for deterministic OSVVM randomization.
 -- =====================================================================================================================
 
 library ieee;
@@ -61,7 +63,9 @@ library lib_bench;
 
 entity TB_REGBLOCK is
     generic (
-        RUNNER_CFG : string
+        RUNNER_CFG          : string;
+        G_RANDOM_ITERATIONS : positive := 32;
+        G_RANDOM_SEED       : positive := 1
     );
 end entity TB_REGBLOCK;
 
@@ -572,6 +576,7 @@ begin
 
         -- Set up the test runner
         test_runner_setup(runner, RUNNER_CFG);
+        v_rnd.InitSeed(G_RANDOM_SEED);
 
         -- Show PASS log messages for checks
         show(get_logger(default_checker), display_handler, pass);
@@ -714,10 +719,10 @@ begin
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Performing 42 random invalid read/write to random addresses.");
+                info(" Performing " & to_string(G_RANDOM_ITERATIONS) & " random invalid read/write operations.");
                 info("-----------------------------------------------------------------------------");
 
-                for i in 1 to 42 loop
+                for i in 1 to G_RANDOM_ITERATIONS loop
 
                     v_rand_addr := v_rnd.RandSlv(C_ADDR_BELOW_MIN, C_ADDR_ABOVE_MAX);
 
@@ -734,10 +739,10 @@ begin
                 -- Check if the bad address counter has incremented by n more
                 proc_axi_lite_check(
                     reg            => C_REG_BAD_ADDRESS_COUNTER,
-                    expected_data  => std_logic_vector(to_unsigned(42, tb_s_axil_rdata'length)),
+                    expected_data  => std_logic_vector(to_unsigned(G_RANDOM_ITERATIONS, tb_s_axil_rdata'length)),
                     expected_rresp => axi_resp_okay,
-                    msg            => "BAD_ADDRESS_COUNTER should be 42 after 42 additional " &
-                    "invalid read/write attempts");
+                    msg            => "BAD_ADDRESS_COUNTER should be " & to_string(G_RANDOM_ITERATIONS) & " after " &
+                    to_string(G_RANDOM_ITERATIONS) & " additional invalid read/write attempts");
 
             elsif run("test_regblock_random_rw") then
 
@@ -750,7 +755,7 @@ begin
                 info(" Performing random read/write operations on AXI-Lite on TEST registers");
                 info("-----------------------------------------------------------------------------");
 
-                for i in 1 to 32 loop
+                for i in 1 to G_RANDOM_ITERATIONS loop
 
                     v_expected_data := v_rnd.RandSlv(tb_s_axil_rdata'length);
 
@@ -761,8 +766,9 @@ begin
                     end if;
 
                     info("");
-                    info("[" & to_string(i) & "/32] Write 0x"  & to_hstring(v_expected_data) & " to register " &
-                        v_rnd_reg.name      & " at address 0x" & to_hstring(v_rnd_reg.addr));
+                    info("[" & to_string(i) & "/" & to_string(G_RANDOM_ITERATIONS) & "] Write 0x" &
+                        to_hstring(v_expected_data) & " to register " & v_rnd_reg.name & " at address 0x" &
+                        to_hstring(v_rnd_reg.addr));
 
                     -- Writes a random value to one of the registers and
                     -- checks if the read value matches the written value

@@ -36,6 +36,8 @@
 ## 1.0      17/10/2025  Timothee Charrier   Initial release
 ## 2.0      29/07/2026  Timothee Charrier   Apply changes from `setup_vunit.py` to improve portability.
 ##                                          Add new common library `common`.
+##                                          Add two generics controlling the number of random iterations and the
+##                                          random seed for deterministic OSVVM randomization.
 ## =====================================================================================================================
 
 import sys
@@ -63,6 +65,8 @@ COMMON_ROOT: Path = BENCH_ROOT / "common"
 ## =====================================================================================================================
 
 cli = create_vunit_cli()
+cli.parser.add_argument("--random-iterations", type=int, default=32, help="Number of random cases per random loop")
+cli.parser.add_argument("--random-seed", type=int, default=1, help="Deterministic OSVVM random seed")
 args = cli.parse_args()
 
 ## =====================================================================================================================
@@ -80,6 +84,10 @@ LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
 LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_common_pkg.vhd")
 LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_reg_map_pkg.vhd")
 LIB_BENCH.add_source_files(pattern=THIS_DIR / "**" / "*.vhd")
+
+TB_REGBLOCK = LIB_BENCH.test_bench("tb_regblock")
+TB_REGBLOCK.set_generic(name="G_RANDOM_ITERATIONS", value=args.random_iterations)
+TB_REGBLOCK.set_generic(name="G_RANDOM_SEED", value=args.random_seed)
 
 ## =====================================================================================================================
 # Set up simulator
