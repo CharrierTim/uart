@@ -140,7 +140,7 @@ class Simulator(ABC):
         self.vu = vu
         return self
 
-    def get_vivado_path(self) -> Path:
+    def get_vivado_path(self) -> Path | None:
         """Get the path to the Vivado installation.
 
         Which command returns the path to the Vivado executable.
@@ -149,15 +149,20 @@ class Simulator(ABC):
 
         Returns
         -------
-        Path
-            The path to the Vivado installation.
+        Path | None
+            The path to the Vivado installation, or None when Vivado is unavailable.
         """
         vivado_path: str | None = shutil.which(cmd="vivado")
         if not vivado_path:
             LOGGER.warning("Vivado executable not found in PATH!")
-            return Path()
+            return None
 
-        return Path(vivado_path).parent.parent.parent
+        installation_path: Path = Path(vivado_path).resolve().parent.parent
+        if not (installation_path / "data" / "vhdl").is_dir():
+            LOGGER.warning("Vivado VHDL data directory not found under %s", installation_path)
+            return None
+
+        return installation_path
 
     def get_unisim_vcomp_library_path(self) -> Path | None:
         """Get the path for the unisim VCOMP file compiled in unisim library.
