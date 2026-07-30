@@ -174,7 +174,9 @@ class Simulator(ABC):
         Path | None
             The path to the library file, or None when it is unavailable.
         """
-        vivado_path: Path = self.get_vivado_path()
+        vivado_path: Path | None = self.get_vivado_path()
+        if vivado_path is None:
+            return None
         unisim_vcomp_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VCOMP.vhd"
 
         if not unisim_vcomp_path.exists():
@@ -193,7 +195,9 @@ class Simulator(ABC):
         Path | None
             The path to the library file, or None when it is unavailable.
         """
-        vivado_path: Path = self.get_vivado_path()
+        vivado_path: Path | None = self.get_vivado_path()
+        if vivado_path is None:
+            return None
         unisim_vpkg_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VPKG.vhd"
 
         if not unisim_vpkg_path.exists():
@@ -212,7 +216,9 @@ class Simulator(ABC):
         Path | None
             The path to the library glob, or None when it is unavailable.
         """
-        vivado_path: Path = self.get_vivado_path()
+        vivado_path: Path | None = self.get_vivado_path()
+        if vivado_path is None:
+            return None
         unifast_path: Path = vivado_path / "data" / "vhdl" / "src" / "unifast" / "primitive"
 
         if not unifast_path.exists():
@@ -717,13 +723,14 @@ class QuestaModelSim(Simulator):
         )
 
         if library_name == "unisim":
+            vivado_path: Path | None = self.get_vivado_path()
             unisim_vpkg_path: Path | None = self.get_unisim_vpkg_library_path()
             unisim_vcomp_path: Path | None = self.get_unisim_vcomp_library_path()
-            if unisim_vpkg_path is None or unisim_vcomp_path is None:
+            if vivado_path is None or unisim_vpkg_path is None or unisim_vcomp_path is None:
                 raise SystemExit("ERROR: Vivado Unisim source files are unavailable")
 
             UNISIM: Library = self.vu.add_library(library_name="unisim")
-            unisim_dir: Path = self.get_vivado_path() / "data" / "vhdl" / "src" / "unisims"
+            unisim_dir: Path = vivado_path / "data" / "vhdl" / "src" / "unisims"
             UNISIM.add_source_file(file_name=unisim_vpkg_path)
             UNISIM.add_source_file(file_name=unisim_vcomp_path)
             UNISIM.add_source_files(pattern=str(unisim_dir / "primitive" / "*.vhd"))
