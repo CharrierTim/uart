@@ -32,12 +32,13 @@
 ## Version  Date        Author              Description
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      27/10/2025  Timothee Charrier   Initial release
-## 1.1      05/01/2026  Timothee Charrier   Add VGA controller file
+## 1.1      05/01/2026  Timothee Charrier   Add VGA controller file.
 ## 1.2      09/01/2026  Timothee Charrier   Remove deprecated 'resync_slv' module and add open-logic library.
-##                                          Add report_bus_skew command and report
+##                                          Add report_bus_skew command and report.
 ## 1.3      11/04/2026  Timothee Charrier   Add GIT_STATUS generic to the top entity.
 ## 1.4      24/05/2026  Timothee Charrier   Update VHDL source list with new regblock files and add FPGA_ID generic.
 ## 1.5      30/07/2026  Timothee Charrier   Improve error handling for missing files and git commands.
+##                                          Add CLK_RST_MANAGER file.
 ## =====================================================================================================================
 
 
@@ -112,15 +113,16 @@ source $CORES_DIR/open-logic/tools/vivado/import_sources.tcl
 ## =====================================================================================================================
 
 set VHDL_SOURCES [list \
-    [list lib_rtl "$SOURCES_DIR/regblock/reg_utils.vhd"        2008] \
-    [list lib_rtl "$SOURCES_DIR/regblock/regblock_pkg.vhd"     2008] \
-    [list lib_rtl "$SOURCES_DIR/regblock/regblock.vhd"         2008] \
-    [list lib_rtl "$SOURCES_DIR/vga/vga_controller.vhd"        2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/uart_rx.vhd"              2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/uart_tx.vhd"              2008] \
-    [list lib_rtl "$SOURCES_DIR/uart/uart_axi_lite_bridge.vhd" 2008] \
-    [list lib_rtl "$SOURCES_DIR/spi/spi_master.vhd"            2008] \
-    [list lib_rtl "$SOURCES_DIR/top_fpga/top_fpga.vhd"         2008] \
+    [list lib_rtl "$SOURCES_DIR/clk_rst_manager/clk_rst_manager.vhd" 2008] \
+    [list lib_rtl "$SOURCES_DIR/regblock/reg_utils.vhd"              2008] \
+    [list lib_rtl "$SOURCES_DIR/regblock/regblock_pkg.vhd"           2008] \
+    [list lib_rtl "$SOURCES_DIR/regblock/regblock.vhd"               2008] \
+    [list lib_rtl "$SOURCES_DIR/vga/vga_controller.vhd"              2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart_rx.vhd"                    2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart_tx.vhd"                    2008] \
+    [list lib_rtl "$SOURCES_DIR/uart/uart_axi_lite_bridge.vhd"       2008] \
+    [list lib_rtl "$SOURCES_DIR/spi/spi_master.vhd"                  2008] \
+    [list lib_rtl "$SOURCES_DIR/top_fpga/top_fpga.vhd"               2008] \
 ]
 
 foreach source $VHDL_SOURCES {

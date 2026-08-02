@@ -44,6 +44,7 @@
 --                                          LED now indicates AXI bad address transactions.
 --                                          Add FPGA_ID generic and register.
 --          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
+--                                          Move clock and reset logic to a dedicated module `clk_rst_manager`.
 -- =====================================================================================================================
 
 library ieee;
@@ -105,13 +106,17 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- =================================================================================================================
 
     -- General
-    constant C_CLK_FREQ_HZ          : positive  := 50_000_000;
-    constant C_RST_POLARITY         : std_logic := '1';
+    constant C_CLK_FREQ_HZ          : positive := 50_000_000;
 
-    -- Resynchronization
+    -- Resynchronization and clock domain crossing
     constant C_RESYNC_WIDTH         : positive  := 3;
     constant C_RESYNC_DEFAULT_VALUE : std_logic := '0';
     constant C_RESYNC_NB_STAGES     : positive  := 3;
+
+    -- Clock and reset manager
+    constant C_RST_PULSE_CYCLES     : positive  := 3;
+    constant C_RST_POLARITY         : std_logic := '1';
+    constant C_ASYNC_RST_OUTPUT     : boolean   := false;
 
     -- UART
     constant C_BAUD_RATE_BPS        : positive := 115_200;
@@ -141,10 +146,8 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- Internal reset and clock
     signal internal_clk             : std_logic;
     signal vga_clk                  : std_logic;
-    signal pll_locked               : std_logic;
-    signal intermediate_arst_p      : std_logic;
-    signal internal_sys_arst_p      : std_logic;
-    signal internal_vga_arst_p      : std_logic;
+    signal internal_clk_arst_p      : std_logic;
+    signal vga_clk_arst_p           : std_logic;
 
     -- Resynchronization
     signal async_inputs_slv         : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
@@ -179,66 +182,30 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- VGA registers
     signal manual_colors            : std_logic_vector(11 downto 0);
 
-    -- =================================================================================================================
-    -- COMPONENTS
-    -- =================================================================================================================
-
-    -- vsg_off
-    component clk_wiz_0 is
-        port (
-            CLK_OUT1          : out   std_logic;
-            CLK_OUT2          : out   std_logic;
-            RESET             : in    std_logic;
-            LOCKED            : out   std_logic;
-            CLK_IN1           : in    std_logic
-        );
-    end component;
-    -- vsg_on
-
 begin
 
     -- =================================================================================================================
-    -- PLL and positive reset logic
+    -- CLOCK AND RESET MANAGER
     -- =================================================================================================================
 
-    inst_pll : component clk_wiz_0
-        port map (
-            clk_out1 => internal_clk,
-            clk_out2 => vga_clk,
-            reset    => PAD_I_ARST_P,
-            locked   => pll_locked,
-            clk_in1  => PAD_I_CLK
-        );
-
-    -- Toggle reset from BTN or when PLL is unlocked
-    intermediate_arst_p <= PAD_I_ARST_P or (not pll_locked);
-
-    -- System clock domain positive reset generation
-    inst_olo_base_sys_reset_gen : entity olo.olo_base_reset_gen
+    inst_CLK_RST_MANAGER : entity lib_rtl.clk_rst_manager
         generic map (
-            RSTPULSECYCLES_G   => 3,                 -- Minimum duration of the reset pulse in clock cycles
-            RSTINPOLARITY_G    => C_RST_POLARITY,    -- Polarity of 'RstIn'
-            ASYNCRESETOUTPUT_G => false,             -- Asserted synchronously
-            SYNCSTAGES_G       => C_RESYNC_NB_STAGES -- Number of synchronization stages
+            G_RST_PULSE_CYCLES => C_RST_PULSE_CYCLES,
+            G_RST_POLARITY     => C_RST_POLARITY,
+            G_ASYNC_RST_OUTPUT => C_ASYNC_RST_OUTPUT,
+            G_RESYNC_NB_STAGES => C_RESYNC_NB_STAGES
         )
         port map (
-            Clk    => internal_clk,
-            RstOut => internal_sys_arst_p,
-            RstIn  => intermediate_arst_p
-        );
+            PAD_I_CLK         => PAD_I_CLK,
+            PAD_I_ARST_P      => PAD_I_ARST_P,
 
-    -- VGA clock domain positive reset generation
-    inst_olo_base_vga_reset_gen : entity olo.olo_base_reset_gen
-        generic map (
-            RSTPULSECYCLES_G   => 3,
-            RSTINPOLARITY_G    => C_RST_POLARITY,
-            ASYNCRESETOUTPUT_G => false,
-            SYNCSTAGES_G       => C_RESYNC_NB_STAGES
-        )
-        port map (
-            Clk    => vga_clk,
-            RstOut => internal_vga_arst_p,
-            RstIn  => intermediate_arst_p
+            -- Internal clock domain
+            O_INTERNAL_CLK    => internal_clk,
+            O_INTERNAL_ARST_P => internal_clk_arst_p,
+
+            -- VGA clock domain
+            O_VGA_CLK         => vga_clk,
+            O_VGA_ARST_P      => vga_clk_arst_p
         );
 
     -- =================================================================================================================
@@ -260,7 +227,7 @@ begin
         )
         port map (
             Clk       => internal_clk,
-            Rst       => internal_sys_arst_p,
+            Rst       => internal_clk_arst_p,
             DataAsync => async_inputs_slv,
             DataSync  => sync_inputs_slv
         );
@@ -277,7 +244,7 @@ begin
         )
         port map (
             CLK               => internal_clk,
-            ARST_P            => internal_sys_arst_p,
+            ARST_P            => internal_clk_arst_p,
             I_UART_RX         => PAD_I_UART_RX,
             O_UART_TX         => PAD_O_UART_TX,
             O_START_BIT_ERROR => hwif_in.uart_start_bit_error_counter.count.incr,
@@ -343,7 +310,7 @@ begin
     inst_reglock : entity lib_rtl.regblock
         port map (
             clk            => internal_clk,
-            arst           => internal_sys_arst_p,
+            arst           => internal_clk_arst_p,
             s_axil_awready => axil_awready,
             s_axil_awvalid => axil_awvalid,
             s_axil_awaddr  => axil_awaddr,
@@ -381,7 +348,7 @@ begin
         )
         port map (
             CLK             => internal_clk,
-            ARST_P          => internal_sys_arst_p,
+            ARST_P          => internal_clk_arst_p,
             O_SCLK          => PAD_O_SCLK,
             O_MOSI          => PAD_O_MOSI,
             I_MISO          => PAD_I_MISO,
@@ -413,11 +380,11 @@ begin
         port map (
             -- System clock domain
             CLK_SYS         => internal_clk,
-            ARST_SYS_P      => internal_sys_arst_p,
+            ARST_SYS_P      => internal_clk_arst_p,
             I_MANUAL_COLORS => manual_colors,
             -- VGA clock domain
             CLK_VGA         => vga_clk,
-            ARST_VGA_P      => internal_vga_arst_p,
+            ARST_VGA_P      => vga_clk_arst_p,
             O_HSYNC         => PAD_O_VGA_HSYNC,
             O_VSYNC         => PAD_O_VGA_VSYNC,
             O_RED           => PAD_O_VGA_RED,
@@ -429,10 +396,10 @@ begin
     -- LED CONTROL: LED_0 is ON when the value of the counter 'bad_address_counter' is greater than 0
     -- =================================================================================================================
 
-    p_led : process (internal_clk, internal_sys_arst_p) is
+    p_led : process (internal_clk, internal_clk_arst_p) is
     begin
 
-        if (internal_sys_arst_p = '1') then
+        if (internal_clk_arst_p = '1') then
 
             PAD_O_LED_0 <= '0';
 
