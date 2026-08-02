@@ -1,13 +1,18 @@
 # NVC Coverage Specification File
 # Collect coverage only on RTL sources, exclude testbench and models
+#
+# Format:
+# (+|-)block <ENTITY_NAME>
+# (+|-)hierarchy <HIERARCHY>
+# (+|-)fsm-type <TYPE>
 
-# Enable coverage on main RTL library
-+hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.*
+# Enable coverage on custom IPs
++block uart_tx
++block uart_rx
++block uart_axi_lite_bridge
++block spi_master
++block vga_controller
++block top_fpga
 
-# Excluse OLO library modules (IP)
--hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.INST_OLO_BASE_SYS_RESET_GEN.*
--hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.INST_OLO_BASE_VGA_RESET_GEN.*
--hierarchy LIB_BENCH.TB_TOP_FPGA.DUT.INST_VGA.INST_OLO_BASE_CC_STATUS.*
-
-# Exclude PLL/clock generation (vendor IP)
--block clk_wiz_0
+# Enable coverage on generated IPs
++block regblock
