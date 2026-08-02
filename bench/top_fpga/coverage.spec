@@ -7,6 +7,7 @@
 # (+|-)fsm-type <TYPE>
 
 # Enable coverage on custom IPs
++block clk_rst_manager
 +block uart_tx
 +block uart_rx
 +block uart_axi_lite_bridge
