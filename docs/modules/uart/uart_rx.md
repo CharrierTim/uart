@@ -3,7 +3,7 @@
 ## Description
 
 The UART RX module implements a asynchronous UART receiver that samples and deserializes incoming data bits
-from a input line (`I_UART_RX`).
+from a input line (`PAD_I_UART_RX`).
 The receiver uses oversampling, digital filtering, and majority voting to reduce noise and improve reliability.
 
 It supports configurable baud rates and sampling rates.
@@ -32,7 +32,7 @@ It supports configurable baud rates and sampling rates.
 | ------------------- | ----------- | :-------: | ------------- | ------------------------------------- |
 | `CLK`               | std_logic   |    in     | -             | Input clock                           |
 | `ARST_P`            | std_logic   |    in     | -             | Input asynchronous reset, active high |
-| `I_UART_RX`         | std_logic   |    in     | -             | Asynchronous input UART RX line       |
+| `PAD_I_UART_RX`     | std_logic   |    in     | -             | Asynchronous input UART RX line       |
 | `O_BYTE`            | vector[7:0] |    out    | 0x00          | Output byte                           |
 | `O_BYTE_VALID`      | std_logic   |    out    | 0b0           | Output byte valid flag                |
 | `O_START_BIT_ERROR` | std_logic   |    out    | 0b0           | Output start bit error flag           |
@@ -79,7 +79,7 @@ A 5-stage shift register processes the incoming signal:
 ```none
 Stage 0-1: Metastability resolution (2 flip-flops)
 Stage 2-4: Digital filtering (3 consecutive samples)
-I_UART_RX → [FF] → [FF] → [Filter] → [Filter] → [Filter] → i_uart_rx_filtered
+PAD_I_UART_RX → [FF] → [FF] → [Filter] → [Filter] → [Filter] → i_uart_rx_filtered
 ```
 
 #### Digital Filtering Logic
