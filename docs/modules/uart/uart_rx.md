@@ -74,27 +74,25 @@ The asynchronous UART RX input must be properly synchronized to prevent metastab
 
 #### Synchronization Chain
 
-A 5-stage shift register processes the incoming signal:
+A 4-stage shift register processes the incoming signal. The filter examines three overlapping synchronized samples:
 
 ```none
-Stage 0-1: Metastability resolution (2 flip-flops)
-Stage 2-4: Digital filtering (3 consecutive samples)
-PAD_I_UART_RX → [FF] → [FF] → [Filter] → [Filter] → [Filter] → i_uart_rx_filtered
+I_UART_RX → [Stage 0] → [Stage 1] → [Stage 2] → [Stage 3] → i_uart_rx_filtered
+                                     └──── filter bits 3:1 ────┘
 ```
 
 #### Digital Filtering Logic
 
 The filter uses a simple majority voting algorithm on the last 3 stages:
 
-| Input Samples (bits 4:2) | Filtered Output     | Description            |
+| Input Samples (bits 3:1) | Filtered Output     | Description            |
 | ------------------------ | ------------------- | ---------------------- |
 | `000`                    | `0`                 | All zeros → output low |
 | `111`                    | `1`                 | All ones → output high |
 | Other patterns           | Keep previous value | Insufficient agreement |
 
-!!! important
-    The first 2 bits of the shift register are potentially metastable and must NOT be used for any logic decisions.
-    Only bits [4:2] are used for filtering. (I made this mistake)
+The filtered value changes only after bits 3:1 contain three consecutive equal samples. Other patterns retain the
+previous filtered value.
 
 #### Edge Detection
 
@@ -139,8 +137,10 @@ Legend:
 The mid-bit sample point is calculated as:
 
 $$
-\mathrm{mid bit} = \frac{\mathrm{G}\_\mathrm{BAUD}\_\mathrm{RATE}\_\mathrm{BPS} - 1}{2}
+\mathrm{mid bit} = \frac{\mathrm{G}\_\mathrm{SAMPLING}\_\mathrm{RATE}}{2}
 $$
+
+With the default 16x oversampling rate, the sample point is tick 8.
 
 ### Bit Counter
 
@@ -186,7 +186,7 @@ The module then waits for the following time before going back to idle and accep
 
 $$
 \mathrm{RECOVERY}\_\mathrm{PERIOD} = \mathrm{G}\_\mathrm{SAMPLING}\_\mathrm{RATE} \times
-(\mathrm{G}\_\mathrm{NB}\_\mathrm{DATA}\_\mathrm{BITS} + 1)
+(\mathrm{O}\_\mathrm{BYTE}'\mathrm{length} + 1)
 $$
 
 This represents the time for almost one complete UART frame (data bits + stop bit) at the configured baud rate.
@@ -201,20 +201,20 @@ The UART RX FSM is defined as:
 
 Where the following transitions are defined:
 
-| Transition | Condition(s)                                                                                                                           |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| T0         | `i_uart_rx_filtered_d1 = 1` **AND** `i_uart_rx_filtered = 0` (falling edge on the UART line)                                           |
-| T1         | `rx_baud_tick = 1` **AND** `oversampling_counter = G_SAMPLING_RATE - 1` **AND** `uart_rx_sampled_bit = 1` (invalid start bit = 1)      |
-| T2         | Automatic                                                                                                                              |
-| T3         | `recovery_elapsed = 1`                                                                                                                 |
-| T4         | `rx_baud_tick = 1` **AND** `oversampling_counter = G_SAMPLING_RATE - 1` **AND** `uart_rx_sampled_bit = 0` (valid start bit = 0)        |
-| T5         | `rx_baud_tick = 1` **AND** `oversampling_counter = G_SAMPLING_RATE - 1` **AND** `bit_counter = O_BYTE'length - 1`                      |
-| T6         | `rx_baud_tick = 1` **AND** `oversampling_counter = C_THREE_QUARTER_POINT - 1` **AND** `uart_rx_sampled_bit = 0` (invalid stop bit = 0) |
-| T7         | Automatic                                                                                                                              |
-| T8         | `rx_baud_tick = 1` **AND** `oversampling_counter = C_THREE_QUARTER_POINT - 1` **AND** `uart_rx_sampled_bit = 1` (valid stop bit = 1)   |
-| T9         | Automatic                                                                                                                              |
+| Transition | Condition(s)                                                                                                                      |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| T0         | `i_uart_rx_filtered_d1 = 1` **AND** `i_uart_rx_filtered = 0` (falling edge on the UART line)                                      |
+| T1         | `rx_baud_tick = 1` **AND** `oversampling_counter = G_SAMPLING_RATE - 1` **AND** `uart_rx_sampled_bit = 1` (invalid start bit = 1) |
+| T2         | Automatic                                                                                                                         |
+| T3         | `recovery_elapsed = 1`                                                                                                            |
+| T4         | `rx_baud_tick = 1` **AND** `oversampling_counter = G_SAMPLING_RATE - 1` **AND** `uart_rx_sampled_bit = 0` (valid start bit = 0)   |
+| T5         | `rx_baud_tick = 1` **AND** `oversampling_counter = G_SAMPLING_RATE - 1` **AND** `bit_counter = O_BYTE'length - 1`                 |
+| T6         | `oversampling_counter = C_THREE_QUARTER_POINT - 1` **AND** `uart_rx_sampled_bit = 0` (invalid stop bit = 0)                       |
+| T7         | Automatic                                                                                                                         |
+| T8         | `oversampling_counter = C_THREE_QUARTER_POINT - 1` **AND** `uart_rx_sampled_bit = 1` (valid stop bit = 1)                         |
+| T9         | Automatic                                                                                                                         |
 
 !!! note
     **Early Stop Bit Exit for Burst Support**
     The module exits the stop bit at **3/4 of the bit period** (tick 12 of 16) after validation at mid-point
-    (tick 8).This enables zero-gap back-to-back frame reception for burst transmissions.
+    (tick 8). This enables zero-gap back-to-back frame reception for burst transmissions.

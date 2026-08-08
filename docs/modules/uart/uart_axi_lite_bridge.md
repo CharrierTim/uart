@@ -105,7 +105,7 @@ The following fields are defined:
 
 #### Read Mode
 
-The read mode allows reading a 16-bit value from a specified 8-bit register address. The device responds with the
+The read mode allows reading a 32-bit value from a specified 8-bit register address. The device responds with the
 current register value.
 
 **Command Format**:
@@ -151,7 +151,7 @@ Bytes received    (hex): 0x44 0x45 0x39 0x44 0x42 0x45 0x45 0x46 0x0D
 
 #### Write Mode
 
-The write mode allows writing a 16-bit value to a specified 8-bit register address.
+The write mode allows writing a 32-bit value to a specified 8-bit register address.
 The device does not send any acknowledgment response after a successful write operation.
 
 **Command Format**:
