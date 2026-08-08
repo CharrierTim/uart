@@ -93,7 +93,9 @@ nav:
   - Home: index.md
   - Usage: usage.md
   - Modules:
+      - Overview: modules/index.md
       - Top FPGA: modules/top_fpga/top_fpga.md
+      - Clock and Reset Manager: modules/clk_rst_manager/clk_rst_manager.md
       - Internal Registers: modules/regblock/regblock.md
       - UART:
           - UART AXI-Lite Bridge: modules/uart/uart_axi_lite_bridge.md
