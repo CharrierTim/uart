@@ -26,7 +26,7 @@ The FPGA design consists of the following main components:
 
 ![UART Top FPGA](./assets/uart.drawio){ page="TOP-FPGA" }
 
-See the [top_fpga module documentation](modules/top_fpga.md) for design details and instantiated modules.
+See the [top_fpga module documentation](modules/top_fpga/top_fpga.md) for design details and instantiated modules.
 
 ## List of Abbreviations
 
@@ -149,7 +149,7 @@ The FPGA defines the following inputs/outputs:
 
 ## Design architecture
 
-- [FPGA modules](modules/top_fpga.md)
+- [FPGA modules](modules/top_fpga/top_fpga.md)
 
 ## Testbench
 

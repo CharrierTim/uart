@@ -93,7 +93,7 @@ nav:
   - Home: index.md
   - Usage: usage.md
   - Modules:
-      - Top FPGA: modules/top_fpga.md
+      - Top FPGA: modules/top_fpga/top_fpga.md
       - Internal Registers: modules/regblock/regblock.md
       - UART:
           - UART AXI-Lite Bridge: modules/uart/uart_axi_lite_bridge.md
