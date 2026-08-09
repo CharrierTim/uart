@@ -39,6 +39,7 @@
 -- 2.2      09/04/2026  Timothee Charrier   Refactor soft reset sequential process to be more clear and concise.
 -- 2.3      24/05/2026  Timothee Charrier   Update UART interface to AXI4-Lite and update the protocol accordingly.
 --          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
+--          05/08/2026                      Update UART interface port names with `PAD_` prefix for clarity.
 -- =====================================================================================================================
 
 library ieee;
@@ -61,9 +62,9 @@ entity UART_AXI_LITE_BRIDGE is
         -- Clock and reset
         CLK               : in    std_logic;
         ARST_P            : in    std_logic;
-        -- UART interface
-        I_UART_RX         : in    std_logic;
-        O_UART_TX         : out   std_logic;
+        -- UART interface (RX from the pad, asynchronous to the clock domain `CLK`)
+        PAD_I_UART_RX     : in    std_logic;
+        PAD_O_UART_TX     : out   std_logic;
         O_START_BIT_ERROR : out   std_logic;
         O_STOP_BIT_ERROR  : out   std_logic;
         -- AXI4-Lite interface for register access
@@ -210,7 +211,7 @@ begin
             ARST_P          => ARST_P,
             I_TX_DATA       => tx_byte_to_send_encoded,
             I_TX_DATA_VALID => tx_byte_to_send_valid,
-            O_UART_TX       => O_UART_TX,
+            O_UART_TX       => PAD_O_UART_TX,
             O_DONE          => tx_byte_send
         );
 
@@ -251,7 +252,7 @@ begin
         port map (
             CLK               => CLK,
             ARST_P            => ARST_P,
-            I_UART_RX         => I_UART_RX,
+            PAD_I_UART_RX     => PAD_I_UART_RX,
             O_BYTE            => rx_byte,
             O_BYTE_VALID      => rx_byte_valid,
             O_START_BIT_ERROR => O_START_BIT_ERROR,

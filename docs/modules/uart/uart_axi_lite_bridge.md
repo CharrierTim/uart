@@ -29,8 +29,8 @@ It allows reading and writing 32-bit values to/from the AXI Lite bus through a s
 | ---------------- | ----------------------------- | :-------: | ------------- | ------------------------------------------ |
 | `CLK`            | std_logic                     |    in     | -             | Input clock                                |
 | `ARST_P`         | std_logic                     |    in     | -             | Input asynchronous reset, active high      |
-| `I_UART_RX`      | std_logic                     |    in     | -             | Asynchronous input UART RX line            |
-| `O_UART_TX`      | std_logic                     |    out    | 0b1           | Output UART TX line                        |
+| `PAD_I_UART_RX`  | std_logic                     |    in     | -             | Asynchronous input UART RX line            |
+| `PAD_O_UART_TX`  | std_logic                     |    out    | 0b1           | Output UART TX line synchronous to `CLK`   |
 | `M_AXIL_AWREADY` | std_logic                     |    in     | -             | AXI Lite write address ready (from slave)  |
 | `M_AXIL_AWVALID` | std_logic                     |    out    | 0b0           | AXI Lite master write address valid        |
 | `M_AXIL_AWADDR`  | std_logic_vector(7 downto 0)  |    out    | 0x00          | AXI Lite master write address              |
@@ -105,7 +105,7 @@ The following fields are defined:
 
 #### Read Mode
 
-The read mode allows reading a 16-bit value from a specified 8-bit register address. The device responds with the
+The read mode allows reading a 32-bit value from a specified 8-bit register address. The device responds with the
 current register value.
 
 **Command Format**:
@@ -151,7 +151,7 @@ Bytes received    (hex): 0x44 0x45 0x39 0x44 0x42 0x45 0x45 0x46 0x0D
 
 #### Write Mode
 
-The write mode allows writing a 16-bit value to a specified 8-bit register address.
+The write mode allows writing a 32-bit value to a specified 8-bit register address.
 The device does not send any acknowledgment response after a successful write operation.
 
 **Command Format**:

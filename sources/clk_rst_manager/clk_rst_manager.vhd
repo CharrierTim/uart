@@ -53,7 +53,7 @@ entity CLK_RST_MANAGER is
         G_RESYNC_NB_STAGES : positive  := 3
     );
     port (
-        -- Input clock and reset
+        -- Input clock and reset from the pads
         PAD_I_CLK         : in    std_logic;
         PAD_I_ARST_P      : in    std_logic;
 

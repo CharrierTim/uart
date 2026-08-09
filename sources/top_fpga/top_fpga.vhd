@@ -45,6 +45,7 @@
 --                                          Add FPGA_ID generic and register.
 --          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 --                                          Move clock and reset logic to a dedicated module `clk_rst_manager`.
+--          05/08/2026                      Update UART interface port names with `PAD_` prefix.
 -- =====================================================================================================================
 
 library ieee;
@@ -245,8 +246,8 @@ begin
         port map (
             CLK               => internal_clk,
             ARST_P            => internal_clk_arst_p,
-            I_UART_RX         => PAD_I_UART_RX,
-            O_UART_TX         => PAD_O_UART_TX,
+            PAD_I_UART_RX     => PAD_I_UART_RX,
+            PAD_O_UART_TX     => PAD_O_UART_TX,
             O_START_BIT_ERROR => hwif_in.uart_start_bit_error_counter.count.incr,
             O_STOP_BIT_ERROR  => hwif_in.uart_stop_bit_error_counter.count.incr,
             M_AXIL_AWREADY    => axil_awready,

@@ -35,6 +35,7 @@
 -- 1.1      07/01/2026  Timothee Charrier   Naming conventions update and remove generic and code comments update
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 --          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
+--          05/08/2026                      Update UART RX input port names with `PAD_` prefix for clarity.
 -- =====================================================================================================================
 
 library ieee;
@@ -56,8 +57,8 @@ entity UART_RX is
         -- Clock and reset
         CLK               : in    std_logic;
         ARST_P            : in    std_logic;
-        -- UART interface
-        I_UART_RX         : in    std_logic;
+        -- UART interface from the pad, asynchronous to the clock domain `CLK`
+        PAD_I_UART_RX     : in    std_logic;
         -- Output data interface
         O_BYTE            : out   std_logic_vector(8 - 1 downto 0);
         O_BYTE_VALID      : out   std_logic;
@@ -323,10 +324,10 @@ begin
         elsif rising_edge(CLK) then
 
             -- =========================================================================================================
-            -- Shift register to resynchronize the asynchronous UART RX input into the local clock domain
+            -- Shift register to resynchronize the asynchronous UART RX input from the pad into the local clock domain
             -- =========================================================================================================
 
-            i_uart_rx_sr <= i_uart_rx_sr(i_uart_rx_sr'high - 1 downto i_uart_rx_sr'low) & I_UART_RX;
+            i_uart_rx_sr <= i_uart_rx_sr(i_uart_rx_sr'high - 1 downto i_uart_rx_sr'low) & PAD_I_UART_RX;
 
             -- =========================================================================================================
             -- Simple digital filtering to mitigate noise on the UART RX line.

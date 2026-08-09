@@ -36,6 +36,7 @@
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
 --          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 -- 2.1      29/07/2026  Timothee Charrier   Add common package for `proc_check_time_in_range` procedure
+--          05/08/2026                      Update UART interface input port names with `PAD_` prefix for clarity.
 -- =====================================================================================================================
 
 library ieee;
@@ -77,28 +78,28 @@ architecture TB_UART_RX_ARCH of TB_UART_RX is
     -- =================================================================================================================
 
     -- UART Slave BFM instance
-    constant C_UART_BFM_MASTER    : uart_master_t   := new_uart_master(
+    constant C_UART_BFM_MASTER     : uart_master_t   := new_uart_master(
             initial_baud_rate => C_BAUD_RATE_BPS
         );
-    constant C_UART_STREAM_MASTER : stream_master_t := as_stream(C_UART_BFM_MASTER);
+    constant C_UART_STREAM_MASTER  : stream_master_t := as_stream(C_UART_BFM_MASTER);
 
     -- =================================================================================================================
     -- SIGNALS
     -- =================================================================================================================
 
     -- DUT signals
-    signal tb_clk                 : std_logic;
-    signal tb_arst_h              : std_logic;
-    signal tb_i_uart_rx           : std_logic;
-    signal tb_o_byte              : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
-    signal tb_o_byte_valid        : std_logic;
-    signal tb_o_start_bit_error   : std_logic;
-    signal tb_o_stop_bit_error    : std_logic;
+    signal tb_clk                  : std_logic;
+    signal tb_arst_h               : std_logic;
+    signal tb_pad_i_uart_rx        : std_logic;
+    signal tb_o_byte               : std_logic_vector(C_NB_DATA_BITS - 1 downto 0);
+    signal tb_o_byte_valid         : std_logic;
+    signal tb_o_start_bit_error    : std_logic;
+    signal tb_o_stop_bit_error     : std_logic;
 
-    signal tb_i_uart_rx_manual    : std_logic;
-    signal tb_model_uart_tx       : std_logic;
-    signal tb_i_uart_select       : std_logic;
-    signal tb_random_data         : std_logic_vector(tb_o_byte'range);
+    signal tb_pad_i_uart_rx_manual : std_logic;
+    signal tb_model_uart_tx        : std_logic;
+    signal tb_i_uart_select        : std_logic;
+    signal tb_random_data          : std_logic_vector(tb_o_byte'range);
 
 begin
 
@@ -115,7 +116,7 @@ begin
         port map (
             CLK               => tb_clk,
             ARST_P            => tb_arst_h,
-            I_UART_RX         => tb_i_uart_rx,
+            PAD_I_UART_RX     => tb_pad_i_uart_rx,
             O_BYTE            => tb_o_byte,
             O_BYTE_VALID      => tb_o_byte_valid,
             O_START_BIT_ERROR => tb_o_start_bit_error,
@@ -123,8 +124,8 @@ begin
         );
 
     -- Select between manual RX input and model RX input
-    tb_i_uart_rx <= tb_i_uart_rx_manual when tb_i_uart_select = '1' else
-                    tb_model_uart_tx;
+    tb_pad_i_uart_rx <= tb_pad_i_uart_rx_manual when tb_i_uart_select = '1' else
+                        tb_model_uart_tx;
 
     -- =================================================================================================================
     -- UART master model
@@ -183,15 +184,15 @@ begin
         begin
 
             -- Reset the DUT by setting the input state to all zeros
-            tb_arst_h           <= '1';
-            tb_i_uart_rx_manual <= '1';
-            tb_i_uart_select    <= '0';
-            tb_random_data      <= (others => '0');
+            tb_arst_h               <= '1';
+            tb_pad_i_uart_rx_manual <= '1';
+            tb_i_uart_select        <= '0';
+            tb_random_data          <= (others => '0');
 
             wait for c_clock_cycles * C_CLK_PERIOD;
 
             -- Reassert reset
-            tb_arst_h           <= '0';
+            tb_arst_h               <= '0';
 
             -- Wait for the DUT to step over
             wait for 5 ns;
@@ -323,7 +324,7 @@ begin
                 for value in 1 to G_RANDOM_ITERATIONS loop
                     tb_random_data <= v_random_data.RandSlv(tb_o_byte'length);
                     wait for C_BIT_TIME;
-                    proc_uart_send_byte(tb_i_uart_rx_manual, tb_random_data);
+                    proc_uart_send_byte(tb_pad_i_uart_rx_manual, tb_random_data);
 
                     -- Verify data are matching
                     check_equal(
@@ -356,27 +357,27 @@ begin
                 tb_i_uart_select <= '1';
 
                 -- Send a byte (0x00) with invalid start bit
-                tb_i_uart_rx_manual <= '0';
-                wait for 0.25 * C_BIT_TIME; -- Invalid start bit (too short)
-                tb_i_uart_rx_manual <= '1'; -- Sudden change to high
-                wait for 0.75 * C_BIT_TIME; -- Complete the rest of the start bit duration
-                tb_i_uart_rx_manual <= '0'; -- Bit 0
+                tb_pad_i_uart_rx_manual <= '0';
+                wait for 0.25 * C_BIT_TIME;     -- Invalid start bit (too short)
+                tb_pad_i_uart_rx_manual <= '1'; -- Sudden change to high
+                wait for 0.75 * C_BIT_TIME;     -- Complete the rest of the start bit duration
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 0
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 1
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 1
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 2
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 2
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 3
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 3
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 4
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 4
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 5
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 5
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 6
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 6
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 7
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 7
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Stop bit
+                tb_pad_i_uart_rx_manual <= '1'; -- Stop bit
                 wait for 1.1 * C_BIT_TIME;
 
                 -- Check data was not updated
@@ -387,13 +388,13 @@ begin
 
                 info("Sending bytes 0x01 and 0x02 to ensure UART is still working");
 
-                proc_uart_send_byte(tb_i_uart_rx_manual, x"01");
+                proc_uart_send_byte(tb_pad_i_uart_rx_manual, x"01");
                 check_equal(
                     tb_o_byte = x"01",
                     True,
                     "Checking received data is 0x02");
 
-                proc_uart_send_byte(tb_i_uart_rx_manual, x"02");
+                proc_uart_send_byte(tb_pad_i_uart_rx_manual, x"02");
                 check_equal(
                     tb_o_byte = x"02",
                     True,
@@ -412,27 +413,27 @@ begin
                 tb_i_uart_select <= '1';
 
                 -- Send a byte (0xE2) with invalid stop bit
-                tb_i_uart_rx_manual <= '0';
+                tb_pad_i_uart_rx_manual <= '0';
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 0
+                tb_pad_i_uart_rx_manual <= '1'; -- Bit 0
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 1
+                tb_pad_i_uart_rx_manual <= '1'; -- Bit 1
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 2
+                tb_pad_i_uart_rx_manual <= '1'; -- Bit 2
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 3
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 3
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 4
+                tb_pad_i_uart_rx_manual <= '1'; -- Bit 4
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 5
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 5
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 6
+                tb_pad_i_uart_rx_manual <= '1'; -- Bit 6
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Bit 7
+                tb_pad_i_uart_rx_manual <= '0'; -- Bit 7
                 wait for C_BIT_TIME;
-                tb_i_uart_rx_manual <= '0'; -- Stop bit
+                tb_pad_i_uart_rx_manual <= '0'; -- Stop bit
                 wait for 2 * C_BIT_TIME;
-                tb_i_uart_rx_manual <= '1'; -- Bit 0
+                tb_pad_i_uart_rx_manual <= '1'; -- Bit 0
 
                 -- Check data was not updated
                 check_equal(
@@ -445,13 +446,13 @@ begin
 
                 info("Sending bytes 0x01 and 0x02 to ensure UART is still working");
 
-                proc_uart_send_byte(tb_i_uart_rx_manual, x"01");
+                proc_uart_send_byte(tb_pad_i_uart_rx_manual, x"01");
                 check_equal(
                     tb_o_byte = x"01",
                     True,
                     "Checking received data is 0x01");
 
-                proc_uart_send_byte(tb_i_uart_rx_manual, x"02");
+                proc_uart_send_byte(tb_pad_i_uart_rx_manual, x"02");
                 check_equal(
                     tb_o_byte = x"02",
                     True,
