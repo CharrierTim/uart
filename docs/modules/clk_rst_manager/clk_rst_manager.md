@@ -81,9 +81,9 @@ The FPGA uses a PLL (`clk_wiz_0`) to generate internal clocks from the input clo
 | `PAD_I_CLK`         | std_logic |    in     | -             | External 100 MHz input clock             |
 | `PAD_I_ARST_P`      | std_logic |    in     | -             | External asynchronous reset, active high |
 | `O_INTERNAL_CLK`    | std_logic |    out    | 0             | 50 MHz internal system clock             |
-| `O_INTERNAL_ARST_P` | std_logic |    out    |               | Internal system reset, active high       |
+| `O_INTERNAL_ARST_P` | std_logic |    out    | 1             | Internal system reset, active high       |
 | `O_VGA_CLK`         | std_logic |    out    | 0             | 65 MHz VGA clock                         |
-| `O_VGA_ARST_P`      | std_logic |    out    |               | VGA-domain reset, active high            |
+| `O_VGA_ARST_P`      | std_logic |    out    | 1             | VGA-domain reset, active high            |
 
 </div>
 
