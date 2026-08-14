@@ -601,6 +601,9 @@ class GHDL(Simulator):
             with open(file=json_file, encoding="utf-8") as f:
                 content = f.read()
 
+            # Normalize Windows backslashes to forward slashes in the JSON file
+            content = content.replace("\\", "/")
+
             # Replace version string in JSON file
             content: str = re.sub(
                 pattern=r'"gcovr/format_version":\s*"\d+\.\d+"', repl='"gcovr/format_version": "0.14"', string=content
