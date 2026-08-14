@@ -30,7 +30,7 @@ required-version = ">=0.11.15"
 
 [dependency-groups]
 
-hdl_dev = ["peakrdl-markdown", "peakrdl-regblock-vhdl", "peakrdl"]
+hdl_dev = ["gcovr", "peakrdl-markdown", "peakrdl-regblock-vhdl", "peakrdl"]
 
 lint = ["docstrfmt", "pre-commit", "pytest", "ruff", "vsg"]
 
