@@ -49,6 +49,7 @@
 ##          01/06/2026  Timothee Charrier   Rename `--fast_pll` flag to `--without_unisim`.
 ## 2.6      29/07/2026  Timothee Charrier   Apply changes from `setup_vunit.py` to improve portability.
 ##                                          Add new common library `common`.
+##          14/08/2026                      Small update to use the new `VUnitProject` class.
 ## =====================================================================================================================
 
 import sys
@@ -59,7 +60,7 @@ from vunit.ui.library import Library
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 sys.path.insert(0, str((Path(__file__).parent.parent.parent / "cores" / "open-logic" / "sim").resolve()))
 
-from setup_vunit import create_vunit, create_vunit_cli
+from setup_vunit import VUnitProject, create_vunit_cli
 
 ## =====================================================================================================================
 # Define paths
@@ -78,37 +79,36 @@ MODELS_ROOT: Path = BENCH_ROOT / "models"
 ## =====================================================================================================================
 
 cli = create_vunit_cli()
-cli.parser.add_argument("--vhdl_ls", action="store_true", help="Generate vhdl_ls configuration file")
-cli.parser.add_argument(
-    "--without_unisim",
-    action="store_true",
-    help="Use a custom behavioral PLL model (faster simulation without needing Vivado pre-compiled libraries)",
-)
 args = cli.parse_args()
 
 ## =====================================================================================================================
 # Set up VUnit environment
 ## =====================================================================================================================
 
-VU, simulator = create_vunit(args=args, run_file_dir=THIS_DIR, add_random=False)
+project = VUnitProject.create(
+    args=args,
+    run_file_dir=THIS_DIR,
+    add_random=False,
+)
+project.require_unisim()
 
 # Open-logic libraries
-OLO: Library = VU.add_library(library_name="olo")
+OLO: Library = project.vu.add_library(library_name="olo")
 OLO.add_source_files(pattern=CORES_ROOT / "open-logic" / "src" / "**" / "*.vhd")
 OLO.add_source_files(pattern=CORES_ROOT / "open-logic" / "3rdParty/" / "en_cl_fix" / "hdl" / "*.vhd")
 OLO.add_compile_option(name="nvc.a_flags", value=["--relaxed"])
 
 # Add the source files to the library
-LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
+LIB_RTL: Library = project.vu.add_library(library_name="lib_rtl")
 LIB_RTL.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
 
-if not args.without_unisim:
+if project.use_unisim:
     LIB_RTL.add_source_file(file_name=CORES_ROOT / "pll" / "clk_wiz_0_sim_netlist.vhd")
 else:
     LIB_RTL.add_source_file(file_name=MODELS_ROOT / "pll" / "pll_fast_sim.vhd")
 
 # Add the test library
-LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
+LIB_BENCH: Library = project.vu.add_library(library_name="lib_bench")
 LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_common_pkg.vhd")
 LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_reg_map_pkg.vhd")
 LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "uart" / "*.vhd")
@@ -116,32 +116,10 @@ LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "spi" / "*.vhd")
 LIB_BENCH.add_source_files(pattern=THIS_DIR / "**" / "*.vhd")
 
 ## =====================================================================================================================
-# Set up simulator
+# Generate vhdl_ls configuration or run simulation
 ## =====================================================================================================================
 
-simulator.attach(VU).configure()
-
-if not args.without_unisim:
-    simulator.add_library(library_name="unisim")
-    simulator.add_library(library_name="unifast")
-
-## =====================================================================================================================
-# Generate vhdl_ls configuration if requested and exit
-## =====================================================================================================================
-
-if args.vhdl_ls:
-    optional_files: list[tuple[Path | None, str]] = [
-        (BENCH_ROOT / "ip_tb" / "**" / "*.vhd", "lib_bench"),
-        (simulator.get_unifast_library_path(), "unifast"),
-        (simulator.get_unisim_vcomp_library_path(), "unisim"),
-        (simulator.get_unisim_vpkg_library_path(), "unisim"),
-    ]
-    files: list[tuple[Path, str]] = [(path, library) for path, library in optional_files if path is not None]
-    simulator.generate_vhdl_ls_toml(external_libraries=files, output_path=PRJ_ROOT)
-    sys.exit(0)
-
-## =====================================================================================================================
-# Run
-## =====================================================================================================================
-
-VU.main(post_run=simulator.post_run)
+project.execute(
+    output_path=PRJ_ROOT,
+    external_libraries=[(BENCH_ROOT / "ip_tb" / "**" / "*.vhd", "lib_bench")],
+)

@@ -198,9 +198,12 @@ vivado -mode batch -nojournal -source run_synthesis.tcl
 
 ## Additional Options
 
-- `--vhdl_ls`: Generate a `vhdl_ls` configuration file for [vhdl_ls](https://github.com/VHDL-LS/rust_hdl_vscode)
-  language server integration. The file will be generated in the project root as `vhdl_ls.toml`. Known issue
-  with `unifast` library, where manually adding `is_third_party = true` fixes the warnings.
+- `--vhdl-ls`: Generate a `vhdl_ls` configuration file for [vhdl_ls](https://github.com/VHDL-LS/rust_hdl_vscode)
+    language server integration. The file will be generated in the project root as `vhdl_ls.toml`. This mode does not
+    require a simulator, and simulator selection flags are accepted but ignored.
+
+When Vivado Unisim sources are unavailable, both simulation and VHDL-LS generation require `--without-unisim` explicitly
+to select the behavioral PLL model.
 
 The script auto-detects the simulator (1. `nvc` or 2. `GHDL` or 3. `QuestaSim`/`ModelSim`) but you can also explicitly specify
 the simulator to use:
@@ -208,7 +211,7 @@ the simulator to use:
 - `--nvc`: Use `nvc` as the simulator.
 - `--ghdl`: Use `GHDL` as the simulator.
 - `--questa` or `--modelsim`: Use `QuestaSim`/`ModelSim` as the simulator.
-- `--without_unisim`: Use a custom behavioral PLL model (faster simulation without needing Vivado pre-compiled libraries)
+- `--without-unisim`: Use a custom behavioral PLL model (faster simulation without needing Vivado pre-compiled libraries)
 
 Run the following command to get more help with `VUnit` options:
 
