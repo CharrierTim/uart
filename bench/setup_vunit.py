@@ -24,7 +24,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    setup_vunit.py
-## @version 2.7
+## @version 3.0
 ## @brief   This module provides simulator classes for VUnit.
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -52,6 +52,8 @@
 ##                                          Improve library path handling and error reporting
 ##                                          Create a `create_vunit_cli` and `create_vunit` functions to simplify VUnit
 ##                                          setup and CLI handling.
+## 3.0      14/08/2026  Timothee Charrier   Major refactor: add `VivadoPathHelper` and `VUnitProject` classes to better
+##                                          handle the simulation/non-simulation modes.
 ## =====================================================================================================================
 
 import logging
@@ -72,34 +74,314 @@ if TYPE_CHECKING:
     from vunit.ui.library import Library
 
 LOGGER: logging.Logger = logging.getLogger(name=__name__)
-VHDL_LS_TOML: TypeAlias = dict[str, Any]
+VhdlLsToml: TypeAlias = dict[str, Any]
 
 
-class Simulator(ABC):
-    """Abstract base class for HDL simulators."""
+class VivadoPathHelper:
+    """Resolve Vivado VHDL source paths.
+
+    Unisim files:
+        - unisim_VPKG.vhd: Usually located under        `vivado_path/data/vhdl/src/unisims/unisim_VPKG.vhd`
+        - unisim_VCOMP.vhd: Usually located under       `vivado_path/data/vhdl/src/unisims/unisim_VCOMP.vhd`
+        - Unisim primitive files: Usually located under `vivado_path/data/vhdl/src/unisims/primitive/*.vhd`
+
+    Unifast files:
+        - Unifast primitive files: Usually located under `vivado_path/data/vhdl/src/unifast/primitive/*.vhd`
+    """
+
+    def __init__(self) -> None:
+        """Initialize an unresolved Vivado installation path."""
+        self._vivado_path: Path | None = None
+        self._is_resolved: bool = False
+
+    def _resolve_vivado_path(self, *, warn: bool) -> Path | None:
+        """Resolve and store the Vivado installation path."""
+        if self._is_resolved:
+            return self._vivado_path
+
+        self._is_resolved = True
+        executable_path: str | None = shutil.which(cmd="vivado")
+
+        if not executable_path:
+            if warn:
+                LOGGER.warning("Vivado executable not found in PATH!")
+            return None
+
+        installation_path: Path = Path(executable_path).resolve().parent.parent
+
+        if not (installation_path / "data" / "vhdl").is_dir():
+            if warn:
+                LOGGER.warning("Vivado VHDL data directory not found under %s", installation_path)
+            return None
+
+        self._vivado_path = installation_path
+        return self._vivado_path
+
+    def is_available(self) -> bool:
+        """Return whether Vivado VHDL sources are available without logging a warning."""
+        return self._resolve_vivado_path(warn=False) is not None
+
+    def get_vivado_path(self) -> Path | None:
+        """Return the Vivado installation path when its VHDL sources are available."""
+        return self._resolve_vivado_path(warn=True)
+
+    def _get_source_path(self, relative_path: Path, description: str, *, directory: bool = False) -> Path | None:
+        """Return a Vivado source path when it exists."""
+        vivado_path: Path | None = self.get_vivado_path()
+
+        if vivado_path is None:
+            return None
+
+        source_path: Path = vivado_path / relative_path
+        exists: bool = source_path.is_dir() if directory else source_path.is_file()
+
+        if not exists:
+            LOGGER.warning("%s not found at %s", description, source_path)
+            return None
+
+        return source_path
+
+    def get_unisim_vcomp_path(self) -> Path | None:
+        """Return the Unisim component declaration file."""
+        return self._get_source_path(
+            relative_path=Path("data/vhdl/src/unisims/unisim_VCOMP.vhd"),
+            description="Unisim VCOMP file",
+        )
+
+    def get_unisim_vpkg_path(self) -> Path | None:
+        """Return the Unisim package file."""
+        return self._get_source_path(
+            relative_path=Path("data/vhdl/src/unisims/unisim_VPKG.vhd"),
+            description="Unisim VPKG file",
+        )
+
+    def get_unisim_primitive_path(self) -> Path | None:
+        """Return the glob for Unisim primitive source files."""
+        primitive_path: Path | None = self._get_source_path(
+            relative_path=Path("data/vhdl/src/unisims/primitive"),
+            description="Unisim primitive directory",
+            directory=True,
+        )
+        return primitive_path / "*.vhd" if primitive_path is not None else None
+
+    def get_unifast_primitive_path(self) -> Path | None:
+        """Return the glob for Unifast primitive source files."""
+        primitive_path: Path | None = self._get_source_path(
+            relative_path=Path("data/vhdl/src/unifast/primitive"),
+            description="Unifast primitive directory",
+            directory=True,
+        )
+        return primitive_path / "*.vhd" if primitive_path is not None else None
+
+    def get_vhdl_ls_external_libraries(self) -> list[tuple[Path, str]]:
+        """Return available Vivado source paths tagged with their VHDL library names."""
+        optional_libraries: list[tuple[Path | None, str]] = [
+            (self.get_unifast_primitive_path(), "unifast"),
+            (self.get_unisim_vcomp_path(), "unisim"),
+            (self.get_unisim_vpkg_path(), "unisim"),
+        ]
+        return [(path, library_name) for path, library_name in optional_libraries if path is not None]
+
+
+class VUnitProject:
+    """VUnit project that owns its VUnit instance."""
+
+    THIRD_PARTY_LIBRARIES: ClassVar[set[str]] = {"vunit_lib", "osvvm", "unisim", "unifast", "xil_defaultlib"}
+
+    def __init__(
+        self,
+        args: Namespace,
+        run_file_dir: Path | None = None,
+        add_random: bool = False,
+        vivado_paths: VivadoPathHelper | None = None,
+    ) -> None:
+        """Initialize the VUnit project.
+
+        Parameters
+        ----------
+        args : Namespace
+            Parsed VUnit and simulator command-line arguments.
+        run_file_dir : Path
+            Directory containing the run file.
+        add_random : bool
+            Add the VUnit random package. Defaults to False.
+        vivado_paths : VivadoPathHelper | None
+            Vivado source path resolver. Defaults to a new helper.
+        """
+        # CLI arguments
+        self.args: Namespace = args
+        self.vivado_paths: VivadoPathHelper = vivado_paths or VivadoPathHelper()
+        self._requires_unisim: bool = False
+
+        # Paths
+        self.run_file_dir: Path = run_file_dir or Path.cwd()
+        self.results_dir: Path = self.run_file_dir / "results"
+
+        # Prepare the environment before creating the VUnit instance
+        self._prepare_environment()
+
+        # Create the VUnit instance and add required built-ins and verification components
+        self.vu: VUnit = VUnit.from_args(args=args)
+        self.vu.add_vhdl_builtins()
+        self.vu.add_verification_components()
+
+        if add_random:
+            self.vu.add_random()
+
+    @property
+    def enable_coverage(self) -> bool:
+        """Return whether coverage collection is enabled."""
+        return bool(self.args.coverage)
+
+    @property
+    def vhdl_ls(self) -> bool:
+        """Return whether VHDL-LS configuration generation is requested."""
+        return bool(self.args.vhdl_ls)
+
+    @property
+    def use_unisim(self) -> bool:
+        """Return whether the Vivado Unisim PLL model is requested."""
+        return self._requires_unisim and not bool(self.args.without_unisim)
+
+    def require_unisim(self) -> None:
+        """Declare that this project requires selecting a PLL simulation model."""
+        self._requires_unisim = True
+
+    @classmethod
+    def create(
+        cls,
+        args: Namespace,
+        run_file_dir: Path,
+        add_random: bool = True,
+    ) -> "VUnitProject":
+        """Create a file-only project or simulator-backed project from parsed CLI arguments."""
+        if args.vhdl_ls:
+            return cls(
+                args=args,
+                run_file_dir=run_file_dir,
+                add_random=add_random,
+            )
+        return _create_simulator(
+            args=args,
+            run_file_dir=run_file_dir,
+            add_random=add_random,
+        )
+
+    def execute(
+        self,
+        output_path: Path | None = None,
+        external_libraries: list[tuple[Path, str]] | None = None,
+    ) -> None:
+        """Generate VHDL-LS configuration or run the selected simulator."""
+        # Check if Vivado Unisim sources are available when requested
+        if self.use_unisim and not self.vivado_paths.is_available():
+            raise SystemExit(
+                "ERROR: Vivado Unisim sources are unavailable. "
+                "Pass --without-unisim to use the behavioral PLL model explicitly."
+            )
+
+        # Generate VHDL-LS configuration if requested
+        if self.vhdl_ls:
+            libraries: list[tuple[Path, str]] = list(external_libraries or [])
+
+            if self.use_unisim:
+                vivado_libraries: list[tuple[Path, str]] = self.vivado_paths.get_vhdl_ls_external_libraries()
+                libraries.extend(vivado_libraries)
+
+                # To avoid warnings in the the vivado simulation netlist, define unisim to Vunit
+                self.vu.add_external_library(library_name="unisim", path=str(self.vivado_paths.get_unisim_vpkg_path()))
+
+            self.generate_vhdl_ls_toml(external_libraries=libraries, output_path=output_path)
+            return
+
+        self._execute_simulation(use_unisim=self.use_unisim)
+
+    def _prepare_environment(self) -> None:
+        """Prepare the environment before creating the VUnit instance."""
+
+    def _execute_simulation(self, *, use_unisim: bool) -> None:
+        """Reject simulation for projects without a simulator backend."""
+        raise TypeError("Simulation mode requires a simulator-backed VUnit project")
+
+    def _add_file_to_vhdl_ls_config(
+        self,
+        toml_data: VhdlLsToml,
+        file_path: Path,
+        library_name: str,
+    ) -> None:
+        """Add a file to the vhdl_ls configuration."""
+        libraries: dict[str, dict[str, Any]] = toml_data.setdefault("libraries", {})
+        library_entry: dict[str, Any] = libraries.setdefault(library_name, {"files": []})
+
+        # Exclude known third-party libraries from user code analysis
+        if library_name in self.THIRD_PARTY_LIBRARIES:
+            library_entry["is_third_party"] = True
+
+        library_entry["files"].append(str(file_path.resolve()))
+
+    def generate_vhdl_ls_toml(
+        self,
+        external_libraries: list[tuple[Path, str]] | None = None,
+        output_path: Path | None = None,
+    ) -> None:
+        """Generate `vhdl_ls.toml` file for the rust_hdl VHDL Language Server (https://github.com/VHDL-LS/rust_hdl).
+
+        Adapted from `cores/open-logic/sim/create_vhdl_ls_config.py` to be used with the VUnit project.
+        See https://github.com/open-logic/open-logic/blob/main/sim/create_vhdl_ls_config.py for the original version.
+
+        Parameters
+        ----------
+        external_libraries : list[tuple[Path, str]] | None
+            List of tuples containing library paths and names to include in the configuration. Defaults to None.
+            Example: [(Path("/path/to/unisim_VPKG.vhd"), "unisim")]
+        output_path : Path | None
+            Directory to save the generated configuration file. Defaults to the project root.
+        """
+        if output_path is None:
+            output_path = Path.cwd()
+
+        toml_data: VhdlLsToml = {"libraries": {}}
+
+        # Add files from the VUnit project
+        for source_file in self.vu.get_compile_order():
+            self._add_file_to_vhdl_ls_config(
+                toml_data=toml_data,
+                file_path=Path(source_file.name),
+                library_name=source_file.library.name,
+            )
+
+        # Add external libraries if provided
+        for file_path, library_name in external_libraries or []:
+            self._add_file_to_vhdl_ls_config(
+                toml_data=toml_data,
+                file_path=file_path,
+                library_name=library_name,
+            )
+
+        # Ignore unused work library statement
+        toml_data.setdefault("lint", {})["unnecessary_work_library"] = False
+
+        # Write the TOML data to a file
+        config_file: Path = output_path / "vhdl_ls.toml"
+        try:
+            with open(file=config_file, mode="w", encoding="utf-8") as f:
+                rtoml.dump(obj=toml_data, file=f, pretty=True)
+            LOGGER.info("vhdl_ls configuration generated at: %s", config_file)
+        except OSError as e:
+            LOGGER.error("Failed to write vhdl_ls configuration: %s", e)
+            raise
+
+
+class Simulator(VUnitProject, ABC):
+    """Abstract VUnit project backed by an HDL simulator."""
 
     SIMULATOR_NAME: str = ""
     EXECUTABLE: str = ""
     DEFAULT_LIBRARIES: ClassVar[dict[str, str]] = {}
-    THIRD_PARTY_LIBRARIES: ClassVar[set[str]] = {"vunit_lib", "osvvm", "unisim", "unifast", "xil_defaultlib"}
     DEFAULT_LIBRARIES_TO_COVER: ClassVar[set[str]] = {"lib_bench"}
 
-    def __init__(self, enable_coverage: bool = False, run_file_dir: Path | None = None) -> None:
-        """Initialize the simulator.
-
-        Parameters
-        ----------
-        enable_coverage : bool
-            Enable coverage collection and reporting. Defaults to False.
-        run_file_dir : Path
-            Directory containing the run file.
-        """
-        self.enable_coverage: bool = enable_coverage
-        self.run_file_dir: Path = run_file_dir or Path.cwd()
-        self.results_dir: Path = self.run_file_dir / "results"
-
-        self.vu: VUnit | None = None
-
+    def _prepare_environment(self) -> None:
+        """Validate and select the simulator before creating VUnit."""
         self._check_results_dir()
         self._check_executable()
         self._set_environment()
@@ -109,7 +391,6 @@ class Simulator(ABC):
         if not self.results_dir.exists():
             try:
                 self.results_dir.mkdir(parents=True, exist_ok=True)
-                LOGGER.info("Created results directory: %s", self.results_dir)
             except OSError as e:
                 raise SystemExit(f"ERROR: Could not create results directory at {self.results_dir} - {e}") from e
         elif not os.access(path=self.results_dir, mode=os.W_OK):
@@ -124,186 +405,46 @@ class Simulator(ABC):
         """Set environment variables for the simulator."""
         os.environ["VUNIT_SIMULATOR"] = self.SIMULATOR_NAME
 
-    def attach(self, vu: VUnit) -> "Simulator":
-        """Attach a VUnit instance to this simulator.
+    def _get_output_path(self) -> Path:
+        """Return VUnit's configured output path."""
+        return Path(self.vu._output_path)
 
-        Parameters
-        ----------
-        vu : VUnit
-            The VUnit instance to attach.
-
-        Returns
-        -------
-        Simulator
-            Self for method chaining.
-        """
-        self.vu = vu
-        return self
-
-    def get_vivado_path(self) -> Path | None:
-        """Get the path to the Vivado installation.
-
-        Which command returns the path to the Vivado executable.
-        The executable is usually located under `vivado_path/202x.x/bin/vivado`.
-        This method returns the parent directory of `bin`, which is the root of the Vivado installation.
-
-        Returns
-        -------
-        Path | None
-            The path to the Vivado installation, or None when Vivado is unavailable.
-        """
-        vivado_path: str | None = shutil.which(cmd="vivado")
-        if not vivado_path:
-            LOGGER.warning("Vivado executable not found in PATH!")
-            return None
-
-        installation_path: Path = Path(vivado_path).resolve().parent.parent
-        if not (installation_path / "data" / "vhdl").is_dir():
-            LOGGER.warning("Vivado VHDL data directory not found under %s", installation_path)
-            return None
-
-        return installation_path
-
-    def get_unisim_vcomp_library_path(self) -> Path | None:
-        """Get the path for the unisim VCOMP file compiled in unisim library.
-
-        Usually located under `vivado_path/data/vhdl/src/unisims/unisim_VCOMP.vhd`.
-
-        Returns
-        -------
-        Path | None
-            The path to the library file, or None when it is unavailable.
-        """
-        vivado_path: Path | None = self.get_vivado_path()
-        if vivado_path is None:
-            return None
-        unisim_vcomp_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VCOMP.vhd"
-
-        if not unisim_vcomp_path.exists():
-            LOGGER.warning("Unisim VCOMP file not found at %s", unisim_vcomp_path)
-            return None
-
-        return unisim_vcomp_path
-
-    def get_unisim_vpkg_library_path(self) -> Path | None:
-        """Get the path for the unisim VPKG file compiled in unisim library.
-
-        Usually located under `vivado_path/data/vhdl/src/unisims/unisim_VPKG.vhd`.
-
-        Returns
-        -------
-        Path | None
-            The path to the library file, or None when it is unavailable.
-        """
-        vivado_path: Path | None = self.get_vivado_path()
-        if vivado_path is None:
-            return None
-        unisim_vpkg_path: Path = vivado_path / "data" / "vhdl" / "src" / "unisims" / "unisim_VPKG.vhd"
-
-        if not unisim_vpkg_path.exists():
-            LOGGER.warning("Unisim VPKG file not found at %s", unisim_vpkg_path)
-            return None
-
-        return unisim_vpkg_path
-
-    def get_unifast_library_path(self) -> Path | None:
-        """Get the path for the unifast library files compiled in the unifast library.
-
-        Usually located under `vivado_path/data/vhdl/src/unifast/primitive/*.vhd`.
-
-        Returns
-        -------
-        Path | None
-            The path to the library glob, or None when it is unavailable.
-        """
-        vivado_path: Path | None = self.get_vivado_path()
-        if vivado_path is None:
-            return None
-        unifast_path: Path = vivado_path / "data" / "vhdl" / "src" / "unifast" / "primitive"
-
-        if not unifast_path.exists():
-            LOGGER.warning("Unifast primitive directory not found at %s", unifast_path)
-            return None
-
-        return unifast_path / "*.vhd"
+    @staticmethod
+    def _uses_gcc_backend(results: Results) -> bool:
+        """Return whether GHDL uses its GCC backend."""
+        return results._simulator_if._backend == "gcc"
 
     def add_library(self, library_name: str, library_path: str | None = None) -> "Simulator":
-        """Add an external library to VUnit.
-
-        Parameters
-        ----------
-        library_name : str
-            Name of the library (e.g., 'unisim', 'unifast').
-        library_path : str | None
-            Path to the library. If None, uses the default path.
-
-        Returns
-        -------
-        Simulator
-            Self for method chaining.
-        """
-        if not self.vu:
-            LOGGER.error("Must call attach() before adding libraries!")
-            return self
-
+        """Add an external precompiled library to VUnit."""
         path: str | None = library_path or self.DEFAULT_LIBRARIES.get(library_name)
         if not path:
             raise SystemExit(f"ERROR: No path configured for library '{library_name}'")
 
-        expanded_path: str = str(Path(path).expanduser())
-        self.vu.add_external_library(library_name=library_name, path=expanded_path)
+        self.vu.add_external_library(library_name=library_name, path=str(Path(path).expanduser()))
         return self
 
     def get_libraries_to_cover(self) -> list["Library"]:
-        """Get the library objects to include in coverage collection.
-
-        Returns
-        -------
-        list[Library]
-            The library objects to cover.
-        """
-        libs_by_name: dict[str, "Library"] = {lib.name: lib for lib in self.vu.get_libraries()}  # noqa: UP037
-        return [libs_by_name[name] for name in self.DEFAULT_LIBRARIES_TO_COVER if name in libs_by_name]
+        """Return the VUnit libraries included in coverage collection."""
+        libraries_by_name: dict[str, "Library"] = {  # noqa: UP037
+            library.name: library for library in self.vu.get_libraries()
+        }
+        return [libraries_by_name[name] for name in self.DEFAULT_LIBRARIES_TO_COVER if name in libraries_by_name]
 
     def configure(self) -> "Simulator":
-        """Apply simulator-specific configuration.
-
-        Returns
-        -------
-        Simulator
-            Self for method chaining.
-        """
-        if not self.vu:
-            LOGGER.error("Must call attach() before configure!")
-            return self
-
+        """Apply simulator-specific options after project source registration."""
         self._apply_options()
         return self
 
-    @abstractmethod
-    def get_simulator_name(self) -> str:
-        """Get the name of the simulator."""
+    def _execute_simulation(self, *, use_unisim: bool) -> None:
+        """Configure and run the simulator with optional Vivado libraries."""
+        simulator: Simulator = self.configure()
+        LOGGER.info("Using simulator %s with executable %s", simulator.SIMULATOR_NAME, simulator.EXECUTABLE)
 
-    @abstractmethod
-    def _apply_options(self) -> None:
-        """Apply simulator-specific VUnit options."""
+        if use_unisim:
+            simulator.add_library(library_name="unisim")
+            simulator.add_library(library_name="unifast")
 
-    def post_run(self, results: Results) -> None:
-        """Execute post-run actions.
-
-        This method is used as VUnit's post_run callback.
-
-        Parameters
-        ----------
-        results : Results
-            The simulation results from VUnit.
-        """
-        self._merge_output_files(results=results)
-
-        if self.enable_coverage:
-            self._generate_coverage(results=results)
-        else:
-            LOGGER.info("Coverage generation skipped (not enabled)")
+        simulator.vu.main(post_run=simulator.post_run)
 
     def _merge_output_files(self, results: Results) -> None:
         """Merge output files from tests in the current run into a single file."""
@@ -336,99 +477,27 @@ class Simulator(ABC):
         LOGGER.info("Successfully merged output files to: %s", output_file)
 
     @abstractmethod
+    def _apply_options(self) -> None:
+        """Apply simulator-specific VUnit options."""
+
+    @abstractmethod
     def _generate_coverage(self, results: Results) -> None:
-        """Generate coverage report.
+        """Generate the simulator-specific coverage report."""
+
+    def post_run(self, results: Results) -> None:
+        """Execute post-run actions.
+
+        This method is used as VUnit's post_run callback.
 
         Parameters
         ----------
         results : Results
             The simulation results from VUnit.
         """
+        self._merge_output_files(results=results)
 
-    def _add_file_to_vhdl_ls_config(
-        self,
-        toml_data: VHDL_LS_TOML,
-        file_path: Path,
-        library_name: str,
-    ) -> None:
-        """Add a file to the vhdl_ls configuration.
-
-        Adapted from `cores/open-logic/sim/create_vhdl_ls_config.py` to be used with the VUnit project.
-        See https://github.com/open-logic/open-logic/blob/main/sim/create_vhdl_ls_config.py for the original version.
-
-        Parameters
-        ----------
-        toml_data : dict[str, dict[str, Any]]
-            The TOML data structure to which the file will be added.
-        file_path : Path
-            The path to the VHDL file.
-        library_name : str
-            The name of the library to which the file belongs.
-        """
-        libraries: dict[str, dict[str, Any]] = toml_data.setdefault("libraries", {})
-        library_entry: dict[str, Any] = libraries.setdefault(library_name, {"files": []})
-        library_entry.setdefault("files", [])
-
-        # Exclude known third-party libraries from user code analysis
-        if library_name in self.THIRD_PARTY_LIBRARIES:
-            library_entry["is_third_party"] = True
-
-        library_entry["files"].append(str(file_path.resolve()))
-
-    def generate_vhdl_ls_toml(
-        self,
-        external_libraries: list[tuple[Path, str]] | None = None,
-        output_path: Path | None = None,
-    ) -> None:
-        """Generate `vhdl_ls.toml` file for the rust_hdl VHDL Language Server (https://github.com/VHDL-LS/rust_hdl).
-
-        Adapted from `cores/open-logic/sim/create_vhdl_ls_config.py` to be used with the VUnit project.
-        See https://github.com/open-logic/open-logic/blob/main/sim/create_vhdl_ls_config.py for the original version.
-
-        Parameters
-        ----------
-        external_libraries : list[tuple[Path, str]] | None
-            List of tuples containing library paths and names to include in the configuration. Defaults to None.
-            Example: [(Path("/path/to/unisim_VPKG.vhd"), "unisim")]
-        output_path : Path | None
-            Directory to save the generated configuration file. Defaults to the project root.
-        """
-        if not self.vu:
-            LOGGER.error("Must call attach() before generating vhdl_ls configuration!")
-            return
-
-        if output_path is None:
-            output_path = Path.cwd()
-
-        toml_data: VHDL_LS_TOML = {"libraries": {}}
-
-        # Add files from the VUnit project
-        for source_file in self.vu.get_compile_order():
-            self._add_file_to_vhdl_ls_config(
-                toml_data=toml_data,
-                file_path=Path(source_file.name),
-                library_name=source_file.library.name,
-            )
-
-        # Add external libraries if provided
-        for file_path, library_name in external_libraries or []:
-            self._add_file_to_vhdl_ls_config(
-                toml_data=toml_data,
-                file_path=file_path,
-                library_name=library_name,
-            )
-
-        # Ignore unused work library statement
-        toml_data.setdefault("lint", {})["unnecessary_work_library"] = False
-
-        # Write the TOML data to a file
-        config_file: Path = output_path / "vhdl_ls.toml"
-        try:
-            with open(file=config_file, mode="w", encoding="utf-8") as f:
-                rtoml.dump(obj=toml_data, file=f, pretty=True)
-            LOGGER.info("vhdl_ls configuration generated at: %s", config_file)
-        except OSError as e:
-            LOGGER.error("Failed to write vhdl_ls configuration: %s", e)
+        if self.enable_coverage:
+            self._generate_coverage(results=results)
 
 
 class NVC(Simulator):
@@ -441,10 +510,6 @@ class NVC(Simulator):
         "unifast": "~/.nvc/lib/unifast.08",
     }
 
-    def get_simulator_name(self) -> str:
-        """Get the name of the simulator."""
-        return self.SIMULATOR_NAME
-
     def _apply_options(self) -> None:
         """Apply NVC-specific options."""
         # Base flags always applied
@@ -454,9 +519,7 @@ class NVC(Simulator):
 
         # Add coverage flags if enabled
         if self.enable_coverage:
-            coverage_spec_path: Path = (
-                self.run_file_dir / "coverage.spec" if self.run_file_dir else Path("coverage.spec")
-            )
+            coverage_spec_path: Path = self.run_file_dir / "coverage.spec"
             if not coverage_spec_path.exists():
                 LOGGER.warning(
                     "Coverage spec file not found at %s. Coverage will be enabled but may not work properly "
@@ -491,10 +554,7 @@ class NVC(Simulator):
         results : Results
             The simulation results from VUnit.
         """
-        if not self.vu:
-            return
-
-        output_path: Path = Path(self.vu._output_path)
+        output_path: Path = self._get_output_path()
         coverage_file: Path = output_path / "coverage_data"
         coverage_dir: Path = output_path / "coverage_report_nvc"
 
@@ -531,10 +591,6 @@ class GHDL(Simulator):
         "unisim": "~/.ghdl/xilinx-vivado/unisim/v08",
         "unifast": "~/.ghdl/xilinx-vivado/unifast/v08",
     }
-
-    def get_simulator_name(self) -> str:
-        """Get the name of the simulator."""
-        return self.SIMULATOR_NAME
 
     def _apply_options(self) -> None:
         """Apply GHDL-specific options."""
@@ -589,7 +645,8 @@ class GHDL(Simulator):
         process: Process[list[str]] = Process(args=cmd)
         process.consume_output()
 
-    def _fix_gcovr_json_version(self, json_file: Path) -> None:
+    @staticmethod
+    def _fix_gcovr_json_version(json_file: Path) -> None:
         """Fix the version string in gcovr JSON coverage file to work around gcovr issues with GHDL coverage files.
 
         Parameters
@@ -650,13 +707,10 @@ class GHDL(Simulator):
         results : Results
             The simulation results from VUnit.
         """
-        if not self.vu:
-            return
-
         if not self._check_gcovr():
             return
 
-        output_path: Path = Path(self.vu._output_path)
+        output_path: Path = self._get_output_path()
         coverage_file: Path = output_path / "coverage_data"
         coverage_dir: Path = output_path / "coverage_report_ghdl"
         html_report: Path = coverage_dir / "index.html"
@@ -666,7 +720,7 @@ class GHDL(Simulator):
         results.merge_coverage(file_name=str(coverage_file))
         LOGGER.info("Coverage files merged")
 
-        if results._simulator_if._backend == "gcc":
+        if self._uses_gcc_backend(results=results):
             self._generate_gcc_coverage(coverage_file=coverage_file, html_report=html_report)
         else:
             json_file: Path = coverage_file / "gcovr.json"
@@ -684,10 +738,6 @@ class QuestaModelSim(Simulator):
     SIMULATOR_NAME: str = "modelsim"
     EXECUTABLE: str = "vsim"
     DEFAULT_LIBRARIES_TO_COVER: ClassVar[set[str]] = {"lib_bench", "lib_rtl"}
-
-    def get_simulator_name(self) -> str:
-        """Get the name of the simulator."""
-        return self.SIMULATOR_NAME
 
     def add_library(self, library_name: str, library_path: str | None = None) -> "Simulator":
         """Add an external library to VUnit for Questa/ModelSim.
@@ -707,37 +757,34 @@ class QuestaModelSim(Simulator):
         Simulator
             Self for method chaining.
         """
-        if not self.vu:
-            LOGGER.error("Must call attach() before adding libraries!")
-            return self
+        if library_name not in {"unisim", "unifast"}:
+            return super().add_library(library_name, library_path)
 
         LOGGER.warning(
-            (
-                "Manually adding library '%s' with source files instead of using pre-compiled libraries. Expect very slow simulation times."
-            ),
+            "Manually adding library '%s' with source files instead of using pre-compiled libraries. "
+            "Expect very slow simulation times.",
             library_name,
         )
 
         if library_name == "unisim":
-            vivado_path: Path | None = self.get_vivado_path()
-            unisim_vpkg_path: Path | None = self.get_unisim_vpkg_library_path()
-            unisim_vcomp_path: Path | None = self.get_unisim_vcomp_library_path()
-            if vivado_path is None or unisim_vpkg_path is None or unisim_vcomp_path is None:
+            unisim_vpkg_path: Path | None = self.vivado_paths.get_unisim_vpkg_path()
+            unisim_vcomp_path: Path | None = self.vivado_paths.get_unisim_vcomp_path()
+            unisim_primitive_path: Path | None = self.vivado_paths.get_unisim_primitive_path()
+            if unisim_vpkg_path is None or unisim_vcomp_path is None or unisim_primitive_path is None:
                 raise SystemExit("ERROR: Vivado Unisim source files are unavailable")
 
-            UNISIM: Library = self.vu.add_library(library_name="unisim")
-            unisim_dir: Path = vivado_path / "data" / "vhdl" / "src" / "unisims"
-            UNISIM.add_source_file(file_name=unisim_vpkg_path)
-            UNISIM.add_source_file(file_name=unisim_vcomp_path)
-            UNISIM.add_source_files(pattern=str(unisim_dir / "primitive" / "*.vhd"))
+            unisim: Library = self.vu.add_library(library_name="unisim")
+            unisim.add_source_file(file_name=unisim_vpkg_path)
+            unisim.add_source_file(file_name=unisim_vcomp_path)
+            unisim.add_source_files(pattern=unisim_primitive_path)
 
         elif library_name == "unifast":
-            unifast_path: Path | None = self.get_unifast_library_path()
+            unifast_path: Path | None = self.vivado_paths.get_unifast_primitive_path()
             if unifast_path is None:
                 raise SystemExit("ERROR: Vivado Unifast source files are unavailable")
 
-            UNIFAST: Library = self.vu.add_library(library_name="unifast")
-            UNIFAST.add_source_files(pattern=unifast_path)
+            unifast: Library = self.vu.add_library(library_name="unifast")
+            unifast.add_source_files(pattern=unifast_path)
 
         return self
 
@@ -790,13 +837,10 @@ class QuestaModelSim(Simulator):
         results : Results
             The simulation results from VUnit.
         """
-        if not self.vu:
-            return
-
         if not self._check_vcover():
             return
 
-        output_path: Path = Path(self.vu._output_path)
+        output_path: Path = self._get_output_path()
         coverage_file: Path = output_path / "coverage_data.ucdb"
         coverage_dir: Path = output_path / "coverage_report_questa"
 
@@ -823,19 +867,27 @@ class QuestaModelSim(Simulator):
         LOGGER.info("Coverage report generated at %s", coverage_dir)
 
 
-def select_simulator(
-    name: str | None = None, enable_coverage: bool = False, run_file_dir: Path | None = None
+def _create_simulator(
+    args: Namespace,
+    run_file_dir: Path,
+    add_random: bool = False,
 ) -> Simulator:
-    """Select and create a simulator.
+    """Create the simulator selected by the command-line arguments or environment.
+
+    If no simulator is specified, attempt to auto-detect one from the available executables.
+    Prioritize:
+        1. NVC
+        2. GHDL
+        3. Questa/ModelSim
 
     Parameters
     ----------
-    name : str | None
-        Simulator name ('nvc', 'ghdl' or 'questa/modelsim'). If None, auto-detects.
-    enable_coverage : bool
-        Enable coverage collection and reporting. Defaults to False.
-    run_file_dir : Path | None
-        Directory of the `run.py` file. Defaults to None.
+    args : Namespace
+        Parsed VUnit and simulator command-line arguments.
+    run_file_dir : Path
+        Directory of the `run.py` file.
+    add_random : bool
+        Add the VUnit random package. Defaults to False.
 
     Returns
     -------
@@ -845,70 +897,113 @@ def select_simulator(
     Raises
     ------
     SystemExit
-        If the specified simulator is unknown or if no suitable simulator is found during auto-detection.
+        If the selected simulator is unknown or if no suitable simulator is found during auto-detection.
     """
     simulators: dict[str, type[Simulator]] = {
         "nvc": NVC,
         "ghdl": GHDL,
         "questa": QuestaModelSim,
         "modelsim": QuestaModelSim,
-        "questa/modelsim": QuestaModelSim,
     }
 
-    # Auto-detect if not specified
-    if not name:
-        name = os.environ.get("VUNIT_SIMULATOR")
-        if not name:
-            for sim_name, simulator_class in simulators.items():
-                if shutil.which(cmd=simulator_class.EXECUTABLE):
-                    name = sim_name
-                    break
+    simulator_name: str | None = args.simulator or os.environ.get("VUNIT_SIMULATOR")
+    if not simulator_name:
+        for simulator_class in (NVC, GHDL, QuestaModelSim):
+            if shutil.which(cmd=simulator_class.EXECUTABLE):
+                simulator_name = simulator_class.SIMULATOR_NAME
+                break
 
-    # Create the appropriate simulator
-    simulator_class: type[Simulator] | None = simulators.get(name)
-    if not simulator_class:
-        available: str = ", ".join(simulators.keys())
+    simulator_class: type[Simulator] | None = simulators.get(simulator_name)
+    if simulator_class is None:
         LOGGER.error(
             (
-                "Could not determine simulator to use from args or VUNIT_SIMULATOR "
-                "Ensure that the simulator executable is in PATH or specify the simulator name explicitly.\n"
-                "Available simulators: %s"
+                "Could not determine simulator to use from args or VUNIT_SIMULATOR."
+                "Please specify a simulator with --nvc, --ghdl, --modelsim, or --questa."
             ),
-            available,
         )
         raise SystemExit(1)
 
-    return simulator_class(enable_coverage=enable_coverage, run_file_dir=run_file_dir)
+    return simulator_class(
+        args=args,
+        run_file_dir=run_file_dir,
+        add_random=add_random,
+    )
 
 
 def create_vunit_cli() -> VUnitCLI:
     """Create a VUnit CLI with the simulator options shared by all benches."""
     cli = VUnitCLI()
-    cli.parser.add_argument("--coverage", action="store_true", help="Enable coverage collection and reporting")
-    cli.parser.add_argument("--ghdl", action="store_true", help="Use GHDL as the simulator")
+
+    #
+    # Default options
+    #
+
+    cli.parser.set_defaults(
+        log_level="INFO",
+    )
+
     cli.parser.add_argument(
-        "--modelsim", dest="questa", action="store_true", help="Use ModelSim/Questa as the simulator"
+        "--without-unisim",
+        "--without_unisim",
+        dest="without_unisim",
+        action="store_true",
+        help="Use a custom behavioral PLL model (faster simulation without needing Vivado pre-compiled libraries)",
     )
-    cli.parser.add_argument("--nvc", action="store_true", help="Use nvc as the simulator")
-    cli.parser.add_argument("--questa", dest="questa", action="store_true", help="Use Questa/ModelSim as the simulator")
+
+    #
+    # VHDL-LS Toml generation option
+    #
+
+    cli.parser.add_argument(
+        "--vhdl-ls",
+        "--vhdl_ls",
+        dest="vhdl_ls",
+        action="store_true",
+        help="Generate the vhdl_ls configuration without running simulation",
+    )
+
+    #
+    # Simulator selection
+    #
+
+    simulator_group = cli.parser.add_mutually_exclusive_group()
+    simulator_group.add_argument(
+        "--nvc",
+        dest="simulator",
+        action="store_const",
+        const="nvc",
+        help="Use nvc as the simulator",
+    )
+    simulator_group.add_argument(
+        "--ghdl",
+        dest="simulator",
+        action="store_const",
+        const="ghdl",
+        help="Use GHDL as the simulator",
+    )
+    simulator_group.add_argument(
+        "--modelsim",
+        dest="simulator",
+        action="store_const",
+        const="modelsim",
+        help="Use ModelSim as the simulator",
+    )
+    simulator_group.add_argument(
+        "--questa",
+        dest="simulator",
+        action="store_const",
+        const="questa",
+        help="Use Questa as the simulator",
+    )
+
+    #
+    # Simulation options
+    #
+
+    cli.parser.add_argument(
+        "--coverage",
+        action="store_true",
+        help="Enable coverage collection and reporting",
+    )
+
     return cli
-
-
-def create_vunit(args: Namespace, run_file_dir: Path, add_random: bool = True) -> tuple[VUnit, Simulator]:
-    """Create the VUnit project and simulator selected by common CLI options."""
-    simulator_name: str | None = (
-        "nvc" if args.nvc else "ghdl" if args.ghdl else "questa/modelsim" if args.questa else None
-    )
-    simulator = select_simulator(
-        name=simulator_name,
-        enable_coverage=args.coverage,
-        run_file_dir=run_file_dir,
-    )
-
-    vu = VUnit.from_args(args=args)
-    vu.add_vhdl_builtins()
-    vu.add_verification_components()
-    if add_random:
-        vu.add_random()
-
-    return vu, simulator

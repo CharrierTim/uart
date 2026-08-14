@@ -43,6 +43,7 @@
 ##                                          enabled or not for output results merge.
 ## 2.5      29/07/2026  Timothee Charrier   Apply changes from `setup_vunit.py` to improve portability.
 ##                                          Add new common library `common`.
+##          14/08/2026                      Small update to use the new `VUnitProject` class.
 ## =====================================================================================================================
 
 import sys
@@ -52,7 +53,7 @@ from vunit.ui.library import Library
 
 sys.path.insert(0, str((Path(__file__).parent.parent.parent).resolve()))
 
-from setup_vunit import create_vunit, create_vunit_cli
+from setup_vunit import VUnitProject, create_vunit_cli
 
 ## =====================================================================================================================
 # Define paths
@@ -77,14 +78,14 @@ args = cli.parse_args()
 # Set up VUnit environment
 ## =====================================================================================================================
 
-VU, simulator = create_vunit(args=args, run_file_dir=THIS_DIR)
+project = VUnitProject.create(args=args, run_file_dir=THIS_DIR)
 
 # Add the source files to the library
-LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
+LIB_RTL: Library = project.vu.add_library(library_name="lib_rtl")
 LIB_RTL.add_source_files(pattern=SRC_ROOT / "uart" / "*.vhd")
 
 # Add the test library
-LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
+LIB_BENCH: Library = project.vu.add_library(library_name="lib_bench")
 LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_common_pkg.vhd")
 LIB_BENCH.add_source_files(pattern=THIS_DIR / "**" / "*.vhd")
 
@@ -94,14 +95,7 @@ for testbench_name in ("tb_uart_rx", "tb_uart_tx"):
     testbench.set_generic(name="G_RANDOM_SEED", value=args.random_seed)
 
 ## =====================================================================================================================
-# Set up simulator
+# Generate vhdl_ls configuration or run simulation
 ## =====================================================================================================================
 
-simulator.attach(VU).configure()
-
-## =====================================================================================================================
-# Run
-## =====================================================================================================================
-
-
-VU.main(post_run=simulator.post_run)
+project.execute(output_path=PRJ_ROOT)

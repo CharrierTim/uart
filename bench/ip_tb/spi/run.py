@@ -45,6 +45,7 @@
 ##                                          Add new common library `common`.
 ##                                          Add two generics controlling the number of random iterations and the
 ##                                          random seed for deterministic OSVVM randomization.
+##          14/08/2026                      Small update to use the new `VUnitProject` class.
 ## =====================================================================================================================
 
 import sys
@@ -58,7 +59,7 @@ from vunit.ui.testbench import TestBench
 
 sys.path.insert(0, str((Path(__file__).parent.parent.parent).resolve()))
 
-from setup_vunit import create_vunit, create_vunit_cli
+from setup_vunit import VUnitProject, create_vunit_cli
 
 ## =====================================================================================================================
 # Define paths
@@ -84,23 +85,17 @@ args = cli.parse_args()
 # Set up VUnit environment
 ## =====================================================================================================================
 
-VU, simulator = create_vunit(args=args, run_file_dir=THIS_DIR)
+project = VUnitProject.create(args=args, run_file_dir=THIS_DIR)
 
 # Add the source files to the library
-LIB_RTL: Library = VU.add_library(library_name="lib_rtl")
+LIB_RTL: Library = project.vu.add_library(library_name="lib_rtl")
 LIB_RTL.add_source_files(pattern=SRC_ROOT / "spi" / "*.vhd")
 
 # Add the test library
-LIB_BENCH: Library = VU.add_library(library_name="lib_bench")
+LIB_BENCH: Library = project.vu.add_library(library_name="lib_bench")
 LIB_BENCH.add_source_file(file_name=COMMON_ROOT / "tb_common_pkg.vhd")
 LIB_BENCH.add_source_files(pattern=THIS_DIR / "**" / "*.vhd")
 LIB_BENCH.add_source_files(pattern=MODELS_ROOT / "spi" / "*.vhd")
-
-## =====================================================================================================================
-# Set up simulator
-## =====================================================================================================================
-
-simulator.attach(VU).configure()
 
 ## =====================================================================================================================
 # Set up test
@@ -143,4 +138,4 @@ generate_spi_tests(TB_SPI, cpol_values=[0, 1], cpha_values=[0, 1])
 ## =====================================================================================================================
 
 
-VU.main(post_run=simulator.post_run)
+project.execute(output_path=PRJ_ROOT)
