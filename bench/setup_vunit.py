@@ -459,14 +459,16 @@ class NVC(Simulator):
             )
             if not coverage_spec_path.exists():
                 LOGGER.warning(
-                    "Coverage spec file not found at %s. Coverage will be enabled but may not work properly without a valid spec file.",
+                    "Coverage spec file not found at %s. Coverage will be enabled but may not work properly "
+                    "without a valid spec file.",
                     coverage_spec_path,
                 )
 
             elab_flags.append(f"--cover-spec={coverage_spec_path}")
 
             # Coverage reduces performance, so we only enable it for the libraries we want to cover instead of globally.
-            # Coverage on `lib_bench` is enough for nvc, but more libraries can be added to `DEFAULT_LIBRARIES_TO_COVER` if needed.
+            # Coverage on `lib_bench` is enough for nvc. Add more libraries to
+            # `DEFAULT_LIBRARIES_TO_COVER` when needed.
             libs_to_cover: list["Library"] = self.get_libraries_to_cover()  # noqa: UP037
             LOGGER.info("Enabling coverage for libraries: %s", ", ".join(lib.name for lib in libs_to_cover))
 
