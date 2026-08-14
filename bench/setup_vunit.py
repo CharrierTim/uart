@@ -470,7 +470,6 @@ class NVC(Simulator):
             # Coverage on `lib_bench` is enough for nvc. Add more libraries to
             # `DEFAULT_LIBRARIES_TO_COVER` when needed.
             libs_to_cover: list["Library"] = self.get_libraries_to_cover()  # noqa: UP037
-            LOGGER.info("Enabling coverage for libraries: %s", ", ".join(lib.name for lib in libs_to_cover))
 
             for lib in libs_to_cover:
                 lib.set_sim_option(name="enable_coverage", value=True)
@@ -548,7 +547,6 @@ class GHDL(Simulator):
             # Coverage reduces performance, so we only enable it for the libraries we want to cover instead of globally.
             # Coverage on `lib_bench` is enough for ghdl.
             libs_to_cover: list["Library"] = self.get_libraries_to_cover()  # noqa: UP037
-            LOGGER.info("Enabling coverage for libraries: %s", ", ".join(lib.name for lib in libs_to_cover))
 
             for lib in libs_to_cover:
                 lib.set_sim_option(name="enable_coverage", value=True)
@@ -610,7 +608,7 @@ class GHDL(Simulator):
 
             with open(file=json_file, mode="w", encoding="utf-8") as f:
                 f.write(content)
-            LOGGER.info("Modified gcovr.json to fix version issue")
+
         except (OSError, UnicodeDecodeError) as e:
             LOGGER.error("Failed to modify gcovr.json: %s", e)
 
@@ -759,7 +757,6 @@ class QuestaModelSim(Simulator):
             # Coverage reduces performance, so we only enable it for the libraries we want to cover instead of globally.
             # Coverage on `lib_bench` is not enough for Questa/ModelSim. Also need to add `lib_rtl`.
             libs_to_cover: list["Library"] = self.get_libraries_to_cover()  # noqa: UP037
-            LOGGER.info("Enabling coverage for libraries: %s", ", ".join(lib.name for lib in libs_to_cover))
 
             for lib in libs_to_cover:
                 lib.set_compile_option(name="modelsim.vcom_flags", value=["+cover=bcefs"])
