@@ -496,7 +496,7 @@ class NVC(Simulator):
 
         output_path: Path = Path(self.vu._output_path)
         coverage_file: Path = output_path / "coverage_data"
-        coverage_dir: Path = output_path / "coverage_report"
+        coverage_dir: Path = output_path / "coverage_report_nvc"
 
         # Merge coverage databases
         LOGGER.info("Merging coverage files into %s.ncdb...", coverage_file)
@@ -655,7 +655,7 @@ class GHDL(Simulator):
 
         output_path: Path = Path(self.vu._output_path)
         coverage_file: Path = output_path / "coverage_data"
-        coverage_dir: Path = output_path / "coverage_report"
+        coverage_dir: Path = output_path / "coverage_report_ghdl"
         html_report: Path = coverage_dir / "index.html"
         coverage_dir.mkdir(parents=True, exist_ok=True)
 
@@ -795,7 +795,7 @@ class QuestaModelSim(Simulator):
 
         output_path: Path = Path(self.vu._output_path)
         coverage_file: Path = output_path / "coverage_data.ucdb"
-        coverage_dir: Path = output_path / "coverage_report"
+        coverage_dir: Path = output_path / "coverage_report_questa"
 
         LOGGER.info("Merging coverage files into %s...", coverage_file)
         results.merge_coverage(file_name=str(coverage_file))
