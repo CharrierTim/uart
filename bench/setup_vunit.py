@@ -475,7 +475,7 @@ class NVC(Simulator):
                 lib.set_sim_option(name="enable_coverage", value=True)
                 lib.set_sim_option(
                     name="nvc.elab_flags",
-                    value=["--cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable,"],
+                    value=["--cover=statement,branch,expression,fsm-state,count-from-undefined,exclude-unreachable"],
                     overwrite=False,
                 )
 
