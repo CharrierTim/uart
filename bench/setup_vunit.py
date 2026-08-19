@@ -917,8 +917,9 @@ def _create_simulator(
     if simulator_class is None:
         LOGGER.error(
             (
-                "Could not determine simulator to use from args or VUNIT_SIMULATOR."
-                "Please specify a simulator with --nvc, --ghdl, --modelsim, or --questa."
+                "Could not determine which simulator to use.\n"
+                "Select one with --nvc, --ghdl, --modelsim, or --questa, or set VUNIT_SIMULATOR to nvc, ghdl, ModelSim/Questa (vsim).\n"
+                "Make sure the selected simulator executable is available in PATH."
             ),
         )
         raise SystemExit(1)
@@ -972,28 +973,28 @@ def create_vunit_cli() -> VUnitCLI:
         dest="simulator",
         action="store_const",
         const="nvc",
-        help="Use nvc as the simulator",
+        help="Use nvc as the simulator (`nvc` executable must be available in PATH)",
     )
     simulator_group.add_argument(
         "--ghdl",
         dest="simulator",
         action="store_const",
         const="ghdl",
-        help="Use GHDL as the simulator",
+        help="Use GHDL as the simulator (`ghdl` executable must be available in PATH)",
     )
     simulator_group.add_argument(
         "--modelsim",
         dest="simulator",
         action="store_const",
         const="modelsim",
-        help="Use ModelSim as the simulator",
+        help="Use ModelSim as the simulator (`vsim` executable must be available in PATH)",
     )
     simulator_group.add_argument(
         "--questa",
         dest="simulator",
         action="store_const",
         const="questa",
-        help="Use Questa as the simulator",
+        help="Use Questa as the simulator (`vsim` executable must be available in PATH)",
     )
 
     #
