@@ -1,5 +1,7 @@
 # UART RX
 
+VHDL Source: [uart_rx.vhd](https://github.com/CharrierTim/uart/blob/main/sources/uart/uart_rx.vhd)
+
 ## Description
 
 The UART RX module implements a asynchronous UART receiver that samples and deserializes incoming data bits

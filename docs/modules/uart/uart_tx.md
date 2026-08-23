@@ -1,5 +1,7 @@
 # UART TX
 
+VHDL Source: [uart_tx.vhd](https://github.com/CharrierTim/uart/blob/main/sources/uart/uart_tx.vhd)
+
 ## Description
 
 The UART TX module implements a UART transmitter that serializes and sends data bytes over a output line (`O_UART_TX`).

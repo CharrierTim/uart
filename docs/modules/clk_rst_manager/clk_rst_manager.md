@@ -1,5 +1,7 @@
 # Clock and Reset Manager
 
+VHDL Source: [clk_rst_manager.vhd](https://github.com/CharrierTim/uart/blob/main/sources/clk_rst_manager/clk_rst_manager.vhd)
+
 ## Description
 
 The clock and reset manager generates the internal system and VGA clock domains from the external FPGA clock.
@@ -90,6 +92,10 @@ The FPGA uses a PLL (`clk_wiz_0`) to generate internal clocks from the input clo
 ---
 
 ## Architecture
+
+![Clock-reset-manager Architecture](../../assets/uart.drawio){ page="CLK-RST-MANAGER" }
+
+---
 
 ### Sub-modules
 
