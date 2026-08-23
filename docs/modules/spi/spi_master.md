@@ -1,5 +1,7 @@
 # SPI Master
 
+VHDL Source: [spi_master.vhd](https://github.com/CharrierTim/uart/blob/main/sources/spi/spi_master.vhd)
+
 ## Description
 
 ---

@@ -1,5 +1,7 @@
 # VGA Controller
 
+VHDL Source: [vga_controller.vhd](https://github.com/CharrierTim/uart/blob/main/sources/vga/vga_controller.vhd)
+
 ## Description
 
 The VGA Controller is a hardware module that generates timing signals for VGA video output.

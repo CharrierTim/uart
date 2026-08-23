@@ -1,5 +1,7 @@
 # UART AXI Lite Bridge
 
+VHDL Source: [uart_axi_lite_bridge.vhd](https://github.com/CharrierTim/uart/blob/main/sources/uart/uart_axi_lite_bridge.vhd)
+
 ## Description
 
 The UART AXI Lite Bridge module implements a UART controller that interfaces with an AXI Lite bus.

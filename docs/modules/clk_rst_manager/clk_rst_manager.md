@@ -1,5 +1,7 @@
 # Clock and Reset Manager
 
+VHDL Source: [clk_rst_manager.vhd](https://github.com/CharrierTim/uart/blob/main/sources/clk_rst_manager/clk_rst_manager.vhd)
+
 ## Description
 
 The clock and reset manager generates the internal system and VGA clock domains from the external FPGA clock.
