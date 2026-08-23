@@ -12,10 +12,6 @@ A reset is requested when either condition is true:
 - `PAD_I_ARST_P` is asserted.
 - The PLL lock output is de-asserted.
 
-## Architecture
-
-![Clock-reset-manager Architecture](../../assets/uart.drawio){ page="CLK-RST-MANAGER" }
-
 ## Clocking Configuration
 
 The FPGA uses a PLL (`clk_wiz_0`) to generate internal clocks from the input clock.
@@ -96,6 +92,10 @@ The FPGA uses a PLL (`clk_wiz_0`) to generate internal clocks from the input clo
 ---
 
 ## Architecture
+
+![Clock-reset-manager Architecture](../../assets/uart.drawio){ page="CLK-RST-MANAGER" }
+
+---
 
 ### Sub-modules
 
