@@ -4,10 +4,6 @@ site_description: Documentation for the UART Project
 site_url: https://charriertim.github.io/uart/
 copyright: Copyright &copy; 2026 Timothée Charrier
 
-repo_name: CharrierTim/uart
-repo_url: https://github.com/CharrierTim/uart
-edit_uri: edit/main/docs/
-
 theme:
   name: material
 
@@ -76,15 +72,13 @@ markdown_extensions:
       generic: true
 
 extra_javascript:
-  # Drawio
-  - https://viewer.diagrams.net/js/viewer-static.min.js
   # Wavedrom
   - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js
   - https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js
   # Events
   - assets/javascripts/onload-events.js
   # Mathjax
-  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-chtml.min.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 extra_css:
   - assets/stylesheets/style.css
