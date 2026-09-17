@@ -4,6 +4,9 @@ site_description: Documentation for the UART Project
 site_url: https://charriertim.github.io/uart/
 copyright: Copyright &copy; 2026 Timothée Charrier
 
+repo_name: CharrierTim/uart
+repo_url: https://github.com/CharrierTim/uart
+
 theme:
   name: material
 
