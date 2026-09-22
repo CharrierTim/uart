@@ -60,12 +60,12 @@ See the [top_fpga module documentation](modules/top_fpga/top_fpga.md) for design
 
 | Tool                      | Version                                                       |
 | ------------------------- | ------------------------------------------------------------- |
-| **NVC**                   | `nvc 1.22.0 (1.22.0.r0.g56b67ebc4) (Using LLVM 22.1.8)`       |
+| **NVC**                   | `nvc 1.23.0 (1.23.0.r0.gcba10a2e0) (Using LLVM 22.1.8)`       |
 | **PeakRDL**               | `1.5.0`                                                       |
 | **PeakRDL-regblock-vhdl** | `v1.3.1.1`                                                    |
 | **Vivado**                | `2025.2`                                                      |
 | **VSG**                   | `VHDL Style Guide (VSG) version: 3.35.0`                      |
-| **VUnit**                 | `5.0.0.dev11 commit 1197afd44175df0695eb0bf8d6dd49a4af88b469` |
+| **VUnit**                 | `5.0.0.dev12 commit bbbe9caba5278dd8057020edc3aeb5f223c0e037` |
 
 ## Clocking Configuration
 
