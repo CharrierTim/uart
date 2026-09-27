@@ -23,7 +23,7 @@
 ## =====================================================================================================================
 ## @project uart
 ## @file    pinout.xdc
-## @version 1.2
+## @version 1.3
 ## @brief   Pinout constraints for the FPGA
 ## @author  Timothee Charrier
 ## =====================================================================================================================
@@ -34,6 +34,7 @@
 ## 1.0      29/10/2025  Timothee Charrier   Initial release
 ## 1.1      05/01/2026  Timothee Charrier   Add VGA constraints
 ## 1.2      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high
+## 1.3      26/09/2026  Timothee Charrier   Add switches 4-7 to the pinout constraints
 ## =====================================================================================================================
 
 # Clock and reset
@@ -70,6 +71,11 @@ set_property -dict {PACKAGE_PIN Y19  IOSTANDARD LVCMOS33}             [get_ports
 set_property -dict {PACKAGE_PIN F22  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_0}];     # SW0
 set_property -dict {PACKAGE_PIN G22  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_1}];     # SW1
 set_property -dict {PACKAGE_PIN H22  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_2}];     # SW2
+set_property -dict {PACKAGE_PIN F21  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_3}];     # SW3
+set_property -dict {PACKAGE_PIN H19  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_4}];     # SW4
+set_property -dict {PACKAGE_PIN H18  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_5}];     # SW5
+set_property -dict {PACKAGE_PIN H17  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_6}];     # SW6
+set_property -dict {PACKAGE_PIN M15  IOSTANDARD LVCMOS18}             [get_ports {PAD_I_SWITCH_7}];     # SW7
 
 # LED
 set_property -dict {PACKAGE_PIN T22  IOSTANDARD LVCMOS33}             [get_ports {PAD_O_LED_0}];        # LD0

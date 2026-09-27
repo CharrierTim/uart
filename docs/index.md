@@ -131,6 +131,11 @@ The FPGA defines the following inputs/outputs:
 | `PAD_I_SWITCH_0`     | F22        | in        | -        | -    | LVCMOS18   |
 | `PAD_I_SWITCH_1`     | G22        | in        | -        | -    | LVCMOS18   |
 | `PAD_I_SWITCH_2`     | H22        | in        | -        | -    | LVCMOS18   |
+| `PAD_I_SWITCH_3`     | F21        | in        | -        | -    | LVCMOS18   |
+| `PAD_I_SWITCH_4`     | H19        | in        | -        | -    | LVCMOS18   |
+| `PAD_I_SWITCH_5`     | H18        | in        | -        | -    | LVCMOS18   |
+| `PAD_I_SWITCH_6`     | H17        | in        | -        | -    | LVCMOS18   |
+| `PAD_I_SWITCH_7`     | M15        | in        | -        | -    | LVCMOS18   |
 | `PAD_O_LED_0`        | T22        | out       | -        | -    | LVCMOS33   |
 | `PAD_O_VGA_BLUE[0]`  | Y21        | out       | -        | -    | LVCMOS33   |
 | `PAD_O_VGA_BLUE[1]`  | Y20        | out       | -        | -    | LVCMOS33   |

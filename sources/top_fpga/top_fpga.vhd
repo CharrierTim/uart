@@ -46,6 +46,9 @@
 --          25/05/2026                      Rename `RST` to `ARST` to reflect asynchronous reset nature.
 --                                          Move clock and reset logic to a dedicated module `clk_rst_manager`.
 --          05/08/2026                      Update UART interface port names with `PAD_` prefix.
+--          26/09/2026                      Add a bad address counter to trigger a reset request if the counter exceeds
+--                                          a threshold and the reset request is enabled + LED indicates if device
+--                                          is running + add all switches to the register map.
 -- =====================================================================================================================
 
 library ieee;
@@ -92,6 +95,11 @@ entity TOP_FPGA is
         PAD_I_SWITCH_0  : in    std_logic;
         PAD_I_SWITCH_1  : in    std_logic;
         PAD_I_SWITCH_2  : in    std_logic;
+        PAD_I_SWITCH_3  : in    std_logic;
+        PAD_I_SWITCH_4  : in    std_logic;
+        PAD_I_SWITCH_5  : in    std_logic;
+        PAD_I_SWITCH_6  : in    std_logic;
+        PAD_I_SWITCH_7  : in    std_logic;
         PAD_O_LED_0     : out   std_logic
     );
 end entity TOP_FPGA;
@@ -107,81 +115,82 @@ architecture TOP_FPGA_ARCH of TOP_FPGA is
     -- =================================================================================================================
 
     -- General
-    constant C_CLK_FREQ_HZ          : positive := 50_000_000;
+    constant C_CLK_FREQ_HZ           : positive := 50_000_000;
 
     -- Resynchronization and clock domain crossing
-    constant C_RESYNC_WIDTH         : positive  := 3;
-    constant C_RESYNC_DEFAULT_VALUE : std_logic := '0';
-    constant C_RESYNC_NB_STAGES     : positive  := 3;
+    constant C_RESYNC_WIDTH          : positive  := 8;
+    constant C_RESYNC_DEFAULT_VALUE  : std_logic := '0';
+    constant C_RESYNC_NB_STAGES      : positive  := 3;
 
     -- Clock and reset manager
-    constant C_RST_PULSE_CYCLES     : positive  := 3;
-    constant C_RST_POLARITY         : std_logic := '1';
-    constant C_ASYNC_RST_OUTPUT     : boolean   := false;
+    constant C_MAX_BAD_ADDRESS_COUNT : positive  := 20; -- After 20 bad address transactions, reset the device
+    constant C_RST_PULSE_CYCLES      : positive  := 3;
+    constant C_RST_POLARITY          : std_logic := '1';
+    constant C_ASYNC_RST_OUTPUT      : boolean   := false;
 
     -- UART
-    constant C_BAUD_RATE_BPS        : positive := 115_200;
-    constant C_SAMPLING_RATE        : positive := 16;
+    constant C_BAUD_RATE_BPS         : positive := 115_200;
+    constant C_SAMPLING_RATE         : positive := 16;
 
     -- SPI
-    constant C_SPI_FREQ_HZ          : positive  := 1_000_000;
-    constant C_SPI_NB_DATA_BITS     : positive  := 8;
-    constant C_CLK_POLARITY         : std_logic := '0';
-    constant C_CLK_PHASE            : std_logic := '0';
+    constant C_SPI_FREQ_HZ           : positive  := 1_000_000;
+    constant C_SPI_NB_DATA_BITS      : positive  := 8;
+    constant C_CLK_POLARITY          : std_logic := '0';
+    constant C_CLK_PHASE             : std_logic := '0';
 
     -- VGA (current: 1024x768@60Hz)
-    constant C_H_PIXELS             : positive := 1024;
-    constant C_H_FRONT_PORCH        : positive := 24;
-    constant C_H_SYNC_PULSE         : positive := 136;
-    constant C_H_BACK_PORCH         : positive := 160;
+    constant C_H_PIXELS              : positive := 1024;
+    constant C_H_FRONT_PORCH         : positive := 24;
+    constant C_H_SYNC_PULSE          : positive := 136;
+    constant C_H_BACK_PORCH          : positive := 160;
 
-    constant C_V_PIXELS             : positive := 768;
-    constant C_V_FRONT_PORCH        : positive := 3;
-    constant C_V_SYNC_PULSE         : positive := 6;
-    constant C_V_BACK_PORCH         : positive := 29;
+    constant C_V_PIXELS              : positive := 768;
+    constant C_V_FRONT_PORCH         : positive := 3;
+    constant C_V_SYNC_PULSE          : positive := 6;
+    constant C_V_BACK_PORCH          : positive := 29;
 
     -- =================================================================================================================
     -- SIGNALS
     -- =================================================================================================================
 
     -- Internal reset and clock
-    signal internal_clk             : std_logic;
-    signal vga_clk                  : std_logic;
-    signal internal_clk_arst_p      : std_logic;
-    signal vga_clk_arst_p           : std_logic;
+    signal internal_clk              : std_logic;
+    signal vga_clk                   : std_logic;
+    signal internal_clk_arst_p       : std_logic;
+    signal vga_clk_arst_p            : std_logic;
 
     -- Resynchronization
-    signal async_inputs_slv         : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
-    signal sync_inputs_slv          : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
+    signal async_inputs_slv          : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
+    signal sync_inputs_slv           : std_logic_vector(C_RESYNC_WIDTH - 1 downto 0);
 
     -- Reglock signals
-    signal axil_awready             : std_logic;
-    signal axil_awvalid             : std_logic;
-    signal axil_awaddr              : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
-    signal axil_awprot              : std_logic_vector(2 downto 0);
-    signal axil_wready              : std_logic;
-    signal axil_wvalid              : std_logic;
-    signal axil_wdata               : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
-    signal axil_wstrb               : std_logic_vector(REGBLOCK_DATA_WIDTH / 8 - 1 downto 0);
-    signal axil_bready              : std_logic;
-    signal axil_bvalid              : std_logic;
-    signal axil_bresp               : std_logic_vector(1 downto 0);
-    signal axil_arready             : std_logic;
-    signal axil_arvalid             : std_logic;
-    signal axil_araddr              : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
-    signal axil_arprot              : std_logic_vector(2 downto 0);
-    signal axil_rready              : std_logic;
-    signal axil_rvalid              : std_logic;
-    signal axil_rdata               : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
-    signal axil_rresp               : std_logic_vector(1 downto 0);
-    signal hwif_in                  : regblock_in_t;
-    signal hwif_out                 : regblock_out_t;
+    signal axil_awready              : std_logic;
+    signal axil_awvalid              : std_logic;
+    signal axil_awaddr               : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
+    signal axil_awprot               : std_logic_vector(2 downto 0);
+    signal axil_wready               : std_logic;
+    signal axil_wvalid               : std_logic;
+    signal axil_wdata                : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
+    signal axil_wstrb                : std_logic_vector(REGBLOCK_DATA_WIDTH / 8 - 1 downto 0);
+    signal axil_bready               : std_logic;
+    signal axil_bvalid               : std_logic;
+    signal axil_bresp                : std_logic_vector(1 downto 0);
+    signal axil_arready              : std_logic;
+    signal axil_arvalid              : std_logic;
+    signal axil_araddr               : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0);
+    signal axil_arprot               : std_logic_vector(2 downto 0);
+    signal axil_rready               : std_logic;
+    signal axil_rvalid               : std_logic;
+    signal axil_rdata                : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
+    signal axil_rresp                : std_logic_vector(1 downto 0);
+    signal hwif_in                   : regblock_in_t;
+    signal hwif_out                  : regblock_out_t;
 
-    signal axil_bad_rresp           : std_logic;
-    signal axil_bad_bresp           : std_logic;
+    signal axil_bad_rresp            : std_logic;
+    signal axil_bad_bresp            : std_logic;
 
     -- VGA registers
-    signal manual_colors            : std_logic_vector(11 downto 0);
+    signal manual_colors             : std_logic_vector(11 downto 0);
 
 begin
 
@@ -191,22 +200,28 @@ begin
 
     inst_CLK_RST_MANAGER : entity lib_rtl.clk_rst_manager
         generic map (
-            G_RST_PULSE_CYCLES => C_RST_PULSE_CYCLES,
-            G_RST_POLARITY     => C_RST_POLARITY,
-            G_ASYNC_RST_OUTPUT => C_ASYNC_RST_OUTPUT,
-            G_RESYNC_NB_STAGES => C_RESYNC_NB_STAGES
+            G_BAD_ADDRESS_COUNTER_WIDTH => hwif_out.bad_address_counter.count.value'length,
+            G_RST_PULSE_CYCLES          => C_RST_PULSE_CYCLES,
+            G_RST_POLARITY              => C_RST_POLARITY,
+            G_ASYNC_RST_OUTPUT          => C_ASYNC_RST_OUTPUT,
+            G_RESYNC_NB_STAGES          => C_RESYNC_NB_STAGES
         )
         port map (
-            PAD_I_CLK         => PAD_I_CLK,
-            PAD_I_ARST_P      => PAD_I_ARST_P,
+            PAD_I_CLK                => PAD_I_CLK,
+            PAD_I_ARST_P             => PAD_I_ARST_P,
 
             -- Internal clock domain
-            O_INTERNAL_CLK    => internal_clk,
-            O_INTERNAL_ARST_P => internal_clk_arst_p,
+            O_INTERNAL_CLK           => internal_clk,
+            O_INTERNAL_ARST_P        => internal_clk_arst_p,
+
+            -- For alarms generation
+            I_BAD_ADDRESS_RST_REQ_EN => hwif_out.bad_address_reset_config.bad_address_rst_req_en.value,
+            I_BAD_ADDRESS_COUNTER    => hwif_out.bad_address_counter.count.value,
+            I_MAX_BAD_ADDRESS_COUNT  => hwif_out.bad_address_reset_config.max_bad_address_count.value,
 
             -- VGA clock domain
-            O_VGA_CLK         => vga_clk,
-            O_VGA_ARST_P      => vga_clk_arst_p
+            O_VGA_CLK                => vga_clk,
+            O_VGA_ARST_P             => vga_clk_arst_p
         );
 
     -- =================================================================================================================
@@ -215,9 +230,14 @@ begin
 
     async_inputs_slv <=
     (
-        2 => PAD_I_SWITCH_2,
+        0 => PAD_I_SWITCH_0,
         1 => PAD_I_SWITCH_1,
-        0 => PAD_I_SWITCH_0
+        2 => PAD_I_SWITCH_2,
+        3 => PAD_I_SWITCH_3,
+        4 => PAD_I_SWITCH_4,
+        5 => PAD_I_SWITCH_5,
+        6 => PAD_I_SWITCH_6,
+        7 => PAD_I_SWITCH_7
     );
 
     inst_olo_intf_sync : entity olo.olo_intf_sync
@@ -294,10 +314,16 @@ begin
     hwif_in.git_status.status.next_q <= G_GIT_STATUS;
     hwif_in.fpga_id.id.next_q        <= G_FPGA_ID;
 
-    -- Switches registers
-    hwif_in.switch_status.switch_2.next_q <= sync_inputs_slv(2);
-    hwif_in.switch_status.switch_1.next_q <= sync_inputs_slv(1);
-    hwif_in.switch_status.switch_0.next_q <= sync_inputs_slv(0);
+    -- Switches and reset status registers
+    hwif_in.ios_status.switch_7.next_q     <= sync_inputs_slv(7);
+    hwif_in.ios_status.switch_6.next_q     <= sync_inputs_slv(6);
+    hwif_in.ios_status.switch_5.next_q     <= sync_inputs_slv(5);
+    hwif_in.ios_status.switch_4.next_q     <= sync_inputs_slv(4);
+    hwif_in.ios_status.switch_3.next_q     <= sync_inputs_slv(3);
+    hwif_in.ios_status.switch_2.next_q     <= sync_inputs_slv(2);
+    hwif_in.ios_status.switch_1.next_q     <= sync_inputs_slv(1);
+    hwif_in.ios_status.switch_0.next_q     <= sync_inputs_slv(0);
+    hwif_in.ios_status.reset_status.next_q <= '1';
 
     -- Counters registers
     hwif_in.bad_address_counter.count.next_q          <= hwif_out.bad_address_counter.count.value;
@@ -394,26 +420,9 @@ begin
         );
 
     -- =================================================================================================================
-    -- LED CONTROL: LED_0 is ON when the value of the counter 'bad_address_counter' is greater than 0
+    -- LED OUTPUT
     -- =================================================================================================================
 
-    p_led : process (internal_clk, internal_clk_arst_p) is
-    begin
-
-        if (internal_clk_arst_p = '1') then
-
-            PAD_O_LED_0 <= '0';
-
-        elsif rising_edge(internal_clk) then
-
-            if (hwif_out.bad_address_counter.count.value > x"00000000") then
-                PAD_O_LED_0 <= '1';
-            else
-                PAD_O_LED_0 <= '0';
-            end if;
-
-        end if;
-
-    end process p_led;
+    PAD_O_LED_0 <= hwif_out.ios_status.reset_status.value;
 
 end architecture TOP_FPGA_ARCH;

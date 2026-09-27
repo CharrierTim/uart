@@ -34,7 +34,8 @@
 -- 1.0      16/05/2026  Timothee Charrier   Initial release
 -- 1.1      29/07/2026  Timothee Charrier   Move register map to a common package
 --                                          Add two generics controlling the number of random iterations and the
---                                          random seed for deterministic OSVVM randomization.
+--                                          random seed for deterministic OSVVM randomization
+--          26/09/2026                      Update switch/led register and hwif_out tests
 -- =====================================================================================================================
 
 library ieee;
@@ -263,9 +264,15 @@ begin
             tb_hwif_in.GIT_STATUS.status.next_q                <= C_REG_GIT_STATUS.data(0);
             tb_hwif_in.FPGA_ID.id.next_q                       <= C_REG_FPGA_ID.data;
             tb_hwif_in.SPI_RX_DATA.rx_data.next_q              <= C_REG_SPI_RX_DATA.data(15 downto 8);
-            tb_hwif_in.SWITCH_STATUS.switch_0.next_q           <= C_REG_SWITCH_STATUS.data(0);
-            tb_hwif_in.SWITCH_STATUS.switch_1.next_q           <= C_REG_SWITCH_STATUS.data(1);
-            tb_hwif_in.SWITCH_STATUS.switch_2.next_q           <= C_REG_SWITCH_STATUS.data(2);
+            tb_hwif_in.IOS_STATUS.switch_0.next_q              <= C_REG_IOS_STATUS.data(0);
+            tb_hwif_in.IOS_STATUS.switch_1.next_q              <= C_REG_IOS_STATUS.data(1);
+            tb_hwif_in.IOS_STATUS.switch_2.next_q              <= C_REG_IOS_STATUS.data(2);
+            tb_hwif_in.IOS_STATUS.switch_3.next_q              <= C_REG_IOS_STATUS.data(3);
+            tb_hwif_in.IOS_STATUS.switch_4.next_q              <= C_REG_IOS_STATUS.data(4);
+            tb_hwif_in.IOS_STATUS.switch_5.next_q              <= C_REG_IOS_STATUS.data(5);
+            tb_hwif_in.IOS_STATUS.switch_6.next_q              <= C_REG_IOS_STATUS.data(6);
+            tb_hwif_in.IOS_STATUS.switch_7.next_q              <= C_REG_IOS_STATUS.data(7);
+            tb_hwif_in.IOS_STATUS.reset_status.next_q          <= '1';
             tb_hwif_in.uart_start_bit_error_counter.count.incr <= '0';
             tb_hwif_in.uart_stop_bit_error_counter.count.incr  <= '0';
 
@@ -607,6 +614,7 @@ begin
                 proc_axi_lite_check_default_value(C_REG_SPI_RX_DATA);
                 proc_axi_lite_check_default_value(C_REG_VGA_COLOR_CONTROL);
                 proc_axi_lite_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
+                proc_axi_lite_check_default_value(C_REG_BAD_ADDRESS_RESET_CONFIG);
                 proc_axi_lite_check_default_value(C_REG_START_BIT_ERROR_COUNTER);
                 proc_axi_lite_check_default_value(C_REG_STOP_BIT_ERROR_COUNTER);
                 proc_axi_lite_check_default_value(C_REG_TEST_REGISTER_1);
@@ -621,7 +629,7 @@ begin
                 proc_axi_lite_check_read_only(C_REG_GIT_STATUS);
                 proc_axi_lite_check_read_only(C_REG_FPGA_ID);
                 proc_axi_lite_check_read_only(C_REG_SPI_RX_DATA);
-                proc_axi_lite_check_read_only(C_REG_SWITCH_STATUS);
+                proc_axi_lite_check_read_only(C_REG_IOS_STATUS);
                 proc_axi_lite_check_read_only(C_REG_BAD_ADDRESS_COUNTER);
                 proc_axi_lite_check_read_only(C_REG_START_BIT_ERROR_COUNTER);
                 proc_axi_lite_check_read_only(C_REG_STOP_BIT_ERROR_COUNTER);
@@ -636,8 +644,26 @@ begin
 
                 proc_axi_lite_check_read_write(C_REG_SPI_TX_CONTROL);
                 proc_axi_lite_check_read_write(C_REG_VGA_COLOR_CONTROL);
+                proc_axi_lite_check_read_write(C_REG_BAD_ADDRESS_RESET_CONFIG);
                 proc_axi_lite_check_read_write(C_REG_TEST_REGISTER_1);
                 proc_axi_lite_check_read_write(C_REG_TEST_REGISTER_2);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Writing some values to the specific registers");
+                info("-----------------------------------------------------------------------------");
+
+                proc_axi_lite_write(C_REG_SPI_TX_CONTROL, x"0000_0100");
+                proc_axi_lite_check(C_REG_SPI_TX_CONTROL, x"0000_0000"); -- Bit 8 is a pulse bit
+
+                proc_axi_lite_write(C_REG_SPI_TX_CONTROL, x"0000_00FF");
+                proc_axi_lite_check(C_REG_SPI_TX_CONTROL, x"0000_00FF");
+
+                proc_axi_lite_write(C_REG_BAD_ADDRESS_RESET_CONFIG, x"0000_0156");
+                proc_axi_lite_check(C_REG_BAD_ADDRESS_RESET_CONFIG, x"0000_0156");
+
+                proc_axi_lite_write(C_REG_BAD_ADDRESS_RESET_CONFIG, x"0000_00AE");
+                proc_axi_lite_check(C_REG_BAD_ADDRESS_RESET_CONFIG, x"0000_00AE");
 
             elsif run("test_regblock_hw_if") then
 
@@ -669,6 +695,36 @@ begin
                     tb_hwif_out.vga_color_control.blue.value,
                     C_REG_VGA_COLOR_CONTROL.data(11 downto 8),
                     "VGA_COLOR[11:8]  default value mismatch after reset");
+
+                check_equal(
+                    tb_hwif_out.bad_address_counter.count.value,
+                    C_REG_BAD_ADDRESS_COUNTER.data(31 downto 0),
+                    "BAD_ADDRESS_COUNTER default value mismatch after reset");
+
+                check_equal(
+                    tb_hwif_out.ios_status.reset_status.value,
+                    '1',
+                    "IOS_STATUS_RESET should be 1 after reset");
+
+                check_equal(
+                    tb_hwif_out.bad_address_reset_config.max_bad_address_count.value,
+                    C_REG_BAD_ADDRESS_RESET_CONFIG.data(7 downto 0),
+                    "MAX_BAD_ADDRESS_COUNT default value mismatch after reset");
+
+                check_equal(
+                    tb_hwif_out.bad_address_reset_config.bad_address_rst_req_en.value,
+                    C_REG_BAD_ADDRESS_RESET_CONFIG.data(8),
+                    "BAD_ADDRESS_RESET_ENABLE default value mismatch after reset");
+
+                check_equal(
+                    tb_hwif_out.uart_start_bit_error_counter.count.value,
+                    C_REG_START_BIT_ERROR_COUNTER.data(31 downto 0),
+                    "UART_START_BIT_ERROR_COUNTER default value mismatch after reset");
+
+                check_equal(
+                    tb_hwif_out.uart_stop_bit_error_counter.count.value,
+                    C_REG_STOP_BIT_ERROR_COUNTER.data(31 downto 0),
+                    "UART_STOP_BIT_ERROR_COUNTER default value mismatch after reset");
 
             elsif run("test_regblock_bad_addr") then
 
@@ -713,14 +769,14 @@ begin
                     expected_rresp => axi_resp_okay,
                     msg            => "BAD_ADDRESS_COUNTER should be 4 after two invalid write attempts");
 
-                -- Reset DUT
-                proc_reset_dut;
-                wait for 10 us;
-
                 info("");
                 info("-----------------------------------------------------------------------------");
                 info(" Performing " & to_string(G_RANDOM_ITERATIONS) & " random invalid read/write operations.");
                 info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 10 us;
 
                 for i in 1 to G_RANDOM_ITERATIONS loop
 

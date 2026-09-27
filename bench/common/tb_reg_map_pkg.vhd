@@ -32,6 +32,8 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      30/07/2026  Timothee Charrier   Initial version, create a package for register map for testbench
+--          25/09/2026                      Add comment separators, max/min address constants for testing
+--          26/09/2026                      Update registers, add min/max addresses range and add missing separators
 -- =====================================================================================================================
 
 library ieee;
@@ -40,7 +42,15 @@ library ieee;
 library lib_rtl;
     use lib_rtl.regblock_pkg.all;
 
+-- =====================================================================================================================
+-- PACKAGE
+-- =====================================================================================================================
+
 package TB_REG_MAP_PKG is
+
+    -- =================================================================================================================
+    -- TYPES
+    -- =================================================================================================================
 
     type t_reg is record
         name               : string;
@@ -49,7 +59,15 @@ package TB_REG_MAP_PKG is
         writable_bits_mask : std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0);
     end record t_reg;
 
-    constant C_REG_GIT_HASH                : t_reg :=
+    -- =================================================================================================================
+    -- CONSTANTS
+    -- =================================================================================================================
+
+    -- Min/Max out of range addresses for testing
+    constant C_ADDR_BELOW_MIN               : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0) := x"2C";
+    constant C_ADDR_ABOVE_MAX               : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0) := x"F4";
+
+    constant C_REG_GIT_HASH                 : t_reg :=
     (
         name               => "GIT_HASH",
         addr               => 8x"00",
@@ -57,7 +75,7 @@ package TB_REG_MAP_PKG is
         writable_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_GIT_STATUS              : t_reg :=
+    constant C_REG_GIT_STATUS               : t_reg :=
     (
         name               => "GIT_STATUS",
         addr               => 8x"04",
@@ -65,7 +83,7 @@ package TB_REG_MAP_PKG is
         writable_bits_mask => 32x"0000_0001"
     );
 
-    constant C_REG_FPGA_ID                 : t_reg :=
+    constant C_REG_FPGA_ID                  : t_reg :=
     (
         name               => "FPGA_ID",
         addr               => 8x"08",
@@ -73,7 +91,7 @@ package TB_REG_MAP_PKG is
         writable_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_SPI_TX_CONTROL          : t_reg :=
+    constant C_REG_SPI_TX_CONTROL           : t_reg :=
     (
         name               => "SPI_TX_CONTROL",
         addr               => 8x"0C",
@@ -81,7 +99,7 @@ package TB_REG_MAP_PKG is
         writable_bits_mask => 32x"0000_00FF"
     );
 
-    constant C_REG_SPI_RX_DATA             : t_reg :=
+    constant C_REG_SPI_RX_DATA              : t_reg :=
     (
         name               => "SPI_RX_DATA",
         addr               => 8x"10",
@@ -89,7 +107,7 @@ package TB_REG_MAP_PKG is
         writable_bits_mask => 32x"0000_00FF"
     );
 
-    constant C_REG_VGA_COLOR_CONTROL       : t_reg :=
+    constant C_REG_VGA_COLOR_CONTROL        : t_reg :=
     (
         name               => "VGA_COLOR",
         addr               => 8x"14",
@@ -97,15 +115,15 @@ package TB_REG_MAP_PKG is
         writable_bits_mask => 32x"0000_0FFF"
     );
 
-    constant C_REG_SWITCH_STATUS           : t_reg :=
+    constant C_REG_IOS_STATUS               : t_reg :=
     (
-        name               => "SWITCH_STATUS",
+        name               => "IOS_STATUS",
         addr               => 8x"18",
-        data               => 32x"0000_0000",
-        writable_bits_mask => 32x"0000_0007"
+        data               => 32x"0000_0100", -- Bit 8 set to 1 after reset
+        writable_bits_mask => 32x"0000_00FF"
     );
 
-    constant C_REG_BAD_ADDRESS_COUNTER     : t_reg :=
+    constant C_REG_BAD_ADDRESS_COUNTER      : t_reg :=
     (
         name               => "BAD_ADDRESS_COUNTER",
         addr               => 8x"1C",
@@ -113,23 +131,31 @@ package TB_REG_MAP_PKG is
         writable_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_START_BIT_ERROR_COUNTER : t_reg :=
+    constant C_REG_BAD_ADDRESS_RESET_CONFIG : t_reg :=
     (
-        name               => "START_BIT_ERROR_COUNTER",
+        name               => "BAD_ADDRESS_RESET_CONFIG",
         addr               => 8x"20",
-        data               => 32x"0000_0000",
-        writable_bits_mask => 32x"FFFF_FFFF"
+        data               => 32x"0000_0014",
+        writable_bits_mask => 32x"0000_01FF"
     );
 
-    constant C_REG_STOP_BIT_ERROR_COUNTER  : t_reg :=
+    constant C_REG_START_BIT_ERROR_COUNTER  : t_reg :=
     (
-        name               => "STOP_BIT_ERROR_COUNTER",
+        name               => "START_BIT_ERROR_COUNTER",
         addr               => 8x"24",
         data               => 32x"0000_0000",
         writable_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_TEST_REGISTER_1         : t_reg :=
+    constant C_REG_STOP_BIT_ERROR_COUNTER   : t_reg :=
+    (
+        name               => "STOP_BIT_ERROR_COUNTER",
+        addr               => 8x"28",
+        data               => 32x"0000_0000",
+        writable_bits_mask => 32x"FFFF_FFFF"
+    );
+
+    constant C_REG_TEST_REGISTER_1          : t_reg :=
     (
         name               => "TEST_REGISTER_1",
         addr               => 8x"F8",
@@ -137,7 +163,7 @@ package TB_REG_MAP_PKG is
         writable_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_TEST_REGISTER_2         : t_reg :=
+    constant C_REG_TEST_REGISTER_2          : t_reg :=
     (
         name               => "TEST_REGISTER_2",
         addr               => 8x"FC",
@@ -145,7 +171,7 @@ package TB_REG_MAP_PKG is
         writable_bits_mask => 32x"FFFF_FFFF"
     );
 
-    constant C_REG_BAD_ADDR                : t_reg :=
+    constant C_REG_BAD_ADDR                 : t_reg :=
     (
         name               => "REG_BAD_ADDR",
         addr               => 8x"98",

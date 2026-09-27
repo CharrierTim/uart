@@ -34,7 +34,7 @@
 -- 1.0      01/12/2025  Timothee Charrier   Initial release
 -- 1.1      12/10/2025  Timothee Charrier   Update UART_MODEL interface names
 -- 2.0      12/01/2026  Timothee Charrier   Convert reset signal from active-low to active-high. Add VGA horizontal and
---                                          vertical timings test.
+--                                          vertical timings test
 -- 2.1      17/04/2026  Timothee Charrier   Add VGA test vectors and procedure to check VGA outputs
 -- 2.2      23/05/2026  Timothee Charrier   Major refactor with:
 --                                              - Update register (now SystemDL-generated) definitions to 32 bits
@@ -42,6 +42,7 @@
 --                                              - Fix proc_vga_check_outputs to correctly sample VGA outputs during
 --                                                active video time and avoid sampling during blanking intervals
 -- 2.3      29/07/2026  Timothee Charrier   Add common package for register map
+--          26/09/2026                      Add `test_bad_addr_alarm` and update `test_switches_toggling`
 -- =====================================================================================================================
 
 library ieee;
@@ -89,9 +90,7 @@ architecture TB_TOP_FPGA_ARCH of TB_TOP_FPGA is
     signal tb_pad_o_mosi          : std_logic;
     signal tb_pad_i_miso          : std_logic;
     signal tb_pad_o_cs_n          : std_logic;
-    signal tb_pad_i_switch_0      : std_logic;
-    signal tb_pad_i_switch_1      : std_logic;
-    signal tb_pad_i_switch_2      : std_logic;
+    signal tb_pad_i_switch        : std_logic_vector(8 - 1 downto 0);
     signal tb_pad_o_led_0         : std_logic;
 
     signal tb_pad_o_vga_hsync     : std_logic;
@@ -143,15 +142,20 @@ begin
             PAD_O_MOSI      => tb_pad_o_mosi,
             PAD_I_MISO      => tb_pad_i_miso,
             PAD_O_CS_N      => tb_pad_o_cs_n,
-            PAD_I_SWITCH_0  => tb_pad_i_switch_0,
-            PAD_I_SWITCH_1  => tb_pad_i_switch_1,
-            PAD_I_SWITCH_2  => tb_pad_i_switch_2,
-            PAD_O_LED_0     => tb_pad_o_led_0,
+            PAD_I_SWITCH_0  => tb_pad_i_switch(0),
+            PAD_I_SWITCH_1  => tb_pad_i_switch(1),
+            PAD_I_SWITCH_2  => tb_pad_i_switch(2),
+            PAD_I_SWITCH_3  => tb_pad_i_switch(3),
+            PAD_I_SWITCH_4  => tb_pad_i_switch(4),
+            PAD_I_SWITCH_5  => tb_pad_i_switch(5),
+            PAD_I_SWITCH_6  => tb_pad_i_switch(6),
+            PAD_I_SWITCH_7  => tb_pad_i_switch(7),
             PAD_O_VGA_HSYNC => tb_pad_o_vga_hsync,
             PAD_O_VGA_VSYNC => tb_pad_o_vga_vsync,
             PAD_O_VGA_RED   => tb_pad_o_vga_red,
             PAD_O_VGA_GREEN => tb_pad_o_vga_green,
-            PAD_O_VGA_BLUE  => tb_pad_o_vga_blue
+            PAD_O_VGA_BLUE  => tb_pad_o_vga_blue,
+            PAD_O_LED_0     => tb_pad_o_led_0
         );
 
     -- =================================================================================================================
@@ -365,6 +369,7 @@ begin
     p_test_runner : process is
 
         variable v_spi_slave_data : std_logic_vector(8 - 1 downto 0);
+        variable v_switch_pattern : std_logic_vector(8 - 1 downto 0);
 
         -- =============================================================================================================
         -- proc_reset_dut
@@ -390,9 +395,7 @@ begin
 
             tb_i_uart_select       <= '0';
             tb_i_uart_rx_manual    <= '1';
-            tb_pad_i_switch_0      <= '0';
-            tb_pad_i_switch_1      <= '0';
-            tb_pad_i_switch_2      <= '0';
+            tb_pad_i_switch        <= (others => '0');
 
             tb_i_read_addr         <= (others => '0');
             tb_i_read_addr_valid   <= '0';
@@ -1045,7 +1048,7 @@ begin
                 -- Select the manual UART
                 tb_i_uart_select <= '1';
 
-                for i in 1 to 8 loop
+                for idx in 1 to 8 loop
                     tb_i_uart_rx_manual <= '0';
                     wait for 0.25 * C_UART_BIT_TIME; -- Invalid start bit (too short)
                     tb_i_uart_rx_manual <= '1';      -- Sudden change to high
@@ -1074,7 +1077,7 @@ begin
                 -- Select the manual UART
                 tb_i_uart_select <= '1';
 
-                for i in 1 to 3 loop
+                for idx in 1 to 3 loop
                     tb_i_uart_rx_manual <= '0';
                     wait for C_UART_BIT_TIME;
                     tb_i_uart_rx_manual <= '1'; -- Bit 0
@@ -1102,65 +1105,11 @@ begin
                 -- Check that the stop bit error counter has incremented by 3
                 proc_uart_check(C_REG_STOP_BIT_ERROR_COUNTER, x"0000_0003");
 
-            elsif (run("test_led_and_switches_toggling")) then
-
-                -- Reset DUT
-                proc_reset_dut;
-                wait for 100 us;
+            elsif (run("test_switches_toggling_and_led")) then
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Checking " & C_REG_BAD_ADDRESS_COUNTER.name & " register default value");
-                info("-----------------------------------------------------------------------------");
-
-                proc_uart_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
-
-                info("");
-                info("-----------------------------------------------------------------------------");
-                info(" Checking " & C_REG_BAD_ADDRESS_COUNTER.name & " is in read-only mode");
-                info("-----------------------------------------------------------------------------");
-
-                proc_uart_check_read_only(C_REG_BAD_ADDRESS_COUNTER);
-
-                info("");
-                info("-----------------------------------------------------------------------------");
-                info(" Reading to a bad address (0x98) and checking LED_0 is indicating error");
-                info("-----------------------------------------------------------------------------");
-                info("");
-
-                proc_uart_read(C_REG_BAD_ADDR);
-                wait for C_UART_READ_CMD_TIME;
-
-                check_equal(tb_pad_o_led_0, '1', "LED_0 should be ON indicating error when reading from bad address");
-                check(
-                    tb_pad_o_led_0'stable(C_UART_READ_CMD_TIME),
-                    "LED_0 should remain stable ON for at least " &
-                    time'image(C_UART_READ_CMD_TIME) &
-                    " after reading from bad address");
-
-                info("");
-                info("-----------------------------------------------------------------------------");
-                info(" Writing to a bad address (0x98) and checking LED_0 is indicating error");
-                info("-----------------------------------------------------------------------------");
-                info("");
-
-                -- Reset DUT to clear LED_0
-                proc_reset_dut;
-                wait for 100 us;
-
-                proc_uart_write(C_REG_BAD_ADDR, x"FEDC_BA98");
-                wait for C_UART_WRITE_CMD_TIME;
-
-                check_equal(tb_pad_o_led_0, '1', "LED_0 should be ON indicating error when writing to bad address");
-                check(
-                    tb_pad_o_led_0'stable(C_UART_WRITE_CMD_TIME),
-                    "LED_0 should remain stable ON for at least " &
-                    time'image(C_UART_WRITE_CMD_TIME) &
-                    " after writing to bad address");
-
-                info("");
-                info("-----------------------------------------------------------------------------");
-                info(" Checking register REG_SWITCHES characteristics (read-only)");
+                info(" Checking register " & C_REG_IOS_STATUS.name & " characteristics (read-only)");
                 info("-----------------------------------------------------------------------------");
 
                 -- Reset DUT
@@ -1168,32 +1117,84 @@ begin
                 wait for 100 us;
 
                 -- Check default value
-                proc_uart_check_default_value(C_REG_SWITCH_STATUS);
+                proc_uart_check_default_value(C_REG_IOS_STATUS);
 
                 -- Check register is in read-only
-                proc_uart_check_read_only(C_REG_SWITCH_STATUS);
+                proc_uart_check_read_only(C_REG_IOS_STATUS);
 
                 info("");
                 info("-----------------------------------------------------------------------------");
-                info(" Toggling input switches - Testing combinations");
+                info(" Checking LED is on after reset");
                 info("-----------------------------------------------------------------------------");
 
-                for i in 0 to 7 loop
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Check that the LED is on after reset
+                proc_uart_check(C_REG_IOS_STATUS, x"0000_0100");
+                check_equal(tb_pad_o_led_0, '1', "Checking LED is on after reset");
+                check_equal(tb_pad_o_led_0'stable(100 us), True, "Checking LED remains on after reset");
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Toggling input switches - Testing zero and one-hot patterns");
+                info("-----------------------------------------------------------------------------");
+
+                for idx in 0 to 8 loop
+
+                    v_switch_pattern := (others => '0');
+
+                    if (idx > 0) then
+                        v_switch_pattern(idx - 1) := '1';
+                    end if;
 
                     -- Set switches according to bit pattern
-                    tb_pad_i_switch_0 <= std_logic(to_unsigned(i, 3)(0));
-                    tb_pad_i_switch_1 <= std_logic(to_unsigned(i, 3)(1));
-                    tb_pad_i_switch_2 <= std_logic(to_unsigned(i, 3)(2));
+                    tb_pad_i_switch <= v_switch_pattern;
                     wait for 1 ns; -- Signal propagation
 
                     info("");
-                    info("Testing combination :"                     &
-                        " SW2=" & std_logic'image(tb_pad_i_switch_2) &
-                        " SW1=" & std_logic'image(tb_pad_i_switch_1) &
-                        " SW0=" & std_logic'image(tb_pad_i_switch_0));
+                    info("Testing combination:"                      &
+                        " SW7=" & std_logic'image(tb_pad_i_switch(7)) &
+                        " SW6=" & std_logic'image(tb_pad_i_switch(6)) &
+                        " SW5=" & std_logic'image(tb_pad_i_switch(5)) &
+                        " SW4=" & std_logic'image(tb_pad_i_switch(4)) &
+                        " SW3=" & std_logic'image(tb_pad_i_switch(3)) &
+                        " SW2=" & std_logic'image(tb_pad_i_switch(2)) &
+                        " SW1=" & std_logic'image(tb_pad_i_switch(1)) &
+                        " SW0=" & std_logic'image(tb_pad_i_switch(0)));
 
-                    proc_uart_check(C_REG_SWITCH_STATUS, std_logic_vector(to_unsigned(i, 32)));
+                    proc_uart_check(C_REG_IOS_STATUS, x"0000_01" & v_switch_pattern);
                 end loop;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing some arbitrary patterns on input switches");
+                info("-----------------------------------------------------------------------------");
+
+                info("");
+                info("Testing combination: SW7='1' SW6='0' SW5='1' SW4='0' SW3='1' SW2='0' SW1='1' SW0='0'");
+                tb_pad_i_switch <= "10101010"; -- 0xAA
+                wait for 1 ns;                 -- Signal propagation
+                proc_uart_check(C_REG_IOS_STATUS, x"0000_01AA");
+
+                info("");
+                info("Testing combination: SW7='0' SW6='1' SW5='0' SW4='1' SW3='0' SW2='1' SW1='0' SW0='1'");
+                tb_pad_i_switch <= "01010101"; -- 0x55
+                wait for 1 ns;                 -- Signal propagation
+                proc_uart_check(C_REG_IOS_STATUS, x"0000_0155");
+
+                info("");
+                info("Testing combination: SW7='1' SW6='1' SW5='1' SW4='1' SW3='1' SW2='1' SW1='1' SW0='1'");
+                tb_pad_i_switch <= "11111111"; -- 0xFF
+                wait for 1 ns;                 -- Signal propagation
+                proc_uart_check(C_REG_IOS_STATUS, x"0000_01FF");
+
+                info("");
+                info("Testing combination: SW7='0' SW6='0' SW5='1' SW4='0' SW3='0' SW2='0' SW1='1' SW0='0'");
+                tb_pad_i_switch <= "00101000"; -- 0x28
+                wait for 1 ns;                 -- Signal propagation
+                proc_uart_check(C_REG_IOS_STATUS, x"0000_0128");
 
             elsif (run("test_spi")) then
 
@@ -1332,6 +1333,126 @@ begin
 
                 tb_check_vsync_timings <= '1';
                 wait for 2.1 * C_V_WHOLE_LINE_TIME;
+
+            elsif (run("test_bad_addr_alarm")) then
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking bad address registers default value");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_check_default_value(C_REG_BAD_ADDRESS_COUNTER);
+                proc_uart_check_default_value(C_REG_BAD_ADDRESS_RESET_CONFIG);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking " & C_REG_BAD_ADDRESS_COUNTER.name & " is in read-only mode");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_check_read_only(C_REG_BAD_ADDRESS_COUNTER);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Checking " & C_REG_BAD_ADDRESS_RESET_CONFIG.name & " is in read-write mode");
+                info("-----------------------------------------------------------------------------");
+
+                proc_uart_check_read_write(C_REG_BAD_ADDRESS_RESET_CONFIG);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing that no reset is performed when the enable bit is not set in " &
+                    C_REG_BAD_ADDRESS_RESET_CONFIG.name);
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Write to a test register to ensure it is not reset by the bad address alarm
+                proc_uart_write(C_REG_TEST_REGISTER_1, x"1234_ABCD");
+                proc_uart_check(C_REG_TEST_REGISTER_1, x"1234_ABCD");
+
+                for idx in 1 to C_MAX_BAD_ADDRESS_COUNT + 5 loop
+                    proc_uart_read(C_INVALID_REG);
+                end loop;
+
+                -- Check that the bad address counter is >= C_MAX_BAD_ADDRESS_COUNT
+                proc_uart_check(
+                    C_REG_BAD_ADDRESS_COUNTER,
+                    std_logic_vector(to_unsigned(C_MAX_BAD_ADDRESS_COUNT + 5, 32)));
+
+                -- Check that the test register was not reset
+                proc_uart_check(C_REG_TEST_REGISTER_1, x"1234_ABCD");
+
+                info("");
+                info("Enabling it should reset the device instantly");
+
+                proc_uart_write(C_REG_BAD_ADDRESS_RESET_CONFIG,
+                    x"0000_01" & C_REG_BAD_ADDRESS_RESET_CONFIG.data(7 downto 0));
+                proc_uart_check(C_REG_TEST_REGISTER_1, C_REG_TEST_REGISTER_1.data);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing that a reset is performed when the enable bit is set in " &
+                    C_REG_BAD_ADDRESS_RESET_CONFIG.name);
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Enable the reset on bad address alarm
+                proc_uart_write(C_REG_BAD_ADDRESS_RESET_CONFIG,
+                    x"0000_01" & C_REG_BAD_ADDRESS_RESET_CONFIG.data(7 downto 0));
+
+                -- Write to a test register to ensure it is not reset by the bad address alarm
+                proc_uart_write(C_REG_TEST_REGISTER_1, x"1234_ABCD");
+                proc_uart_check(C_REG_TEST_REGISTER_1, x"1234_ABCD");
+
+                for idx in 1 to C_MAX_BAD_ADDRESS_COUNT loop
+                    if (idx <= C_MAX_BAD_ADDRESS_COUNT - 1) then
+                        proc_uart_read(C_INVALID_REG);
+                    else
+                        -- Workaround to avoid assertion failure in uart_slave after the reset
+                        proc_uart_write(C_INVALID_REG, x"0000_0000");
+                    end if;
+                end loop;
+
+                -- The register must contain its reset value.
+                proc_uart_check(C_REG_TEST_REGISTER_1, C_REG_TEST_REGISTER_1.data);
+
+                info("");
+                info("-----------------------------------------------------------------------------");
+                info(" Testing that a reset is performed when the enable bit is set in " &
+                    C_REG_BAD_ADDRESS_RESET_CONFIG.name & " and different max count value");
+                info("-----------------------------------------------------------------------------");
+
+                -- Reset DUT
+                proc_reset_dut;
+                wait for 100 us;
+
+                -- Enable the reset on bad address alarm and set the max count to 4
+                proc_uart_write(C_REG_BAD_ADDRESS_RESET_CONFIG, x"0000_0104");
+
+                -- Write to a test register to ensure it is not reset by the bad address alarm
+                proc_uart_write(C_REG_TEST_REGISTER_1, x"1234_ABCD");
+                proc_uart_check(C_REG_TEST_REGISTER_1, x"1234_ABCD");
+
+                for idx in 1 to 4 loop
+                    if (idx <= 4 - 1) then
+                        proc_uart_read(C_INVALID_REG);
+                    else
+                        -- Workaround to avoid assertion failure in uart_slave after the reset
+                        proc_uart_write(C_INVALID_REG, x"0000_0000");
+                    end if;
+                end loop;
+
+                -- The register must contain its reset value.
+                proc_uart_check(C_REG_TEST_REGISTER_1, C_REG_TEST_REGISTER_1.data);
 
             end if;
 

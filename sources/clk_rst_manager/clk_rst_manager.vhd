@@ -23,7 +23,7 @@
 -- =====================================================================================================================
 -- @project uart
 -- @file    clk_rst_manager.vhd
--- @version 1.0
+-- @version 1.1
 -- @brief   Module that manages the clock and reset signals.
 --          Uses a PLL to generate the clocks, and for each clock domain, generates a positive asynchronous reset signal
 --          that guarantee synchronous de-assertion of the reset.
@@ -34,10 +34,13 @@
 -- Version  Date        Author              Description
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      02/08/2026  Timothee Charrier   Initial release
+-- 1.1      26/09/2026  Timothee Charrier   Add a bad address counter to trigger a reset request if the counter exceeds
+--                                          a threshold and the reset request is enabled
 -- =====================================================================================================================
 
 library ieee;
     use ieee.std_logic_1164.all;
+    use ieee.numeric_std.all;
 
 library olo;
 
@@ -47,22 +50,28 @@ library olo;
 
 entity CLK_RST_MANAGER is
     generic (
-        G_RST_PULSE_CYCLES : positive  := 3;
-        G_RST_POLARITY     : std_logic := '1';
-        G_ASYNC_RST_OUTPUT : boolean   := false;
-        G_RESYNC_NB_STAGES : positive  := 3
+        G_BAD_ADDRESS_COUNTER_WIDTH : positive  := 32;
+        G_RST_PULSE_CYCLES          : positive  := 3;
+        G_RST_POLARITY              : std_logic := '1';
+        G_ASYNC_RST_OUTPUT          : boolean   := false;
+        G_RESYNC_NB_STAGES          : positive  := 3
     );
     port (
         -- Input clock and reset from the pads
-        PAD_I_CLK         : in    std_logic;
-        PAD_I_ARST_P      : in    std_logic;
+        PAD_I_CLK                : in    std_logic;
+        PAD_I_ARST_P             : in    std_logic;
+
+        -- For alarms generation
+        I_BAD_ADDRESS_RST_REQ_EN : in    std_logic;
+        I_BAD_ADDRESS_COUNTER    : in    std_logic_vector(G_BAD_ADDRESS_COUNTER_WIDTH - 1 downto 0);
+        I_MAX_BAD_ADDRESS_COUNT  : in    std_logic_vector(8 - 1 downto 0);
 
         -- Output clocks and resets
-        O_INTERNAL_CLK    : out   std_logic;
-        O_INTERNAL_ARST_P : out   std_logic;
+        O_INTERNAL_CLK           : out   std_logic;
+        O_INTERNAL_ARST_P        : out   std_logic;
 
-        O_VGA_CLK         : out   std_logic;
-        O_VGA_ARST_P      : out   std_logic
+        O_VGA_CLK                : out   std_logic;
+        O_VGA_ARST_P             : out   std_logic
     );
 end entity CLK_RST_MANAGER;
 
@@ -82,6 +91,7 @@ architecture CLK_RST_MANAGER_ARCH of CLK_RST_MANAGER is
     signal intermediate_arst_p : std_logic;
     signal internal_sys_arst_p : std_logic;
     signal internal_vga_arst_p : std_logic;
+    signal bad_address_rst_req : std_logic;
 
     -- =================================================================================================================
     -- COMPONENT DECLARATIONS
@@ -115,11 +125,25 @@ begin
         );
 
     -- =================================================================================================================
+    -- ALARMS GENERATION
+    --
+    --  - If more than G_MAX_BAD_ADDRESS_COUNT bad address transactions are detected, and if the reset request is
+    --    enabled, then a reset request is generated.
+    -- =================================================================================================================
+
+    bad_address_rst_req <= '1' when (
+                                        unsigned(I_BAD_ADDRESS_COUNTER) >= unsigned(I_MAX_BAD_ADDRESS_COUNT)
+                                        and
+                                        I_BAD_ADDRESS_RST_REQ_EN = '1'
+                                    ) else
+                           '0';
+
+    -- =================================================================================================================
     -- RESET GENERATION AND SYNCHRONIZATION
     -- =================================================================================================================
 
     -- Toggle reset from BTN or when PLL is unlocked
-    intermediate_arst_p <= PAD_I_ARST_P or (not pll_locked);
+    intermediate_arst_p <= PAD_I_ARST_P or (not pll_locked) or bad_address_rst_req;
 
     -- System clock domain positive reset generation
     inst_olo_base_sys_reset_gen : entity olo.olo_base_reset_gen

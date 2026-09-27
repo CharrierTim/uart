@@ -33,6 +33,7 @@
 -- -------  ----------  ------------------  ----------------------------------------------------------------------------
 -- 1.0      16/05/2026  Timothee Charrier   Initial release
 -- 1.1      29/07/2026  Timothee Charrier   Move `proc_check_time_in_range` to a common package
+--          26/09/2026                      Move min/max addresses to register map package
 -- =====================================================================================================================
 
 library ieee;
@@ -59,11 +60,7 @@ package TB_REGBLOCK_PKG is
     -- =================================================================================================================
 
     -- Clock configuration
-    constant C_CLK_FREQ_HZ    : positive := 50_000_000;
-    constant C_CLK_PERIOD     : time     := 1 sec / C_CLK_FREQ_HZ;
-
-    -- Min/Max out of range addresses for testing
-    constant C_ADDR_BELOW_MIN : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0) := x"28";
-    constant C_ADDR_ABOVE_MAX : std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0) := x"F4";
+    constant C_CLK_FREQ_HZ : positive := 50_000_000;
+    constant C_CLK_PERIOD  : time     := 1 sec / C_CLK_FREQ_HZ;
 
 end package TB_REGBLOCK_PKG;

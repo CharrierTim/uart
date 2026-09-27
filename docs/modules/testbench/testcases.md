@@ -6,7 +6,8 @@
 
 ### Description
 
-Checks default values and access rights (RO/RW) for the test registers of the FPGA.
+Checks default values and access rights for the FPGA identity, UART error-counter,
+and test registers.
 
 ### Steps
 
@@ -19,6 +20,8 @@ Checks default values and access rights (RO/RW) for the test registers of the FP
         - [`C_REG_GIT_HASH`](../regblock/regblock.md#git_hash-register)
         - [`C_REG_GIT_STATUS`](../regblock/regblock.md#git_status-register)
         - [`C_REG_FPGA_ID`](../regblock/regblock.md#fpga_id-register)
+        - [`C_REG_START_BIT_ERROR_COUNTER`](../regblock/regblock.md#uart_start_bit_error_counter-register)
+        - [`C_REG_STOP_BIT_ERROR_COUNTER`](../regblock/regblock.md#uart_stop_bit_error_counter-register)
         - [`C_REG_TEST_REGISTER_1`](../regblock/regblock.md#test_register_1-register)
         - [`C_REG_TEST_REGISTER_2`](../regblock/regblock.md#test_register_2-register)
 
@@ -40,8 +43,8 @@ Checks default values and access rights (RO/RW) for the test registers of the FP
 5. **Write and Verify Custom Value**
     - Write `0x1234_ABCD` to [`C_REG_TEST_REGISTER_1`](../regblock/regblock.md#test_register_1-register).
     - Read back and check value is `0x1234_ABCD`.
-    - Write `6789_EF01` to [`C_REG_TEST_REGISTER_2`](../regblock/regblock.md#test_register_2-register).
-    - Read back and check value is `6789_EF01`.
+    - Write `0x6789_EF01` to [`C_REG_TEST_REGISTER_2`](../regblock/regblock.md#test_register_2-register).
+    - Read back and check value is `0x6789_EF01`.
 
 ---
 
@@ -49,7 +52,8 @@ Checks default values and access rights (RO/RW) for the test registers of the FP
 
 ### Description
 
-Tests robustness of UART implementation including invalid start/stop bits and command framing.
+Tests UART robustness with invalid start/stop bits, malformed command framing,
+timing verification, and UART error-counter behavior.
 
 ### Steps
 
@@ -118,47 +122,33 @@ Tests robustness of UART implementation including invalid start/stop bits and co
     - Check value in [`C_REG_TEST_REGISTER_1`](../regblock/regblock.md#test_register_1-register) was not written;
     contents unchanged with [`proc_uart_check`](tb_top_fpga.md#procedure-proc_uart_check)
 
+7. **Check UART Error Counters Under Repeated Errors**
+        - Send repeated invalid start bits and verify the start-bit error counter increments.
+        - Send repeated invalid stop bits and verify the stop-bit error counter increments.
+
 ---
 
-## Testcase 03: `test_led_and_switches_toggling`
+## Testcase 03: `test_switches_toggling_and_led`
 
 ### Description
 
-Validates the bad address counter and `SWITCH_STATUS` read-only register. Checks bad address handling via `LED_0` and
-reading all switch combinations.
+Validates the read-only `IOS_STATUS` register, the reset-status indication,
+the reset LED behavior, and switch input decoding for all eight switches.
 
 ### Steps
 
-1. **Check Register `BAD_ADDRESS_COUNTER` Characteristics**
-        - Call [`proc_reset_dut`](tb_top_fpga.md#procedure-proc_reset_dut)
-        - Wait for 100 µs
-        - Check default value using [`proc_uart_check_default_value`](tb_top_fpga.md#procedure-proc_uart_check_default_value)
-            for [`C_REG_BAD_ADDRESS_COUNTER`](../regblock/regblock.md#bad_address_counter-register)
-        - Check register [`C_REG_BAD_ADDRESS_COUNTER`](../regblock/regblock.md#bad_address_counter-register) is in
-        read-only mode using [`proc_uart_check_read_only`](tb_top_fpga.md#procedure-proc_uart_check_read_only)
+1. **Check `IOS_STATUS` Register Characteristics**
+    - Reset the DUT and verify the default value of [`C_REG_IOS_STATUS`](../regblock/regblock.md#ios_status-register).
+    - Verify that the register is read-only.
 
-2. **Read and Write a Bad Address and Verify `led_0` Output**
-        - Read from bad address `C_REG_BAD_ADDR`
-            - Wait for `C_UART_READ_CMD_TIME`
-            - Check `tb_pad_o_led_0` is stable at `'1'` for `C_UART_READ_CMD_TIME` using `check_equal`
-        - Reset the DUT, then write to bad address `C_REG_BAD_ADDR`
-            - Wait for `C_UART_WRITE_CMD_TIME`
-            - Check `tb_pad_o_led_0` is stable at `'1'` for `C_UART_WRITE_CMD_TIME` using `check_equal`
+2. **Check Reset Status and LED Behavior**
+    - Reset the DUT and verify that `reset_status` is asserted in `C_REG_IOS_STATUS`.
+    - Verify that `tb_pad_o_led_0` is asserted and remains stable after reset.
 
-3. **Check Register `SWITCH_STATUS` Characteristics**
-        - Call [`proc_reset_dut`](tb_top_fpga.md#procedure-proc_reset_dut)
-        - Wait for 100 µs
-        - Check default value using [`proc_uart_check_default_value`](tb_top_fpga.md#procedure-proc_uart_check_default_value)
-            for [`C_REG_SWITCH_STATUS`](../regblock/regblock.md#switch_status-register)
-        - Check register [`C_REG_SWITCH_STATUS`](../regblock/regblock.md#switch_status-register) is in read-only mode
-        using [`proc_uart_check_read_only`](tb_top_fpga.md#procedure-proc_uart_check_read_only)
-
-4. **Toggle Input Switches and Verify Combinations**
-        - For all combinations of `tb_pad_i_switch_0`, `tb_pad_i_switch_1`, `tb_pad_i_switch_2` (from `0` to `7`):
-            - Set switches with binary pattern from `i`
-            - Wait for 1 ns (signal propagation)
-            - Check register [`C_REG_SWITCH_STATUS`](../regblock/regblock.md#switch_status-register) value matches
-            the bit pattern using [`proc_uart_check`](tb_top_fpga.md#procedure-proc_uart_check)
+3. **Toggle Input Switches and Verify Status**
+    - Apply zero, one-hot, and representative multi-bit patterns to all eight switch inputs.
+    - Verify that the switch bits in [`C_REG_IOS_STATUS`](../regblock/regblock.md#ios_status-register)
+      match the applied input pattern.
 
 ---
 
@@ -218,3 +208,21 @@ Tests the VGA color-control register, RGB output mapping, and horizontal and ver
 5. Enable vertical timing checks for at least two complete frames.
 
 ---
+
+## Testcase 06: `test_bad_addr_alarm`
+
+### Description
+
+Tests the bad address counter and alarm generation when the counter exceeds the maximum allowed value
+and verifies the reset generation based on the `bad_address_rst_req_en` configuration.
+
+### Steps
+
+1. Reset the DUT and verify the default values of [`C_REG_BAD_ADDRESS_COUNTER`](../regblock/regblock.md#bad_address_counter-register)
+    and [`C_REG_BAD_ADDRESS_RESET_CONFIG`](../regblock/regblock.md#bad_address_reset_config-register).
+2. Verify that the counter is read-only and the reset configuration register is read-write.
+3. With reset generation disabled, perform invalid accesses and verify that the counter increments
+    without resetting the test register. To check it, write `0x1234_ABCD` to [`C_REG_TEST_REGISTER_1`](../regblock/regblock.md#test_register_1-register)
+    and verify that the value remains unchanged after exceeding the maximum count.
+4. Enable reset generation and verify that exceeding the configured maximum resets the test register.
+5. Repeat the enabled-alarm check with a custom maximum count.

@@ -23,7 +23,7 @@
 // =====================================================================================================================
 // @project uart
 // @file    regblock.rdl
-// @version 1.0
+// @version 1.1
 // @brief   RDL description of the control and status registers (CSR) accessible on the AXI4 Lite bus.
 // @author  Timothee Charrier
 // =====================================================================================================================
@@ -32,6 +32,8 @@
 // Version  Date        Author              Description
 // -------  ----------  ------------------  ----------------------------------------------------------------------------
 // 1.0      16/05/2026  Timothee Charrier   Initial release
+// 1.1      27/09/2026  Timothee Charrier   Added bad address reset configuration register and update `ios_status`
+//                                          register. Also update some descriptions and documentation.
 // =====================================================================================================================
 
 addrmap regblock {
@@ -46,7 +48,7 @@ addrmap regblock {
         default hw = w;
 
         field {
-            desc = "Hash value";
+            desc = "Git hash value when the bitstream was generated.";
         } hash[31:0];
 
     } git_hash @ 0x00;
@@ -63,7 +65,11 @@ addrmap regblock {
         default hw = w;
 
         field {
-            desc = "Status value";
+            desc = "
+            Git status value:
+                - 0: Clean (no uncommitted changes)
+                - 1: Dirty (uncommitted changes)
+                ";
         } status[0:0];
 
     } git_status @ 0x04;
@@ -76,7 +82,7 @@ addrmap regblock {
         default hw = w;
 
         field {
-            desc = "ID value";
+            desc = "FPGA ID value.";
         } id[31:0];
 
     } fpga_id @ 0x08;
@@ -89,14 +95,14 @@ addrmap regblock {
         default hw = r;
 
         field {
-            desc = "TX data to be sent";
+            desc = "TX data to be sent.";
             reset = 0;
         } tx_data[7:0];
 
         field {
             desc  =
             "SPI transaction valid signal. Asserts for one cycle when written 1
-            and then clears back to 0 on the next cycle";
+            and then clears back to 0 on the next cycle.";
             reset = 0;
             singlepulse;
         } tx_data_valid[8:8];
@@ -111,7 +117,7 @@ addrmap regblock {
         default hw = w;
 
         field {
-            desc  = "RX data received over SPI";
+            desc  = "RX data received over SPI.";
             reset = 0;
         } rx_data[7:0];
 
@@ -128,28 +134,28 @@ addrmap regblock {
         default hw = r;
 
         field {
-            desc  = "Red channel intensity (0-15)";
+            desc  = "Red channel intensity (0-15).";
             reset = 0;
         } red[11:8];
 
         field {
-            desc  = "Green channel intensity (0-15)";
+            desc  = "Green channel intensity (0-15).";
             reset = 15;
         } green[7:4];
 
         field {
-            desc  = "Blue channel intensity (0-15)";
+            desc  = "Blue channel intensity (0-15).";
             reset = 0;
         } blue[3:0];
 
     } vga_color_control @ 0x14;
 
     reg {
-        name = "Switch Status";
+        name = "Switches and LEDs Status";
         desc = "
-        Register used to read the status of the input switches.
-        Each bit corresponds to a different switch, with bit 0 corresponding to switch_0,
-        bit 1 to switch_1, and bit 2 to switch_2.
+        Register used to read the status of the input switches or leds.
+            - Bits 0-7 correspond to switches 0-7, respectively.
+            - Bit    8 indicates if the device is in reset (1) or not (0).
         ";
 
         default sw = r;
@@ -170,7 +176,39 @@ addrmap regblock {
             reset = 0;
         } switch_2[2:2];
 
-    } switch_status @ 0x18;
+        field {
+            desc  = "Status of switch 3";
+            reset = 0;
+        } switch_3[3:3];
+
+        field {
+            desc  = "Status of switch 4";
+            reset = 0;
+        } switch_4[4:4];
+
+        field {
+            desc  = "Status of switch 5";
+            reset = 0;
+        } switch_5[5:5];
+
+        field {
+            desc  = "Status of switch 6";
+            reset = 0;
+        } switch_6[6:6];
+
+        field {
+            desc  = "Status of switch 7";
+            reset = 0;
+        } switch_7[7:7];
+
+        field {
+            sw = r;
+            hw = rw;
+            desc  = "Indicates if the device is in reset (1) or not (0).";
+            reset = 0;
+        } reset_status[8:8];
+
+    } ios_status @ 0x18;
 
     reg {
         name = "Bad address counter";
@@ -180,12 +218,39 @@ addrmap regblock {
         default hw = rw;
 
         field {
-            desc  = "Counter value, incremented on each bad address access";
+            desc  = "Counter value, incremented on each bad address access.";
             reset = 0;
             counter;
         } count[31:0];
 
     } bad_address_counter @ 0x1C;
+
+    reg {
+        name = "Bad address reset configuration register";
+        desc = "Register used to configure the bad address reset behavior.";
+
+        default sw = rw;
+        default hw = r;
+
+        field {
+            desc  = "
+            Maximum allowed value for the bad address counter before triggering a reset.
+                Defaults to 0d20 (0x14).
+                Range: 0d0 to 0d255 (0x00 to 0xFF)
+                ";
+            reset = 0x14;
+        } max_bad_address_count[7:0];
+
+        field {
+            desc  = "
+            Configure a reset generation when the bad address counter exceeds the maximum allowed value:
+                0: Disable the reset generation when bad_address_counter.count > bad_address_reset_config.max_bad_address_count.
+                1: Enable the reset generation when bad_address_counter.count > bad_address_reset_config.max_bad_address_count.
+            ";
+            reset = 0;
+        } bad_address_rst_req_en[8:8];
+
+    } bad_address_reset_config @ 0x20;
 
     reg {
         name = "UART start bit error counter";
@@ -200,7 +265,7 @@ addrmap regblock {
             counter;
         } count[31:0];
 
-    } uart_start_bit_error_counter @ 0x20;
+    } uart_start_bit_error_counter @ 0x24;
 
     reg {
         name = "UART stop bit error counter";
@@ -215,7 +280,7 @@ addrmap regblock {
             counter;
         } count[31:0];
 
-    } uart_stop_bit_error_counter @ 0x24;
+    } uart_stop_bit_error_counter @ 0x28;
 
     reg {
         name = "Test Register 1";

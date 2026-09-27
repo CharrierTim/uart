@@ -66,12 +66,13 @@ The FPGA instantiates the [`clk_rst_manager`](../clk_rst_manager/clk_rst_manager
 
 <div class="generics-table" markdown="1">
 
-| Generic Name         | Type      | Default Value | Description                                                        |
-| -------------------- | --------- | ------------- | ------------------------------------------------------------------ |
-| `RstPulseCycles_g`   | positive  | 0d3           | Minimum duration of the reset pulse in clock cycles                |
-| `RstInPolarity_g`    | std_logic | 0b1           | Polarity of 'RstIn'.                                               |
-| `AsyncResetOutput_g` | boolean   | false         | False -> Reset signal is asserted synchronously.                   |
-| `SyncStages_g`       | positive  | 0d3           | Number of synchronization stages for the multi-stage synchronizer. |
+| Generic Name                  | Type      | Default Value | Description                                                        |
+| ----------------------------- | --------- | ------------- | ------------------------------------------------------------------ |
+| `G_BAD_ADDRESS_COUNTER_WIDTH` | positive  | 0d32          | Width of the bad address counter.                                  |
+| `G_RST_PULSE_CYCLES`          | positive  | 0d3           | Minimum duration of the reset pulse in clock cycles                |
+| `G_RST_POLARITY`              | std_logic | 0b1           | Polarity of 'RstIn'.                                               |
+| `G_ASYNC_RST_OUTPUT`          | boolean   | false         | False -> Reset signal is asserted synchronously.                   |
+| `G_RESYNC_NB_STAGES`          | positive  | 0d3           | Number of synchronization stages for the multi-stage synchronizer. |
 
 </div>
 
@@ -116,9 +117,15 @@ The FPGA instantiates the [`regblock`](../regblock/regblock.md) module. The hard
 | `git_hash.hash.next_q`                      | [`G_GIT_ID`](#generics)                                                   | Git identifier at bitstream generation time.                                       |
 | `git_status.status.next_q`                  | [`G_GIT_STATUS`](#generics)                                               | Git status at bitstream generation time.                                           |
 | `fpga_id.id.next_q`                         | [`G_FPGA_ID`](#generics)                                                  | FPGA identification value.                                                         |
-| `switch_status.switch_2.next_q`             | Resynchronized `PAD_I_SWITCH_2`                                           | Switch 2 input after resynchronizer.                                               |
-| `switch_status.switch_1.next_q`             | Resynchronized `PAD_I_SWITCH_1`                                           | Switch 1 input after resynchronizer.                                               |
-| `switch_status.switch_0.next_q`             | Resynchronized `PAD_I_SWITCH_0`                                           | Switch 0 input after resynchronizer.                                               |
+| `ios_status.reset_status.next_q`            | Constant `'1'`                                                            | 0 when device is in reset, 1 when device is out of reset.                          |
+| `ios_status.switch_7.next_q`                | Resynchronized `PAD_I_SWITCH_7`                                           | Switch 7 input after resynchronizer.                                               |
+| `ios_status.switch_6.next_q`                | Resynchronized `PAD_I_SWITCH_6`                                           | Switch 6 input after resynchronizer.                                               |
+| `ios_status.switch_5.next_q`                | Resynchronized `PAD_I_SWITCH_5`                                           | Switch 5 input after resynchronizer.                                               |
+| `ios_status.switch_4.next_q`                | Resynchronized `PAD_I_SWITCH_4`                                           | Switch 4 input after resynchronizer.                                               |
+| `ios_status.switch_3.next_q`                | Resynchronized `PAD_I_SWITCH_3`                                           | Switch 3 input after resynchronizer.                                               |
+| `ios_status.switch_2.next_q`                | Resynchronized `PAD_I_SWITCH_2`                                           | Switch 2 input after resynchronizer.                                               |
+| `ios_status.switch_1.next_q`                | Resynchronized `PAD_I_SWITCH_1`                                           | Switch 1 input after resynchronizer.                                               |
+| `ios_status.switch_0.next_q`                | Resynchronized `PAD_I_SWITCH_0`                                           | Switch 0 input after resynchronizer.                                               |
 | `bad_address_counter.count.incr`            | `'1'` on bad address access, otherwise `'0'`                              | Increment pulse generated by the [`regblock`](../regblock/regblock.md).            |
 | `bad_address_counter.count.next_q`          | `hwif_out.bad_address_counter.count.value`                                | Counter feedback from [`regblock`](../regblock/regblock.md) output.                |
 | `uart_start_bit_error_counter.count.next_q` | `hwif_out.uart_start_bit_error_counter.count.value`                       | Counter feedback from [`regblock`](../regblock/regblock.md) output.                |

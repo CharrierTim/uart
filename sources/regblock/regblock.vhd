@@ -90,8 +90,9 @@ architecture rtl of regblock is
         spi_tx_control : std_logic;
         spi_rx_data : std_logic;
         vga_color_control : std_logic;
-        switch_status : std_logic;
+        ios_status : std_logic;
         bad_address_counter : std_logic;
+        bad_address_reset_config : std_logic;
         uart_start_bit_error_counter : std_logic;
         uart_stop_bit_error_counter : std_logic;
         test_register_1 : std_logic;
@@ -145,6 +146,15 @@ architecture rtl of regblock is
         red : \regblock.vga_color_control.red_combo_t\;
     end record;
 
+    type \regblock.ios_status.reset_status_combo_t\ is record
+        next_q : std_logic;
+        load_next : std_logic;
+    end record;
+
+    type \regblock.ios_status_combo_t\ is record
+        reset_status : \regblock.ios_status.reset_status_combo_t\;
+    end record;
+
     type \regblock.bad_address_counter.count_combo_t\ is record
         next_q : std_logic_vector(31 downto 0);
         load_next : std_logic;
@@ -154,6 +164,21 @@ architecture rtl of regblock is
 
     type \regblock.bad_address_counter_combo_t\ is record
         count : \regblock.bad_address_counter.count_combo_t\;
+    end record;
+
+    type \regblock.bad_address_reset_config.max_bad_address_count_combo_t\ is record
+        next_q : std_logic_vector(7 downto 0);
+        load_next : std_logic;
+    end record;
+
+    type \regblock.bad_address_reset_config.bad_address_rst_req_en_combo_t\ is record
+        next_q : std_logic;
+        load_next : std_logic;
+    end record;
+
+    type \regblock.bad_address_reset_config_combo_t\ is record
+        max_bad_address_count : \regblock.bad_address_reset_config.max_bad_address_count_combo_t\;
+        bad_address_rst_req_en : \regblock.bad_address_reset_config.bad_address_rst_req_en_combo_t\;
     end record;
 
     type \regblock.uart_start_bit_error_counter.count_combo_t\ is record
@@ -199,7 +224,9 @@ architecture rtl of regblock is
     type field_combo_t is record
         spi_tx_control : \regblock.spi_tx_control_combo_t\;
         vga_color_control : \regblock.vga_color_control_combo_t\;
+        ios_status : \regblock.ios_status_combo_t\;
         bad_address_counter : \regblock.bad_address_counter_combo_t\;
+        bad_address_reset_config : \regblock.bad_address_reset_config_combo_t\;
         uart_start_bit_error_counter : \regblock.uart_start_bit_error_counter_combo_t\;
         uart_stop_bit_error_counter : \regblock.uart_stop_bit_error_counter_combo_t\;
         test_register_1 : \regblock.test_register_1_combo_t\;
@@ -239,12 +266,33 @@ architecture rtl of regblock is
         red : \regblock.vga_color_control.red_storage_t\;
     end record;
 
+    type \regblock.ios_status.reset_status_storage_t\ is record
+        value : std_logic;
+    end record;
+
+    type \regblock.ios_status_storage_t\ is record
+        reset_status : \regblock.ios_status.reset_status_storage_t\;
+    end record;
+
     type \regblock.bad_address_counter.count_storage_t\ is record
         value : std_logic_vector(31 downto 0);
     end record;
 
     type \regblock.bad_address_counter_storage_t\ is record
         count : \regblock.bad_address_counter.count_storage_t\;
+    end record;
+
+    type \regblock.bad_address_reset_config.max_bad_address_count_storage_t\ is record
+        value : std_logic_vector(7 downto 0);
+    end record;
+
+    type \regblock.bad_address_reset_config.bad_address_rst_req_en_storage_t\ is record
+        value : std_logic;
+    end record;
+
+    type \regblock.bad_address_reset_config_storage_t\ is record
+        max_bad_address_count : \regblock.bad_address_reset_config.max_bad_address_count_storage_t\;
+        bad_address_rst_req_en : \regblock.bad_address_reset_config.bad_address_rst_req_en_storage_t\;
     end record;
 
     type \regblock.uart_start_bit_error_counter.count_storage_t\ is record
@@ -282,7 +330,9 @@ architecture rtl of regblock is
     type field_storage_t is record
         spi_tx_control : \regblock.spi_tx_control_storage_t\;
         vga_color_control : \regblock.vga_color_control_storage_t\;
+        ios_status : \regblock.ios_status_storage_t\;
         bad_address_counter : \regblock.bad_address_counter_storage_t\;
+        bad_address_reset_config : \regblock.bad_address_reset_config_storage_t\;
         uart_start_bit_error_counter : \regblock.uart_start_bit_error_counter_storage_t\;
         uart_stop_bit_error_counter : \regblock.uart_stop_bit_error_counter_storage_t\;
         test_register_1 : \regblock.test_register_1_storage_t\;
@@ -515,14 +565,16 @@ begin
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#10#));
         decoded_reg_strb.vga_color_control <= cpuif_req_masked and (cpuif_addr = 16#14#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#14#));
-        decoded_reg_strb.switch_status <= cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr;
+        decoded_reg_strb.ios_status <= cpuif_req_masked and (cpuif_addr = 16#18#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#18#));
         decoded_reg_strb.bad_address_counter <= cpuif_req_masked and (cpuif_addr = 16#1C#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#1C#));
-        decoded_reg_strb.uart_start_bit_error_counter <= cpuif_req_masked and (cpuif_addr = 16#20#) and not cpuif_req_is_wr;
+        decoded_reg_strb.bad_address_reset_config <= cpuif_req_masked and (cpuif_addr = 16#20#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#20#));
-        decoded_reg_strb.uart_stop_bit_error_counter <= cpuif_req_masked and (cpuif_addr = 16#24#) and not cpuif_req_is_wr;
+        decoded_reg_strb.uart_start_bit_error_counter <= cpuif_req_masked and (cpuif_addr = 16#24#) and not cpuif_req_is_wr;
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#24#));
+        decoded_reg_strb.uart_stop_bit_error_counter <= cpuif_req_masked and (cpuif_addr = 16#28#) and not cpuif_req_is_wr;
+        is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#28#));
         decoded_reg_strb.test_register_1 <= cpuif_req_masked and (cpuif_addr = 16#F8#);
         is_valid_addr := is_valid_addr or (cpuif_req_masked and (cpuif_addr = 16#F8#));
         decoded_reg_strb.test_register_2 <= cpuif_req_masked and (cpuif_addr = 16#FC#);
@@ -691,6 +743,35 @@ begin
     end process;
     hwif_out.vga_color_control.red.value <= field_storage.vga_color_control.red.value;
 
+    -- Field: regblock.ios_status.reset_status
+    process(all)
+        variable next_c: std_logic;
+        variable load_next_c: std_logic;
+    begin
+        next_c := field_storage.ios_status.reset_status.value;
+        load_next_c := '0';
+        
+        -- HW Write
+        next_c := hwif_in.ios_status.reset_status.next_q;
+        load_next_c := '1';
+        field_combo.ios_status.reset_status.next_q <= next_c;
+        field_combo.ios_status.reset_status.load_next <= load_next_c;
+    end process;
+    process(clk, arst) begin
+        if arst then -- async reset
+            field_storage.ios_status.reset_status.value <= '0';
+        elsif rising_edge(clk) then
+            if false then -- sync reset
+                field_storage.ios_status.reset_status.value <= '0';
+            else
+                if field_combo.ios_status.reset_status.load_next then
+                    field_storage.ios_status.reset_status.value <= field_combo.ios_status.reset_status.next_q;
+                end if;
+            end if;
+        end if;
+    end process;
+    hwif_out.ios_status.reset_status.value <= field_storage.ios_status.reset_status.value;
+
     -- Field: regblock.bad_address_counter.count
     process(all)
         variable next_c: std_logic_vector(31 downto 0);
@@ -727,6 +808,64 @@ begin
         end if;
     end process;
     hwif_out.bad_address_counter.count.value <= field_storage.bad_address_counter.count.value;
+
+    -- Field: regblock.bad_address_reset_config.max_bad_address_count
+    process(all)
+        variable next_c: std_logic_vector(7 downto 0);
+        variable load_next_c: std_logic;
+    begin
+        next_c := field_storage.bad_address_reset_config.max_bad_address_count.value;
+        load_next_c := '0';
+        if decoded_reg_strb.bad_address_reset_config and decoded_req_is_wr then -- SW write
+            next_c := (field_storage.bad_address_reset_config.max_bad_address_count.value and not decoded_wr_biten(7 downto 0)) or (decoded_wr_data(7 downto 0) and decoded_wr_biten(7 downto 0));
+            load_next_c := '1';
+        end if;
+        field_combo.bad_address_reset_config.max_bad_address_count.next_q <= next_c;
+        field_combo.bad_address_reset_config.max_bad_address_count.load_next <= load_next_c;
+    end process;
+    process(clk, arst) begin
+        if arst then -- async reset
+            field_storage.bad_address_reset_config.max_bad_address_count.value <= 8x"14";
+        elsif rising_edge(clk) then
+            if false then -- sync reset
+                field_storage.bad_address_reset_config.max_bad_address_count.value <= 8x"14";
+            else
+                if field_combo.bad_address_reset_config.max_bad_address_count.load_next then
+                    field_storage.bad_address_reset_config.max_bad_address_count.value <= field_combo.bad_address_reset_config.max_bad_address_count.next_q;
+                end if;
+            end if;
+        end if;
+    end process;
+    hwif_out.bad_address_reset_config.max_bad_address_count.value <= field_storage.bad_address_reset_config.max_bad_address_count.value;
+
+    -- Field: regblock.bad_address_reset_config.bad_address_rst_req_en
+    process(all)
+        variable next_c: std_logic;
+        variable load_next_c: std_logic;
+    begin
+        next_c := field_storage.bad_address_reset_config.bad_address_rst_req_en.value;
+        load_next_c := '0';
+        if decoded_reg_strb.bad_address_reset_config and decoded_req_is_wr then -- SW write
+            next_c := (field_storage.bad_address_reset_config.bad_address_rst_req_en.value and not decoded_wr_biten(8)) or (decoded_wr_data(8) and decoded_wr_biten(8));
+            load_next_c := '1';
+        end if;
+        field_combo.bad_address_reset_config.bad_address_rst_req_en.next_q <= next_c;
+        field_combo.bad_address_reset_config.bad_address_rst_req_en.load_next <= load_next_c;
+    end process;
+    process(clk, arst) begin
+        if arst then -- async reset
+            field_storage.bad_address_reset_config.bad_address_rst_req_en.value <= '0';
+        elsif rising_edge(clk) then
+            if false then -- sync reset
+                field_storage.bad_address_reset_config.bad_address_rst_req_en.value <= '0';
+            else
+                if field_combo.bad_address_reset_config.bad_address_rst_req_en.load_next then
+                    field_storage.bad_address_reset_config.bad_address_rst_req_en.value <= field_combo.bad_address_reset_config.bad_address_rst_req_en.next_q;
+                end if;
+            end if;
+        end if;
+    end process;
+    hwif_out.bad_address_reset_config.bad_address_rst_req_en.value <= field_storage.bad_address_reset_config.bad_address_rst_req_en.value;
 
     -- Field: regblock.uart_start_bit_error_counter.count
     process(all)
@@ -895,17 +1034,27 @@ begin
             readback_data_var(11 downto 8) := field_storage.vga_color_control.red.value;
         end if;
         if rd_mux_addr = 16#18# then
-            readback_data_var(0) := hwif_in.switch_status.switch_0.next_q;
-            readback_data_var(1) := hwif_in.switch_status.switch_1.next_q;
-            readback_data_var(2) := hwif_in.switch_status.switch_2.next_q;
+            readback_data_var(0) := hwif_in.ios_status.switch_0.next_q;
+            readback_data_var(1) := hwif_in.ios_status.switch_1.next_q;
+            readback_data_var(2) := hwif_in.ios_status.switch_2.next_q;
+            readback_data_var(3) := hwif_in.ios_status.switch_3.next_q;
+            readback_data_var(4) := hwif_in.ios_status.switch_4.next_q;
+            readback_data_var(5) := hwif_in.ios_status.switch_5.next_q;
+            readback_data_var(6) := hwif_in.ios_status.switch_6.next_q;
+            readback_data_var(7) := hwif_in.ios_status.switch_7.next_q;
+            readback_data_var(8) := field_storage.ios_status.reset_status.value;
         end if;
         if rd_mux_addr = 16#1C# then
             readback_data_var(31 downto 0) := field_storage.bad_address_counter.count.value;
         end if;
         if rd_mux_addr = 16#20# then
-            readback_data_var(31 downto 0) := field_storage.uart_start_bit_error_counter.count.value;
+            readback_data_var(7 downto 0) := field_storage.bad_address_reset_config.max_bad_address_count.value;
+            readback_data_var(8) := field_storage.bad_address_reset_config.bad_address_rst_req_en.value;
         end if;
         if rd_mux_addr = 16#24# then
+            readback_data_var(31 downto 0) := field_storage.uart_start_bit_error_counter.count.value;
+        end if;
+        if rd_mux_addr = 16#28# then
             readback_data_var(31 downto 0) := field_storage.uart_stop_bit_error_counter.count.value;
         end if;
         if rd_mux_addr = 16#F8# then
