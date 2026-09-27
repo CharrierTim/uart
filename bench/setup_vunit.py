@@ -34,26 +34,27 @@
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      01/11/2025  Timothee Charrier   Initial release
 ## 2.0      07/01/2026  Timothee Charrier   Major refactor: VUnit now supports NVC coverage, no need for a custom
-##                                          interface.
+##                                          interface
 ## 2.1      11/04/2026  Timothee Charrier   Add Unisim and Unifast library path retrieval methods
 ## 2.2      17/04/2026  Timothee Charrier   Add `get_simulator_name` method to Simulator base class
 ## 2.3      07/05/2026  Timothee Charrier   Add coverage report generation methods for GHDL and initial Questa or
 ##                                          ModelSim support
 ## 2.4      10/05/2026  Timothee Charrier   Add custom vhdl_ls.toml generation method
-## 2.5      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory.
-##                                          Fix a runtime error with GHDL invalid option.
+## 2.5      14/05/2026  Timothee Charrier   Update results directory to be at the same level as the testbench directory
+##                                          Fix a runtime error with GHDL invalid option
 ## 2.6      17/05/2026  Timothee Charrier   Now takes the run file directory as an argument to properly handle the
-##                                          results directory and coverage specific options.
+##                                          results directory and coverage specific options
 ##          18/05/2026                      Only enable coverage for the libraries we want to cover instead of globally,
-##                                          as coverage can significantly reduce performance.
+##                                          as coverage can significantly reduce performance
 ##          22/05/2026                      Add unisim and unifast workarounds for Questa/ModelSim support, which is
-##                                          currently very slow due to issues with pre-compilation of these libraries.
-## 2.7      29/07/2026  Timothee Charrier   Improve output return from `get_..._path` methods.
+##                                          currently very slow due to issues with pre-compilation of these libraries
+## 2.7      29/07/2026  Timothee Charrier   Improve output return from `get_..._path` methods
 ##                                          Improve library path handling and error reporting
 ##                                          Create a `create_vunit_cli` and `create_vunit` functions to simplify VUnit
-##                                          setup and CLI handling.
+##                                          setup and CLI handling
 ## 3.0      14/08/2026  Timothee Charrier   Major refactor: add `VivadoPathHelper` and `VUnitProject` classes to better
-##                                          handle the simulation/non-simulation modes.
+##                                          handle the simulation/non-simulation modes
+##          26/09/2026                      Add Questa `vcover` coverage statistics generation when sim is complete
 ## =====================================================================================================================
 
 import logging
@@ -830,7 +831,7 @@ class QuestaModelSim(Simulator):
         return True
 
     def _generate_coverage(self, results: Results) -> None:
-        """Generate Questa/ModelSim coverage report.
+        """Generate Questa/ModelSim coverage report and statistics summary.
 
         Parameters
         ----------
@@ -865,6 +866,16 @@ class QuestaModelSim(Simulator):
         process: Process[list[str]] = Process(args=cmd)
         process.consume_output()
         LOGGER.info("Coverage report generated at %s", coverage_dir)
+
+        # Generate coverage statistics summary
+        LOGGER.info("Generating coverage statistics summary...")
+        cmd_stats: list[str] = [
+            "vcover",
+            "summary",
+            str(coverage_file),
+        ]
+        process_stats: Process[list[str]] = Process(args=cmd_stats)
+        process_stats.consume_output()
 
 
 def _create_simulator(
