@@ -18,10 +18,11 @@ Documentation partially generated from the RDL file using the
 | regblock.[spi_tx_control](#spi_tx_control-register)                             | `0x0C` |   4    | Register used to send data over SPI. Writing to this register starts the SPI transaction. |
 | regblock.[spi_rx_data](#spi_rx_data-register)                                   | `0x10` |   4    | Register used to receive data over SPI.                                                   |
 | regblock.[vga_color_control](#vga_color_control-register)                       | `0x14` |   4    | Register used to set the VGA output color.                                                |
-| regblock.[switch_status](#switch_status-register)                               | `0x18` |   4    | Register used to read the status of the input switches.                                   |
+| regblock.[ios_status](#ios_status-register)                                     | `0x18` |   4    | Register used to read switches and LEDs Status.                                           |
 | regblock.[bad_address_counter](#bad_address_counter-register)                   | `0x1C` |   4    | Register used to count the number of bad address accesses.                                |
-| regblock.[uart_start_bit_error_counter](#uart_start_bit_error_counter-register) | `0x20` |   4    | Register used to count the number of UART start bit errors.                               |
-| regblock.[uart_stop_bit_error_counter](#uart_stop_bit_error_counter-register)   | `0x24` |   4    | Register used to count the number of UART stop bit errors.                                |
+| regblock.[bad_address_reset_config](#bad_address_reset_config-register)         | `0x20` |   4    | Register used to configure the bad address reset generation behavior.                     |
+| regblock.[uart_start_bit_error_counter](#uart_start_bit_error_counter-register) | `0x24` |   4    | Register used to count the number of UART start bit errors.                               |
+| regblock.[uart_stop_bit_error_counter](#uart_stop_bit_error_counter-register)   | `0x28` |   4    | Register used to count the number of UART stop bit errors.                                |
 | regblock.[test_register_1](#test_register_1-register)                           | `0xF8` |   4    | Register used to test a 32-bit read/write register with all bits used for data.           |
 | regblock.[test_register_2](#test_register_2-register)                           | `0xFC` |   4    | Register used to test a 32-bit read/write register with all bits used for data.           |
 
@@ -30,8 +31,8 @@ Documentation partially generated from the RDL file using the
 Register indicating the git hash of the repository at the time of bitstream generation.
 
 - Offset: `0x0`
-- Reset default: `0x0`
-- Reset mask: `0xffffffff`
+- Reset default: `—`
+- Reset mask: `—`
 
 ### Fields
 
@@ -42,9 +43,9 @@ Register indicating the git hash of the repository at the time of bitstream gene
 
 <div class="register-bits-table" markdown="1">
 
-| Bits  | Type  | Reset | Name | Description |
-| :---: | :---: | :---: | :--- | :---------- |
-| 31:0  |  ro   |  0x0  | hash | Hash value  |
+| Bits  | Type  | Reset | Name | Description                                      |
+| :---: | :---: | :---: | :--- | :----------------------------------------------- |
+| 31:0  |  ro   |   —   | hash | Git hash value when the bitstream was generated. |
 
 </div>
 <!-- markdownlint-enable -->
@@ -56,8 +57,8 @@ If the value is 1, there were uncommitted changes in the repository (dirty), whi
 value is 0, there were no uncommitted changes (clean).
 
 - Offset: `0x4`
-- Reset default: `0x0`
-- Reset mask: `0x1`
+- Reset default: `—`
+- Reset mask: `—`
 
 ### Fields
 
@@ -68,10 +69,10 @@ value is 0, there were no uncommitted changes (clean).
 
 <div class="register-bits-table" markdown="1">
 
-| Bits  | Type  | Reset | Name   | Description  |
-| :---: | :---: | :---: | :----- | :----------- |
-| 31:1  |       |       |        | Reserved     |
-|   0   |  ro   |  0x0  | status | Status value |
+| Bits  | Type  | Reset | Name   | Description                                                                         |
+| :---: | :---: | :---: | :----- | :---------------------------------------------------------------------------------- |
+| 31:1  |       |       |        | Reserved                                                                            |
+|   0   |  ro   |   —   | status | Git status value: 0: Clean (no uncommitted changes); 1: Dirty (uncommitted changes) |
 
 </div>
 <!-- markdownlint-enable -->
@@ -81,8 +82,8 @@ value is 0, there were no uncommitted changes (clean).
 Register indicating the FPGA identification information.
 
 - Offset: `0x8`
-- Reset default: `0x0`
-- Reset mask: `0xffffffff`
+- Reset default: `—`
+- Reset mask: `—`
 
 ### Fields
 
@@ -93,9 +94,9 @@ Register indicating the FPGA identification information.
 
 <div class="register-bits-table" markdown="1">
 
-| Bits  | Type  | Reset | Name | Description |
-| :---: | :---: | :---: | :--- | :---------- |
-| 31:0  |  ro   |  0x0  | id   | ID value    |
+| Bits  | Type  | Reset | Name | Description   |
+| :---: | :---: | :---: | :--- | :------------ |
+| 31:0  |  ro   |   —   | id   | FPGA ID value |
 
 </div>
 <!-- markdownlint-enable -->
@@ -179,31 +180,38 @@ The color is specified in RGB format, with 4 bits for each channel (red, green, 
 </div>
 <!-- markdownlint-enable -->
 
-## switch_status register
+## ios_status register
 
-Register used to read the status of the input switches.
-Each bit corresponds to a different switch, with bit 0 corresponding to switch_0,
-bit 1 to switch_1, and bit 2 to switch_2.
+Register used to read the status of the input switches or leds.
+
+- Bits 0-7 correspond to switches 0-7, respectively.
+- Bit 8 indicates if the device is in reset (1) or not (0).
 
 - Offset: `0x18`
 - Reset default: `0x0`
-- Reset mask: `0x7`
+- Reset mask: `0x1ff`
 
 ### Fields
 
 <!-- markdownlint-disable -->
 <script type="WaveDrom">
-{"reg": [{"name": "switch_0", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_1", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_2", "bits": 1, "attr": ["ro"], "rotate": -90}, {"bits": 29}], "config": {"lanes": 1, "fontsize": 10, "vspace": 100}}
+{"reg": [{"name": "switch_0", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_1", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_2", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_3", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_4", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_5", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_6", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "switch_7", "bits": 1, "attr": ["ro"], "rotate": -90}, {"name": "reset_status", "bits": 1, "attr": ["ro"], "rotate": -90}, {"bits": 22}], "config": {"lanes": 1, "fontsize": 10, "vspace": 100}}
 </script>
 
 <div class="register-bits-table" markdown="1">
 
-| Bits  | Type  | Reset | Name     | Description        |
-| :---: | :---: | :---: | :------- | :----------------- |
-| 31:3  |       |       |          | Reserved           |
-|   2   |  ro   |  0x0  | switch_2 | Status of switch 2 |
-|   1   |  ro   |  0x0  | switch_1 | Status of switch 1 |
-|   0   |  ro   |  0x0  | switch_0 | Status of switch 0 |
+| Bits  | Type  | Reset | Name         | Description                                         |
+| :---: | :---: | :---: | :----------- | :-------------------------------------------------- |
+| 31:9  |       |       |              | Reserved                                            |
+|   8   |  ro   |  0x0  | reset_status | Indicates if the device is in reset (1) or not (0). |
+|   7   |  ro   |  0x0  | switch_7     | Status of switch 7                                  |
+|   6   |  ro   |  0x0  | switch_6     | Status of switch 6                                  |
+|   5   |  ro   |  0x0  | switch_5     | Status of switch 5                                  |
+|   4   |  ro   |  0x0  | switch_4     | Status of switch 4                                  |
+|   3   |  ro   |  0x0  | switch_3     | Status of switch 3                                  |
+|   2   |  ro   |  0x0  | switch_2     | Status of switch 2                                  |
+|   1   |  ro   |  0x0  | switch_1     | Status of switch 1                                  |
+|   0   |  ro   |  0x0  | switch_0     | Status of switch 0                                  |
 
 </div>
 <!-- markdownlint-enable -->
@@ -212,9 +220,9 @@ bit 1 to switch_1, and bit 2 to switch_2.
 
 Register used to count the number of bad address accesses.
 
-- Offset: `0x1c`
+- Offset: `0x1C`
 - Reset default: `0x0`
-- Reset mask: `0xffffffff`
+- Reset mask: `0XFFFFFFFF`
 
 ### Fields
 
@@ -224,19 +232,59 @@ Register used to count the number of bad address accesses.
 </script>
 
 <div class="register-bits-table" markdown="1">
-
 | Bits  | Type  | Reset | Name  | Description                                           |
 | :---: | :---: | :---: | :---- | :---------------------------------------------------- |
 | 31:0  |  ro   |  0x0  | count | Counter value, incremented on each bad address access |
-
 </div>
 <!-- markdownlint-enable -->
+
+#### count field
+
+Counter value, incremented on each bad address access.
+
+## bad_address_reset_config register
+
+Register used to configure the bad address reset behavior.
+
+- Absolute Address: `0x20`
+- Base Offset: `0x20`
+- Size: `0x4`
+
+### Fields
+
+<!-- markdownlint-disable -->
+<script type="WaveDrom">
+{"reg": [{"name": "max_bad_address_count", "bits": 8, "attr": ["rw"], "rotate": 0}, {"name": "bad_address_rst_req_en", "bits": 1, "attr": ["rw"], "rotate": -90}, {"bits": 23}], "config": {"lanes": 1, "fontsize": 10, "vspace": 160}}
+</script>
+
+<div class="register-bits-table" markdown="1">
+
+| Bits  | Type  | Reset | Name                   | Description                                                                                 |
+| :---: | :---: | :---: | :--------------------- | :------------------------------------------------------------------------------------------ |
+| 31:9  |       |       |                        | Reserved                                                                                    |
+|   8   |  rw   |  0x0  | bad_address_rst_req_en | Configure a reset generation when the bad address counter exceeds the maximum allowed value |
+|  7:0  |  rw   | 0x14  | max_bad_address_count  | Maximum allowed value for the bad address counter before triggering a reset                 |
+</div>
+<!-- markdownlint-enable -->
+
+#### max_bad_address_count field
+
+Maximum allowed value for the bad address counter before triggering a reset.
+
+- Defaults to `0d20` (`0x14`).
+- Range: `0d0` to `0d255` (`0x00` to `0xFF`)
+
+#### bad_address_rst_req_en field
+
+Configure a reset generation when the bad address counter exceeds the maximum allowed value:
+0: Disable the reset generation when bad_address_counter.count &gt; bad_address_reset_config.max_bad_address_count.
+1: Enable the reset generation when bad_address_counter.count &gt; bad_address_reset_config.max_bad_address_count.
 
 ## uart_start_bit_error_counter register
 
 Register used to count the number of UART start bit errors.
 
-- Offset: `0x20`
+- Offset: `0x24`
 - Reset default: `0x0`
 - Reset mask: `0xffffffff`
 
@@ -260,7 +308,7 @@ Register used to count the number of UART start bit errors.
 
 Register used to count the number of UART stop bit errors.
 
-- Offset: `0x24`
+- Offset: `0x28`
 - Reset default: `0x0`
 - Reset mask: `0xffffffff`
 

@@ -43,22 +43,52 @@ package regblock_pkg is
         rx_data : \regblock.spi_rx_data.rx_data_in_t\;
     end record;
 
-    type \regblock.switch_status.switch_0_in_t\ is record
+    type \regblock.ios_status.switch_0_in_t\ is record
         next_q : std_logic;
     end record;
 
-    type \regblock.switch_status.switch_1_in_t\ is record
+    type \regblock.ios_status.switch_1_in_t\ is record
         next_q : std_logic;
     end record;
 
-    type \regblock.switch_status.switch_2_in_t\ is record
+    type \regblock.ios_status.switch_2_in_t\ is record
         next_q : std_logic;
     end record;
 
-    type \regblock.switch_status_in_t\ is record
-        switch_0 : \regblock.switch_status.switch_0_in_t\;
-        switch_1 : \regblock.switch_status.switch_1_in_t\;
-        switch_2 : \regblock.switch_status.switch_2_in_t\;
+    type \regblock.ios_status.switch_3_in_t\ is record
+        next_q : std_logic;
+    end record;
+
+    type \regblock.ios_status.switch_4_in_t\ is record
+        next_q : std_logic;
+    end record;
+
+    type \regblock.ios_status.switch_5_in_t\ is record
+        next_q : std_logic;
+    end record;
+
+    type \regblock.ios_status.switch_6_in_t\ is record
+        next_q : std_logic;
+    end record;
+
+    type \regblock.ios_status.switch_7_in_t\ is record
+        next_q : std_logic;
+    end record;
+
+    type \regblock.ios_status.reset_status_in_t\ is record
+        next_q : std_logic;
+    end record;
+
+    type \regblock.ios_status_in_t\ is record
+        switch_0 : \regblock.ios_status.switch_0_in_t\;
+        switch_1 : \regblock.ios_status.switch_1_in_t\;
+        switch_2 : \regblock.ios_status.switch_2_in_t\;
+        switch_3 : \regblock.ios_status.switch_3_in_t\;
+        switch_4 : \regblock.ios_status.switch_4_in_t\;
+        switch_5 : \regblock.ios_status.switch_5_in_t\;
+        switch_6 : \regblock.ios_status.switch_6_in_t\;
+        switch_7 : \regblock.ios_status.switch_7_in_t\;
+        reset_status : \regblock.ios_status.reset_status_in_t\;
     end record;
 
     type \regblock.bad_address_counter.count_in_t\ is record
@@ -93,7 +123,7 @@ package regblock_pkg is
         git_status : \regblock.git_status_in_t\;
         fpga_id : \regblock.fpga_id_in_t\;
         spi_rx_data : \regblock.spi_rx_data_in_t\;
-        switch_status : \regblock.switch_status_in_t\;
+        ios_status : \regblock.ios_status_in_t\;
         bad_address_counter : \regblock.bad_address_counter_in_t\;
         uart_start_bit_error_counter : \regblock.uart_start_bit_error_counter_in_t\;
         uart_stop_bit_error_counter : \regblock.uart_stop_bit_error_counter_in_t\;
@@ -130,12 +160,33 @@ package regblock_pkg is
         red : \regblock.vga_color_control.red_out_t\;
     end record;
 
+    type \regblock.ios_status.reset_status_out_t\ is record
+        value : std_logic;
+    end record;
+
+    type \regblock.ios_status_out_t\ is record
+        reset_status : \regblock.ios_status.reset_status_out_t\;
+    end record;
+
     type \regblock.bad_address_counter.count_out_t\ is record
         value : std_logic_vector(31 downto 0);
     end record;
 
     type \regblock.bad_address_counter_out_t\ is record
         count : \regblock.bad_address_counter.count_out_t\;
+    end record;
+
+    type \regblock.bad_address_reset_config.max_bad_address_count_out_t\ is record
+        value : std_logic_vector(7 downto 0);
+    end record;
+
+    type \regblock.bad_address_reset_config.bad_address_rst_req_en_out_t\ is record
+        value : std_logic;
+    end record;
+
+    type \regblock.bad_address_reset_config_out_t\ is record
+        max_bad_address_count : \regblock.bad_address_reset_config.max_bad_address_count_out_t\;
+        bad_address_rst_req_en : \regblock.bad_address_reset_config.bad_address_rst_req_en_out_t\;
     end record;
 
     type \regblock.uart_start_bit_error_counter.count_out_t\ is record
@@ -157,7 +208,9 @@ package regblock_pkg is
     type regblock_out_t is record
         spi_tx_control : \regblock.spi_tx_control_out_t\;
         vga_color_control : \regblock.vga_color_control_out_t\;
+        ios_status : \regblock.ios_status_out_t\;
         bad_address_counter : \regblock.bad_address_counter_out_t\;
+        bad_address_reset_config : \regblock.bad_address_reset_config_out_t\;
         uart_start_bit_error_counter : \regblock.uart_start_bit_error_counter_out_t\;
         uart_stop_bit_error_counter : \regblock.uart_stop_bit_error_counter_out_t\;
     end record;

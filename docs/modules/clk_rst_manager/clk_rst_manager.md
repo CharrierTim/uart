@@ -11,6 +11,8 @@ A reset is requested when either condition is true:
 
 - `PAD_I_ARST_P` is asserted.
 - The PLL lock output is de-asserted.
+- If `I_BAD_ADDRESS_RST_REQ_EN` is asserted and the bad address
+  counter (`I_BAD_ADDRESS_COUNTER`) exceeds the maximum allowed value (`I_MAX_BAD_ADDRESS_COUNT`).
 
 ## Clocking Configuration
 
@@ -65,12 +67,13 @@ The FPGA uses a PLL (`clk_wiz_0`) to generate internal clocks from the input clo
 
 <div class="generics-table" markdown="1">
 
-| Generic Name         | Type      | Default Value | Description                                                        |
-| -------------------- | --------- | ------------- | ------------------------------------------------------------------ |
-| `RstPulseCycles_g`   | positive  | 0d3           | Minimum duration of the reset pulse in clock cycles                |
-| `RstInPolarity_g`    | std_logic | 0b1           | Polarity of 'RstIn'.                                               |
-| `AsyncResetOutput_g` | boolean   | false         | False -> Reset signal is asserted synchronously.                   |
-| `SyncStages_g`       | positive  | 0d3           | Number of synchronization stages for the multi-stage synchronizer. |
+| Generic Name                  | Type      | Default Value | Description                                                        |
+| ----------------------------- | --------- | ------------- | ------------------------------------------------------------------ |
+| `G_BAD_ADDRESS_COUNTER_WIDTH` | positive  | 0d32          | Width of the bad address counter.                                  |
+| `G_RST_PULSE_CYCLES`          | positive  | 0d3           | Minimum duration of the reset pulse in clock cycles                |
+| `G_RST_POLARITY`              | std_logic | 0b1           | Polarity of 'RstIn'.                                               |
+| `G_ASYNC_RST_OUTPUT`          | boolean   | false         | False -> Reset signal is asserted synchronously.                   |
+| `G_RESYNC_NB_STAGES`          | positive  | 0d3           | Number of synchronization stages for the multi-stage synchronizer. |
 
 ---
 
@@ -78,14 +81,17 @@ The FPGA uses a PLL (`clk_wiz_0`) to generate internal clocks from the input clo
 
 <div class="ports-table" markdown="1">
 
-| Port Name           | Type      | Direction | Default Value | Description                              |
-| ------------------- | --------- | :-------: | ------------- | ---------------------------------------- |
-| `PAD_I_CLK`         | std_logic |    in     | -             | External 100 MHz input clock             |
-| `PAD_I_ARST_P`      | std_logic |    in     | -             | External asynchronous reset, active high |
-| `O_INTERNAL_CLK`    | std_logic |    out    | 0             | 50 MHz internal system clock             |
-| `O_INTERNAL_ARST_P` | std_logic |    out    | 1             | Internal system reset, active high       |
-| `O_VGA_CLK`         | std_logic |    out    | 0             | 65 MHz VGA clock                         |
-| `O_VGA_ARST_P`      | std_logic |    out    | 1             | VGA-domain reset, active high            |
+| Port Name                  | Type                                    | Direction | Default Value | Description                                                |
+| -------------------------- | --------------------------------------- | :-------: | ------------- | ---------------------------------------------------------- |
+| `PAD_I_CLK`                | std_logic                               |    in     | -             | External 100 MHz input clock                               |
+| `PAD_I_ARST_P`             | std_logic                               |    in     | -             | External asynchronous reset, active high                   |
+| `I_BAD_ADDRESS_RST_REQ_EN` | std_logic                               |    in     | -             | Bad address reset request enable                           |
+| `I_BAD_ADDRESS_COUNTER`    | vector[G_BAD_ADDRESS_COUNTER_WIDTH-1:0] |    in     | -             | Bad address counter value                                  |
+| `I_MAX_BAD_ADDRESS_COUNT`  | vector[7:0]                             |    in     | -             | Maximum allowed bad address count before reset is asserted |
+| `O_INTERNAL_CLK`           | std_logic                               |    out    | 0             | 50 MHz internal system clock                               |
+| `O_INTERNAL_ARST_P`        | std_logic                               |    out    | 1             | Internal system reset, active high                         |
+| `O_VGA_CLK`                | std_logic                               |    out    | 0             | 65 MHz VGA clock                                           |
+| `O_VGA_ARST_P`             | std_logic                               |    out    | 1             | VGA-domain reset, active high                              |
 
 </div>
 

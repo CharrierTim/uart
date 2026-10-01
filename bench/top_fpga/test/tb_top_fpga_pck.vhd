@@ -36,14 +36,12 @@
 -- 2.1      17/04/2026  Timothee Charrier   Add VGA test vectors and procedure to check VGA outputs
 -- 2.2      23/05/2026  Timothee Charrier   Update register related definitions to 32 bits
 -- 2.3      29/07/2026  Timothee Charrier   Add common package for register map
+--          26/09/2026                      Add an invalid register for testing
 -- =====================================================================================================================
 
 library ieee;
     use ieee.std_logic_1164.all;
     use ieee.math_real.all;
-
-library lib_rtl;
-    use lib_rtl.regblock_pkg.all;
 
 library lib_bench;
     use lib_bench.spi_pkg.all;
@@ -72,6 +70,18 @@ package TB_TOP_FPGA_PKG is
     constant C_GIT_ID                     : std_logic_vector(32 - 1 downto 0) := C_REG_GIT_HASH.data;
     constant C_GIT_STATUS                 : std_logic                         := C_REG_GIT_STATUS.data(0);
     constant C_FPGA_ID                    : std_logic_vector(32 - 1 downto 0) := C_REG_FPGA_ID.data;
+
+    -- Invalid register address for testing
+    constant C_INVALID_REG                : t_reg :=
+    (
+        name               => "INVALID_REG",
+        addr               => C_ADDR_ABOVE_MAX,
+        data               => (others => '0'),
+        writable_bits_mask => (others => '0')
+    );
+
+    -- Bad address max value for reset
+    constant C_MAX_BAD_ADDRESS_COUNT      : positive := 20; -- After 20 bad address transactions, reset the device
 
     -- UART model constants
     constant C_UART_BAUD_RATE_BPS         : positive := 115_200;
