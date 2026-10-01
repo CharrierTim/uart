@@ -1,0 +1,31 @@
+name: SystemRDL-check
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "tools/peakrdl/**"
+      - ".github/workflows/rdl-check.yml"
+  pull_request:
+    paths:
+      - "tools/peakrdl/**"
+      - ".github/workflows/rdl-check.yml"
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - run: uv sync --group lint
+
+      - name: Check SystemRDL formatting
+        run: uv run rdlfmt --check .

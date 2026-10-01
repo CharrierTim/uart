@@ -63,6 +63,7 @@ See the [top_fpga module documentation](modules/top_fpga/top_fpga.md) for design
 | **NVC**                   | `nvc 1.23.0 (1.23.0.r0.gcba10a2e0) (Using LLVM 22.1.8)`       |
 | **PeakRDL-regblock-vhdl** | `v1.3.1.1`                                                    |
 | **PeakRDL**               | `1.5.0`                                                       |
+| **rdlfmt**                | `0.3.0`                                                       |
 | **Ruff**                  | `v0.16.9`                                                     |
 | **Vivado**                | `2025.2`                                                      |
 | **VSG**                   | `VHDL Style Guide (VSG) version: 3.35.0`                      |
