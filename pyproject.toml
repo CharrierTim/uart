@@ -72,35 +72,49 @@ exclude = [
     "oss-cad-suite",
     "site-packages",
     "venv",
+    "cores",
 ]
 line-length = 120
 indent-width = 4
 
 [tool.ruff.lint]
-extend-select = [
-    'D',       # pydocstyle
-    "I",       # isort
-    "UP",      # pyupgrade
-    "PL",      # pylint
-    "E",       # pycodestyle errors
-    "W",       # pycodestyle warnings
-    "F",       # pyflakes
-    "C4",      # flake8-comprehension
-    "LOG",     # flake8-logging
-    "G",       # flake8-logging-format
-    "ISC",     # implicit string concat
-    "TC",      # flake8-typechecking
-    "SIM103",  # return the condition directly
-    "SIM300",  # yoda conditions
-    "RUF100",  # unused noqa
-    "RUF101",  # redirected noqa
-    "RUF010",  # explicit type conversion in f-string
-    "RUF005",  # collection literal concatenation
-    "RUF022",  # unsorted __all__
-    "PERF101", # unnecessary list cast
-    "PERF102", # unnecessary dict.items()
-    "B007",    # unused loop variable
-    "PYI030",  # unnecessary literal union
+select = [
+    "I",      # isort
+    "UP",     # pyupgrade
+    "PL",     # pylint
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "C4",     # flake8-comprehension
+    "LOG",    # flake8-logging
+    "G",      # flake8-logging-format
+    "ISC",    # implicit string concat
+    "TC",     # flake8-typechecking
+    "PTH",    # flake8-use-pathlib
+    "B",      # flake8-bugbear
+    "BLE",    # flake8-blind-except
+    "T10",    # flake8-debugger
+    "EXE",    # flake8-executable
+    "DTZ",    # flake8-datetimez
+    "YTT",    # flake8-2020
+    "SLOT",   # flake8-slots
+    "PERF",   # perflint
+    "SIM103", # return the condition directly
+    "SIM300", # yoda conditions
+    "RUF100", # unused noqa
+    "RUF101", # redirected noqa
+    "RUF010", # explicit type conversion in f-string
+    "RUF005", # collection literal concatenation
+    "RUF022", # unsorted __all__
+    "RUF023", # unsorted __slots__
+    "PYI030", # unnecessary literal union
+    "PT010",  # pytest.raises without an Exception type argument
+    "PT031",  # pytest.warns should be single statement
+    "TRY201", # `raise exc` instead of plain `raise`
+    "TRY401", # logging with exception instead of `log.exception`
+    "S102",   # use of `exec`
+    "S110",   # try-except-pass
+    "S112",   # try-except-continue
 ]
 ignore = [
     "E741",    # ambiguous variable name (preference)
@@ -125,10 +139,10 @@ docstring-code-line-length = 120
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
-## =====================================================================================================================
-# Workaround for `error: Multiple top-level packages discovered in a flat-layout:`
-# See https://stackoverflow.com/questions/72294299/multiple-top-level-packages-discovered-in-a-flat-layout
-## =====================================================================================================================
+# ## =====================================================================================================================
+# # Workaround for `error: Multiple top-level packages discovered in a flat-layout:`
+# # See https://stackoverflow.com/questions/72294299/multiple-top-level-packages-discovered-in-a-flat-layout
+# ## =====================================================================================================================
 
-[tool.setuptools]
-py-modules = []
+# [tool.setuptools]
+# py-modules = []
