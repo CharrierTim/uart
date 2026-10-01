@@ -1,0 +1,21 @@
+name: SystemRDL-check
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "tools/peakrdl/**"
+      - ".github/workflows/rdl-check.yml"
+  pull_request:
+    paths:
+      - "tools/peakrdl/**"
+      - ".github/workflows/rdl-check.yml"
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check SystemRDL formatting
+        run: uvx rdlfmt --check .
