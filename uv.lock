@@ -1987,58 +1987,42 @@ name = "uart"
 version = "1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "rtoml" },
-    { name = "vunit-hdl" },
-]
-
-[package.dev-dependencies]
-docs = [
+    { name = "docstrfmt" },
+    { name = "gcovr" },
     { name = "mkdocs" },
     { name = "mkdocs-drawio" },
     { name = "mkdocs-material" },
-    { name = "pymdown-extensions" },
-]
-hdl-dev = [
-    { name = "gcovr" },
     { name = "peakrdl" },
     { name = "peakrdl-markdown" },
     { name = "peakrdl-regblock-vhdl" },
-]
-lint = [
-    { name = "docstrfmt" },
     { name = "pre-commit" },
+    { name = "pymdown-extensions" },
     { name = "pytest" },
     { name = "rdlfmt" },
+    { name = "rtoml" },
     { name = "ruff" },
     { name = "vsg" },
+    { name = "vunit-hdl" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "rtoml" },
-    { name = "vunit-hdl", git = "https://github.com/VUnit/vunit.git?rev=master" },
-]
-
-[package.metadata.requires-dev]
-docs = [
+    { name = "docstrfmt" },
+    { name = "gcovr" },
     { name = "mkdocs" },
     { name = "mkdocs-drawio" },
     { name = "mkdocs-material" },
-    { name = "pymdown-extensions" },
-]
-hdl-dev = [
-    { name = "gcovr" },
     { name = "peakrdl" },
     { name = "peakrdl-markdown" },
     { name = "peakrdl-regblock-vhdl" },
-]
-lint = [
-    { name = "docstrfmt" },
     { name = "pre-commit" },
+    { name = "pymdown-extensions" },
     { name = "pytest" },
     { name = "rdlfmt" },
+    { name = "rtoml" },
     { name = "ruff" },
     { name = "vsg" },
+    { name = "vunit-hdl", git = "https://github.com/VUnit/vunit.git?rev=master" },
 ]
 
 [[package]]

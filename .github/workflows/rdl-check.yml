@@ -25,7 +25,7 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-      - run: uv sync --group lint
+      - run: uv sync
 
       - name: Check SystemRDL formatting
         run: uv run rdlfmt --check .

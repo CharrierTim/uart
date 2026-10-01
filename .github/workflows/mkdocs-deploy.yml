@@ -28,7 +28,7 @@ jobs:
         with:
           enable-cache: true
 
-      - run: uv sync --group docs
+      - run: uv sync
       - run: uv run mkdocs gh-deploy --force
 
       - name: Minimize uv cache
