@@ -85,7 +85,7 @@ I_UART_RX → [Stage 0] → [Stage 1] → [Stage 2] → [Stage 3] → i_uart_rx_
 
 #### Digital Filtering Logic
 
-The filter uses a simple majority voting algorithm on the last 3 stages:
+The filter uses a three-sample unanimity filter on the last 3 stages:
 
 | Input Samples (bits 3:1) | Filtered Output     | Description            |
 | ------------------------ | ------------------- | ---------------------- |

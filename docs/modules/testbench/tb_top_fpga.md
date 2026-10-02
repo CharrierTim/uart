@@ -12,11 +12,11 @@ The following figure depicts the Testbench:
 
 A record type used to define register configurations for the testbench.
 
-| Property      | Description                                                                                                                                                                              |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type Name** | `t_reg`                                                                                                                                                                                  |
-| **Purpose**   | Register fields with address and default value                                                                                                                                           |
-| **Fields**    | - `name` :  `string` - Register name identifier<br>- `addr` : `std_logic_vector(7 downto 0)` - 8-bit register address<br>- `data` : `std_logic_vector(15 downto 0)` - 16-bit reset value |
+| Property      | Description                                                                                                                                                                                                                                                                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type Name** | `t_reg`                                                                                                                                                                                                                                                                                                                               |
+| **Purpose**   | Register fields with address and default value                                                                                                                                                                                                                                                                                        |
+| **Fields**    | - `name` : `string` - Register name identifier<br>- `addr` : `std_logic_vector(REGBLOCK_MIN_ADDR_WIDTH - 1 downto 0)` - register address<br>- `data` : `std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0)` - 32-bit reset value<br>- `writable_bits_mask` : `std_logic_vector(REGBLOCK_DATA_WIDTH - 1 downto 0)` - writable-bit mask |
 
 ## Constants
 
@@ -24,79 +24,76 @@ A record type used to define register configurations for the testbench.
 
 The following constants are defined:
 
-| Name                           | Type          | Value                                                           | Description                              |
-| ------------------------------ | ------------- | --------------------------------------------------------------- | ---------------------------------------- |
-| `C_FREQ_HZ`                    | positive      | 0d100_000_000                                                   | Clock frequency                          |
-| `C_CLK_PERIOD`                 | time          | 1 sec / `C_FREQ_HZ`                                             | Clock period                             |
-| `C_GIT_ID`                     | vector[31: 0] | 0x12345678                                                      | Git identifier for DUT version tracking  |
-| `C_UART_BAUD_RATE_BPS`         | positive      | 0d115_200                                                       | UART baud rate in bits per second        |
-| `C_UART_BIT_TIME`              | time          | 1 sec / `C_UART_BAUD_RATE_BPS`                                  | Time duration for one UART bit           |
-| `C_UART_BIT_TIME_ACCURACY`     | time          | 0. 01 * `C_UART_BIT_TIME`                                       | UART bit timing tolerance (1%)           |
-| `C_UART_WRITE_NB_BITS`         | positive      | 10 * 8                                                          | Total bits for UART write command        |
-| `C_UART_WRITE_CMD_TIME`        | time          | `C_UART_BIT_TIME` * `C_UART_WRITE_NB_BITS`                      | Total time for UART write command        |
-| `C_READ_NB_BITS`               | positive      | 10 * 9                                                          | Total bits for UART read command         |
-| `C_UART_READ_CMD_TIME`         | time          | `C_UART_BIT_TIME` * `C_UART_READ_NB_BITS`                       | Total time for UART read command         |
-| `C_SPI_FREQ_HZ`                | positive      | 0d1_000_000                                                     | SPI SLCK frequency                       |
-| `C_SPI_BIT_TIME`               | time          | 1 sec / `C_SPI_FREQ_HZ`                                         | SPI baud rate in bits per second         |
-| `C_SPI_BIT_TIME_ACCURACY`      | time          | 0.01 * `C_SPI_BIT_TIME`                                         | SPI bit timing tolerance (1%)            |
-| `C_SPI_NB_DATA_BIS`            | positive      | 8                                                               | Total bits in SPI transaction            |
-| `C_SPI_TRANSACTION_TIME`       | time          | (`C_SPI_NB_DATA_BIS` + 2) * `C_SPI_BIT_TIME`                    | SPI transaction time                     |
-| `C_H_VGA_PIXEL_FREQUENCY`      | integer       | 0d65_000_000                                                    | VGA pixel clock frequency                |
-| `C_H_VGA_PIXEL_BIT_TIME`       | time          | 1 sec / `C_H_VGA_PIXEL_FREQUENCY`                               | VGA pixel clock period                   |
-| `C_H_PIXELS`                   | integer       | 0d1024                                                          | VGA active display width (pixels)        |
-| `C_H_FRONT_PORCH`              | integer       | 0d24                                                            | VGA horizontal front porch (pixels)      |
-| `C_H_SYNC_PULSE`               | integer       | 0d136                                                           | VGA horizontal sync pulse width (pixels) |
-| `C_H_BACK_PORCH`               | integer       | 0d160                                                           | VGA horizontal back porch (pixels)       |
-| `C_H_HSYNC_HIGH`               | integer       | `C_H_PIXELS` + `C_H_FRONT_PORCH` + `C_H_BACK_PORCH`             | VGA horizontal sync high period (pixels) |
-| `C_H_WHOLE_LINE`               | integer       | `C_H_SYNC_PULSE` + `C_H_HSYNC_HIGH`                             | VGA total horizontal line (pixels)       |
-| `C_H_SYNC_PULSE_TIME`          | time          | `C_H_SYNC_PULSE` * `C_H_VGA_PIXEL_BIT_TIME`                     | VGA horizontal sync pulse duration       |
-| `C_H_SYNC_PULSE_TIME_ACCURACY` | time          | 0.01 \* `C_H_SYNC_PULSE` * `C_H_VGA_PIXEL_BIT_TIME`             | VGA horizontal sync pulse tolerance      |
-| `C_H_HSYNC_HIGH_TIME`          | time          | `C_H_HSYNC_HIGH` * `C_H_VGA_PIXEL_BIT_TIME`                     | VGA horizontal sync high duration        |
-| `C_H_HSYNC_HIGH_TIME_ACCURACY` | time          | 0.01 \* `C_H_HSYNC_HIGH` * `C_H_VGA_PIXEL_BIT_TIME`             | VGA horizontal sync high tolerance       |
-| `C_H_WHOLE_LINE_TIME`          | time          | `C_H_SYNC_PULSE_TIME` + `C_H_HSYNC_HIGH_TIME`                   | VGA total horizontal line duration       |
-| `C_H_WHOLE_LINE_TIME_ACCURACY` | time          | `C_H_SYNC_PULSE_TIME_ACCURACY` + `C_H_HSYNC_HIGH_TIME_ACCURACY` | VGA total horizontal line tolerance      |
-| `C_V_VGA_PIXEL_FREQUENCY`      | integer       | `C_H_VGA_PIXEL_FREQUENCY` / `C_H_WHOLE_LINE`                    | VGA line frequency (Hz)                  |
-| `C_V_VGA_PIXEL_BIT_TIME`       | time          | 1 sec / `C_V_VGA_PIXEL_FREQUENCY`                               | VGA line period                          |
-| `C_V_PIXELS`                   | integer       | 0d768                                                           | VGA active display height (lines)        |
-| `C_V_FRONT_PORCH`              | integer       | 0d3                                                             | VGA vertical front porch (lines)         |
-| `C_V_SYNC_PULSE`               | integer       | 0d6                                                             | VGA vertical sync pulse width (lines)    |
-| `C_V_BACK_PORCH`               | integer       | 0d29                                                            | VGA vertical back porch (lines)          |
-| `C_V_HSYNC_HIGH`               | integer       | `C_V_PIXELS` + `C_V_FRONT_PORCH` + `C_V_BACK_PORCH`             | VGA vertical sync high period (lines)    |
-| `C_V_WHOLE_LINE`               | integer       | `C_V_SYNC_PULSE` + `C_V_HSYNC_HIGH`                             | VGA total vertical frame (lines)         |
-| `C_V_SYNC_PULSE_TIME`          | time          | `C_V_SYNC_PULSE` * `C_V_VGA_PIXEL_BIT_TIME`                     | VGA vertical sync pulse duration         |
-| `C_V_SYNC_PULSE_TIME_ACCURACY` | time          | 0.01 \* `C_V_SYNC_PULSE` * `C_V_VGA_PIXEL_BIT_TIME`             | VGA vertical sync pulse tolerance        |
-| `C_V_HSYNC_HIGH_TIME`          | time          | `C_V_HSYNC_HIGH` * `C_V_VGA_PIXEL_BIT_TIME`                     | VGA vertical sync high duration          |
-| `C_V_HSYNC_HIGH_TIME_ACCURACY` | time          | 0.01 \* `C_V_HSYNC_HIGH` * `C_V_VGA_PIXEL_BIT_TIME`             | VGA vertical sync high tolerance         |
-| `C_V_WHOLE_LINE_TIME`          | time          | `C_V_SYNC_PULSE_TIME` + `C_V_HSYNC_HIGH_TIME`                   | VGA total vertical frame duration        |
-| `C_V_WHOLE_LINE_TIME_ACCURACY` | time          | `C_V_SYNC_PULSE_TIME_ACCURACY` + `C_V_HSYNC_HIGH_TIME_ACCURACY` | VGA total vertical frame tolerance       |
-| `C_VGA_VECTOR_TEST_1`          | vector[11:0]  | x"ABC"                                                          | Test vector for VGA output verification  |
-| `C_VGA_VECTOR_TEST_2`          | vector[11:0]  | x"123"                                                          | Test vector for VGA output verification  |
-| `C_VGA_VECTOR_TEST_3`          | vector[11:0]  | x"F0F"                                                          | Test vector for VGA output verification  |
+| Name                           | Type         | Value                                                           | Description                              |
+| ------------------------------ | ------------ | --------------------------------------------------------------- | ---------------------------------------- |
+| `C_FREQ_HZ`                    | positive     | 0d100_000_000                                                   | Clock frequency                          |
+| `C_CLK_PERIOD`                 | time         | 1 sec / `C_FREQ_HZ`                                             | Clock period                             |
+| `C_GIT_ID`                     | vector[31:0] | `C_REG_GIT_HASH.data`                                           | Git identifier for DUT version tracking  |
+| `C_GIT_STATUS`                 | std_logic    | `C_REG_GIT_STATUS.data(0)`                                      | Git status for DUT version tracking      |
+| `C_FPGA_ID`                    | vector[31:0] | `C_REG_FPGA_ID.data`                                            | FPGA identifier for DUT version tracking |
+| `C_UART_BAUD_RATE_BPS`         | positive     | 0d115_200                                                       | UART baud rate in bits per second        |
+| `C_UART_BIT_TIME`              | time         | 1 sec / `C_UART_BAUD_RATE_BPS`                                  | Time duration for one UART bit           |
+| `C_UART_BIT_TIME_ACCURACY`     | time         | 0. 01 * `C_UART_BIT_TIME`                                       | UART bit timing tolerance (1%)           |
+| `C_UART_WRITE_NB_BITS`         | positive     | 10 * 12                                                         | Total bits for UART write command        |
+| `C_UART_WRITE_CMD_TIME`        | time         | `C_UART_BIT_TIME` * `C_UART_WRITE_NB_BITS`                      | Total time for UART write command        |
+| `C_UART_READ_NB_BITS`          | positive     | 10 * 13                                                         | Total bits for UART read command         |
+| `C_UART_READ_CMD_TIME`         | time         | `C_UART_BIT_TIME` * `C_UART_READ_NB_BITS`                       | Total time for UART read command         |
+| `C_SPI_FREQ_HZ`                | positive     | 0d1_000_000                                                     | SPI SLCK frequency                       |
+| `C_SPI_BIT_TIME`               | time         | 1 sec / `C_SPI_FREQ_HZ`                                         | SPI baud rate in bits per second         |
+| `C_SPI_BIT_TIME_ACCURACY`      | time         | 0.01 * `C_SPI_BIT_TIME`                                         | SPI bit timing tolerance (1%)            |
+| `C_SPI_NB_DATA_BITS`           | positive     | 8                                                               | Total bits in SPI transaction            |
+| `C_SPI_TRANSACTION_TIME`       | time         | (`C_SPI_NB_DATA_BITS` + 2) * `C_SPI_BIT_TIME`                   | SPI transaction time                     |
+| `C_H_VGA_PIXEL_FREQUENCY`      | integer      | 0d65_000_000                                                    | VGA pixel clock frequency                |
+| `C_H_VGA_PIXEL_BIT_TIME`       | time         | 1 sec / `C_H_VGA_PIXEL_FREQUENCY`                               | VGA pixel clock period                   |
+| `C_H_PIXELS`                   | integer      | 0d1024                                                          | VGA active display width (pixels)        |
+| `C_H_FRONT_PORCH`              | integer      | 0d24                                                            | VGA horizontal front porch (pixels)      |
+| `C_H_SYNC_PULSE`               | integer      | 0d136                                                           | VGA horizontal sync pulse width (pixels) |
+| `C_H_BACK_PORCH`               | integer      | 0d160                                                           | VGA horizontal back porch (pixels)       |
+| `C_H_HSYNC_HIGH`               | integer      | `C_H_PIXELS` + `C_H_FRONT_PORCH` + `C_H_BACK_PORCH`             | VGA horizontal sync high period (pixels) |
+| `C_H_WHOLE_LINE`               | integer      | `C_H_SYNC_PULSE` + `C_H_HSYNC_HIGH`                             | VGA total horizontal line (pixels)       |
+| `C_H_SYNC_PULSE_TIME`          | time         | `C_H_SYNC_PULSE` * `C_H_VGA_PIXEL_BIT_TIME`                     | VGA horizontal sync pulse duration       |
+| `C_H_SYNC_PULSE_TIME_ACCURACY` | time         | 0.01 \* `C_H_SYNC_PULSE` * `C_H_VGA_PIXEL_BIT_TIME`             | VGA horizontal sync pulse tolerance      |
+| `C_H_HSYNC_HIGH_TIME`          | time         | `C_H_HSYNC_HIGH` * `C_H_VGA_PIXEL_BIT_TIME`                     | VGA horizontal sync high duration        |
+| `C_H_HSYNC_HIGH_TIME_ACCURACY` | time         | 0.01 \* `C_H_HSYNC_HIGH` * `C_H_VGA_PIXEL_BIT_TIME`             | VGA horizontal sync high tolerance       |
+| `C_H_WHOLE_LINE_TIME`          | time         | `C_H_SYNC_PULSE_TIME` + `C_H_HSYNC_HIGH_TIME`                   | VGA total horizontal line duration       |
+| `C_H_WHOLE_LINE_TIME_ACCURACY` | time         | `C_H_SYNC_PULSE_TIME_ACCURACY` + `C_H_HSYNC_HIGH_TIME_ACCURACY` | VGA total horizontal line tolerance      |
+| `C_V_VGA_PIXEL_FREQUENCY`      | integer      | `C_H_VGA_PIXEL_FREQUENCY` / `C_H_WHOLE_LINE`                    | VGA line frequency (Hz)                  |
+| `C_V_VGA_PIXEL_BIT_TIME`       | time         | 1 sec / `C_V_VGA_PIXEL_FREQUENCY`                               | VGA line period                          |
+| `C_V_PIXELS`                   | integer      | 0d768                                                           | VGA active display height (lines)        |
+| `C_V_FRONT_PORCH`              | integer      | 0d3                                                             | VGA vertical front porch (lines)         |
+| `C_V_SYNC_PULSE`               | integer      | 0d6                                                             | VGA vertical sync pulse width (lines)    |
+| `C_V_BACK_PORCH`               | integer      | 0d29                                                            | VGA vertical back porch (lines)          |
+| `C_V_HSYNC_HIGH`               | integer      | `C_V_PIXELS` + `C_V_FRONT_PORCH` + `C_V_BACK_PORCH`             | VGA vertical sync high period (lines)    |
+| `C_V_WHOLE_LINE`               | integer      | `C_V_SYNC_PULSE` + `C_V_HSYNC_HIGH`                             | VGA total vertical frame (lines)         |
+| `C_V_SYNC_PULSE_TIME`          | time         | `C_V_SYNC_PULSE` * `C_V_VGA_PIXEL_BIT_TIME`                     | VGA vertical sync pulse duration         |
+| `C_V_SYNC_PULSE_TIME_ACCURACY` | time         | 0.01 \* `C_V_SYNC_PULSE` * `C_V_VGA_PIXEL_BIT_TIME`             | VGA vertical sync pulse tolerance        |
+| `C_V_HSYNC_HIGH_TIME`          | time         | `C_V_HSYNC_HIGH` * `C_V_VGA_PIXEL_BIT_TIME`                     | VGA vertical sync high duration          |
+| `C_V_HSYNC_HIGH_TIME_ACCURACY` | time         | 0.01 \* `C_V_HSYNC_HIGH` * `C_V_VGA_PIXEL_BIT_TIME`             | VGA vertical sync high tolerance         |
+| `C_V_WHOLE_LINE_TIME`          | time         | `C_V_SYNC_PULSE_TIME` + `C_V_HSYNC_HIGH_TIME`                   | VGA total vertical frame duration        |
+| `C_V_WHOLE_LINE_TIME_ACCURACY` | time         | `C_V_SYNC_PULSE_TIME_ACCURACY` + `C_V_HSYNC_HIGH_TIME_ACCURACY` | VGA total vertical frame tolerance       |
+| `C_VGA_VECTOR_TEST_1`          | vector[11:0] | x"ABC"                                                          | Test vector for VGA output verification  |
+| `C_VGA_VECTOR_TEST_2`          | vector[11:0] | x"123"                                                          | Test vector for VGA output verification  |
+| `C_VGA_VECTOR_TEST_3`          | vector[11:0] | x"F0F"                                                          | Test vector for VGA output verification  |
 
 ### Registers
 
 The following registers are defined as [`t_reg`](#t_reg):
 
-| Name               | Address | Reset Value |
-| ------------------ | ------- | ----------- |
-| `C_REG_GIT_ID_MSB` | 0x00    | 0x1234      |
-| `C_REG_GIT_ID_LSB` | 0x01    | 0x5678      |
-| `C_REG_GIT_STATUS` | 0x02    | 0x0001      |
-| `C_REG_12`         | 0x03    | 0x1212      |
-| `C_REG_34`         | 0x04    | 0x3434      |
-| `C_REG_56`         | 0x05    | 0x5656      |
-| `C_REG_78`         | 0x06    | 0x7878      |
-| `C_REG_SPI_TX`     | 0x07    | 0x0000      |
-| `C_REG_SPI_RX`     | 0x08    | 0x0000      |
-| `C_REG_SPI_RX`     | 0x08    | 0x0000      |
-| `C_REG_VGA_CTRL`   | 0x09    | 0x00F0      |
-| `C_REG_9A`         | 0xAB    | 0x9A9A      |
-| `C_REG_CD`         | 0xAC    | 0xCDCD      |
-| `C_REG_EF`         | 0xDC    | 0xEFEF      |
-| `C_REG_SWITCHES`   | 0xB1    | 0x0000      |
-| `C_REG_LED`        | 0xEF    | 0x0001      |
-| `C_REG_16_BITS`    | 0xFF    | 0x0000      |
-| `C_REG_DEAD`       | 0xCC    | 0xDEAD      |
+| Name                             | Address | Reset Value   |
+| -------------------------------- | ------- | ------------- |
+| `C_REG_GIT_HASH`                 | `0x00`  | `0xDEAD_BEEF` |
+| `C_REG_GIT_STATUS`               | `0x04`  | `0x0000_0001` |
+| `C_REG_FPGA_ID`                  | `0x08`  | `0x1234_5678` |
+| `C_REG_SPI_TX_CONTROL`           | `0x0C`  | `0x0000_0000` |
+| `C_REG_SPI_RX_DATA`              | `0x10`  | `0x0000_0000` |
+| `C_REG_VGA_COLOR_CONTROL`        | `0x14`  | `0x0000_00F0` |
+| `C_REG_IOS_STATUS`               | `0x18`  | `0x0000_0100` |
+| `C_REG_BAD_ADDRESS_COUNTER`      | `0x1C`  | `0x0000_0000` |
+| `C_REG_BAD_ADDRESS_RESET_CONFIG` | `0x20`  | `0x0000_0014` |
+| `C_REG_START_BIT_ERROR_COUNTER`  | `0x24`  | `0x0000_0000` |
+| `C_REG_STOP_BIT_ERROR_COUNTER`   | `0x28`  | `0x0000_0000` |
+| `C_REG_TEST_REGISTER_1`          | `0xF8`  | `0x0000_0000` |
+| `C_REG_TEST_REGISTER_2`          | `0xFC`  | `0x0000_0000` |
 
 ## Processes
 
