@@ -365,7 +365,7 @@ class VUnitProject:
         # Write the TOML data to a file
         config_file: Path = output_path / "vhdl_ls.toml"
         try:
-            with Path.open(file=config_file, mode="w", encoding="utf-8") as f:
+            with Path.open(self=config_file, mode="w", encoding="utf-8") as f:
                 rtoml.dump(obj=toml_data, file=f, pretty=True)
             LOGGER.info("vhdl_ls configuration generated at: %s", config_file)
         except OSError as e:
@@ -456,7 +456,7 @@ class Simulator(VUnitProject, ABC):
             LOGGER.warning("No test results found for output merge")
             return
 
-        with Path.open(file=output_file, mode="w", encoding="utf-8") as outfile:
+        with Path.open(self=output_file, mode="w", encoding="utf-8") as outfile:
             LOGGER.info("Merging output from %d tests...", len(test_results))
 
             for test_name, test_result in sorted(test_results.items()):
@@ -469,7 +469,7 @@ class Simulator(VUnitProject, ABC):
 
                 # Write the contents of the file
                 try:
-                    with Path.open(file=txt_file, encoding="utf-8") as infile:
+                    with Path.open(self=txt_file, encoding="utf-8") as infile:
                         outfile.write(infile.read())
                 except (OSError, UnicodeDecodeError) as e:
                     outfile.write(f"[ERROR: Could not read file - {e}]\n")
@@ -656,7 +656,7 @@ class GHDL(Simulator):
             The path to the JSON coverage file.
         """
         try:
-            with Path.open(file=json_file, encoding="utf-8") as f:
+            with Path.open(self=json_file, encoding="utf-8") as f:
                 content = f.read()
 
             # Normalize Windows backslashes to forward slashes in the JSON file
@@ -667,7 +667,7 @@ class GHDL(Simulator):
                 pattern=r'"gcovr/format_version":\s*"\d+\.\d+"', repl='"gcovr/format_version": "0.14"', string=content
             )
 
-            with Path.open(file=json_file, mode="w", encoding="utf-8") as f:
+            with Path.open(self=json_file, mode="w", encoding="utf-8") as f:
                 f.write(content)
 
         except (OSError, UnicodeDecodeError) as e:
