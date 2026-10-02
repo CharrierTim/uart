@@ -199,18 +199,18 @@ Register used to read the status of the input switches or leds.
 
 <div class="register-bits-table" markdown="1">
 
-| Bits  | Type  | Reset | Name         | Description                                         |
-| :---: | :---: | :---: | :----------- | :-------------------------------------------------- |
-| 31:9  |       |       |              | Reserved                                            |
-|   8   |  ro   | `0x0` | reset_status | Indicates if the device is in reset (1) or not (0). |
-|   7   |  ro   | `0x0` | switch_7     | Status of switch 7                                  |
-|   6   |  ro   | `0x0` | switch_6     | Status of switch 6                                  |
-|   5   |  ro   | `0x0` | switch_5     | Status of switch 5                                  |
-|   4   |  ro   | `0x0` | switch_4     | Status of switch 4                                  |
-|   3   |  ro   | `0x0` | switch_3     | Status of switch 3                                  |
-|   2   |  ro   | `0x0` | switch_2     | Status of switch 2                                  |
-|   1   |  ro   | `0x0` | switch_1     | Status of switch 1                                  |
-|   0   |  ro   | `0x0` | switch_0     | Status of switch 0                                  |
+| Bits  | Type  | Reset | Name         | Description                                                           |
+| :---: | :---: | :---: | :----------- | :-------------------------------------------------------------------- |
+| 31:9  |       |       |              | Reserved                                                              |
+|   8   |  ro   | `0x0` | reset_status | Indicates that the device has completed reset and is operational (1). |
+|   7   |  ro   | `0x0` | switch_7     | Status of switch 7                                                    |
+|   6   |  ro   | `0x0` | switch_6     | Status of switch 6                                                    |
+|   5   |  ro   | `0x0` | switch_5     | Status of switch 5                                                    |
+|   4   |  ro   | `0x0` | switch_4     | Status of switch 4                                                    |
+|   3   |  ro   | `0x0` | switch_3     | Status of switch 3                                                    |
+|   2   |  ro   | `0x0` | switch_2     | Status of switch 2                                                    |
+|   1   |  ro   | `0x0` | switch_1     | Status of switch 1                                                    |
+|   0   |  ro   | `0x0` | switch_0     | Status of switch 0                                                    |
 
 </div>
 <!-- markdownlint-enable -->

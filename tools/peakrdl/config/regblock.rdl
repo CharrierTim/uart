@@ -197,7 +197,7 @@ addrmap regblock {
         field {
             sw = r;
             hw = rw;
-            desc = "Indicates if the device is in reset (1) or not (0).";
+            desc = "Indicates that the device has completed reset and is operational (1).";
             reset = 0;
         } reset_status[8:8];
     } ios_status @ 0x18;
