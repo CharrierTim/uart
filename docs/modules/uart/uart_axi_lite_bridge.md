@@ -97,8 +97,8 @@ The UART controller module instantiates the [UART TX](uart_tx.md) module with th
 ### Protocol
 
 The implemented UART protocol is an ASCII-based protocol to access the internal registers of the FPGA.
-All commands and responses are ASCII text and every message is terminated by a mandatory carriage-return (CR, `\r`).
-A line-feed (LF, `\n`) may follow CR but is optional and ignored by the device.
+Commands are terminated by a mandatory carriage-return (CR, `\r`); an optional line-feed (LF, `\n`) following a command
+is ignored by the device. Read responses are ASCII text terminated by CR only.
 
 The following fields are defined:
 
@@ -123,15 +123,18 @@ R + AA + \r[\n]
 - `\r`: mandatory CR terminator (ASCII 0x0D)
 - `\n`: optional LF (ASCII 0x0A), if present it is ignored by the device
 
+!!! warning
+    The bridge does not reject invalid hexadecimal characters. Any character outside `0` through `9` and `A` through `F`
+    is decoded as hexadecimal zero.
+
 **Response Format**:
 
 ```raw
-DDDDDDDD + \r[\n]
+DDDDDDDD + \r
 ```
 
 - `DDDDDDDD`: eight ASCII hex characters representing the 32-bit register value, MSB first (`0x00000000` .. `0xFFFFFFFF`)
 - `\r`: mandatory CR terminator
-- `\n`: optional LF (ASCII 0x0A)
 
 **Examples**:
 

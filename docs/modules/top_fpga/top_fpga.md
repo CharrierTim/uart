@@ -52,7 +52,12 @@ The following figure depicts the Top-Level:
 | `PAD_I_SWITCH_0`  | std_logic   |    in     | -             | Input switch 0                                               |
 | `PAD_I_SWITCH_1`  | std_logic   |    in     | -             | Input switch 1                                               |
 | `PAD_I_SWITCH_2`  | std_logic   |    in     | -             | Input switch 2                                               |
-| `PAD_O_LED_0`     | std_logic   |    out    | 0b0           | Asserted when the bad-address counter is nonzero             |
+| `PAD_I_SWITCH_3`  | std_logic   |    in     | -             | Input switch 3                                               |
+| `PAD_I_SWITCH_4`  | std_logic   |    in     | -             | Input switch 4                                               |
+| `PAD_I_SWITCH_5`  | std_logic   |    in     | -             | Input switch 5                                               |
+| `PAD_I_SWITCH_6`  | std_logic   |    in     | -             | Input switch 6                                               |
+| `PAD_I_SWITCH_7`  | std_logic   |    in     | -             | Input switch 7                                               |
+| `PAD_O_LED_0`     | std_logic   |    out    | 0b0           | Asserted after the device has completed reset                |
 
 </div>
 
@@ -117,7 +122,7 @@ The FPGA instantiates the [`regblock`](../regblock/regblock.md) module. The hard
 | `git_hash.hash.next_q`                      | [`G_GIT_ID`](#generics)                                                   | Git identifier at bitstream generation time.                                       |
 | `git_status.status.next_q`                  | [`G_GIT_STATUS`](#generics)                                               | Git status at bitstream generation time.                                           |
 | `fpga_id.id.next_q`                         | [`G_FPGA_ID`](#generics)                                                  | FPGA identification value.                                                         |
-| `ios_status.reset_status.next_q`            | Constant `'1'`                                                            | 0 when device is in reset, 1 when device is out of reset.                          |
+| `ios_status.reset_status.next_q`            | Constant `'1'`                                                            | 1 after the device has completed reset and is operational.                         |
 | `ios_status.switch_7.next_q`                | Resynchronized `PAD_I_SWITCH_7`                                           | Switch 7 input after resynchronizer.                                               |
 | `ios_status.switch_6.next_q`                | Resynchronized `PAD_I_SWITCH_6`                                           | Switch 6 input after resynchronizer.                                               |
 | `ios_status.switch_5.next_q`                | Resynchronized `PAD_I_SWITCH_5`                                           | Switch 5 input after resynchronizer.                                               |
