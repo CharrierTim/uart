@@ -64,7 +64,7 @@ See the [top_fpga module documentation](modules/top_fpga/top_fpga.md) for design
 | **Open-Logic**            | `4.7.0`                                                       |
 | **PeakRDL-regblock-vhdl** | `v1.3.1.1`                                                    |
 | **PeakRDL**               | `1.5.0`                                                       |
-| **rdlfmt**                | `0.3.0`                                                       |
+| **rdlfmt**                | `0.4.0`                                                       |
 | **Ruff**                  | `v0.16.9`                                                     |
 | **Vivado**                | `2025.2`                                                      |
 | **VSG**                   | `VHDL Style Guide (VSG) version: 3.35.0`                      |
