@@ -66,7 +66,7 @@ See the [top_fpga module documentation](modules/top_fpga/top_fpga.md) for design
 | **rdlfmt**                | `0.3.0`                                                       |
 | **Ruff**                  | `v0.16.9`                                                     |
 | **Vivado**                | `2025.2`                                                      |
-| **VSG**                   | `VHDL Style Guide (VSG) version: 3.35.0`                      |
+| **VSG**                   | `VHDL Style Guide (VSG) version: 3.36.0`                      |
 | **VUnit**                 | `5.0.0.dev14 commit 44736ccfb1a89ffdc53638a2bc42a33e9f02eb46` |
 
 ## Clocking Configuration
