@@ -24,7 +24,7 @@ repos:
 
   # Python hooks
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.9
+    rev: v0.17.5
     hooks:
       - id: ruff-check
         args: [--fix]
@@ -33,7 +33,7 @@ repos:
 
   # VHDL hooks
   - repo: https://github.com/jeremiah-c-leary/vhdl-style-guide
-    rev: 3.35.0
+    rev: 3.36.0
     hooks:
       - id: vsg
         args:
@@ -41,7 +41,7 @@ repos:
           - --configuration=tools/vsg/config/.vsg.yaml
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.23.3
+    rev: v0.24.1
     hooks:
       - id: markdownlint-cli2
         args:
