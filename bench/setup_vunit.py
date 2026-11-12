@@ -664,7 +664,7 @@ class GHDL(Simulator):
 
             # Replace version string in JSON file
             content: str = re.sub(
-                pattern=r'"gcovr/format_version":\s*"\d+\.\d+"', repl='"gcovr/format_version": "0.14"', string=content
+                pattern=r'"gcovr/format_version":\s*"\d+\.\d+"', repl='"gcovr/format_version": "0.15"', string=content
             )
 
             with Path.open(self=json_file, mode="w", encoding="utf-8") as f:
@@ -677,7 +677,7 @@ class GHDL(Simulator):
         """Generate coverage report using gcovr with JSON coverage file.
 
         Requires a workaround to fix the version string in the JSON file due to gcovr issues with GHDL coverage files.
-        Without it, gcovr will fail with error `AssertionError: Wrong format version, got 0.6 expected 0.14.`
+        Without it, gcovr will fail with error `AssertionError: Wrong format version, got 0.6 expected 0.15.`
 
         Parameters
         ----------
