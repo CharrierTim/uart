@@ -107,7 +107,10 @@ package body TB_COMMON_PKG is
         str   : string;
         width : integer
     ) return string is
-        variable v_result : string(1 to width) := (others => ' ');
+        variable v_result : string(1 to width) :=
+        (
+            others => ' '
+        );
     begin
 
         if (str'length >= width) then

@@ -226,9 +226,9 @@ begin
         push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(23 downto 20)));
         push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(19 downto 16)));
         push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(15 downto 12)));
-        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(11 downto  8)));
-        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA( 7 downto  4)));
-        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA( 3 downto  0)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA(11 downto 8)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA( 7 downto 4)));
+        push_stream(net, C_UART_STREAM_MASTER, func_hex_to_ascii_representation(I_WRITE_DATA( 3 downto 0)));
 
         -- Send carriage return
         push_stream(net, C_UART_STREAM_MASTER, C_CHAR_CR);

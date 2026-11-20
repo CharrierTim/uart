@@ -23,7 +23,7 @@
 ## =====================================================================================================================
 ##  @project uart
 ##  @file    .vsg.yaml
-##  @version 1.1
+##  @version 1.2
 ##  @brief   Configuration file for VHDL Style Guide (VSG). Some part are adapted from:
 ##              - https://github.com/open-logic/open-logic/blob/main/lint/config/vsg_config.yml | By Patrick Studer
 ##  @author  Timothee Charrier
@@ -34,6 +34,7 @@
 ## -------  ----------  ------------------  ----------------------------------------------------------------------------
 ## 1.0      11/28/2025  Timothee Charrier   Initial release
 ## 1.1      23/05/2026  Timothee Charrier   Add AXI signal prefixes to port names rule
+## 1.2      24/06/2026  Timothee Charrier   Bump rules from new VSG version 3.36.0
 ## =====================================================================================================================
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -833,6 +834,10 @@ rule:
   # Array Constraint Rules
   # ------------------------------------------------------------------------------------------------------------------
 
+  array_constraint_100:
+    # This rule checks for whitespace before the opening parenthesis.
+    number_of_spaces: 0
+
   array_constraint_500:
     # This rule checks the open keyword in array constraints has the proper case.
     case: lower
@@ -1239,9 +1244,17 @@ rule:
     # This rule checks for blank lines or comments above the when keyword.
     style: allow_comment
 
+  case_generate_alternative_200:
+    # This rule checks for a blank line below the **=>** keyword.
+    style: allow_comment
+
   case_generate_alternative_500:
     # This rule checks the when keyword has proper case.
     case: lower
+
+  case_generate_statement_200:
+    # This rule checks for blank lines or comments above the **end** keyword.
+    style: require_blank_line
 
   case_generate_statement_400:
     # This rule checks the => are aligned in case_generate_alternatives.
@@ -1654,6 +1667,14 @@ rule:
   # ------------------------------------------------------------------------------------------------------------------
   # Constrained Array Definition Rules
   # ------------------------------------------------------------------------------------------------------------------
+
+  constrained_array_definition_100:
+    # This rule checks for a single space before the **of** keyword.
+    number_of_spaces: 1
+
+  constrained_array_definition_101:
+    # This rule checks for a single space after the **of** keyword.
+    number_of_spaces: 1
 
   constrained_array_definition_500:
     # This rule checks the array keyword has proper case.
@@ -2710,8 +2731,24 @@ rule:
     case: lower
 
   # ------------------------------------------------------------------------------------------------------------------
+  # Index Constraint Rules Rules
+  # ------------------------------------------------------------------------------------------------------------------
+
+  index_constraint_100:
+    # This rule checks for whitespace before the opening parenthesis.
+    number_of_spaces: 0
+
+  # ------------------------------------------------------------------------------------------------------------------
   # Index Subtype Definition Rules
   # ------------------------------------------------------------------------------------------------------------------
+
+  index_subtype_definition_100:
+    # This rule checks for a single space before the **range** keyword.
+    number_of_spaces: 1
+
+  index_subtype_definition_101:
+    # This rule checks for a single space after the **range** keyword.
+    number_of_spaces: 1
 
   index_subtype_definition_500:
     # This rule checks the range keyword in index subtype definitions has the proper case.
@@ -4204,6 +4241,14 @@ rule:
   # Range Constraint Rules
   # ------------------------------------------------------------------------------------------------------------------
 
+  range_constraint_100:
+    # This rule checks for a single space before the **range** keyword.
+    number_of_spaces: 1
+
+  range_constraint_101:
+    # This rule checks for a single space after the **range** keyword.
+    number_of_spaces: 1
+
   range_constraint_500:
     # This rule checks the range keyword in range constraints has the proper case.
     case: lower
@@ -4610,6 +4655,10 @@ rule:
     record_constraint_element: add_new_line
     record_constraint_open_paren: remove_new_line
 
+  signal_018:
+    # This rule checks the **:=** is on the same line as the **signal** keyword.
+    action: same_line
+
   signal_100:
     # This rule checks for a single space before the identifier.
     number_of_spaces: 1
@@ -4633,6 +4682,33 @@ rule:
     # This rule checks alignment of multiline constraints in signal declarations.
     align_left: no
     align_paren: yes
+
+  signal_401:
+    # This rule checks the alignment of assignment keywords in signal declarations.
+    compact_alignment: yes
+    blank_line_ends_group: yes
+    comment_line_ends_group: no
+    separate_generic_port_alignment: yes
+    if_control_statements_ends_group: yes
+    case_control_statements_ends_group: yes
+    generate_statements_ends_group: yes
+    loop_control_statements_ends_group: yes
+    aggregate_parens_ends_group: yes
+    ignore_single_line_aggregates: yes
+    include_type_is_keyword: no
+
+  signal_402:
+    # This rule checks the alignment of multiline signal initializations that contain arrays.
+    align_left: no
+    align_paren: yes
+    align_when_keywords: yes
+    wrap_at_when: yes
+    align_else_keywords: yes
+
+  signal_403:
+    # This rule checks the structure of multiline signal initializations that contain arrays.
+    new_line_after_assign: yes
+    ignore_single_line: no
 
   signal_600:
     # This rule checks for valid suffixes on signal identifiers. Default signal suffix is _s.
@@ -4897,6 +4973,18 @@ rule:
   # Unbounded Array Definition Rules
   # ------------------------------------------------------------------------------------------------------------------
 
+  unbounded_array_definition_100:
+    # This rule checks for whitespace after the **array** keyword.
+    number_of_spaces: 1
+
+  unbounded_array_definition_101:
+    # This rule checks for a single space before the **of** keyword.
+    number_of_spaces: 1
+
+  unbounded_array_definition_102:
+    # This rule checks for a single space after the **of** keyword.
+    number_of_spaces: 1
+
   unbounded_array_definition_500:
     # This rule checks the array keyword has proper case.
     case: lower
@@ -4985,6 +5073,10 @@ rule:
     record_constraint_element: add_new_line
     record_constraint_open_paren: add_new_line
 
+  variable_018:
+    # This rule checks the **:=** is on the same line as the **variable** keyword.
+    action: same_line
+
   variable_100:
     # This rule checks for a single space before the identifier.
     number_of_spaces: ">=1"
@@ -5006,6 +5098,33 @@ rule:
     align_left: no
     align_paren: yes
     severity: Error
+
+  variable_401:
+    # This rule checks the alignment of assignment keywords in variable declarations.
+    compact_alignment: yes
+    blank_line_ends_group: yes
+    comment_line_ends_group: no
+    separate_generic_port_alignment: yes
+    if_control_statements_ends_group: yes
+    case_control_statements_ends_group: yes
+    generate_statements_ends_group: yes
+    loop_control_statements_ends_group: yes
+    aggregate_parens_ends_group: yes
+    ignore_single_line_aggregates: yes
+    include_type_is_keyword: no
+
+  variable_402:
+    # This rule checks the alignment of multiline variable initializations that contain arrays.
+    align_left: no
+    align_paren: yes
+    align_when_keywords: yes
+    wrap_at_when: yes
+    align_else_keywords: yes
+
+  variable_403:
+    # This rule checks the structure of multiline variable initializations that contain arrays.
+    new_line_after_assign: yes
+    ignore_single_line: yes
 
   variable_600:
     # This rule checks for valid suffix on variable identifiers. The default variable suffix is _v.
@@ -5138,10 +5257,6 @@ rule:
     # This rule checks for spaces after a comma.
     number_of_spaces: ">=1"
 
-  whitespace_008:
-    # This rule checks for spaces after the std_logic_vector keyword.
-    number_of_spaces: 0
-
   whitespace_010:
     # This rule checks for spaces before and after the concate (&) operator.
     number_of_spaces: 1
@@ -5161,6 +5276,14 @@ rule:
   whitespace_100:
     # This rule checks for at least a single space before and after relational operators.
     number_of_spaces: ">=1"
+
+  whitespace_102:
+    # This rule checks for a single space before direction keywords.
+    number_of_spaces: 1
+
+  whitespace_103:
+    # This rule checks for a single space after direction keywords.
+    number_of_spaces: 1
 
   whitespace_200:
     # This rule enforces a maximum number of consecutive blank lines.
