@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
-| Date         : Sun Sep 27 18:48:27 2026
+| Date         : Sun Nov 22 11:47:10 2026
 | Host         : fedora1.home running 64-bit unknown
 | Command      : report_utilization -hierarchical -file /home/tim/projects/uart/synthesis/results/impl/uart_utilization_hierarchical_place.rpt
 | Design       : TOP_FPGA
@@ -22,10 +22,10 @@ Table of Contents
 +---------------------------------+----------------------+------------+------------+---------+------+-----+--------+--------+------------+
 |             Instance            |        Module        | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | DSP Blocks |
 +---------------------------------+----------------------+------------+------------+---------+------+-----+--------+--------+------------+
-| TOP_FPGA                        |                (top) |        467 |        467 |       0 |    0 | 670 |      0 |      0 |          0 |
+| TOP_FPGA                        |                (top) |        470 |        470 |       0 |    0 | 670 |      0 |      0 |          0 |
 |   (TOP_FPGA)                    |                (top) |          0 |          0 |       0 |    0 |   0 |      0 |      0 |          0 |
-|   inst_reglock                  |             regblock |        270 |        270 |       0 |    0 | 315 |      0 |      0 |          0 |
-|   inst_uart_axi_lite_bridge     | UART_AXI_LITE_BRIDGE |        131 |        131 |       0 |    0 | 170 |      0 |      0 |          0 |
+|   inst_reglock                  |             regblock |        271 |        271 |       0 |    0 | 315 |      0 |      0 |          0 |
+|   inst_uart_axi_lite_bridge     | UART_AXI_LITE_BRIDGE |        133 |        133 |       0 |    0 | 170 |      0 |      0 |          0 |
 |     (inst_uart_axi_lite_bridge) | UART_AXI_LITE_BRIDGE |          3 |          3 |       0 |    0 |  88 |      0 |      0 |          0 |
 |     inst_uart_rx                |              UART_RX |         81 |         81 |       0 |    0 |  56 |      0 |      0 |          0 |
 |   inst_vga                      |       VGA_CONTROLLER |         47 |         47 |       0 |    0 | 100 |      0 |      0 |          0 |

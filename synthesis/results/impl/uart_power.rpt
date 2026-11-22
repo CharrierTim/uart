@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
-| Date             : Sun Sep 27 18:48:49 2026
+| Date             : Sun Nov 22 11:47:32 2026
 | Host             : fedora1.home running 64-bit unknown
 | Command          : report_power -file /home/tim/projects/uart/synthesis/results/impl/uart_power.rpt
 | Design           : TOP_FPGA
@@ -33,7 +33,7 @@ Table of Contents
 | Total On-Chip Power (W)  | 0.236        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.129        |
+| Dynamic (W)              | 0.128        |
 | Device Static (W)        | 0.108        |
 | Effective TJA (C/W)      | 11.5         |
 | Max Ambient (C)          | 82.3         |
@@ -52,13 +52,13 @@ Table of Contents
 +----------------+-----------+----------+-----------+-----------------+
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
-| Clocks         |     0.003 |        6 |       --- |             --- |
-| Slice Logic    |    <0.001 |     1327 |       --- |             --- |
-|   LUT as Logic |    <0.001 |      467 |     53200 |            0.88 |
+| Clocks         |     0.002 |        6 |       --- |             --- |
+| Slice Logic    |    <0.001 |     1330 |       --- |             --- |
+|   LUT as Logic |    <0.001 |      470 |     53200 |            0.88 |
 |   Register     |    <0.001 |      670 |    106400 |            0.63 |
 |   CARRY4       |    <0.001 |       28 |     13300 |            0.21 |
 |   Others       |     0.000 |       36 |       --- |             --- |
-| Signals        |    <0.001 |      992 |       --- |             --- |
+| Signals        |    <0.001 |      993 |       --- |             --- |
 | PLL            |     0.123 |        1 |         4 |           25.00 |
 | I/O            |     0.001 |       31 |       200 |           15.50 |
 | Static Power   |     0.108 |          |           |                 |
@@ -151,10 +151,9 @@ Table of Contents
 +------------------------+-----------+
 | Name                   | Power (W) |
 +------------------------+-----------+
-| TOP_FPGA               |     0.129 |
+| TOP_FPGA               |     0.128 |
 |   inst_CLK_RST_MANAGER |     0.124 |
 |     inst_pll           |     0.124 |
 |       inst             |     0.124 |
 |   inst_reglock         |     0.001 |
-|   inst_vga             |     0.001 |
 +------------------------+-----------+
