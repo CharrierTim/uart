@@ -61,6 +61,7 @@ See the [top_fpga module documentation](modules/top_fpga/top_fpga.md) for design
 | Tool                      | Version                                                 |
 | ------------------------- | ------------------------------------------------------- |
 | **NVC**                   | `nvc 1.23.1 (1.23.1.r0.gfab54a9e9) (Using LLVM 23.1.5)` |
+| **Open-Logic**            | `4.8.0 (5136eedce163fb23fecb647d7a00fc6861e4d6d0)`      |
 | **PeakRDL-regblock-vhdl** | `v1.3.1.1`                                              |
 | **PeakRDL**               | `1.5.0`                                                 |
 | **rdlfmt**                | `0.4.2`                                                 |
