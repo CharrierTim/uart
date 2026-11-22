@@ -572,7 +572,7 @@ class NVC(Simulator):
         # Generate coverage report
         LOGGER.info("Generating coverage report to %s...", coverage_dir)
         cmd: list[str] = ["nvc", "--cover-report", str(coverage_db), "-o", str(coverage_dir)]
-        process: Process[list[str]] = Process(args=cmd)
+        process: Process = Process(args=cmd)
         process.consume_output()
         LOGGER.info("Coverage report generated at %s", coverage_dir)
 
@@ -643,7 +643,7 @@ class GHDL(Simulator):
             "--html",
             "--html-details",
         ]
-        process: Process[list[str]] = Process(args=cmd)
+        process: Process = Process(args=cmd)
         process.consume_output()
 
     @staticmethod
@@ -697,7 +697,7 @@ class GHDL(Simulator):
             "--html",
             "--html-details",
         ]
-        process: Process[list[str]] = Process(args=cmd)
+        process: Process = Process(args=cmd)
         process.consume_output()
 
     def _generate_coverage(self, results: Results) -> None:
@@ -863,7 +863,7 @@ class QuestaModelSim(Simulator):
             "-output",
             str(coverage_dir),
         ]
-        process: Process[list[str]] = Process(args=cmd)
+        process: Process = Process(args=cmd)
         process.consume_output()
         LOGGER.info("Coverage report generated at %s", coverage_dir)
 
@@ -874,7 +874,7 @@ class QuestaModelSim(Simulator):
             "summary",
             str(coverage_file),
         ]
-        process_stats: Process[list[str]] = Process(args=cmd_stats)
+        process_stats: Process = Process(args=cmd_stats)
         process_stats.consume_output()
 
 
